@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AlphaStat - Punjab Climate Dashboard | SPI/SPEI/SPTI Analysis</title>
+    <title>Drought Monitor | Alpha-Stat-Lab</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); min-height: 100vh; }
         .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
-        .header { background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: white; padding: 30px; border-radius: 15px; margin-bottom: 30px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .header { background: linear-gradient(135deg, #0f2a4a 0%, #1e3c72 100%); color: white; padding: 30px; border-radius: 15px; margin-bottom: 30px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.3); border-bottom: 3px solid #ffd700; }
         .header h1 { font-size: 2.5em; margin-bottom: 10px; }
         .header h1 span { color: #ffd700; }
         .header p { opacity: 0.9; font-size: 1.1em; }
@@ -62,10 +62,11 @@
 </head>
 <body>
     <div class="container">
+        <!-- Updated Header: Option 2 Title -->
         <div class="header">
-            <h1>🌾 <span>AlphaStat</span> | Punjab Climate Dashboard</h1>
-            <p>Drought Indices Analysis: SPI | SPEI | SPTI (1981-2021)</p>
-            <p style="font-size: 0.9em; margin-top: 10px;">📍 32 Districts of Punjab, Pakistan</p>
+            <h1>⚠️ <span>Drought Monitor</span></h1>
+            <p>Punjab, Pakistan | Standardized Indices</p>
+            <p style="font-size: 0.9em; margin-top: 10px;">📍 32 Districts | 1981–2021</p>
         </div>
 
         <div class="controls">
@@ -148,8 +149,9 @@
             </p>
         </div>
 
+        <!-- Updated Footer: Alpha-Stat-Lab -->
         <div class="footer">
-            <p>AlphaStat | Data: Punjab Districts (1981-2021) | SPI/SPEI/SPTI Analysis</p>
+            <p>Alpha-Stat-Lab | Punjab Drought Monitor | SPI · SPEI · SPTI Analysis (1981-2021)</p>
             <p style="font-size: 12px;">Drought Classification: Extreme(≤-2) | Severe(-1.99 to -1.5) | Moderate(-1.49 to -1) | Normal(-0.99 to 0.99) | Wet(≥1)</p>
         </div>
     </div>
