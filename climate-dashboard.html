@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AlphaStat - Punjab Climate Dashboard | SPI/SPEI/SPTI Analysis</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header h1 span {
+            color: #ffd700;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+
+        /* Controls */
+        .controls {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .control-group {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            align-items: flex-end;
+        }
+
+        .control-item {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #1e3c72;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: #2a5298;
+        }
+
+        button {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        /* Stats Cards */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card h3 {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-card .value {
+            font-size: 28px;
+            font-weight: bold;
+            color: #1e3c72;
+        }
+
+        .stat-card .sub {
+            font-size: 12px;
+            color: #999;
+            margin-top: 10px;
+        }
+
+        .stat-card.spi .value { color: #3498db; }
+        .stat-card.spei .value { color: #e74c3c; }
+        .stat-card.spti .value { color: #2ecc71; }
+
+        /* Chart Container */
+        .chart-container {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .chart-container h3 {
+            margin-bottom: 20px;
+            color: #1e3c72;
+            font-size: 1.3em;
+        }
+
+        canvas {
+            max-height: 500px;
+        }
+
+        /* Legend */
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 3px;
+        }
+
+        .legend-color.spi { background: #3498db; }
+        .legend-color.spei { background: #e74c3c; }
+        .legend-color.spti { background: #2ecc71; }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: white;
+            opacity: 0.8;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 50px;
+            color: white;
+            font-size: 1.2em;
+        }
+
+        @media (max-width: 768px) {
+            .control-group {
+                flex-direction: column;
+            }
+            .stats {
+                grid-template-columns: 1fr;
+            }
+            .header h1 {
+                font-size: 1.5em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌾 <span>AlphaStat</span> | Punjab Climate Dashboard</h1>
+            <p>Drought Indices Analysis: SPI | SPEI | SPTI (1981-2021)</p>
+            <p style="font-size: 0.9em; margin-top: 10px;">📍 36 Districts of Punjab, Pakistan</p>
+        </div>
+
+        <div class="controls">
+            <div class="control-group">
+                <div class="control-item">
+                    <label>📍 Select District</label>
+                    <select id="stationSelect">
+                        <option value="">Loading districts...</option>
+                    </select>
+                </div>
+                <div class="control-item">
+                    <label>📅 Year Range</label>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="number" id="startYear" value="1981" min="1981" max="2021" step="1">
+                        <input type="number" id="endYear" value="2021" min="1981" max="2021" step="1">
+                    </div>
+                </div>
+                <div class="control-item">
+                    <button id="updateBtn">🔄 Update Dashboard</button>
+                    <button id="resetZoomBtn" style="margin-left: 10px; background: #95a5a6;">🔍 Reset Zoom</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats" id="statsContainer">
+            <div class="stat-card">
+                <h3>Selected District</h3>
+                <div class="value" id="stationName">—</div>
+                <div class="sub" id="dataPeriod">Select a district</div>
+            </div>
+            <div class="stat-card spi">
+                <h3>SPI (Standardized Precipitation Index)</h3>
+                <div class="value" id="meanSPI">—</div>
+                <div class="sub" id="rangeSPI">—</div>
+            </div>
+            <div class="stat-card spei">
+                <h3>SPEI (Standardized P-E Index)</h3>
+                <div class="value" id="meanSPEI">—</div>
+                <div class="sub" id="rangeSPEI">—</div>
+            </div>
+            <div class="stat-card spti">
+                <h3>SPTI (Standardized P-T Index)</h3>
+                <div class="value" id="meanSPTI">—</div>
+                <div class="sub" id="rangeSPTI">—</div>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <h3>📈 Time Series Analysis (1981-2021)</h3>
+            <canvas id="droughtChart"></canvas>
+            <div class="legend">
+                <div class="legend-item"><div class="legend-color spi"></div><span>SPI - Standardized Precipitation Index</span></div>
+                <div class="legend-item"><div class="legend-color spei"></div><span>SPEI - Standardized Precipitation Evapotranspiration Index</span></div>
+                <div class="legend-item"><div class="legend-color spti"></div><span>SPTI - Standardized Precipitation Temperature Index</span></div>
+            </div>
+            <p style="text-align: center; margin-top: 15px; color: #666; font-size: 12px;">
+                💡 Tip: Mouse wheel to zoom | Drag to pan | Double-click to reset
+            </p>
+        </div>
+
+        <div class="footer">
+            <p>AlphaStat | Data: Punjab Districts (1981-2021) | SPI/SPEI/SPTI Analysis</p>
+            <p style="font-size: 12px;">Developed for Agricultural & Climate Research</p>
+        </div>
+    </div>
+
+    <script>
+        let currentChart = null;
+        let stations = [];
+
+        // Load stations on page load
+        async function loadStations() {
+            try {
+                const response = await fetch('/api/stations');
+                stations = await response.json();
+                const select = document.getElementById('stationSelect');
+                select.innerHTML = '<option value="">-- Select District --</option>' + 
+                    stations.map(s => `<option value="${s}">${s}</option>`).join('');
+            } catch (error) {
+                console.error('Error loading stations:', error);
+                document.getElementById('stationSelect').innerHTML = '<option value="">Error loading districts</option>';
+            }
+        }
+
+        // Update dashboard
+        async function updateDashboard() {
+            const station = document.getElementById('stationSelect').value;
+            const startYear = parseInt(document.getElementById('startYear').value);
+            const endYear = parseInt(document.getElementById('endYear').value);
+            
+            if (!station) {
+                alert('Please select a district');
+                return;
+            }
+            
+            // Show loading state
+            document.getElementById('stationName').innerHTML = 'Loading...';
+            
+            try {
+                // Fetch time series data
+                const response = await fetch(`/api/station/${encodeURIComponent(station)}?startYear=${startYear}&endYear=${endYear}`);
+                const data = await response.json();
+                
+                // Fetch statistics
+                const statsResponse = await fetch(`/api/stats/${encodeURIComponent(station)}`);
+                const stats = await statsResponse.json();
+                
+                // Update station info
+                document.getElementById('stationName').innerHTML = station;
+                document.getElementById('dataPeriod').innerHTML = `${startYear} - ${endYear} (${data.dates.length} months)`;
+                
+                // Update SPI stats
+                document.getElementById('meanSPI').innerHTML = stats.spi.mean;
+                document.getElementById('rangeSPI').innerHTML = `Range: ${stats.spi.min} to ${stats.spi.max} | SD: ${stats.spi.std}`;
+                
+                // Update SPEI stats
+                document.getElementById('meanSPEI').innerHTML = stats.spei.mean;
+                document.getElementById('rangeSPEI').innerHTML = `Range: ${stats.spei.min} to ${stats.spei.max} | SD: ${stats.spei.std}`;
+                
+                // Update SPTI stats
+                document.getElementById('meanSPTI').innerHTML = stats.spti.mean;
+                document.getElementById('rangeSPTI').innerHTML = `Range: ${stats.spti.min} to ${stats.spti.max} | SD: ${stats.spti.std}`;
+                
+                // Create chart
+                const ctx = document.getElementById('droughtChart').getContext('2d');
+                
+                if (currentChart) {
+                    currentChart.destroy();
+                }
+                
+                // Filter out null values for better visualization
+                const chartData = {
+                    labels: data.dates,
+                    spi: data.spi.map((v, i) => v !== null ? v : null),
+                    spei: data.spei.map((v, i) => v !== null ? v : null),
+                    spti: data.spti.map((v, i) => v !== null ? v : null)
+                };
+                
+                currentChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: chartData.labels,
+                        datasets: [
+                            {
+                                label: 'SPI',
+                                data: chartData.spi,
+                                borderColor: '#3498db',
+                                backgroundColor: 'rgba(52, 152, 219, 0.05)',
+                                borderWidth: 2,
+                                fill: false,
+                                tension: 0.1,
+                                pointRadius: 0,
+                                pointHoverRadius: 5,
+                                spanGaps: false
+                            },
+                            {
+                                label: 'SPEI',
+                                data: chartData.spei,
+                                borderColor: '#e74c3c',
+                                backgroundColor: 'rgba(231, 76, 60, 0.05)',
+                                borderWidth: 2,
+                                fill: false,
+                                tension: 0.1,
+                                pointRadius: 0,
+                                pointHoverRadius: 5,
+                                spanGaps: false
+                            },
+                            {
+                                label: 'SPTI',
+                                data: chartData.spti,
+                                borderColor: '#2ecc71',
+                                backgroundColor: 'rgba(46, 204, 113, 0.05)',
+                                borderWidth: 2,
+                                fill: false,
+                                tension: 0.1,
+                                pointRadius: 0,
+                                pointHoverRadius: 5,
+                                spanGaps: false
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        interaction: {
+                            mode: 'index',
+                            intersect: false
+                        },
+                        plugins: {
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        let label = context.dataset.label || '';
+                                        let value = context.raw;
+                                        if (value !== null && value !== undefined) {
+                                            label += ': ' + value.toFixed(2);
+                                            // Add drought classification
+                                            if (value <= -2) label += ' (Extreme Drought)';
+                                            else if (value <= -1.5) label += ' (Severe Drought)';
+                                            else if (value <= -1) label += ' (Moderate Drought)';
+                                            else if (value <= -0.5) label += ' (Mild Drought)';
+                                            else if (value >= 2) label += ' (Extreme Wet)';
+                                            else if (value >= 1.5) label += ' (Severe Wet)';
+                                            else if (value >= 1) label += ' (Moderate Wet)';
+                                        }
+                                        return label;
+                                    }
+                                }
+                            },
+                            zoom: {
+                                zoom: {
+                                    wheel: { enabled: true },
+                                    pinch: { enabled: true },
+                                    mode: 'x',
+                                },
+                                pan: {
+                                    enabled: true,
+                                    mode: 'x',
+                                },
+                                limits: {
+                                    x: { min: 'original', max: 'original' }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                title: { 
+                                    display: true, 
+                                    text: 'Time (Year-Month)', 
+                                    font: { size: 12, weight: 'bold' } 
+                                },
+                                ticks: { 
+                                    maxRotation: 45, 
+                                    autoSkip: true, 
+                                    maxTicksLimit: 15 
+                                }
+                            },
+                            y: {
+                                title: { 
+                                    display: true, 
+                                    text: 'Index Value', 
+                                    font: { size: 12, weight: 'bold' } 
+                                },
+                                grid: { color: '#e0e0e0' },
+                                zeroLineColor: '#1e3c72',
+                                zeroLineWidth: 2,
+                                min: -3,
+                                max: 3
+                            }
+                        }
+                    }
+                });
+                
+            } catch (error) {
+                console.error('Error updating dashboard:', error);
+                alert('Error loading data for ' + station);
+                document.getElementById('stationName').innerHTML = 'Error';
+            }
+        }
+        
+        // Reset zoom
+        function resetZoom() {
+            if (currentChart) {
+                currentChart.resetZoom();
+            }
+        }
+        
+        // Event listeners
+        document.getElementById('updateBtn').addEventListener('click', updateDashboard);
+        document.getElementById('resetZoomBtn').addEventListener('click', resetZoom);
+        document.getElementById('stationSelect').addEventListener('change', updateDashboard);
+        document.getElementById('startYear').addEventListener('change', updateDashboard);
+        document.getElementById('endYear').addEventListener('change', updateDashboard);
+        
+        // Initialize
+        loadStations();
+    </script>
+</body>
+</html>
