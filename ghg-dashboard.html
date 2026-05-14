@@ -17,7 +17,7 @@
         .header p { opacity: 0.9; font-size: 1em; }
         
         .controls { background: white; padding: 25px; border-radius: 15px; margin-bottom: 30px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
-        .control-group { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 20px; }
+        .control-group { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 20px; }
         .control-item label { display: block; margin-bottom: 8px; font-weight: bold; color: #1a472a; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
         select, input { width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 14px; transition: all 0.3s; }
         select:focus, input:focus { outline: none; border-color: #2ecc71; }
@@ -129,19 +129,19 @@
             <div class="stat-card"><h4>Latest Year (2024)</h4><div class="value" id="latestValue">—</div><div class="trend" id="latestChange">vs 1990</div></div>
         </div>
 
-        <!-- Time Series Chart (Line Chart - Default) -->
+        <!-- Time Series Chart -->
         <div class="chart-container">
-            <h3>📈 Emissions Time Series (Line Chart)</h3>
+            <h3>📈 Emissions Time Series (National Totals)</h3>
             <canvas id="emissionsChart"></canvas>
             <p style="text-align: center; margin-top: 15px; color: #666; font-size: 12px;">💡 Mouse wheel to zoom | Drag to pan | Double-click to reset</p>
         </div>
 
-        <!-- Sector Bar Chart -->
+        <!-- Sector Bar Chart - Now with consistent 6 sectors -->
         <div class="chart-container" id="sectorChartContainer">
-            <h3>🏭 Sector Breakdown (Bar Chart)</h3>
+            <h3>🏭 Sector Breakdown (6 Major Sectors - Standardized)</h3>
             <div id="sectorWarning" class="info-note" style="display: none; background: #fff3cd; color: #856404;">⚠️ Showing up to 10 countries. Please deselect some for clearer view.</div>
             <canvas id="sectorChart"></canvas>
-            <p style="text-align: center; margin-top: 15px; color: #666; font-size: 12px;">📊 Average annual emissions by sector (Energy, Industry, Transport, Buildings, Agriculture, Waste)</p>
+            <p style="text-align: center; margin-top: 15px; color: #666; font-size: 12px;">📊 Sectors mapped consistently: Energy | Industry | Transport | Buildings | Agriculture | Waste</p>
         </div>
 
         <div class="footer">
@@ -160,17 +160,65 @@
         };
         
         let currentGas = 'ghg';
-        let totalsData = {};
-        let sectorData = {};
+        let countryTotals = {};
+        let sectorData = {};      // Will store mapped sector data
         let countries = [];
         let selectedCountries = ['China', 'United States', 'India', 'Pakistan'];
         let currentChart = null;
         let currentSectorChart = null;
         
-        const sectors = ['Energy', 'Industry', 'Transport', 'Buildings', 'Agriculture', 'Waste'];
+        // Major sectors for consistent comparison
+        const majorSectors = ['Energy', 'Industry', 'Transport', 'Buildings', 'Agriculture', 'Waste'];
+        
         const sectorColors = { 
-            'Energy': '#f39c12', 'Industry': '#e74c3c', 'Transport': '#3498db', 
-            'Buildings': '#2ecc71', 'Agriculture': '#9b59b6', 'Waste': '#1abc9c' 
+            'Energy': '#f39c12', 
+            'Industry': '#e74c3c', 
+            'Transport': '#3498db', 
+            'Buildings': '#2ecc71', 
+            'Agriculture': '#9b59b6', 
+            'Waste': '#1abc9c' 
+        };
+        
+        // Mapping from detailed sectors to major categories
+        const sectorMapping = {
+            // Energy
+            'Energy': 'Energy',
+            'ENE': 'Energy',
+            // Industry
+            'Industry': 'Industry',
+            'IND': 'Industry',
+            'CHE': 'Industry',
+            'IRO': 'Industry',
+            'NMM': 'Industry',
+            'NFE': 'Industry',
+            'NEU': 'Industry',
+            'PRU_SOL': 'Industry',
+            'REF_TRF': 'Industry',
+            // Transport
+            'Transport': 'Transport',
+            'TRO': 'Transport',
+            'TNR_Other': 'Transport',
+            'Dom_Avi': 'Transport',
+            'Dom_Ship': 'Transport',
+            'Int_Avi': 'Transport',
+            'Int_Ship': 'Transport',
+            // Buildings
+            'Buildings': 'Buildings',
+            'RCO': 'Buildings',
+            // Agriculture
+            'Agriculture': 'Agriculture',
+            'AGS': 'Agriculture',
+            'AWB': 'Agriculture',
+            'ENF': 'Agriculture',
+            'MNM': 'Agriculture',
+            // Waste
+            'Waste': 'Waste',
+            'SWD_LDF': 'Waste',
+            'SWD_INC': 'Waste',
+            'WWT': 'Waste',
+            // Skip/ignore
+            'Off-shore': null,
+            'Indirect': null
         };
         
         const gasNames = { ghg: 'Total GHG', co2: 'CO₂', ch4: 'CH₄', n2o: 'N₂O', fgas: 'F-gases' };
@@ -198,12 +246,17 @@
                 if (!response.ok) throw new Error(`HTTP ${response.status}: ${filename} not found`);
                 const text = await response.text();
                 document.getElementById('progressFill').style.width = '60%';
-                parseTotalsCSV(text);
+                
+                // Parse totals for time series
+                parseAndAggregateCSV(text);
                 document.getElementById('progressFill').style.width = '80%';
                 
-                // Load sector data only once (for the bar chart)
-                if (Object.keys(sectorData).length === 0) {
-                    await loadSectorData();
+                // Load sector data for bar chart (only for CO2/CH4/N2O files, not for totals)
+                if (currentGas !== 'ghg') {
+                    await loadAndMapSectorData(filename);
+                } else {
+                    // For Total GHG, try to load from ghg_by_sector.csv
+                    await loadSectorDataFromFile('ghg_by_sector.csv');
                 }
                 
                 document.getElementById('progressFill').style.width = '100%';
@@ -217,7 +270,7 @@
             }
         }
         
-        function parseTotalsCSV(csvText) {
+        function parseAndAggregateCSV(csvText) {
             const lines = csvText.trim().split('\n');
             const headers = lines[0].split(',');
             
@@ -233,7 +286,7 @@
             }
             yearCols.sort((a,b) => a.year - b.year);
             
-            totalsData = {};
+            const tempAgg = {};
             const countrySet = new Set();
             
             for (let i = 1; i < lines.length; i++) {
@@ -243,38 +296,46 @@
                 let country = countryIdx !== -1 ? values[countryIdx].trim().replace(/['"]/g, '') : '';
                 if (!country) continue;
                 country = country.replace(' and ', ' & ');
-                countrySet.add(country);
                 
-                const yearlyData = {};
+                if (!tempAgg[country]) tempAgg[country] = {};
+                
                 for (const yc of yearCols) {
                     const val = parseFloat(values[yc.col]);
                     if (!isNaN(val) && val > 0) {
-                        yearlyData[yc.year] = val;
+                        tempAgg[country][yc.year] = (tempAgg[country][yc.year] || 0) + val;
                     }
                 }
-                
-                if (Object.keys(yearlyData).length > 0) {
-                    totalsData[country] = yearlyData;
-                }
+                countrySet.add(country);
             }
             
+            countryTotals = tempAgg;
             countries = Array.from(countrySet).sort();
         }
         
-        async function loadSectorData() {
-            const filename = 'ghg_by_sector.csv';
+        async function loadAndMapSectorData(filename) {
             try {
                 const response = await fetch(filename);
-                if (!response.ok) throw new Error(`HTTP ${response.status}: ${filename} not found`);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 const text = await response.text();
-                parseSectorCSV(text);
+                parseAndMapSectorCSV(text);
+            } catch (error) {
+                console.warn('Sector mapping not available for this gas:', error);
+            }
+        }
+        
+        async function loadSectorDataFromFile(filename) {
+            try {
+                const response = await fetch(filename);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const text = await response.text();
+                parseAndMapSectorCSV(text);
             } catch (error) {
                 console.warn('Sector data not available:', error);
                 document.getElementById('sectorChartContainer').style.display = 'none';
             }
         }
         
-        function parseSectorCSV(csvText) {
+        function parseAndMapSectorCSV(csvText) {
             const lines = csvText.trim().split('\n');
             const headers = lines[0].split(',');
             
@@ -291,7 +352,8 @@
             }
             yearCols.sort((a,b) => a.year - b.year);
             
-            sectorData = {};
+            // Initialize sector data structure
+            const mappedData = {};
             
             for (let i = 1; i < lines.length; i++) {
                 const values = lines[i].split(',');
@@ -303,8 +365,11 @@
                 if (!country || !sector) continue;
                 country = country.replace(' and ', ' & ');
                 
-                if (!sectors.includes(sector)) continue;
+                // Map sector to major category
+                let mappedSector = sectorMapping[sector];
+                if (!mappedSector) continue; // Skip unmapped sectors (Off-shore, Indirect)
                 
+                // Extract yearly data
                 const yearlyData = {};
                 for (const yc of yearCols) {
                     const val = parseFloat(values[yc.col]);
@@ -313,13 +378,25 @@
                     }
                 }
                 
-                if (Object.keys(yearlyData).length > 0) {
-                    if (!sectorData[country]) sectorData[country] = {};
-                    if (!sectorData[country][sector]) sectorData[country][sector] = {};
-                    for (const [year, val] of Object.entries(yearlyData)) {
-                        sectorData[country][sector][year] = (sectorData[country][sector][year] || 0) + val;
-                    }
+                if (Object.keys(yearlyData).length === 0) continue;
+                
+                // Add to mapped sector
+                if (!mappedData[country]) mappedData[country] = {};
+                if (!mappedData[country][mappedSector]) mappedData[country][mappedSector] = {};
+                
+                for (const [year, val] of Object.entries(yearlyData)) {
+                    mappedData[country][mappedSector][year] = (mappedData[country][mappedSector][year] || 0) + val;
                 }
+            }
+            
+            sectorData = mappedData;
+            
+            // Debug: Log available sectors for China and Pakistan
+            if (mappedData['China']) {
+                console.log('China mapped sectors:', Object.keys(mappedData['China']));
+            }
+            if (mappedData['Pakistan']) {
+                console.log('Pakistan mapped sectors:', Object.keys(mappedData['Pakistan']));
             }
         }
         
@@ -367,8 +444,8 @@
         function getTimeSeriesData() {
             const result = {};
             for (const country of selectedCountries) {
-                if (totalsData[country]) {
-                    result[country] = totalsData[country];
+                if (countryTotals[country]) {
+                    result[country] = countryTotals[country];
                 }
             }
             return result;
@@ -380,8 +457,8 @@
             
             for (const country of displayCountries) {
                 if (!sectorData[country]) continue;
-                const sectorTotals = {};
-                for (const sector of sectors) {
+                const sectorAverages = {};
+                for (const sector of majorSectors) {
                     let total = 0;
                     let count = 0;
                     if (sectorData[country] && sectorData[country][sector]) {
@@ -392,9 +469,9 @@
                             }
                         }
                     }
-                    sectorTotals[sector] = count > 0 ? total / count : 0;
+                    sectorAverages[sector] = count > 0 ? total / count : 0;
                 }
-                result[country] = sectorTotals;
+                result[country] = sectorAverages;
             }
             return result;
         }
@@ -419,7 +496,7 @@
                 warningDiv.style.display = 'none';
             }
             
-            // === TIME SERIES CHART (Line Chart) ===
+            // === TIME SERIES CHART ===
             const data = getTimeSeriesData();
             const years = [];
             for (let y = startYear; y <= endYear; y++) years.push(y);
@@ -496,7 +573,7 @@
                 }
             });
             
-            // === SECTOR BAR CHART ===
+            // === SECTOR BAR CHART (using mapped sectors) ===
             const sectorDataResult = getSectorDataForCountries(startYear, endYear);
             const displayCountries = selectedCountries.slice(0, 10);
             
@@ -505,7 +582,7 @@
                 const sectorCtx = document.getElementById('sectorChart').getContext('2d');
                 if (currentSectorChart) currentSectorChart.destroy();
                 
-                const sectorDatasets = sectors.map((sector) => ({
+                const sectorDatasets = majorSectors.map((sector) => ({
                     label: sector,
                     data: displayCountries.map(c => sectorDataResult[c]?.[sector] || 0),
                     backgroundColor: sectorColors[sector],
