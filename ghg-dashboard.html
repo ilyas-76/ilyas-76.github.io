@@ -17,15 +17,14 @@
         .header p { opacity: 0.9; font-size: 1em; }
         
         .controls { background: white; padding: 25px; border-radius: 15px; margin-bottom: 30px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
-        .control-group { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 20px; }
+        .control-group { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 20px; }
         .control-item label { display: block; margin-bottom: 8px; font-weight: bold; color: #1a472a; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
         select, input { width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 14px; transition: all 0.3s; }
         select:focus, input:focus { outline: none; border-color: #2ecc71; }
         button { background: linear-gradient(135deg, #1a472a 0%, #2ecc71 100%); color: white; padding: 10px 25px; border: none; border-radius: 8px; font-size: 14px; font-weight: bold; cursor: pointer; transition: transform 0.2s; }
         button:hover { transform: translateY(-2px); }
         
-        /* Country selector with checkboxes style */
-        .country-selector { border: 2px solid #e0e0e0; border-radius: 8px; padding: 10px; max-height: 200px; overflow-y: auto; background: white; }
+        .country-selector { border: 2px solid #e0e0e0; border-radius: 8px; padding: 10px; max-height: 220px; overflow-y: auto; background: white; }
         .country-checkbox { display: flex; align-items: center; padding: 6px 8px; cursor: pointer; border-radius: 5px; transition: background 0.2s; }
         .country-checkbox:hover { background: #e8f5e9; }
         .country-checkbox input { width: 18px; height: 18px; margin-right: 10px; cursor: pointer; }
@@ -55,10 +54,20 @@
         canvas { max-height: 400px; }
         
         .footer { text-align: center; padding: 20px; color: white; opacity: 0.8; font-size: 12px; }
-        .loading { text-align: center; padding: 50px; color: white; }
         .progress-bar { width: 100%; height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px; margin-top: 15px; overflow: hidden; }
         .progress-fill { height: 100%; background: #ffd700; width: 0%; transition: width 0.3s; }
         .data-status { font-size: 12px; color: #27ae60; margin-top: 10px; }
+        
+        /* Variable selector pills */
+        .variable-selector { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 5px; }
+        .var-pill { padding: 8px 20px; border-radius: 30px; font-size: 13px; font-weight: bold; cursor: pointer; transition: all 0.2s; background: #f0f0f0; color: #333; border: 2px solid transparent; }
+        .var-pill:hover { transform: scale(1.02); }
+        .var-pill.active { background: #2ecc71; color: white; border-color: #1a472a; }
+        .var-pill.ghg { background: #1a472a; color: white; }
+        .var-pill.co2 { background: #3498db; color: white; }
+        .var-pill.ch4 { background: #e74c3c; color: white; }
+        .var-pill.n2o { background: #9b59b6; color: white; }
+        .var-pill.fgas { background: #f39c12; color: white; }
         
         @media (max-width: 768px) { .control-group { grid-template-columns: 1fr; } .stat-card .value { font-size: 20px; } }
     </style>
@@ -67,7 +76,7 @@
     <div class="container">
         <div class="header">
             <h1>🌍 <span>GHG Emissions Monitor</span></h1>
-            <p>Greenhouse Gas Emissions by Country & Sector | EDGAR Data 1990-2024</p>
+            <p>Greenhouse Gas Emissions by Country | EDGAR Data 1990-2024</p>
             <p style="font-size: 0.85em;">CO₂ · CH₄ · N₂O · F-gases | IPCC AR5 (GWP-100)</p>
         </div>
 
@@ -82,16 +91,14 @@
                     <div class="selected-badges" id="selectedBadges"></div>
                 </div>
                 <div class="control-item">
-                    <label>🏭 Sector</label>
-                    <select id="sectorSelect">
-                        <option value="all">📊 All Sectors (Total)</option>
-                        <option value="Energy">⚡ Energy</option>
-                        <option value="Industry">🏭 Industry</option>
-                        <option value="Transport">🚗 Transport</option>
-                        <option value="Buildings">🏠 Buildings</option>
-                        <option value="Agriculture">🌾 Agriculture</option>
-                        <option value="Waste">🗑️ Waste</option>
-                    </select>
+                    <label>💨 Gas / Variable</label>
+                    <div class="variable-selector" id="variableSelector">
+                        <div class="var-pill ghg active" data-var="ghg">🌍 Total GHG</div>
+                        <div class="var-pill co2" data-var="co2">🫧 CO₂</div>
+                        <div class="var-pill ch4" data-var="ch4">🔥 CH₄</div>
+                        <div class="var-pill n2o" data-var="n2o">💨 N₂O</div>
+                        <div class="var-pill fgas" data-var="fgas">⚙️ F-gases</div>
+                    </div>
                 </div>
                 <div class="control-item">
                     <label>📊 Chart Type</label>
@@ -146,30 +153,54 @@
     </div>
 
     <script>
-        let allData = [];
+        // File mapping for each gas
+        const gasFiles = {
+            ghg: 'ghg_by_sector.csv',
+            co2: 'co2_emissions.csv',
+            ch4: 'ch4_emissions.csv',
+            n2o: 'n2o_emissions.csv',
+            fgas: 'fgases_emissions.csv'
+        };
+        
+        let currentGas = 'ghg';
+        let allData = {};
         let countries = [];
         let selectedCountries = ['China', 'India', 'United States'];
         let currentChart = null;
         let currentSectorChart = null;
         
         const sectorColors = { 'Energy': '#f39c12', 'Industry': '#e74c3c', 'Transport': '#3498db', 'Buildings': '#2ecc71', 'Agriculture': '#9b59b6', 'Waste': '#1abc9c' };
+        const gasNames = { ghg: 'Total GHG', co2: 'CO₂', ch4: 'CH₄', n2o: 'N₂O', fgas: 'F-gases' };
+
+        // Setup variable selector
+        document.querySelectorAll('.var-pill').forEach(pill => {
+            pill.addEventListener('click', async () => {
+                document.querySelectorAll('.var-pill').forEach(p => p.classList.remove('active'));
+                pill.classList.add('active');
+                currentGas = pill.dataset.var;
+                document.getElementById('dataStatus').innerHTML = `📁 Loading ${gasNames[currentGas]} data...`;
+                document.getElementById('progressFill').style.width = '0%';
+                await loadCSV();
+                updateDashboard();
+            });
+        });
 
         async function loadCSV() {
-            document.getElementById('dataStatus').innerHTML = '📁 Loading ghg_by_sector.csv...';
+            const filename = gasFiles[currentGas];
             document.getElementById('progressFill').style.width = '30%';
             try {
-                const response = await fetch('ghg_by_sector.csv');
-                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const response = await fetch(filename);
+                if (!response.ok) throw new Error(`HTTP ${response.status}: ${filename} not found`);
                 const text = await response.text();
                 document.getElementById('progressFill').style.width = '70%';
                 parseCSV(text);
                 document.getElementById('progressFill').style.width = '100%';
-                document.getElementById('dataStatus').innerHTML = '✅ Data loaded! ' + allData.length + ' records, ' + countries.length + ' countries available.';
+                document.getElementById('dataStatus').innerHTML = `✅ ${gasNames[currentGas]} data loaded! ${countries.length} countries available.`;
                 renderCountryList();
                 updateSelectedBadges();
-                updateDashboard();
             } catch (error) {
-                document.getElementById('dataStatus').innerHTML = '❌ Error loading ghg_by_sector.csv. Make sure the file exists.';
+                document.getElementById('dataStatus').innerHTML = `❌ Error loading ${filename}. Make sure the file exists.`;
+                console.error(error);
             }
         }
         
@@ -178,37 +209,43 @@
             const headers = lines[0].split(',');
             const countryIdx = headers.findIndex(h => h.toLowerCase().includes('country'));
             const sectorIdx = headers.findIndex(h => h.toLowerCase().includes('sector'));
+            
+            // Get year columns
             const yearCols = [];
             for (let i = 0; i < headers.length; i++) {
-                if (headers[i].match(/Y_\d{4}/)) yearCols.push({ col: i, year: parseInt(headers[i].substring(2)) });
+                if (headers[i].match(/Y_\d{4}/)) {
+                    yearCols.push({ col: i, year: parseInt(headers[i].substring(2)) });
+                }
             }
             yearCols.sort((a,b) => a.year - b.year);
             
             const dataMap = new Map();
+            const countrySet = new Set();
+            
             for (let i = 1; i < lines.length; i++) {
                 const values = lines[i].split(',');
                 let country = countryIdx !== -1 ? values[countryIdx].trim().replace(/['"]/g, '') : '';
                 let sector = sectorIdx !== -1 ? values[sectorIdx].trim().replace(/['"]/g, '') : '';
+                
                 if (!country || !sector) continue;
                 country = country.replace(' and ', ' & ');
+                countrySet.add(country);
                 
                 const yearlyData = {};
                 for (const yc of yearCols) {
                     const val = parseFloat(values[yc.col]);
-                    if (!isNaN(val) && val > 0) yearlyData[yc.year] = val;
+                    if (!isNaN(val) && val > 0) {
+                        yearlyData[yc.year] = val;
+                    }
                 }
+                
                 if (Object.keys(yearlyData).length > 0) {
                     const key = `${country}|${sector}`;
                     dataMap.set(key, yearlyData);
                 }
             }
             
-            const countrySet = new Set();
-            for (const key of dataMap.keys()) {
-                countrySet.add(key.split('|')[0]);
-            }
             countries = Array.from(countrySet).sort();
-            
             allData = dataMap;
         }
         
@@ -219,18 +256,10 @@
                 const isSelected = selectedCountries.includes(country);
                 const div = document.createElement('div');
                 div.className = 'country-checkbox' + (isSelected ? ' selected' : '');
-                div.onclick = (e) => {
-                    if (e.target.tagName !== 'INPUT') {
-                        const cb = div.querySelector('input');
-                        cb.checked = !cb.checked;
-                        toggleCountry(country, cb.checked);
-                    }
-                };
                 div.innerHTML = `<input type="checkbox" ${isSelected ? 'checked' : ''} onchange="toggleCountry('${country}', this.checked)"><label>${country}</label>`;
                 container.appendChild(div);
             });
             
-            // Add search filter
             document.getElementById('countrySearch').addEventListener('input', function(e) {
                 const search = e.target.value.toLowerCase();
                 const items = container.querySelectorAll('.country-checkbox');
@@ -262,19 +291,20 @@
         }
         
         function getDataForCountries() {
-            const selectedSector = document.getElementById('sectorSelect').value;
             const result = {};
             for (const country of selectedCountries) {
                 const totalByYear = {};
                 for (const [key, yearlyData] of allData.entries()) {
-                    const [keyCountry, keySector] = key.split('|');
-                    if (keyCountry === country && (selectedSector === 'all' || keySector === selectedSector)) {
+                    const [keyCountry] = key.split('|');
+                    if (keyCountry === country) {
                         for (const [year, val] of Object.entries(yearlyData)) {
                             totalByYear[year] = (totalByYear[year] || 0) + val;
                         }
                     }
                 }
-                if (Object.keys(totalByYear).length > 0) result[country] = totalByYear;
+                if (Object.keys(totalByYear).length > 0) {
+                    result[country] = totalByYear;
+                }
             }
             return result;
         }
@@ -305,7 +335,17 @@
                 const values = years.map(y => countryData[y] || null);
                 const validValues = values.filter(v => v !== null);
                 allValues.push(...validValues);
-                datasets.push({ label: country, data: values, borderColor: colors[idx % colors.length], backgroundColor: colors[idx % colors.length] + '20', borderWidth: 2, fill: false, tension: 0.1, pointRadius: 0, pointHoverRadius: 5 });
+                datasets.push({
+                    label: country,
+                    data: values,
+                    borderColor: colors[idx % colors.length],
+                    backgroundColor: colors[idx % colors.length] + '20',
+                    borderWidth: 2,
+                    fill: false,
+                    tension: 0.1,
+                    pointRadius: 0,
+                    pointHoverRadius: 5
+                });
                 idx++;
             }
             
@@ -317,8 +357,13 @@
             let peakYearVal = 0, peakYearName = '';
             for (let i = 0; i < years.length; i++) {
                 let yearTotal = 0;
-                for (const country of selectedCountries) yearTotal += (data[country] || {})[years[i]] || 0;
-                if (yearTotal > peakYearVal) { peakYearVal = yearTotal; peakYearName = years[i]; }
+                for (const country of selectedCountries) {
+                    yearTotal += (data[country] || {})[years[i]] || 0;
+                }
+                if (yearTotal > peakYearVal) {
+                    peakYearVal = yearTotal;
+                    peakYearName = years[i];
+                }
             }
             document.getElementById('peakYear').innerHTML = peakYearName;
             document.getElementById('peakValue').innerHTML = (peakYearVal / 1000).toFixed(1) + ' Mt';
@@ -330,6 +375,8 @@
                 const pct = ((latestVal - baseVal) / baseVal * 100).toFixed(1);
                 document.getElementById('latestChange').innerHTML = pct + '% vs 1990';
                 document.getElementById('latestChange').className = pct < 0 ? 'trend down' : 'trend up';
+            } else {
+                document.getElementById('latestChange').innerHTML = '—';
             }
             
             const ctx = document.getElementById('emissionsChart').getContext('2d');
@@ -337,42 +384,38 @@
             currentChart = new Chart(ctx, {
                 type: chartType,
                 data: { labels: years, datasets: datasets },
-                options: { responsive: true, maintainAspectRatio: true, interaction: { mode: 'index', intersect: false }, plugins: { tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: ${ctx.raw?.toFixed(0) || 0} kt CO₂eq` } }, zoom: { zoom: { wheel: { enabled: true }, mode: 'x' }, pan: { enabled: true, mode: 'x' } } }, scales: { x: { title: { display: true, text: 'Year' } }, y: { title: { display: true, text: 'Emissions (kt CO₂eq)' }, beginAtZero: true } } }
-            });
-            
-            const sectorContainer = document.getElementById('sectorChartContainer');
-            if (selectedCountries.length === 1 && document.getElementById('sectorSelect').value === 'all') {
-                sectorContainer.style.display = 'block';
-                updateSectorChart(selectedCountries[0], startYear, endYear);
-            } else {
-                sectorContainer.style.display = 'none';
-            }
-        }
-        
-        function updateSectorChart(country, startYear, endYear) {
-            const sectors = ['Energy', 'Industry', 'Transport', 'Buildings', 'Agriculture', 'Waste'];
-            const sectorData = {};
-            for (const sector of sectors) {
-                let total = 0;
-                for (const [key, yearlyData] of allData.entries()) {
-                    const [keyCountry, keySector] = key.split('|');
-                    if (keyCountry === country && keySector === sector) {
-                        for (let y = startYear; y <= endYear; y++) total += yearlyData[y] || 0;
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: ${ctx.raw?.toFixed(0) || 0} kt CO₂eq` } },
+                        zoom: { zoom: { wheel: { enabled: true }, mode: 'x' }, pan: { enabled: true, mode: 'x' } }
+                    },
+                    scales: {
+                        x: { title: { display: true, text: 'Year' } },
+                        y: { title: { display: true, text: `Emissions (kt ${currentGas === 'co2' ? 'CO₂' : currentGas === 'ch4' ? 'CH₄' : currentGas === 'n2o' ? 'N₂O' : currentGas === 'fgas' ? 'F-gases' : 'CO₂eq'})` }, beginAtZero: true }
                     }
                 }
-                sectorData[sector] = total / (endYear - startYear + 1);
-            }
-            const ctx = document.getElementById('sectorChart').getContext('2d');
-            if (currentSectorChart) currentSectorChart.destroy();
-            currentSectorChart = new Chart(ctx, { type: 'bar', data: { labels: sectors, datasets: [{ label: `Average Annual Emissions (${startYear}-${endYear})`, data: sectors.map(s => sectorData[s]), backgroundColor: sectors.map(s => sectorColors[s] || '#95a5a6'), borderRadius: 8 }] }, options: { responsive: true, plugins: { tooltip: { callbacks: { label: (ctx) => ctx.raw.toFixed(0) + ' kt CO₂eq' } } }, scales: { y: { title: { display: true, text: 'Emissions (kt CO₂eq)' }, beginAtZero: true } } } });
+            });
+            
+            // Hide sector chart for now (keep for future use)
+            document.getElementById('sectorChartContainer').style.display = 'none';
         }
         
+        // Event listeners
         document.getElementById('updateBtn').addEventListener('click', updateDashboard);
-        document.getElementById('sectorSelect').addEventListener('change', updateDashboard);
         document.getElementById('chartTypeSelect').addEventListener('change', updateDashboard);
-        document.getElementById('yearStart').addEventListener('input', () => { document.getElementById('yearStartDisplay').textContent = document.getElementById('yearStart').value; updateDashboard(); });
-        document.getElementById('yearEnd').addEventListener('input', () => { document.getElementById('yearEndDisplay').textContent = document.getElementById('yearEnd').value; updateDashboard(); });
+        document.getElementById('yearStart').addEventListener('input', () => {
+            document.getElementById('yearStartDisplay').textContent = document.getElementById('yearStart').value;
+            updateDashboard();
+        });
+        document.getElementById('yearEnd').addEventListener('input', () => {
+            document.getElementById('yearEndDisplay').textContent = document.getElementById('yearEnd').value;
+            updateDashboard();
+        });
         
+        // Initialize
         loadCSV();
     </script>
 </body>
