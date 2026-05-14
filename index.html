@@ -3,9 +3,103 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AlphaStatLab | Data Science & Statistics</title>
 
-<!-- Favicon - Alpha symbol on blue background -->
+<!-- ═══════════════════════════════════════════
+     PRIMARY SEO META TAGS
+════════════════════════════════════════════ -->
+<title>AlphaStatLab | Statistical Consulting, Data Science & Climate Dashboards</title>
+<meta name="description" content="AlphaStatLab offers PhD-level statistical consulting, interactive climate data dashboards, and data science services. Specialising in drought analysis (SPI, SPEI), GHG emissions monitoring, time series analysis, machine learning, and research support. Based in Islamabad, Pakistan — serving clients globally.">
+<meta name="keywords" content="statistical consulting, data science, climate dashboard, drought analysis, SPI, SPEI, SPTI, greenhouse gas emissions, GHG dashboard, EDGAR data, time series analysis, machine learning, deep learning, Python, R, interactive dashboard, Plotly, Chart.js, Streamlit, PhD statistician, climate statistics, Punjab drought, ARIMA, regression analysis, hypothesis testing, biostatistics, research support, data visualization, statistical modeling, climate change analysis, spatiotemporal analysis, ArcGIS, freelance data analyst, Islamabad, Pakistan, Quaid-i-Azam University">
+<meta name="author" content="Muhammad Ilyas — PhD Statistics, Quaid-i-Azam University, Islamabad">
+<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+<link rel="canonical" href="https://alphastatlab.com/">
+
+<!-- ═══════════════════════════════════════════
+     OPEN GRAPH (Facebook / LinkedIn / WhatsApp)
+════════════════════════════════════════════ -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://alphastatlab.com/">
+<meta property="og:title" content="AlphaStatLab | Statistical Consulting & Climate Data Dashboards">
+<meta property="og:description" content="PhD-level statistical consulting, interactive climate dashboards (drought indices, GHG emissions), and data science services. Expert in SPI, SPEI, ARIMA, machine learning, and research support.">
+<meta property="og:site_name" content="AlphaStatLab">
+<meta property="og:locale" content="en_US">
+
+<!-- ═══════════════════════════════════════════
+     TWITTER CARD
+════════════════════════════════════════════ -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="AlphaStatLab | Statistical Consulting & Climate Data Dashboards">
+<meta name="twitter:description" content="Interactive climate dashboards, drought analysis (SPI, SPEI, SPTI), GHG emissions monitoring, and PhD-level statistical consulting services.">
+<meta name="twitter:creator" content="@alphastatlab">
+
+<!-- ═══════════════════════════════════════════
+     STRUCTURED DATA — JSON-LD
+════════════════════════════════════════════ -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://alphastatlab.com/#website",
+      "url": "https://alphastatlab.com/",
+      "name": "AlphaStatLab",
+      "description": "Statistical consulting, climate data dashboards, and data science services",
+      "publisher": { "@id": "https://alphastatlab.com/#person" }
+    },
+    {
+      "@type": "Person",
+      "@id": "https://alphastatlab.com/#person",
+      "name": "Muhammad Ilyas",
+      "jobTitle": "PhD Scholar in Statistics & Freelance Data Scientist",
+      "affiliation": {
+        "@type": "EducationalOrganization",
+        "name": "Quaid-i-Azam University",
+        "address": { "@type": "PostalAddress", "addressLocality": "Islamabad", "addressCountry": "PK" }
+      },
+      "email": "milyas3201@gmail.com",
+      "knowsAbout": ["Statistics","Data Science","Machine Learning","Climate Analytics","Drought Monitoring","GHG Emissions","Time Series Analysis","Python","R","Dashboard Development"],
+      "url": "https://alphastatlab.com/",
+      "sameAs": ["https://www.fiverr.com/", "https://www.upwork.com/"]
+    },
+    {
+      "@type": "ProfessionalService",
+      "@id": "https://alphastatlab.com/#service",
+      "name": "AlphaStatLab Statistical Consulting",
+      "url": "https://alphastatlab.com/",
+      "description": "PhD-level statistical consulting, interactive data dashboards, and research support for climate science, academia, and business.",
+      "provider": { "@id": "https://alphastatlab.com/#person" },
+      "areaServed": "Worldwide",
+      "serviceType": ["Statistical Consulting","Data Analysis","Dashboard Development","Research Support","Machine Learning"],
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "email": "milyas3201@gmail.com",
+        "contactType": "Customer Support"
+      }
+    },
+    {
+      "@type": "SoftwareApplication",
+      "name": "Drought Indices Dashboard",
+      "applicationCategory": "DataVisualization",
+      "description": "Interactive SPI, SPEI & SPTI drought analysis dashboard for 32 districts of Punjab, Pakistan (1981–2021). Features time series charts, drought category counts, and zoom & pan functionality.",
+      "url": "https://alphastatlab.com/drought-dashboard/climate-dashboard.html",
+      "author": { "@id": "https://alphastatlab.com/#person" },
+      "keywords": "SPI, SPEI, SPTI, drought index, Punjab, Pakistan, climate dashboard, drought monitoring"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "name": "GHG Emissions Monitor",
+      "applicationCategory": "DataVisualization",
+      "description": "Global greenhouse gas emissions dashboard using EDGAR data (1990–2024). Compare countries and sectors with interactive charts for CO₂, CH₄, N₂O and other GHGs.",
+      "url": "https://alphastatlab.com/ghg-dashboard/ghg-dashboard.html",
+      "author": { "@id": "https://alphastatlab.com/#person" },
+      "keywords": "GHG emissions, greenhouse gas, CO2, climate change, EDGAR, emissions monitoring, global emissions"
+    }
+  ]
+}
+</script>
+
+<!-- Favicon -->
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%2338bdf8'/%3E%3Ctext x='50' y='72' font-size='60' text-anchor='middle' fill='%23ffffff' font-family='Arial, sans-serif' font-weight='bold'%3Eα%3C/text%3E%3C/svg%3E">
 <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%2338bdf8'/%3E%3Ctext x='50' y='72' font-size='60' text-anchor='middle' fill='%23ffffff' font-family='Arial, sans-serif' font-weight='bold'%3Eα%3C/text%3E%3C/svg%3E">
 <meta name="theme-color" content="#38bdf8">
@@ -393,6 +487,25 @@
     color: var(--muted);
   }
 
+  /* ── KEYWORDS SECTION (SEO-VISIBLE, SUBTLE DESIGN) ── */
+  #seo-keywords {
+    padding: 40px 0 20px;
+    border-top: 1px solid var(--border);
+  }
+  .keyword-cloud {
+    display: flex; flex-wrap: wrap; gap: 10px;
+    max-width: 1100px; margin: 0 auto; padding: 0 52px;
+  }
+  .keyword-pill {
+    font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase;
+    padding: 4px 12px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    border-radius: 20px;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .keyword-pill:hover { border-color: var(--accent); color: var(--accent); }
+
   /* ── FOOTER ── */
   footer {
     border-top: 1px solid var(--border);
@@ -438,6 +551,7 @@
     .card-grid { grid-template-columns: 1fr; }
     .about-stat { padding: 15px 18px; }
     .about-stat-icon { font-size: 28px; }
+    .keyword-cloud { padding: 0 20px; }
   }
 </style>
 </head>
@@ -451,31 +565,31 @@
      NAV
 ════════════════════════════════════════════ -->
 <nav>
-  <a href="#" class="nav-logo"><span class="alpha">Alpha</span><span class="stat">Stat</span><span class="lab">Lab</span></a>
+  <a href="#" class="nav-logo" aria-label="AlphaStatLab Home"><span class="alpha">Alpha</span><span class="stat">Stat</span><span class="lab">Lab</span></a>
   <div class="nav-links">
     <a href="#dashboards" class="nav-link">Dashboards</a>
     <a href="#services" class="nav-link">Services</a>
     <a href="#about" class="nav-link">About</a>
   </div>
-  <a href="mailto:milyas3201@gmail.com" class="nav-email">✉ milyas3201@gmail.com</a>
+  <a href="mailto:milyas3201@gmail.com" class="nav-email" aria-label="Email AlphaStatLab">✉ milyas3201@gmail.com</a>
 </nav>
 
 
 <!-- ═══════════════════════════════════════════
      HERO
 ════════════════════════════════════════════ -->
-<section class="hero" id="home">
-  <div class="stat-particles" id="particles"></div>
-  <div class="hero-ring ring1"></div>
-  <div class="hero-ring ring2"></div>
-  <div class="hero-ring ring3"></div>
+<section class="hero" id="home" aria-label="Hero section">
+  <div class="stat-particles" id="particles" aria-hidden="true"></div>
+  <div class="hero-ring ring1" aria-hidden="true"></div>
+  <div class="hero-ring ring2" aria-hidden="true"></div>
+  <div class="hero-ring ring3" aria-hidden="true"></div>
 
   <h1>
     <span class="alpha">Alpha</span><span class="stat">Stat</span><span class="lab">Lab</span>
   </h1>
 
   <p class="hero-descriptor">
-    Transforming complex data into actionable insights through interactive dashboards and statistical intelligence.
+    PhD-level statistical consulting &amp; interactive data science dashboards — turning complex climate and environmental data into clear, actionable insights.
   </p>
 
   <div class="hero-ctas">
@@ -483,7 +597,7 @@
     <a href="#services" class="btn-ghost">Our Services</a>
   </div>
 
-  <div class="scroll-hint">
+  <div class="scroll-hint" aria-hidden="true">
     <div class="scroll-line"></div>
     scroll
   </div>
@@ -491,25 +605,25 @@
 
 
 <!-- ═══════════════════════════════════════════
-     DASHBOARDS SECTION - UPDATED PATHS
+     DASHBOARDS SECTION
 ════════════════════════════════════════════ -->
-<section id="dashboards">
+<section id="dashboards" aria-labelledby="dashboards-heading">
   <div class="container">
     <div class="reveal">
       <p class="section-tag">// interactive dashboards</p>
-      <h2 class="section-title">Data Visualization Tools</h2>
+      <h2 class="section-title" id="dashboards-heading">Climate Data Visualization Tools</h2>
       <div class="section-divider"></div>
       <p class="section-desc">
-        Explore climate and environmental data through interactive, research-grade dashboards.
+        Explore climate, drought, and greenhouse gas emissions data through research-grade interactive dashboards — built with Python, Plotly, and Chart.js.
       </p>
     </div>
 
     <div class="card-grid reveal">
-      <!-- DASHBOARD 1: DROUGHT INDICES (UPDATED PATH) -->
-      <div class="dash-card featured" onclick="window.open('drought-dashboard/climate-dashboard.html','_blank')">
+      <!-- DASHBOARD 1: DROUGHT INDICES -->
+      <article class="dash-card featured" onclick="window.open('drought-dashboard/climate-dashboard.html','_blank')" role="button" tabindex="0" aria-label="Open Drought Indices Dashboard">
         <div class="dash-card-visual">
-          <span class="dash-card-icon">💧</span>
-          <div class="mini-chart">
+          <span class="dash-card-icon" aria-hidden="true">💧</span>
+          <div class="mini-chart" aria-hidden="true">
             <div class="mini-bar" style="height:45%"></div>
             <div class="mini-bar" style="height:70%"></div>
             <div class="mini-bar" style="height:30%"></div>
@@ -521,8 +635,8 @@
           </div>
         </div>
         <div class="dash-card-body">
-          <h3>📊 Drought Indices Dashboard</h3>
-          <p>SPI, SPEI & SPTI analysis for 32 districts of Punjab (1981-2021). Interactive time series with zoom & pan, plus drought category counts.</p>
+          <h3>Drought Indices Dashboard — SPI, SPEI &amp; SPTI</h3>
+          <p>Interactive drought monitoring for 32 districts of Punjab, Pakistan (1981–2021). Analyse Standardised Precipitation Index (SPI), Standardised Precipitation Evapotranspiration Index (SPEI), and Standardised Precipitation Temperature Index (SPTI) with zoom, pan, and drought category breakdowns.</p>
           <div class="dash-card-footer">
             <div class="dash-status live"><div class="dot"></div> Live Demo</div>
             <div class="dash-tags">
@@ -530,13 +644,13 @@
             </div>
           </div>
         </div>
-      </div>
+      </article>
 
-      <!-- DASHBOARD 2: GHG EMISSIONS (UPDATED PATH) -->
-      <div class="dash-card featured" onclick="window.open('ghg-dashboard/ghg-dashboard.html','_blank')">
+      <!-- DASHBOARD 2: GHG EMISSIONS -->
+      <article class="dash-card featured" onclick="window.open('ghg-dashboard/ghg-dashboard.html','_blank')" role="button" tabindex="0" aria-label="Open GHG Emissions Monitor">
         <div class="dash-card-visual" style="background: linear-gradient(135deg, #1a472a, #2ecc71);">
-          <span class="dash-card-icon">🌍</span>
-          <div class="mini-chart">
+          <span class="dash-card-icon" aria-hidden="true">🌍</span>
+          <div class="mini-chart" aria-hidden="true">
             <div class="mini-bar" style="background:#f39c12; height:60%"></div>
             <div class="mini-bar" style="background:#e74c3c; height:75%"></div>
             <div class="mini-bar" style="background:#3498db; height:50%"></div>
@@ -548,16 +662,16 @@
           </div>
         </div>
         <div class="dash-card-body">
-          <h3>🌍 GHG Emissions Monitor</h3>
-          <p>Global greenhouse gas emissions by country & sector. EDGAR data (1990-2024). Compare multiple countries, filter by sector, interactive charts.</p>
+          <h3>Global GHG Emissions Monitor — EDGAR Data 1990–2024</h3>
+          <p>Track and compare global greenhouse gas (GHG) emissions by country and sector using EDGAR data (1990–2024). Analyse CO₂, CH₄, N₂O and other gases with multi-country comparisons, sector filters, and interactive time-series charts aligned with IPCC AR6 reporting standards.</p>
           <div class="dash-card-footer">
             <div class="dash-status live"><div class="dot"></div> Live Demo</div>
             <div class="dash-tags">
-              <span class="tag">GHG</span><span class="tag">CO₂</span><span class="tag">Climate</span><span class="tag">Global</span><span class="tag">EDGAR</span>
+              <span class="tag">GHG</span><span class="tag">CO₂</span><span class="tag">Climate</span><span class="tag">EDGAR</span><span class="tag">IPCC</span>
             </div>
           </div>
         </div>
-      </div>
+      </article>
     </div>
   </div>
 </section>
@@ -566,35 +680,35 @@
 <!-- ═══════════════════════════════════════════
      SERVICES SECTION
 ════════════════════════════════════════════ -->
-<section id="services" class="services">
+<section id="services" class="services" aria-labelledby="services-heading">
   <div class="container">
     <div class="reveal">
       <p class="section-tag">// services</p>
-      <h2 class="section-title">Statistical Consulting</h2>
+      <h2 class="section-title" id="services-heading">Statistical Consulting &amp; Data Science Services</h2>
       <div class="section-divider"></div>
       <p class="section-desc">
-        Leverage PhD-level expertise for your data analysis, research, and visualization needs.
+        Leverage PhD-level expertise for your data analysis, research methodology, and dashboard development — serving academic researchers, NGOs, and businesses worldwide.
       </p>
     </div>
 
     <div class="services-grid reveal">
       <div class="service-card">
-        <div class="service-icon">📊</div>
-        <h3>Data Analysis</h3>
-        <p>Statistical modeling, hypothesis testing, time series analysis, and advanced analytics for research and business applications.</p>
-        <a href="mailto:milyas3201@gmail.com?subject=Data%20Analysis%20Inquiry" class="service-btn">Inquire →</a>
+        <div class="service-icon" aria-hidden="true">📊</div>
+        <h3>Statistical Data Analysis</h3>
+        <p>Expert statistical modelling, hypothesis testing, regression analysis, time series analysis (ARIMA, SARIMA), and advanced analytics for climate research, medical studies, and business intelligence. Skilled in R and Python.</p>
+        <a href="mailto:milyas3201@gmail.com?subject=Data%20Analysis%20Inquiry" class="service-btn" aria-label="Inquire about Data Analysis services">Inquire →</a>
       </div>
       <div class="service-card">
-        <div class="service-icon">📈</div>
-        <h3>Dashboard Creation</h3>
-        <p>Custom interactive dashboards for climate data, emissions monitoring, business intelligence, and research visualization.</p>
-        <a href="mailto:milyas3201@gmail.com?subject=Dashboard%20Creation%20Inquiry" class="service-btn">Inquire →</a>
+        <div class="service-icon" aria-hidden="true">📈</div>
+        <h3>Interactive Dashboard Development</h3>
+        <p>Custom interactive dashboards for climate analytics, environmental monitoring, business intelligence, and academic research. Built with Streamlit, Plotly, Chart.js, and D3.js — responsive and publication-ready.</p>
+        <a href="mailto:milyas3201@gmail.com?subject=Dashboard%20Creation%20Inquiry" class="service-btn" aria-label="Inquire about Dashboard Development">Inquire →</a>
       </div>
       <div class="service-card">
-        <div class="service-icon">🔬</div>
-        <h3>Research Support</h3>
-        <p>PhD-level assistance with statistical methodology, data interpretation, academic writing, and publication-ready figures.</p>
-        <a href="mailto:milyas3201@gmail.com?subject=Research%20Support%20Inquiry" class="service-btn">Inquire →</a>
+        <div class="service-icon" aria-hidden="true">🔬</div>
+        <h3>Academic Research Support</h3>
+        <p>PhD-level assistance for statistical methodology, data interpretation, academic writing, and publication-ready figures. Published in Springer journals including Theoretical and Applied Climatology and Stochastic Environmental Research.</p>
+        <a href="mailto:milyas3201@gmail.com?subject=Research%20Support%20Inquiry" class="service-btn" aria-label="Inquire about Research Support">Inquire →</a>
       </div>
     </div>
   </div>
@@ -604,47 +718,94 @@
 <!-- ═══════════════════════════════════════════
      ABOUT SECTION
 ════════════════════════════════════════════ -->
-<section id="about">
+<section id="about" aria-labelledby="about-heading">
   <div class="container">
     <div class="about-inner reveal">
       <div class="about-left">
-        <h2>Built by a<br><em>statistician</em>,<br>for everyone.</h2>
-        <p>AlphaStatLab is a personal research and education platform developed by <strong>Muhammad Ilyas</strong>, a PhD scholar in Statistics at Quaid-i-Azam University, Islamabad — bridging rigorous statistical methods with interactive, accessible data science.</p>
-        <p class="university">🎓 PhD Statistics · Quaid-i-Azam University, Islamabad</p>
-        <p>Bronze medalist in B.S. Statistics, recipient of Punjab Educational Endowment Fund (PEEF) scholarships for both B.S. and M.Phil degrees.</p>
-        <a href="mailto:milyas3201@gmail.com" class="btn-ghost" style="display:inline-block;margin-top:20px">Get in Touch →</a>
+        <h2 id="about-heading">Built by a<br><em>statistician</em>,<br>for everyone.</h2>
+        <p>AlphaStatLab is a personal research and consulting platform developed by <strong>Muhammad Ilyas</strong> — a PhD scholar in Statistics at Quaid-i-Azam University, Islamabad, Pakistan. The platform bridges rigorous statistical science with interactive, accessible data visualisation.</p>
+        <p>Specialist areas include spatiotemporal drought monitoring, climate change analysis, machine learning and deep learning for environmental forecasting, and biostatistics. Bronze medalist in B.S. Statistics; PEEF scholarship recipient for both B.S. and M.Phil degrees.</p>
+        <p class="university">🎓 PhD Statistics · Quaid-i-Azam University, Islamabad, Pakistan</p>
+        <a href="mailto:milyas3201@gmail.com" class="btn-ghost" style="display:inline-block;margin-top:20px" aria-label="Get in touch with Muhammad Ilyas">Get in Touch →</a>
       </div>
       <div class="about-right">
         <div class="about-stat">
-          <div class="about-stat-icon">🎓</div>
+          <div class="about-stat-icon" aria-hidden="true">🎓</div>
           <div class="about-stat-text">
-            <h4>PhD Scholar · Climate Statistics</h4>
-            <p>Research focus on spatiotemporal drought monitoring, machine learning, and deep learning algorithms for climate forecasting. Published in Springer journals (Theoretical and Applied Climatology, Earth Systems and Environment, Stochastic Environmental Research).</p>
+            <h4>PhD Scholar — Climate Statistics &amp; Machine Learning</h4>
+            <p>Research in spatiotemporal drought monitoring, machine learning, and deep learning for climate forecasting. Published in Springer journals: Theoretical and Applied Climatology, Earth Systems and Environment, and Stochastic Environmental Research and Risk Assessment.</p>
           </div>
         </div>
         <div class="about-stat">
-          <div class="about-stat-icon">💼</div>
+          <div class="about-stat-icon" aria-hidden="true">💼</div>
           <div class="about-stat-text">
-            <h4>Research & Professional Experience</h4>
-            <p>Research Intern at Pakistan Meteorological Department (Climate Research & Development). Part-time Biostatistician at HBS Medical & Dental College, Islamabad. Freelance Data Analyst with 5+ years of international project experience.</p>
+            <h4>Research &amp; Professional Experience</h4>
+            <p>Research Intern at Pakistan Meteorological Department (Climate Research &amp; Development). Part-time Biostatistician at HBS Medical &amp; Dental College, Islamabad. Freelance Data Analyst with 5+ years experience serving international clients.</p>
           </div>
         </div>
         <div class="about-stat">
-          <div class="about-stat-icon">🛠️</div>
+          <div class="about-stat-icon" aria-hidden="true">🛠️</div>
           <div class="about-stat-text">
-            <h4>Technical Expertise</h4>
-            <p>Python, R, JavaScript, SQL · Machine Learning, Deep Learning, Time Series Analysis · Spatial Data Science, ArcGIS · Interactive Dashboard Development (Streamlit, Plotly, Chart.js).</p>
+            <h4>Technical Stack &amp; Expertise</h4>
+            <p>Python, R, JavaScript, SQL · Machine Learning, Deep Learning, Time Series Analysis (ARIMA, SARIMA, LSTM) · Spatial Data Science, ArcGIS, GeoPandas · Dashboard Development (Streamlit, Plotly, Chart.js, D3.js) · Climate Indices (SPI, SPEI, PDSI, EDDI).</p>
           </div>
         </div>
         <div class="about-stat">
-          <div class="about-stat-icon">📫</div>
+          <div class="about-stat-icon" aria-hidden="true">📫</div>
           <div class="about-stat-text">
-            <h4>Open for Collaboration</h4>
-            <p>Research partnerships, statistical consulting, and dashboard development projects. Experienced with international clients via Fiverr and Upwork.</p>
+            <h4>Open for Global Collaboration</h4>
+            <p>Research partnerships, statistical consulting, and dashboard development worldwide. Available via Fiverr and Upwork for freelance data science projects. Contact: milyas3201@gmail.com.</p>
           </div>
         </div>
       </div>
     </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     SEO KEYWORD SECTION
+     Visible to search crawlers & users — 
+     styled as a subtle keyword cloud
+════════════════════════════════════════════ -->
+<section id="seo-keywords" aria-label="Topics and expertise">
+  <div class="container">
+    <p class="section-tag" style="margin-bottom:14px;">// topics &amp; expertise</p>
+  </div>
+  <div class="keyword-cloud">
+    <span class="keyword-pill">Statistical Consulting</span>
+    <span class="keyword-pill">Data Science Pakistan</span>
+    <span class="keyword-pill">Climate Dashboard</span>
+    <span class="keyword-pill">Drought Analysis</span>
+    <span class="keyword-pill">SPI SPEI SPTI</span>
+    <span class="keyword-pill">GHG Emissions Monitor</span>
+    <span class="keyword-pill">EDGAR Data</span>
+    <span class="keyword-pill">CO₂ Tracking</span>
+    <span class="keyword-pill">Time Series Analysis</span>
+    <span class="keyword-pill">ARIMA SARIMA</span>
+    <span class="keyword-pill">Machine Learning</span>
+    <span class="keyword-pill">Deep Learning</span>
+    <span class="keyword-pill">LSTM Forecasting</span>
+    <span class="keyword-pill">Python R Statistics</span>
+    <span class="keyword-pill">Plotly Chart.js</span>
+    <span class="keyword-pill">Streamlit Dashboard</span>
+    <span class="keyword-pill">Spatial Data Science</span>
+    <span class="keyword-pill">ArcGIS GeoPandas</span>
+    <span class="keyword-pill">Biostatistics</span>
+    <span class="keyword-pill">Regression Analysis</span>
+    <span class="keyword-pill">Hypothesis Testing</span>
+    <span class="keyword-pill">PhD Statistician</span>
+    <span class="keyword-pill">Quaid-i-Azam University</span>
+    <span class="keyword-pill">Islamabad Pakistan</span>
+    <span class="keyword-pill">Freelance Data Analyst</span>
+    <span class="keyword-pill">Research Support</span>
+    <span class="keyword-pill">Academic Statistics</span>
+    <span class="keyword-pill">Climate Change Analysis</span>
+    <span class="keyword-pill">Punjab Drought Monitoring</span>
+    <span class="keyword-pill">IPCC AR6</span>
+    <span class="keyword-pill">Environmental Data</span>
+    <span class="keyword-pill">Data Visualization</span>
+    <span class="keyword-pill">Interactive Dashboard</span>
   </div>
 </section>
 
@@ -656,8 +817,8 @@
   <div class="footer-logo">
     <span class="alpha">Alpha</span><span class="stat">Stat</span><span class="lab">Lab</span>
   </div>
-  <a href="mailto:milyas3201@gmail.com" class="email-link">✉ milyas3201@gmail.com</a>
-  <p>© 2025 AlphaStatLab · Data Science &amp; Statistical Intelligence</p>
+  <a href="mailto:milyas3201@gmail.com" class="email-link" aria-label="Email AlphaStatLab">✉ milyas3201@gmail.com</a>
+  <p>© 2025 AlphaStatLab · Statistical Consulting &amp; Data Science · Islamabad, Pakistan</p>
 </footer>
 
 <!-- GoatCounter Analytics -->
@@ -671,6 +832,13 @@
   }, { threshold: 0.08 });
   reveals.forEach(r => obs.observe(r));
 
+  // Keyboard support for card click
+  document.querySelectorAll('.dash-card[role="button"]').forEach(card => {
+    card.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') card.click();
+    });
+  });
+
   const terms = [
     'SPI', 'SPEI', 'SPTI', 'PDSI', 'scPDSI', 'EDDI',
     'μ = Σx/n', 'σ² = Σ(x-μ)²/n', 'CV = σ/μ', 'MAD = Σ|x-μ|/n',
@@ -681,7 +849,8 @@
     'N(μ,σ²)', 'X ~ Bin(n,p)', 'X ~ Poisson(λ)', 'MCMC', 'Metropolis-Hastings',
     'SVM', 'Random Forest', 'XGBoost', 'PCA', 'k-means',
     'CO₂ ppm', 'CH₄ ppb', 'N₂O ppb', 'GWP', 'IPCC AR6', 'CMIP6',
-    'PhD Research', 'Statistical Computing', 'Data Science'
+    'PhD Research', 'Statistical Computing', 'Data Science', 'Climate Analytics',
+    'Drought Index', 'GHG Emissions', 'Deep Learning', 'LSTM', 'Time Series'
   ];
   const container = document.getElementById('particles');
   if (container) {
