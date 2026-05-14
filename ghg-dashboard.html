@@ -136,7 +136,7 @@
             <p style="text-align: center; margin-top: 15px; color: #666; font-size: 12px;">💡 Mouse wheel to zoom | Drag to pan | Double-click to reset</p>
         </div>
 
-        <!-- Sector Bar Chart - Now with consistent 6 sectors -->
+        <!-- Sector Bar Chart -->
         <div class="chart-container" id="sectorChartContainer">
             <h3>🏭 Sector Breakdown (6 Major Sectors - Standardized)</h3>
             <div id="sectorWarning" class="info-note" style="display: none; background: #fff3cd; color: #856404;">⚠️ Showing up to 10 countries. Please deselect some for clearer view.</div>
@@ -161,7 +161,7 @@
         
         let currentGas = 'ghg';
         let countryTotals = {};
-        let sectorData = {};      // Will store mapped sector data
+        let sectorData = {};
         let countries = [];
         let selectedCountries = ['China', 'United States', 'India', 'Pakistan'];
         let currentChart = null;
@@ -181,48 +181,28 @@
         
         // Mapping from detailed sectors to major categories
         const sectorMapping = {
-            // Energy
-            'Energy': 'Energy',
-            'ENE': 'Energy',
-            // Industry
-            'Industry': 'Industry',
-            'IND': 'Industry',
-            'CHE': 'Industry',
-            'IRO': 'Industry',
-            'NMM': 'Industry',
-            'NFE': 'Industry',
-            'NEU': 'Industry',
-            'PRU_SOL': 'Industry',
-            'REF_TRF': 'Industry',
-            // Transport
-            'Transport': 'Transport',
-            'TRO': 'Transport',
-            'TNR_Other': 'Transport',
-            'Dom_Avi': 'Transport',
-            'Dom_Ship': 'Transport',
-            'Int_Avi': 'Transport',
-            'Int_Ship': 'Transport',
-            // Buildings
-            'Buildings': 'Buildings',
-            'RCO': 'Buildings',
-            // Agriculture
-            'Agriculture': 'Agriculture',
-            'AGS': 'Agriculture',
-            'AWB': 'Agriculture',
-            'ENF': 'Agriculture',
-            'MNM': 'Agriculture',
-            // Waste
-            'Waste': 'Waste',
-            'SWD_LDF': 'Waste',
-            'SWD_INC': 'Waste',
-            'WWT': 'Waste',
-            // Skip/ignore
-            'Off-shore': null,
-            'Indirect': null
+            'Energy': 'Energy', 'ENE': 'Energy',
+            'Industry': 'Industry', 'IND': 'Industry', 'CHE': 'Industry', 'IRO': 'Industry',
+            'NMM': 'Industry', 'NFE': 'Industry', 'NEU': 'Industry', 'PRU_SOL': 'Industry', 'REF_TRF': 'Industry',
+            'Transport': 'Transport', 'TRO': 'Transport', 'TNR_Other': 'Transport',
+            'Dom_Avi': 'Transport', 'Dom_Ship': 'Transport', 'Int_Avi': 'Transport', 'Int_Ship': 'Transport',
+            'Buildings': 'Buildings', 'RCO': 'Buildings',
+            'Agriculture': 'Agriculture', 'AGS': 'Agriculture', 'AWB': 'Agriculture', 'ENF': 'Agriculture', 'MNM': 'Agriculture',
+            'Waste': 'Waste', 'SWD_LDF': 'Waste', 'SWD_INC': 'Waste', 'WWT': 'Waste',
+            'Off-shore': null, 'Indirect': null
         };
         
         const gasNames = { ghg: 'Total GHG', co2: 'CO₂', ch4: 'CH₄', n2o: 'N₂O', fgas: 'F-gases' };
         const gasUnits = { ghg: 'kt CO₂eq', co2: 'kt CO₂', ch4: 'kt CH₄', n2o: 'kt N₂O', fgas: 'kt F-gases' };
+
+        // Function to check if a string is a valid country name (not numeric/coordinates)
+        function isValidCountryName(str) {
+            if (!str || str.length < 2) return false;
+            if (/^\d/.test(str)) return false;                    // Starts with number
+            if (str.includes('.') && !isNaN(parseFloat(str))) return false; // Looks like coordinate
+            if (str.match(/^[\d\.\-\+e]+$/i)) return false;       // Pure numeric
+            return true;
+        }
 
         // Setup variable selector
         document.querySelectorAll('.var-pill').forEach(pill => {
@@ -247,15 +227,12 @@
                 const text = await response.text();
                 document.getElementById('progressFill').style.width = '60%';
                 
-                // Parse totals for time series
                 parseAndAggregateCSV(text);
                 document.getElementById('progressFill').style.width = '80%';
                 
-                // Load sector data for bar chart (only for CO2/CH4/N2O files, not for totals)
                 if (currentGas !== 'ghg') {
                     await loadAndMapSectorData(filename);
                 } else {
-                    // For Total GHG, try to load from ghg_by_sector.csv
                     await loadSectorDataFromFile('ghg_by_sector.csv');
                 }
                 
@@ -294,7 +271,10 @@
                 if (values.length < 5) continue;
                 
                 let country = countryIdx !== -1 ? values[countryIdx].trim().replace(/['"]/g, '') : '';
-                if (!country) continue;
+                
+                // Filter out numeric/coordinate entries
+                if (!isValidCountryName(country)) continue;
+                
                 country = country.replace(' and ', ' & ');
                 
                 if (!tempAgg[country]) tempAgg[country] = {};
@@ -352,7 +332,6 @@
             }
             yearCols.sort((a,b) => a.year - b.year);
             
-            // Initialize sector data structure
             const mappedData = {};
             
             for (let i = 1; i < lines.length; i++) {
@@ -362,14 +341,14 @@
                 let country = countryIdx !== -1 ? values[countryIdx].trim().replace(/['"]/g, '') : '';
                 let sector = sectorIdx !== -1 ? values[sectorIdx].trim().replace(/['"]/g, '') : '';
                 
+                if (!isValidCountryName(country)) continue;
                 if (!country || !sector) continue;
+                
                 country = country.replace(' and ', ' & ');
                 
-                // Map sector to major category
                 let mappedSector = sectorMapping[sector];
-                if (!mappedSector) continue; // Skip unmapped sectors (Off-shore, Indirect)
+                if (!mappedSector) continue;
                 
-                // Extract yearly data
                 const yearlyData = {};
                 for (const yc of yearCols) {
                     const val = parseFloat(values[yc.col]);
@@ -380,7 +359,6 @@
                 
                 if (Object.keys(yearlyData).length === 0) continue;
                 
-                // Add to mapped sector
                 if (!mappedData[country]) mappedData[country] = {};
                 if (!mappedData[country][mappedSector]) mappedData[country][mappedSector] = {};
                 
@@ -390,14 +368,6 @@
             }
             
             sectorData = mappedData;
-            
-            // Debug: Log available sectors for China and Pakistan
-            if (mappedData['China']) {
-                console.log('China mapped sectors:', Object.keys(mappedData['China']));
-            }
-            if (mappedData['Pakistan']) {
-                console.log('Pakistan mapped sectors:', Object.keys(mappedData['Pakistan']));
-            }
         }
         
         function renderCountryList() {
@@ -487,7 +457,6 @@
             document.getElementById('yearStartDisplay').textContent = startYear;
             document.getElementById('yearEndDisplay').textContent = endYear;
             
-            // Warning for sector chart
             const warningDiv = document.getElementById('sectorWarning');
             if (selectedCountries.length > 10) {
                 warningDiv.style.display = 'block';
@@ -573,7 +542,7 @@
                 }
             });
             
-            // === SECTOR BAR CHART (using mapped sectors) ===
+            // === SECTOR BAR CHART ===
             const sectorDataResult = getSectorDataForCountries(startYear, endYear);
             const displayCountries = selectedCountries.slice(0, 10);
             
@@ -609,7 +578,6 @@
             }
         }
         
-        // Event listeners
         document.getElementById('updateBtn').addEventListener('click', updateDashboard);
         document.getElementById('yearStart').addEventListener('input', () => {
             document.getElementById('yearStartDisplay').textContent = document.getElementById('yearStart').value;
@@ -620,7 +588,6 @@
             updateDashboard();
         });
         
-        // Initialize
         loadData();
     </script>
 </body>
