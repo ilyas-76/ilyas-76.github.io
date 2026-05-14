@@ -76,7 +76,6 @@
   .nav-logo .stat { color: var(--accent); }
   .nav-logo .lab { color: var(--accent3); }
 
-  /* Nav links - simplified */
   .nav-links { display: flex; align-items: center; gap: 4px; }
   .nav-link {
     font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
@@ -103,7 +102,6 @@
     position: relative; z-index: 1;
   }
 
-  /* Floating stat particles */
   .stat-particles {
     position: absolute; inset: 0; overflow: hidden; pointer-events: none;
   }
@@ -120,7 +118,6 @@
     to   { transform: translateY(-120px) rotate(5deg); opacity: 0; }
   }
 
-  /* Hero decorative rings */
   .hero-ring {
     position: absolute; border-radius: 50%;
     border: 1px solid rgba(56,189,248,0.07);
@@ -131,7 +128,6 @@
   .ring3 { width: 1200px; height: 1200px; top: 50%; left: 50%; transform: translate(-50%,-50%); border-style: dashed; animation: rotate 120s linear infinite; }
   @keyframes rotate { to { transform: translate(-50%,-50%) rotate(360deg); } }
 
-  /* Ring dots */
   .ring1::after, .ring2::after {
     content: '';
     position: absolute; width: 6px; height: 6px; border-radius: 50%;
@@ -166,7 +162,6 @@
     z-index: 2;
   }
 
-  /* CTA buttons */
   .hero-ctas { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; position: relative; z-index: 2; }
   .btn-primary {
     background: var(--accent); color: var(--bg);
@@ -185,7 +180,6 @@
   }
   .btn-ghost:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
 
-  /* Scroll indicator */
   .scroll-hint {
     position: absolute; bottom: 36px; left: 50%; transform: translateX(-50%);
     display: flex; flex-direction: column; align-items: center; gap: 8px;
@@ -220,7 +214,6 @@
   /* ── DASHBOARDS SECTION ── */
   #dashboards { background: linear-gradient(to bottom, transparent, rgba(56,189,248,0.015), transparent); }
 
-  /* ── CARD GRID ── */
   .card-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -228,7 +221,6 @@
     justify-content: center;
   }
 
-  /* Dashboard Card */
   .dash-card {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -238,7 +230,6 @@
   }
   .dash-card:hover { transform: translateY(-6px); border-color: var(--accent); }
 
-  /* Featured card */
   .dash-card.featured { border-color: rgba(56,189,248,0.3); }
   .dash-card.featured::before {
     content: 'FEATURED';
@@ -337,27 +328,7 @@
   }
   .service-btn:hover { background: var(--accent); color: var(--bg); }
 
-  /* Support button */
-  .support-section {
-    text-align: center;
-    margin: 40px 0 20px;
-  }
-  .support-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    background: #13C3FF;
-    color: #1a1a2e;
-    padding: 12px 28px;
-    border-radius: 40px;
-    text-decoration: none;
-    font-weight: bold;
-    font-size: 14px;
-    transition: transform 0.2s;
-  }
-  .support-btn:hover { transform: translateY(-2px); }
-
-  /* ── ABOUT BANNER ── */
+  /* ── ABOUT SECTION ── */
   #about {
     padding: 60px 0;
     border-top: 1px solid var(--border);
@@ -365,19 +336,28 @@
   }
   .about-inner {
     display: grid; grid-template-columns: 1fr 1fr;
-    gap: 64px; align-items: center;
+    gap: 64px;
+    align-items: center;
   }
   .about-left h2 {
     font-family: 'Syne', sans-serif; font-weight: 800;
-    font-size: clamp(28px, 4vw, 44px); letter-spacing: -1px;
-    color: var(--white); line-height: 1.1; margin-bottom: 20px;
+    font-size: clamp(28px, 4vw, 44px);
+    letter-spacing: -1px;
+    color: var(--white);
+    line-height: 1.1;
+    margin-bottom: 20px;
   }
   .about-left h2 em {
-    font-family: 'Instrument Serif', serif; font-style: italic;
-    color: var(--accent); font-weight: 400;
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    color: var(--accent);
+    font-weight: 400;
   }
   .about-left p {
-    font-size: 12px; line-height: 1.9; color: var(--muted); margin-bottom: 14px;
+    font-size: 12px;
+    line-height: 1.9;
+    color: var(--muted);
+    margin-bottom: 14px;
   }
   .university {
     color: var(--accent3);
@@ -417,8 +397,13 @@
   footer {
     border-top: 1px solid var(--border);
     padding: 36px 52px;
-    display: flex; align-items: center; justify-content: space-between;
-    position: relative; z-index: 1; flex-wrap: wrap; gap: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    z-index: 1;
+    flex-wrap: wrap;
+    gap: 16px;
   }
   .footer-logo { 
     font-family: 'Syne', sans-serif; font-weight: 800; font-size: 16px; 
@@ -520,8 +505,6 @@
     </div>
 
     <div class="card-grid reveal">
-
-      <!-- DASHBOARD 1: DROUGHT INDICES DASHBOARD -->
       <div class="dash-card featured" onclick="window.open('climate-dashboard.html','_blank')">
         <div class="dash-card-visual">
           <span class="dash-card-icon">💧</span>
@@ -542,17 +525,12 @@
           <div class="dash-card-footer">
             <div class="dash-status live"><div class="dot"></div> Live Demo</div>
             <div class="dash-tags">
-              <span class="tag">SPI</span>
-              <span class="tag">SPEI</span>
-              <span class="tag">SPTI</span>
-              <span class="tag">Drought</span>
-              <span class="tag">Punjab</span>
+              <span class="tag">SPI</span><span class="tag">SPEI</span><span class="tag">SPTI</span><span class="tag">Drought</span><span class="tag">Punjab</span>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- DASHBOARD 2: GHG EMISSIONS MONITOR -->
       <div class="dash-card featured" onclick="window.open('ghg-dashboard.html','_blank')">
         <div class="dash-card-visual" style="background: linear-gradient(135deg, #1a472a, #2ecc71);">
           <span class="dash-card-icon">🌍</span>
@@ -573,23 +551,18 @@
           <div class="dash-card-footer">
             <div class="dash-status live"><div class="dot"></div> Live Demo</div>
             <div class="dash-tags">
-              <span class="tag">GHG</span>
-              <span class="tag">CO₂</span>
-              <span class="tag">Climate</span>
-              <span class="tag">Global</span>
-              <span class="tag">EDGAR</span>
+              <span class="tag">GHG</span><span class="tag">CO₂</span><span class="tag">Climate</span><span class="tag">Global</span><span class="tag">EDGAR</span>
             </div>
           </div>
         </div>
       </div>
-
     </div>
   </div>
 </section>
 
 
 <!-- ═══════════════════════════════════════════
-     SERVICES SECTION - STATISTICAL CONSULTING
+     SERVICES SECTION
 ════════════════════════════════════════════ -->
 <section id="services" class="services">
   <div class="container">
@@ -622,62 +595,50 @@
         <a href="mailto:milyas3201@gmail.com?subject=Research%20Support%20Inquiry" class="service-btn">Inquire →</a>
       </div>
     </div>
-
-    <!-- Ko-fi / Buy Me a Coffee Support Button -->
-    <div class="support-section reveal">
-      <a href="https://ko-fi.com/alphastatlab" target="_blank" class="support-btn">
-        ☕ Support AlphaStatLab
-      </a>
-      <p style="font-size: 11px; color: var(--muted); margin-top: 12px;">Support ongoing research and dashboard development</p>
-    </div>
   </div>
 </section>
 
 
 <!-- ═══════════════════════════════════════════
-     ABOUT SECTION - EXPANDED PROFESSIONAL POINTS
+     ABOUT SECTION - UPDATED FROM CV
 ════════════════════════════════════════════ -->
 <section id="about">
   <div class="container">
     <div class="about-inner reveal">
       <div class="about-left">
         <h2>Built by a<br><em>statistician</em>,<br>for everyone.</h2>
-        <p>AlphaStatLab is a personal research and education platform developed by a PhD scholar of Statistics at the <strong>Department of Statistics, Quaid-i-Azam University, Islamabad, Pakistan</strong> — bridging rigorous statistical methods with interactive, accessible data science.</p>
-        <p class="university">🎓 Quaid-i-Azam University, Islamabad | PhD Statistics</p>
-        <p>Every dashboard is grounded in academic depth, designed for researchers, students, and data professionals.</p>
+        <p>AlphaStatLab is a personal research and education platform developed by <strong>Muhammad Ilyas</strong>, a PhD scholar in Statistics at Quaid-i-Azam University, Islamabad — bridging rigorous statistical methods with interactive, accessible data science.</p>
+        <p class="university">🎓 PhD Statistics · Quaid-i-Azam University, Islamabad</p>
+        <p>Bronze medalist in B.S. Statistics, recipient of Punjab Educational Endowment Fund (PEEF) scholarships for both B.S. and M.Phil degrees.</p>
         <a href="mailto:milyas3201@gmail.com" class="btn-ghost" style="display:inline-block;margin-top:20px">Get in Touch →</a>
       </div>
       <div class="about-right">
-        <!-- Point 1: PhD Scholar -->
         <div class="about-stat">
           <div class="about-stat-icon">🎓</div>
           <div class="about-stat-text">
-            <h4>PhD Scholar of Statistics</h4>
-            <p>Advanced statistical research specializing in climate indices, spatial-temporal analysis, Bayesian inference, and applied econometrics. Experienced in developing methodological frameworks for complex environmental data.</p>
+            <h4>PhD Scholar · Climate Statistics</h4>
+            <p>Research focus on spatiotemporal drought monitoring, machine learning, and deep learning algorithms for climate forecasting. Published in Springer journals (Theoretical and Applied Climatology, Earth Systems and Environment, Stochastic Environmental Research).</p>
           </div>
         </div>
-        <!-- Point 2: Technical Expertise -->
         <div class="about-stat">
-          <div class="about-stat-icon">🐍</div>
+          <div class="about-stat-icon">💼</div>
           <div class="about-stat-text">
-            <h4>Python · R · JavaScript · SQL</h4>
-            <p>Full-stack data science expertise — from raw data preprocessing and statistical modeling to interactive dashboard deployment. Proficient in Pandas, NumPy, SciPy, ggplot2, dplyr, and modern web technologies.</p>
+            <h4>Research & Professional Experience</h4>
+            <p>Research Intern at Pakistan Meteorological Department (Climate Research & Development). Part-time Biostatistician at HBS Medical & Dental College, Islamabad. Freelance Data Analyst with 5+ years of international project experience.</p>
           </div>
         </div>
-        <!-- Point 3: Collaboration -->
         <div class="about-stat">
-          <div class="about-stat-icon">🤝</div>
+          <div class="about-stat-icon">🛠️</div>
           <div class="about-stat-text">
-            <h4>Open to Collaboration & Consulting</h4>
-            <p>Seeking research partnerships, interdisciplinary projects, and consulting opportunities. Expertise in statistical analysis, dashboard development, climate data science, and reproducible research workflows.</p>
+            <h4>Technical Expertise</h4>
+            <p>Python, R, JavaScript, SQL · Machine Learning, Deep Learning, Time Series Analysis · Spatial Data Science, ArcGIS · Interactive Dashboard Development (Streamlit, Plotly, Chart.js).</p>
           </div>
         </div>
-        <!-- Point 4: Publications & Recognition -->
         <div class="about-stat">
-          <div class="about-stat-icon">📄</div>
+          <div class="about-stat-icon">📫</div>
           <div class="about-stat-text">
-            <h4>Publications & Research Output</h4>
-            <p>Peer-reviewed publications in climate statistics and environmental modeling. Committed to open science, reproducible research, and knowledge dissemination through interactive platforms.</p>
+            <h4>Open for Collaboration</h4>
+            <p>Research partnerships, statistical consulting, and dashboard development projects. Experienced with international clients via Fiverr and Upwork.</p>
           </div>
         </div>
       </div>
@@ -702,46 +663,23 @@
         async src="//gc.zgo.at/count.js"></script>
 
 <script>
-  /* ── SCROLL REVEAL ── */
   const reveals = document.querySelectorAll('.reveal');
   const obs = new IntersectionObserver(entries => {
     entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
   }, { threshold: 0.08 });
   reveals.forEach(r => obs.observe(r));
 
-  /* ── FLOATING STAT PARTICLES ── */
   const terms = [
-    // Drought Indices
     'SPI', 'SPEI', 'SPTI', 'PDSI', 'scPDSI', 'EDDI',
-    // Statistical Measures
     'μ = Σx/n', 'σ² = Σ(x-μ)²/n', 'CV = σ/μ', 'MAD = Σ|x-μ|/n',
     'ρ(x,y) = Cov/σₓσᵧ', 'R² = 1 - SSᵣₑₛ/SSₜₒₜ', 'RMSE', 'MAE',
-    // Regression
     'β = (XᵀX)⁻¹Xᵀy', 'ŷ = β₀ + β₁x', 'logit(p) = ln(p/1-p)',
-    'LASSO: min ||y - Xβ||² + λ||β||₁', 'Ridge: min ||y - Xβ||² + λ||β||²',
-    // Time Series
-    'ARIMA(p,d,q)', 'SARIMA(P,D,Q)ₛ', 'ACF', 'PACF', 'KPSS test',
-    'H₀: unit root', 'H₁: stationary',
-    // Hypothesis Testing
-    'H₀: μ₁ = μ₂', 'H₁: μ₁ ≠ μ₂', 't = (x̄₁ - x̄₂)/SE', 'p-value',
-    'χ² = Σ(O-E)²/E', 'F = MSB/MSW', 'α = 0.05', 'Power = 1-β',
-    // Probability Distributions
-    'N(μ,σ²)', 'X ~ Bin(n,p)', 'P(X=k) = C(n,k)pᵏ(1-p)ⁿ⁻ᵏ',
-    'X ~ Poisson(λ)', 'f(x) = λe⁻λˣ', 'Φ(z) = P(Z ≤ z)',
-    // Bayesian
-    'P(θ|D) ∝ P(D|θ)P(θ)', 'MCMC', 'Metropolis-Hastings',
-    'Credible Interval (95%)', 'Prior → Posterior',
-    // Machine Learning
-    'SVM: max margin', 'k-NN', 'Random Forest', 'XGBoost',
-    'PCA: X = T Pᵀ + E', 'k-means: min Σ||xᵢ - μₖ||²',
-    'Neural Network: y = f(Wx + b)', 'ReLU', 'Dropout',
-    // Climate & Environment
-    'CO₂ ppm', 'CH₄ ppb', 'N₂O ppb', 'Global Warming Potential',
-    'IPCC AR6', 'CMIP6', 'SSP scenarios', 'Carbon Budget',
-    'GHG Inventory', 'EDGAR Database', 'Emission Factor',
-    // PhD Research
-    'PhD Research', 'Statistical Computing', 'Data Science',
-    'Reproducible Research', 'Open Science', 'Peer Review'
+    'LASSO', 'Ridge', 'ARIMA(p,d,q)', 'SARIMA(P,D,Q)ₛ', 'ACF', 'PACF',
+    'H₀: μ₁ = μ₂', 't = (x̄₁ - x̄₂)/SE', 'p-value', 'χ² = Σ(O-E)²/E',
+    'N(μ,σ²)', 'X ~ Bin(n,p)', 'X ~ Poisson(λ)', 'MCMC', 'Metropolis-Hastings',
+    'SVM', 'Random Forest', 'XGBoost', 'PCA', 'k-means',
+    'CO₂ ppm', 'CH₄ ppb', 'N₂O ppb', 'GWP', 'IPCC AR6', 'CMIP6',
+    'PhD Research', 'Statistical Computing', 'Data Science'
   ];
   const container = document.getElementById('particles');
   if (container) {
