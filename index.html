@@ -487,25 +487,6 @@
     color: var(--muted);
   }
 
-  /* ── KEYWORDS SECTION (SEO-VISIBLE, SUBTLE DESIGN) ── */
-  #seo-keywords {
-    padding: 40px 0 20px;
-    border-top: 1px solid var(--border);
-  }
-  .keyword-cloud {
-    display: flex; flex-wrap: wrap; gap: 10px;
-    max-width: 1100px; margin: 0 auto; padding: 0 52px;
-  }
-  .keyword-pill {
-    font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase;
-    padding: 4px 12px;
-    border: 1px solid var(--border);
-    color: var(--muted);
-    border-radius: 20px;
-    transition: border-color 0.2s, color 0.2s;
-  }
-  .keyword-pill:hover { border-color: var(--accent); color: var(--accent); }
-
   /* ── FOOTER ── */
   footer {
     border-top: 1px solid var(--border);
@@ -551,7 +532,6 @@
     .card-grid { grid-template-columns: 1fr; }
     .about-stat { padding: 15px 18px; }
     .about-stat-icon { font-size: 28px; }
-    .keyword-cloud { padding: 0 20px; }
   }
 </style>
 </head>
@@ -759,53 +739,6 @@
         </div>
       </div>
     </div>
-  </div>
-</section>
-
-
-<!-- ═══════════════════════════════════════════
-     SEO KEYWORD SECTION
-     Visible to search crawlers & users — 
-     styled as a subtle keyword cloud
-════════════════════════════════════════════ -->
-<section id="seo-keywords" aria-label="Topics and expertise">
-  <div class="container">
-    <p class="section-tag" style="margin-bottom:14px;">// topics &amp; expertise</p>
-  </div>
-  <div class="keyword-cloud">
-    <span class="keyword-pill">Statistical Consulting</span>
-    <span class="keyword-pill">Data Science Pakistan</span>
-    <span class="keyword-pill">Climate Dashboard</span>
-    <span class="keyword-pill">Drought Analysis</span>
-    <span class="keyword-pill">SPI SPEI SPTI</span>
-    <span class="keyword-pill">GHG Emissions Monitor</span>
-    <span class="keyword-pill">EDGAR Data</span>
-    <span class="keyword-pill">CO₂ Tracking</span>
-    <span class="keyword-pill">Time Series Analysis</span>
-    <span class="keyword-pill">ARIMA SARIMA</span>
-    <span class="keyword-pill">Machine Learning</span>
-    <span class="keyword-pill">Deep Learning</span>
-    <span class="keyword-pill">LSTM Forecasting</span>
-    <span class="keyword-pill">Python R Statistics</span>
-    <span class="keyword-pill">Plotly Chart.js</span>
-    <span class="keyword-pill">Streamlit Dashboard</span>
-    <span class="keyword-pill">Spatial Data Science</span>
-    <span class="keyword-pill">ArcGIS GeoPandas</span>
-    <span class="keyword-pill">Biostatistics</span>
-    <span class="keyword-pill">Regression Analysis</span>
-    <span class="keyword-pill">Hypothesis Testing</span>
-    <span class="keyword-pill">PhD Statistician</span>
-    <span class="keyword-pill">Quaid-i-Azam University</span>
-    <span class="keyword-pill">Islamabad Pakistan</span>
-    <span class="keyword-pill">Freelance Data Analyst</span>
-    <span class="keyword-pill">Research Support</span>
-    <span class="keyword-pill">Academic Statistics</span>
-    <span class="keyword-pill">Climate Change Analysis</span>
-    <span class="keyword-pill">Punjab Drought Monitoring</span>
-    <span class="keyword-pill">IPCC AR6</span>
-    <span class="keyword-pill">Environmental Data</span>
-    <span class="keyword-pill">Data Visualization</span>
-    <span class="keyword-pill">Interactive Dashboard</span>
   </div>
 </section>
 
