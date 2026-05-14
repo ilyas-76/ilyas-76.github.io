@@ -66,7 +66,9 @@
     font-family: 'Syne', sans-serif; font-weight: 800; font-size: 20px;
     letter-spacing: -0.5px; color: var(--white); text-decoration: none;
   }
-  .nav-logo span { color: var(--accent); }
+  .nav-logo .alpha { color: var(--white); }
+  .nav-logo .stat { color: var(--accent); }
+  .nav-logo .lab { color: var(--accent3); }
 
   /* Nav links - simplified */
   .nav-links { display: flex; align-items: center; gap: 4px; }
@@ -89,9 +91,9 @@
 
   /* ── HERO ── */
   .hero {
-    min-height: 100vh; display: flex; flex-direction: column;
+    min-height: 80vh; display: flex; flex-direction: column;
     align-items: center; justify-content: center;
-    text-align: center; padding: 100px 24px 80px;
+    text-align: center; padding: 100px 24px 60px;
     position: relative; z-index: 1;
   }
 
@@ -131,52 +133,23 @@
     box-shadow: 0 0 12px var(--accent);
   }
 
-  .hero-badge {
-    display: inline-flex; align-items: center; gap: 10px;
-    border: 1px solid rgba(56,189,248,0.2);
-    background: rgba(56,189,248,0.04);
-    padding: 8px 20px; font-size: 10px;
-    letter-spacing: 0.18em; text-transform: uppercase;
-    color: var(--accent); margin-bottom: 36px;
-    position: relative; z-index: 2;
-  }
-  .hero-badge::before {
-    content: ''; width: 7px; height: 7px; border-radius: 50%;
-    background: var(--accent3); animation: pulse 2s infinite;
-    flex-shrink: 0;
-  }
-  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.5)} }
-
   .hero h1 {
     font-family: 'Syne', sans-serif; font-weight: 800;
     font-size: clamp(56px, 10vw, 120px);
     line-height: 0.92; letter-spacing: -4px;
-    color: var(--white); margin-bottom: 12px;
+    color: var(--white); margin-bottom: 20px;
     position: relative; z-index: 2;
   }
-  .hero h1 .line2 { display: block; color: var(--accent); }
+  .hero h1 .alpha { color: var(--white); }
+  .hero h1 .stat { color: var(--accent); }
+  .hero h1 .lab { color: var(--accent3); }
 
   .hero-descriptor {
     font-family: 'Instrument Serif', serif; font-style: italic;
     font-size: clamp(17px, 2.2vw, 24px); color: var(--muted2);
-    margin: 28px 0 20px; max-width: 580px; line-height: 1.65;
+    margin: 20px 0 30px; max-width: 650px; line-height: 1.65;
     position: relative; z-index: 2;
   }
-
-  /* Stats counter row */
-  .hero-stats {
-    display: flex; gap: 40px; align-items: center;
-    margin: 40px 0 50px; position: relative; z-index: 2;
-    flex-wrap: wrap; justify-content: center;
-  }
-  .hero-stat { text-align: center; }
-  .hero-stat-num {
-    font-family: 'Syne', sans-serif; font-size: 32px; font-weight: 800;
-    color: var(--white); line-height: 1;
-  }
-  .hero-stat-num span { color: var(--accent); }
-  .hero-stat-label { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-top: 6px; }
-  .hero-stat-sep { width: 1px; height: 40px; background: var(--border); }
 
   /* CTA buttons */
   .hero-ctas { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; position: relative; z-index: 2; }
@@ -208,7 +181,7 @@
   @keyframes bob { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(8px)} }
 
   /* ── SECTION COMMONS ── */
-  section { padding: 80px 0 100px; position: relative; z-index: 1; }
+  section { padding: 60px 0 80px; position: relative; z-index: 1; }
   .container { max-width: 1200px; margin: 0 auto; padding: 0 52px; }
   .section-tag {
     font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
@@ -229,7 +202,7 @@
     margin: 16px 0 20px;
   }
 
-  /* ── DASHBOARDS SECTION (Simplified) ── */
+  /* ── DASHBOARDS SECTION ── */
   #dashboards { background: linear-gradient(to bottom, transparent, rgba(56,189,248,0.015), transparent); }
 
   /* ── CARD GRID ── */
@@ -297,6 +270,7 @@
   .dash-status .dot { width: 6px; height: 6px; border-radius: 50%; }
   .dash-status.live { color: var(--accent3); }
   .dash-status.live .dot { background: var(--accent3); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.5)} }
 
   .dash-tags { display: flex; gap: 6px; flex-wrap: wrap; }
   .tag {
@@ -304,6 +278,69 @@
     border: 1px solid rgba(99,179,237,0.15); color: var(--muted2);
     text-transform: uppercase;
   }
+
+  /* ── SERVICES SECTION ── */
+  .services { background: linear-gradient(to bottom, transparent, rgba(129,140,248,0.015), transparent); }
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    margin-top: 40px;
+  }
+  .service-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px 24px;
+    transition: transform 0.3s, border-color 0.3s;
+    text-align: center;
+  }
+  .service-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--accent2);
+  }
+  .service-icon { font-size: 40px; margin-bottom: 16px; }
+  .service-card h3 {
+    font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700;
+    color: var(--white); margin-bottom: 12px;
+  }
+  .service-card p {
+    font-size: 12px; line-height: 1.7; color: var(--muted); margin-bottom: 20px;
+  }
+  .service-btn {
+    display: inline-block;
+    padding: 8px 20px;
+    background: transparent;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: all 0.2s;
+    border-radius: 30px;
+  }
+  .service-btn:hover { background: var(--accent); color: var(--bg); }
+
+  /* Support button */
+  .support-section {
+    text-align: center;
+    margin: 40px 0 20px;
+  }
+  .support-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: #13C3FF;
+    color: #1a1a2e;
+    padding: 12px 28px;
+    border-radius: 40px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 14px;
+    transition: transform 0.2s;
+  }
+  .support-btn:hover { transform: translateY(-2px); }
 
   /* ── ABOUT BANNER ── */
   #about {
@@ -327,6 +364,11 @@
   .about-left p {
     font-size: 12px; line-height: 1.9; color: var(--muted); margin-bottom: 14px;
   }
+  .university {
+    color: var(--accent3);
+    font-weight: bold;
+    margin-top: 10px;
+  }
   .about-right { display: flex; flex-direction: column; gap: 18px; }
   .about-stat {
     display: flex; align-items: center; gap: 18px;
@@ -348,8 +390,12 @@
     display: flex; align-items: center; justify-content: space-between;
     position: relative; z-index: 1; flex-wrap: wrap; gap: 16px;
   }
-  .footer-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 16px; color: var(--white); }
-  .footer-logo span { color: var(--accent); }
+  .footer-logo { 
+    font-family: 'Syne', sans-serif; font-weight: 800; font-size: 16px; 
+  }
+  .footer-logo .alpha { color: var(--white); }
+  .footer-logo .stat { color: var(--accent); }
+  .footer-logo .lab { color: var(--accent3); }
   footer .email-link {
     font-size: 11px; color: var(--accent); text-decoration: none;
   }
@@ -370,7 +416,6 @@
     .container { padding: 0 20px; }
     footer { padding: 28px 20px; flex-direction: column; text-align: center; }
     .hero h1 { letter-spacing: -2px; }
-    .hero-stat-sep { display: none; }
     .card-grid { grid-template-columns: 1fr; }
   }
 </style>
@@ -385,9 +430,10 @@
      NAV
 ════════════════════════════════════════════ -->
 <nav>
-  <a href="#" class="nav-logo">Alpha<span>-Stat</span></a>
+  <a href="#" class="nav-logo"><span class="alpha">Alpha</span><span class="stat">-Stat</span><span class="lab">-Lab</span></a>
   <div class="nav-links">
     <a href="#dashboards" class="nav-link">Dashboards</a>
+    <a href="#services" class="nav-link">Services</a>
     <a href="#about" class="nav-link">About</a>
   </div>
   <a href="mailto:milyas3201@gmail.com" class="nav-email">✉ milyas3201@gmail.com</a>
@@ -403,38 +449,17 @@
   <div class="hero-ring ring2"></div>
   <div class="hero-ring ring3"></div>
 
-  <div class="hero-badge">
-    PhD Scholar of Statistics · Data Science Researcher
-  </div>
-
   <h1>
-    Alpha<span class="line2">-Stat</span>
+    <span class="alpha">Alpha</span><span class="stat">-Stat</span><span class="lab">-Lab</span>
   </h1>
 
   <p class="hero-descriptor">
-    Interactive dashboards for climate analysis, drought monitoring, and statistical intelligence.
+    Transforming complex data into actionable insights through interactive dashboards and statistical intelligence.
   </p>
 
-  <div class="hero-stats">
-    <div class="hero-stat">
-      <div class="hero-stat-num">1<span>+</span></div>
-      <div class="hero-stat-label">Active Dashboard</div>
-    </div>
-    <div class="hero-stat-sep"></div>
-    <div class="hero-stat">
-      <div class="hero-stat-num">32<span></span></div>
-      <div class="hero-stat-label">Districts</div>
-    </div>
-    <div class="hero-stat-sep"></div>
-    <div class="hero-stat">
-      <div class="hero-stat-num">∞</div>
-      <div class="hero-stat-label">Growing</div>
-    </div>
-  </div>
-
   <div class="hero-ctas">
-    <a href="#dashboards" class="btn-primary">Explore Dashboard</a>
-    <a href="#about" class="btn-ghost">Learn More</a>
+    <a href="#dashboards" class="btn-primary">Explore Dashboards</a>
+    <a href="#services" class="btn-ghost">Our Services</a>
   </div>
 
   <div class="scroll-hint">
@@ -445,20 +470,21 @@
 
 
 <!-- ═══════════════════════════════════════════
-     DASHBOARDS SECTION - SINGLE DASHBOARD
+     DASHBOARDS SECTION
 ════════════════════════════════════════════ -->
 <section id="dashboards">
   <div class="container">
     <div class="reveal">
-      <p class="section-tag">// dashboard</p>
-      <h2 class="section-title">Drought Indices Dashboard</h2>
+      <p class="section-tag">// interactive dashboards</p>
+      <h2 class="section-title">Data Visualization Tools</h2>
       <div class="section-divider"></div>
       <p class="section-desc">
-        SPI · SPEI · SPTI analysis for 32 districts of Punjab (1981-2021). Interactive time series with drought classification.
+        Explore climate and environmental data through interactive, research-grade dashboards.
       </p>
     </div>
 
     <div class="card-grid reveal">
+
       <!-- DASHBOARD 1: PUNJAB CLIMATE DASHBOARD -->
       <div class="dash-card featured" onclick="window.open('climate-dashboard.html','_blank')">
         <div class="dash-card-visual">
@@ -476,7 +502,7 @@
         </div>
         <div class="dash-card-body">
           <h3>📊 Drought Indices Dashboard</h3>
-          <p>SPI, SPEI & SPTI drought analysis for 32 districts of Punjab (1981-2021). Interactive time series with zoom & pan, plus drought category counts.</p>
+          <p>SPI, SPEI & SPTI analysis for 32 districts of Punjab (1981-2021). Interactive time series with zoom & pan, plus drought category counts.</p>
           <div class="dash-card-footer">
             <div class="dash-status live"><div class="dot"></div> Live Demo</div>
             <div class="dash-tags">
@@ -490,7 +516,7 @@
         </div>
       </div>
 
-      <!-- DASHBOARD 2: GHG EMISSIONS MONITOR (NEW) -->
+      <!-- DASHBOARD 2: GHG EMISSIONS MONITOR -->
       <div class="dash-card featured" onclick="window.open('ghg-dashboard.html','_blank')">
         <div class="dash-card-visual" style="background: linear-gradient(135deg, #1a472a, #2ecc71);">
           <span class="dash-card-icon">🌍</span>
@@ -520,7 +546,55 @@
           </div>
         </div>
       </div>
+
     </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     SERVICES SECTION - STATISTICAL CONSULTING
+════════════════════════════════════════════ -->
+<section id="services" class="services">
+  <div class="container">
+    <div class="reveal">
+      <p class="section-tag">// services</p>
+      <h2 class="section-title">Statistical Consulting</h2>
+      <div class="section-divider"></div>
+      <p class="section-desc">
+        Leverage PhD-level expertise for your data analysis, research, and visualization needs.
+      </p>
+    </div>
+
+    <div class="services-grid reveal">
+      <div class="service-card">
+        <div class="service-icon">📊</div>
+        <h3>Data Analysis</h3>
+        <p>Statistical modeling, hypothesis testing, time series analysis, and advanced analytics for research and business applications.</p>
+        <a href="mailto:milyas3201@gmail.com?subject=Data%20Analysis%20Inquiry" class="service-btn">Inquire →</a>
+      </div>
+      <div class="service-card">
+        <div class="service-icon">📈</div>
+        <h3>Dashboard Creation</h3>
+        <p>Custom interactive dashboards for climate data, emissions monitoring, business intelligence, and research visualization.</p>
+        <a href="mailto:milyas3201@gmail.com?subject=Dashboard%20Creation%20Inquiry" class="service-btn">Inquire →</a>
+      </div>
+      <div class="service-card">
+        <div class="service-icon">🔬</div>
+        <h3>Research Support</h3>
+        <p>PhD-level assistance with statistical methodology, data interpretation, academic writing, and publication-ready figures.</p>
+        <a href="mailto:milyas3201@gmail.com?subject=Research%20Support%20Inquiry" class="service-btn">Inquire →</a>
+      </div>
+    </div>
+
+    <!-- Ko-fi / Buy Me a Coffee Support Button -->
+    <div class="support-section reveal">
+      <a href="https://ko-fi.com/alphastatlab" target="_blank" class="support-btn">
+        ☕ Support Alpha-Stat-Lab
+      </a>
+      <p style="font-size: 11px; color: var(--muted); margin-top: 12px;">Support ongoing research and dashboard development</p>
+    </div>
+  </div>
 </section>
 
 
@@ -532,7 +606,8 @@
     <div class="about-inner reveal">
       <div class="about-left">
         <h2>Built by a<br><em>statistician</em>,<br>for everyone.</h2>
-        <p>Alpha-Stat-Lab is a personal research and education platform developed by a PhD scholar of Statistics — bridging rigorous statistical methods with interactive, accessible data science.</p>
+        <p>Alpha-Stat-Lab is a personal research and education platform developed by a PhD scholar of Statistics at the <strong>Department of Statistics, Quaid-i-Azam University, Islamabad, Pakistan</strong> — bridging rigorous statistical methods with interactive, accessible data science.</p>
+        <p class="university">🎓 Quaid-i-Azam University, Islamabad | PhD Statistics</p>
         <p>Every dashboard is grounded in academic depth, designed for researchers, students, and data professionals.</p>
         <a href="mailto:milyas3201@gmail.com" class="btn-ghost" style="display:inline-block;margin-top:20px">Get in Touch →</a>
       </div>
@@ -568,11 +643,16 @@
      FOOTER
 ════════════════════════════════════════════ -->
 <footer>
-  <div class="footer-logo">Alpha<span>-Stat</span></div>
+  <div class="footer-logo">
+    <span class="alpha">Alpha</span><span class="stat">-Stat</span><span class="lab">-Lab</span>
+  </div>
   <a href="mailto:milyas3201@gmail.com" class="email-link">✉ milyas3201@gmail.com</a>
-  <p>© 2025 Alpha-Stat-Lab · Climate Data Analytics</p>
+  <p>© 2025 Alpha-Stat-Lab · Data Science &amp; Statistical Intelligence</p>
 </footer>
 
+<!-- GoatCounter Analytics -->
+<script data-goatcounter="https://alphastatlab.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
 
 <script>
   /* ── SCROLL REVEAL ── */
@@ -584,11 +664,11 @@
 
   /* ── FLOATING STAT PARTICLES ── */
   const terms = [
-    'SPI', 'SPEI', 'SPTI', 'Drought Monitor',
-    'μ = Σx/n', 'σ² = Σ(x-μ)²/n', 'Punjab Climate',
-    'R² = 0.94', 'β₀ + β₁x', 'SPEI · SPI',
+    'SPI', 'SPEI', 'SPTI', 'Data Science',
+    'μ = Σx/n', 'σ² = Σ(x-μ)²/n', 'Statistical Computing',
+    'R² = 0.94', 'β₀ + β₁x', 'Climate Analytics',
     'Var(X+Y)', 'E[X] = μ', 'H₀: μ₁=μ₂',
-    'ρ(x,y)', 'N(0,1)', '32 Districts'
+    'ρ(x,y)', 'N(0,1)', 'PhD Research'
   ];
   const container = document.getElementById('particles');
   if (container) {
@@ -604,9 +684,5 @@
     });
   }
 </script>
-  
-    <!-- GoatCounter Analytics -->
-    <script data-goatcounter="https://alphastatlab.goatcounter.com/count"
-            async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>
