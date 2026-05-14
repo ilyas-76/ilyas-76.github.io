@@ -53,12 +53,13 @@
         .chart-container h3 { margin-bottom: 20px; color: #1a472a; font-size: 1.2em; border-left: 4px solid #2ecc71; padding-left: 15px; }
         canvas { max-height: 400px; }
         
+        .info-note { font-size: 11px; color: #666; text-align: center; margin-top: 10px; padding: 8px; background: #f8f9fa; border-radius: 8px; }
+        
         .footer { text-align: center; padding: 20px; color: white; opacity: 0.8; font-size: 12px; }
         .progress-bar { width: 100%; height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px; margin-top: 15px; overflow: hidden; }
         .progress-fill { height: 100%; background: #ffd700; width: 0%; transition: width 0.3s; }
         .data-status { font-size: 12px; color: #27ae60; margin-top: 10px; }
         
-        /* Variable selector pills */
         .variable-selector { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 5px; }
         .var-pill { padding: 8px 20px; border-radius: 30px; font-size: 13px; font-weight: bold; cursor: pointer; transition: all 0.2s; background: #f0f0f0; color: #333; border: 2px solid transparent; }
         .var-pill:hover { transform: scale(1.02); }
@@ -101,7 +102,7 @@
                     </div>
                 </div>
                 <div class="control-item">
-                    <label>📊 Chart Type</label>
+                    <label>📊 Time Series Chart Type</label>
                     <select id="chartTypeSelect">
                         <option value="line">📈 Line Chart (Trend)</option>
                         <option value="bar">📊 Bar Chart (Comparison)</option>
@@ -135,15 +136,19 @@
             <div class="stat-card"><h4>Latest Year (2024)</h4><div class="value" id="latestValue">—</div><div class="trend" id="latestChange">vs 1990</div></div>
         </div>
 
+        <!-- Time Series Chart -->
         <div class="chart-container">
             <h3>📈 Emissions Time Series</h3>
             <canvas id="emissionsChart"></canvas>
             <p style="text-align: center; margin-top: 15px; color: #666; font-size: 12px;">💡 Tip: Mouse wheel to zoom | Drag to pan | Double-click to reset</p>
         </div>
 
-        <div class="chart-container" id="sectorChartContainer" style="display: none;">
-            <h3>🏭 Sector Breakdown</h3>
+        <!-- Sector Comparison Bar Chart (for up to 10 countries) -->
+        <div class="chart-container" id="sectorChartContainer">
+            <h3>🏭 Sector Comparison by Country</h3>
+            <div id="sectorWarning" class="info-note" style="display: none; background: #fff3cd; color: #856404;">⚠️ Showing up to 10 countries. Please deselect some countries to see more details.</div>
             <canvas id="sectorChart"></canvas>
+            <p style="text-align: center; margin-top: 15px; color: #666; font-size: 12px;">📊 Average annual emissions by sector for selected countries</p>
         </div>
 
         <div class="footer">
@@ -169,7 +174,16 @@
         let currentChart = null;
         let currentSectorChart = null;
         
-        const sectorColors = { 'Energy': '#f39c12', 'Industry': '#e74c3c', 'Transport': '#3498db', 'Buildings': '#2ecc71', 'Agriculture': '#9b59b6', 'Waste': '#1abc9c' };
+        const sectorColors = { 
+            'Energy': '#f39c12', 
+            'Industry': '#e74c3c', 
+            'Transport': '#3498db', 
+            'Buildings': '#2ecc71', 
+            'Agriculture': '#9b59b6', 
+            'Waste': '#1abc9c' 
+        };
+        
+        const sectors = ['Energy', 'Industry', 'Transport', 'Buildings', 'Agriculture', 'Waste'];
         const gasNames = { ghg: 'Total GHG', co2: 'CO₂', ch4: 'CH₄', n2o: 'N₂O', fgas: 'F-gases' };
 
         // Setup variable selector
@@ -210,7 +224,6 @@
             const countryIdx = headers.findIndex(h => h.toLowerCase().includes('country'));
             const sectorIdx = headers.findIndex(h => h.toLowerCase().includes('sector'));
             
-            // Get year columns
             const yearCols = [];
             for (let i = 0; i < headers.length; i++) {
                 if (headers[i].match(/Y_\d{4}/)) {
@@ -309,6 +322,34 @@
             return result;
         }
         
+        // Get sector data for selected countries
+        function getSectorDataForCountries(startYear, endYear) {
+            const result = {};
+            const displayCountries = selectedCountries.slice(0, 10); // Max 10 for bar chart
+            
+            for (const country of displayCountries) {
+                const sectorTotals = {};
+                for (const sector of sectors) {
+                    let total = 0;
+                    let count = 0;
+                    for (const [key, yearlyData] of allData.entries()) {
+                        const [keyCountry, keySector] = key.split('|');
+                        if (keyCountry === country && keySector === sector) {
+                            for (let y = startYear; y <= endYear; y++) {
+                                if (yearlyData[y]) {
+                                    total += yearlyData[y];
+                                    count++;
+                                }
+                            }
+                        }
+                    }
+                    sectorTotals[sector] = count > 0 ? total / count : 0;
+                }
+                result[country] = sectorTotals;
+            }
+            return result;
+        }
+        
         function updateDashboard() {
             if (selectedCountries.length === 0) {
                 alert('Please select at least one country');
@@ -321,11 +362,21 @@
             document.getElementById('yearStartDisplay').textContent = startYear;
             document.getElementById('yearEndDisplay').textContent = endYear;
             
+            // Show warning if more than 10 countries
+            const warningDiv = document.getElementById('sectorWarning');
+            if (selectedCountries.length > 10) {
+                warningDiv.style.display = 'block';
+                warningDiv.textContent = `⚠️ Showing only top 10 of ${selectedCountries.length} selected countries in sector chart. Please deselect some for clearer view.`;
+            } else {
+                warningDiv.style.display = 'none';
+            }
+            
+            // === TIME SERIES CHART ===
             const data = getDataForCountries();
             const years = [];
             for (let y = startYear; y <= endYear; y++) years.push(y);
             
-            const colors = ['#e74c3c', '#3498db', '#2ecc71', '#f39c12', '#9b59b6', '#1abc9c', '#e67e22', '#27ae60'];
+            const colors = ['#e74c3c', '#3498db', '#2ecc71', '#f39c12', '#9b59b6', '#1abc9c', '#e67e22', '#27ae60', '#d35400', '#8e44ad'];
             const datasets = [];
             let allValues = [];
             let idx = 0;
@@ -375,8 +426,6 @@
                 const pct = ((latestVal - baseVal) / baseVal * 100).toFixed(1);
                 document.getElementById('latestChange').innerHTML = pct + '% vs 1990';
                 document.getElementById('latestChange').className = pct < 0 ? 'trend down' : 'trend up';
-            } else {
-                document.getElementById('latestChange').innerHTML = '—';
             }
             
             const ctx = document.getElementById('emissionsChart').getContext('2d');
@@ -389,7 +438,7 @@
                     maintainAspectRatio: true,
                     interaction: { mode: 'index', intersect: false },
                     plugins: {
-                        tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: ${ctx.raw?.toFixed(0) || 0} kt CO₂eq` } },
+                        tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: ${ctx.raw?.toFixed(0) || 0} kt ${currentGas === 'co2' ? 'CO₂' : currentGas === 'ch4' ? 'CH₄' : currentGas === 'n2o' ? 'N₂O' : currentGas === 'fgas' ? 'F-gases' : 'CO₂eq'}` } },
                         zoom: { zoom: { wheel: { enabled: true }, mode: 'x' }, pan: { enabled: true, mode: 'x' } }
                     },
                     scales: {
@@ -399,8 +448,40 @@
                 }
             });
             
-            // Hide sector chart for now (keep for future use)
-            document.getElementById('sectorChartContainer').style.display = 'none';
+            // === SECTOR COMPARISON BAR CHART ===
+            const sectorData = getSectorDataForCountries(startYear, endYear);
+            const displayCountries = selectedCountries.slice(0, 10);
+            
+            const sectorCtx = document.getElementById('sectorChart').getContext('2d');
+            if (currentSectorChart) currentSectorChart.destroy();
+            
+            const sectorDatasets = sectors.map((sector, idx) => ({
+                label: sector,
+                data: displayCountries.map(c => sectorData[c]?.[sector] || 0),
+                backgroundColor: sectorColors[sector] || `hsl(${idx * 60}, 70%, 50%)`,
+                borderRadius: 6
+            }));
+            
+            currentSectorChart = new Chart(sectorCtx, {
+                type: 'bar',
+                data: {
+                    labels: displayCountries,
+                    datasets: sectorDatasets
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: ${ctx.raw?.toFixed(0) || 0} kt ${currentGas === 'co2' ? 'CO₂' : currentGas === 'ch4' ? 'CH₄' : currentGas === 'n2o' ? 'N₂O' : currentGas === 'fgas' ? 'F-gases' : 'CO₂eq'}` } },
+                        legend: { position: 'bottom' }
+                    },
+                    scales: {
+                        x: { title: { display: true, text: 'Country' }, ticks: { maxRotation: 45, autoSkip: true } },
+                        y: { title: { display: true, text: `Average Annual Emissions (kt ${currentGas === 'co2' ? 'CO₂' : currentGas === 'ch4' ? 'CH₄' : currentGas === 'n2o' ? 'N₂O' : currentGas === 'fgas' ? 'F-gases' : 'CO₂eq'})` }, beginAtZero: true }
+                    }
+                }
+            });
         }
         
         // Event listeners
