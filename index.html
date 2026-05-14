@@ -60,7 +60,7 @@
       "email": "milyas3201@gmail.com",
       "knowsAbout": ["Statistics","Data Science","Machine Learning","Climate Analytics","Drought Monitoring","GHG Emissions","Time Series Analysis","Python","R","Dashboard Development"],
       "url": "https://alphastatlab.com/",
-      "sameAs": ["https://www.fiverr.com/", "https://www.upwork.com/"]
+      "sameAs": ["https://www.linkedin.com/in/muhammad-ilyas-statistics", "https://www.researchgate.net/profile/Muhammad-Ilyas-144", "https://www.fiverr.com/", "https://www.upwork.com/"]
     },
     {
       "@type": "ProfessionalService",
@@ -131,7 +131,6 @@
     overflow-x: hidden;
   }
 
-  /* ── GRID BACKGROUND ── */
   body::before {
     content: '';
     position: fixed; inset: 0;
@@ -142,7 +141,6 @@
     pointer-events: none; z-index: 0;
   }
 
-  /* ── ORB GLOWS ── */
   .orb { position: fixed; border-radius: 50%; filter: blur(110px); pointer-events: none; z-index: 0; }
   .orb1 { width: 700px; height: 700px; background: #0369a1; top: -250px; left: -200px; opacity: 0.14; animation: floatorb 20s ease-in-out infinite alternate; }
   .orb2 { width: 500px; height: 500px; background: #4f46e5; bottom: -100px; right: -100px; opacity: 0.12; animation: floatorb 25s ease-in-out infinite alternate-reverse; }
@@ -152,7 +150,6 @@
     to   { transform: translate(50px,35px) scale(1.12); }
   }
 
-  /* ── NAV ── */
   nav {
     position: fixed; top: 0; left: 0; right: 0;
     display: flex; align-items: center; justify-content: space-between;
@@ -188,7 +185,6 @@
   }
   .nav-email:hover { background: var(--accent); color: var(--bg); }
 
-  /* ── HERO ── */
   .hero {
     min-height: 80vh; display: flex; flex-direction: column;
     align-items: center; justify-content: center;
@@ -283,7 +279,6 @@
   .scroll-line { width: 1px; height: 50px; background: linear-gradient(to bottom, var(--accent), transparent); }
   @keyframes bob { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(8px)} }
 
-  /* ── SECTION COMMONS ── */
   section { padding: 60px 0 80px; position: relative; z-index: 1; }
   .container { max-width: 1200px; margin: 0 auto; padding: 0 52px; }
   .section-tag {
@@ -305,7 +300,6 @@
     margin: 16px 0 20px;
   }
 
-  /* ── DASHBOARDS SECTION ── */
   #dashboards { background: linear-gradient(to bottom, transparent, rgba(56,189,248,0.015), transparent); }
 
   .card-grid {
@@ -379,7 +373,6 @@
     text-transform: uppercase;
   }
 
-  /* ── SERVICES SECTION ── */
   .services { background: linear-gradient(to bottom, transparent, rgba(129,140,248,0.015), transparent); }
   .services-grid {
     display: grid;
@@ -422,7 +415,6 @@
   }
   .service-btn:hover { background: var(--accent); color: var(--bg); }
 
-  /* ── ABOUT SECTION ── */
   #about {
     padding: 60px 0;
     border-top: 1px solid var(--border);
@@ -487,7 +479,32 @@
     color: var(--muted);
   }
 
-  /* ── FOOTER ── */
+  /* Social Links Styles */
+  .social-links {
+    display: flex;
+    gap: 16px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+  }
+  .social-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 10px 20px;
+    border-radius: 40px;
+    font-size: 12px;
+    color: var(--white);
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .social-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    transform: translateY(-2px);
+  }
+
   footer {
     border-top: 1px solid var(--border);
     padding: 36px 52px;
@@ -505,17 +522,28 @@
   .footer-logo .alpha { color: var(--white); }
   .footer-logo .stat { color: var(--accent); }
   .footer-logo .lab { color: var(--accent3); }
+  .footer-center {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .footer-center a {
+    font-size: 11px;
+    color: var(--muted2);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .footer-center a:hover { color: var(--accent); }
   footer .email-link {
     font-size: 11px; color: var(--accent); text-decoration: none;
   }
   footer .email-link:hover { text-decoration: underline; }
   footer p { font-size: 10px; color: var(--muted); }
 
-  /* ── REVEAL ANIMATION ── */
   .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.75s ease, transform 0.75s ease; }
   .reveal.visible { opacity: 1; transform: translateY(0); }
 
-  /* ── RESPONSIVE ── */
   @media (max-width: 900px) {
     .about-inner { grid-template-columns: 1fr; gap: 40px; }
   }
@@ -524,6 +552,10 @@
     .nav-links { display: none; }
     .container { padding: 0 20px; }
     footer { padding: 28px 20px; flex-direction: column; text-align: center; }
+    .footer-center { order: 1; }
+    .footer-logo { order: 0; }
+    footer .email-link { order: 2; }
+    footer p { order: 3; }
     .hero h1 { 
       font-size: clamp(40px, 7vw, 70px);
       white-space: normal;
@@ -532,6 +564,7 @@
     .card-grid { grid-template-columns: 1fr; }
     .about-stat { padding: 15px 18px; }
     .about-stat-icon { font-size: 28px; }
+    .social-links { justify-content: center; }
   }
 </style>
 </head>
@@ -541,9 +574,6 @@
 <div class="orb orb2"></div>
 <div class="orb orb3"></div>
 
-<!-- ═══════════════════════════════════════════
-     NAV
-════════════════════════════════════════════ -->
 <nav>
   <a href="#" class="nav-logo" aria-label="AlphaStatLab Home"><span class="alpha">Alpha</span><span class="stat">Stat</span><span class="lab">Lab</span></a>
   <div class="nav-links">
@@ -555,9 +585,6 @@
 </nav>
 
 
-<!-- ═══════════════════════════════════════════
-     HERO
-════════════════════════════════════════════ -->
 <section class="hero" id="home" aria-label="Hero section">
   <div class="stat-particles" id="particles" aria-hidden="true"></div>
   <div class="hero-ring ring1" aria-hidden="true"></div>
@@ -584,9 +611,6 @@
 </section>
 
 
-<!-- ═══════════════════════════════════════════
-     DASHBOARDS SECTION
-════════════════════════════════════════════ -->
 <section id="dashboards" aria-labelledby="dashboards-heading">
   <div class="container">
     <div class="reveal">
@@ -599,7 +623,6 @@
     </div>
 
     <div class="card-grid reveal">
-      <!-- DASHBOARD 1: DROUGHT INDICES -->
       <article class="dash-card featured" onclick="window.open('drought-dashboard/climate-dashboard.html','_blank')" role="button" tabindex="0" aria-label="Open Drought Indices Dashboard">
         <div class="dash-card-visual">
           <span class="dash-card-icon" aria-hidden="true">💧</span>
@@ -626,7 +649,6 @@
         </div>
       </article>
 
-      <!-- DASHBOARD 2: GHG EMISSIONS -->
       <article class="dash-card featured" onclick="window.open('ghg-dashboard/ghg-dashboard.html','_blank')" role="button" tabindex="0" aria-label="Open GHG Emissions Monitor">
         <div class="dash-card-visual" style="background: linear-gradient(135deg, #1a472a, #2ecc71);">
           <span class="dash-card-icon" aria-hidden="true">🌍</span>
@@ -657,9 +679,6 @@
 </section>
 
 
-<!-- ═══════════════════════════════════════════
-     SERVICES SECTION
-════════════════════════════════════════════ -->
 <section id="services" class="services" aria-labelledby="services-heading">
   <div class="container">
     <div class="reveal">
@@ -695,9 +714,6 @@
 </section>
 
 
-<!-- ═══════════════════════════════════════════
-     ABOUT SECTION
-════════════════════════════════════════════ -->
 <section id="about" aria-labelledby="about-heading">
   <div class="container">
     <div class="about-inner reveal">
@@ -706,7 +722,13 @@
         <p>AlphaStatLab is a personal research and consulting platform developed by <strong>Muhammad Ilyas</strong> — a PhD scholar in Statistics at Quaid-i-Azam University, Islamabad, Pakistan. The platform bridges rigorous statistical science with interactive, accessible data visualisation.</p>
         <p>Specialist areas include spatiotemporal drought monitoring, climate change analysis, machine learning and deep learning for environmental forecasting, and biostatistics. Bronze medalist in B.S. Statistics; PEEF scholarship recipient for both B.S. and M.Phil degrees.</p>
         <p class="university">🎓 PhD Statistics · Quaid-i-Azam University, Islamabad, Pakistan</p>
-        <a href="mailto:milyas3201@gmail.com" class="btn-ghost" style="display:inline-block;margin-top:20px" aria-label="Get in touch with Muhammad Ilyas">Get in Touch →</a>
+        
+        <!-- Social Links Section - Added Here -->
+        <div class="social-links">
+          <a href="mailto:milyas3201@gmail.com" class="social-btn" aria-label="Email Muhammad Ilyas">📧 Email</a>
+          <a href="https://www.linkedin.com/in/muhammad-ilyas-statistics" target="_blank" rel="noopener noreferrer" class="social-btn" aria-label="LinkedIn Profile">🔗 LinkedIn</a>
+          <a href="https://www.researchgate.net/profile/Muhammad-Ilyas-144" target="_blank" rel="noopener noreferrer" class="social-btn" aria-label="ResearchGate Profile">📚 ResearchGate</a>
+        </div>
       </div>
       <div class="about-right">
         <div class="about-stat">
@@ -734,7 +756,7 @@
           <div class="about-stat-icon" aria-hidden="true">📫</div>
           <div class="about-stat-text">
             <h4>Open for Global Collaboration</h4>
-            <p>Research partnerships, statistical consulting, and dashboard development worldwide. Available via Fiverr and Upwork for freelance data science projects. Contact: milyas3201@gmail.com.</p>
+            <p>Research partnerships, statistical consulting, and dashboard development worldwide. Available via Fiverr and Upwork for freelance data science projects. Connect on LinkedIn or ResearchGate.</p>
           </div>
         </div>
       </div>
@@ -743,18 +765,18 @@
 </section>
 
 
-<!-- ═══════════════════════════════════════════
-     FOOTER
-════════════════════════════════════════════ -->
 <footer>
   <div class="footer-logo">
     <span class="alpha">Alpha</span><span class="stat">Stat</span><span class="lab">Lab</span>
   </div>
-  <a href="mailto:milyas3201@gmail.com" class="email-link" aria-label="Email AlphaStatLab">✉ milyas3201@gmail.com</a>
+  <div class="footer-center">
+    <a href="https://www.linkedin.com/in/muhammad-ilyas-statistics" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+    <a href="https://www.researchgate.net/profile/Muhammad-Ilyas-144" target="_blank" rel="noopener noreferrer">ResearchGate</a>
+    <a href="mailto:milyas3201@gmail.com">Email</a>
+  </div>
   <p>© 2025 AlphaStatLab · Statistical Consulting &amp; Data Science · Islamabad, Pakistan</p>
 </footer>
 
-<!-- GoatCounter Analytics -->
 <script data-goatcounter="https://alphastatlab.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script>
 
@@ -765,7 +787,6 @@
   }, { threshold: 0.08 });
   reveals.forEach(r => obs.observe(r));
 
-  // Keyboard support for card click
   document.querySelectorAll('.dash-card[role="button"]').forEach(card => {
     card.addEventListener('keydown', e => {
       if (e.key === 'Enter' || e.key === ' ') card.click();
