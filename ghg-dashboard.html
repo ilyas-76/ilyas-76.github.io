@@ -65,10 +65,6 @@
         .var-pill:hover { transform: scale(1.02); }
         .var-pill.active { background: #2ecc71; color: white; border-color: #1a472a; }
         .var-pill.ghg { background: #1a472a; color: white; }
-        .var-pill.co2 { background: #3498db; color: white; }
-        .var-pill.ch4 { background: #e74c3c; color: white; }
-        .var-pill.n2o { background: #9b59b6; color: white; }
-        .var-pill.fgas { background: #f39c12; color: white; }
         
         @media (max-width: 768px) { .control-group { grid-template-columns: 1fr; } .stat-card .value { font-size: 20px; } }
     </style>
@@ -95,11 +91,8 @@
                     <label>💨 Gas / Variable</label>
                     <div class="variable-selector" id="variableSelector">
                         <div class="var-pill ghg active" data-var="ghg">🌍 Total GHG</div>
-                        <div class="var-pill co2" data-var="co2">🫧 CO₂</div>
-                        <div class="var-pill ch4" data-var="ch4">🔥 CH₄</div>
-                        <div class="var-pill n2o" data-var="n2o">💨 N₂O</div>
-                        <div class="var-pill fgas" data-var="fgas">⚙️ F-gases</div>
                     </div>
+                    <p style="font-size: 11px; color: #666; margin-top: 8px;">📌 Using country_totals.csv for accurate data</p>
                 </div>
                 <div class="control-item">
                     <label>📊 Time Series Chart Type</label>
@@ -126,7 +119,7 @@
             </div>
             
             <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
-            <div class="data-status" id="dataStatus">📁 Loading GHG data...</div>
+            <div class="data-status" id="dataStatus">📁 Loading GHG data from country_totals.csv...</div>
         </div>
 
         <div class="stats" id="statsContainer">
@@ -138,109 +131,90 @@
 
         <!-- Time Series Chart -->
         <div class="chart-container">
-            <h3>📈 Emissions Time Series</h3>
+            <h3>📈 Emissions Time Series (Complete Country Totals)</h3>
             <canvas id="emissionsChart"></canvas>
-            <p style="text-align: center; margin-top: 15px; color: #666; font-size: 12px;">💡 Tip: Mouse wheel to zoom | Drag to pan | Double-click to reset</p>
+            <p style="text-align: center; margin-top: 15px; color: #666; font-size: 12px;">💡 Data from country_totals.csv | Includes all sectors (Energy, Industry, Transport, Buildings, Agriculture, Waste, Indirect, etc.)</p>
         </div>
 
-        <!-- Sector Comparison Bar Chart (for up to 10 countries) -->
+        <!-- Sector Bar Chart -->
         <div class="chart-container" id="sectorChartContainer">
-            <h3>🏭 Sector Comparison by Country</h3>
-            <div id="sectorWarning" class="info-note" style="display: none; background: #fff3cd; color: #856404;">⚠️ Showing up to 10 countries. Please deselect some countries to see more details.</div>
+            <h3>🏭 Sector Breakdown (Selected Countries)</h3>
+            <div id="sectorWarning" class="info-note" style="display: none; background: #fff3cd; color: #856404;">⚠️ Showing up to 10 countries. Please deselect some for clearer view.</div>
             <canvas id="sectorChart"></canvas>
-            <p style="text-align: center; margin-top: 15px; color: #666; font-size: 12px;">📊 Average annual emissions by sector for selected countries</p>
+            <p style="text-align: center; margin-top: 15px; color: #666; font-size: 12px;">📊 Data from ghg_by_sector.csv | Average annual emissions by sector</p>
         </div>
 
         <div class="footer">
-            <p>Alpha-Stat-Lab | GHG Emissions Monitor | Data: EDGAR 2025</p>
-            <p style="font-size: 11px;">Source: European Commission, Joint Research Centre (JRC), EDGAR_2025_GHG</p>
+            <p>Alpha-Stat-Lab | GHG Emissions Monitor | Data: EDGAR 2025 | Source: European Commission, JRC</p>
         </div>
     </div>
 
     <script>
-        // File mapping for each gas
-        const gasFiles = {
-            ghg: 'ghg_by_sector.csv',
-            co2: 'co2_emissions.csv',
-            ch4: 'ch4_emissions.csv',
-            n2o: 'n2o_emissions.csv',
-            fgas: 'fgases_emissions.csv'
-        };
-        
-        let currentGas = 'ghg';
-        let allData = {};
+        // Data stores
+        let totalsData = {};      // From country_totals.csv (accurate totals)
+        let sectorData = {};      // From ghg_by_sector.csv (sector breakdown)
         let countries = [];
-        let selectedCountries = ['China', 'India', 'United States'];
+        let selectedCountries = ['China', 'United States', 'India'];
         let currentChart = null;
         let currentSectorChart = null;
         
-        const sectorColors = { 
-            'Energy': '#f39c12', 
-            'Industry': '#e74c3c', 
-            'Transport': '#3498db', 
-            'Buildings': '#2ecc71', 
-            'Agriculture': '#9b59b6', 
-            'Waste': '#1abc9c' 
-        };
-        
         const sectors = ['Energy', 'Industry', 'Transport', 'Buildings', 'Agriculture', 'Waste'];
-        const gasNames = { ghg: 'Total GHG', co2: 'CO₂', ch4: 'CH₄', n2o: 'N₂O', fgas: 'F-gases' };
+        const sectorColors = { 
+            'Energy': '#f39c12', 'Industry': '#e74c3c', 'Transport': '#3498db', 
+            'Buildings': '#2ecc71', 'Agriculture': '#9b59b6', 'Waste': '#1abc9c' 
+        };
 
-        // Setup variable selector
-        document.querySelectorAll('.var-pill').forEach(pill => {
-            pill.addEventListener('click', async () => {
-                document.querySelectorAll('.var-pill').forEach(p => p.classList.remove('active'));
-                pill.classList.add('active');
-                currentGas = pill.dataset.var;
-                document.getElementById('dataStatus').innerHTML = `📁 Loading ${gasNames[currentGas]} data...`;
-                document.getElementById('progressFill').style.width = '0%';
-                await loadCSV();
-                updateDashboard();
-            });
-        });
-
-        async function loadCSV() {
-            const filename = gasFiles[currentGas];
-            document.getElementById('progressFill').style.width = '30%';
+        // Load country_totals.csv (for accurate time series)
+        async function loadTotalsData() {
+            const filename = 'country_totals.csv';
+            document.getElementById('dataStatus').innerHTML = '📁 Loading country_totals.csv...';
+            document.getElementById('progressFill').style.width = '20%';
+            
             try {
                 const response = await fetch(filename);
                 if (!response.ok) throw new Error(`HTTP ${response.status}: ${filename} not found`);
                 const text = await response.text();
-                document.getElementById('progressFill').style.width = '70%';
-                parseCSV(text);
+                document.getElementById('progressFill').style.width = '60%';
+                parseTotalsCSV(text);
+                document.getElementById('progressFill').style.width = '80%';
+                await loadSectorData();
                 document.getElementById('progressFill').style.width = '100%';
-                document.getElementById('dataStatus').innerHTML = `✅ ${gasNames[currentGas]} data loaded! ${countries.length} countries available.`;
+                document.getElementById('dataStatus').innerHTML = `✅ Data loaded! ${countries.length} countries available. Accurate totals from country_totals.csv`;
                 renderCountryList();
                 updateSelectedBadges();
+                updateDashboard();
             } catch (error) {
                 document.getElementById('dataStatus').innerHTML = `❌ Error loading ${filename}. Make sure the file exists.`;
                 console.error(error);
             }
         }
         
-        function parseCSV(csvText) {
+        function parseTotalsCSV(csvText) {
             const lines = csvText.trim().split('\n');
             const headers = lines[0].split(',');
-            const countryIdx = headers.findIndex(h => h.toLowerCase().includes('country'));
-            const sectorIdx = headers.findIndex(h => h.toLowerCase().includes('sector'));
             
+            // Find country column and year columns
+            let countryIdx = -1;
             const yearCols = [];
+            
             for (let i = 0; i < headers.length; i++) {
-                if (headers[i].match(/Y_\d{4}/)) {
-                    yearCols.push({ col: i, year: parseInt(headers[i].substring(2)) });
+                const h = headers[i].trim().replace(/['"]/g, '');
+                if (h.toLowerCase() === 'country') countryIdx = i;
+                if (h.match(/Y_\d{4}/)) {
+                    yearCols.push({ col: i, year: parseInt(h.substring(2)) });
                 }
             }
             yearCols.sort((a,b) => a.year - b.year);
             
-            const dataMap = new Map();
+            totalsData = {};
             const countrySet = new Set();
             
             for (let i = 1; i < lines.length; i++) {
                 const values = lines[i].split(',');
-                let country = countryIdx !== -1 ? values[countryIdx].trim().replace(/['"]/g, '') : '';
-                let sector = sectorIdx !== -1 ? values[sectorIdx].trim().replace(/['"]/g, '') : '';
+                if (values.length < 5) continue;
                 
-                if (!country || !sector) continue;
+                let country = countryIdx !== -1 ? values[countryIdx].trim().replace(/['"]/g, '') : '';
+                if (!country) continue;
                 country = country.replace(' and ', ' & ');
                 countrySet.add(country);
                 
@@ -253,13 +227,75 @@
                 }
                 
                 if (Object.keys(yearlyData).length > 0) {
-                    const key = `${country}|${sector}`;
-                    dataMap.set(key, yearlyData);
+                    totalsData[country] = yearlyData;
                 }
             }
             
             countries = Array.from(countrySet).sort();
-            allData = dataMap;
+        }
+        
+        // Load ghg_by_sector.csv (for sector breakdown)
+        async function loadSectorData() {
+            const filename = 'ghg_by_sector.csv';
+            try {
+                const response = await fetch(filename);
+                if (!response.ok) throw new Error(`HTTP ${response.status}: ${filename} not found`);
+                const text = await response.text();
+                parseSectorCSV(text);
+            } catch (error) {
+                console.warn('Sector data not available:', error);
+                document.getElementById('sectorChartContainer').style.display = 'none';
+            }
+        }
+        
+        function parseSectorCSV(csvText) {
+            const lines = csvText.trim().split('\n');
+            const headers = lines[0].split(',');
+            
+            let countryIdx = -1, sectorIdx = -1;
+            const yearCols = [];
+            
+            for (let i = 0; i < headers.length; i++) {
+                const h = headers[i].trim().replace(/['"]/g, '');
+                if (h.toLowerCase() === 'country') countryIdx = i;
+                if (h.toLowerCase() === 'sector') sectorIdx = i;
+                if (h.match(/Y_\d{4}/)) {
+                    yearCols.push({ col: i, year: parseInt(h.substring(2)) });
+                }
+            }
+            yearCols.sort((a,b) => a.year - b.year);
+            
+            sectorData = {};
+            
+            for (let i = 1; i < lines.length; i++) {
+                const values = lines[i].split(',');
+                if (values.length < 5) continue;
+                
+                let country = countryIdx !== -1 ? values[countryIdx].trim().replace(/['"]/g, '') : '';
+                let sector = sectorIdx !== -1 ? values[sectorIdx].trim().replace(/['"]/g, '') : '';
+                
+                if (!country || !sector) continue;
+                country = country.replace(' and ', ' & ');
+                
+                // Skip non-standard sectors for breakdown
+                if (!sectors.includes(sector)) continue;
+                
+                const yearlyData = {};
+                for (const yc of yearCols) {
+                    const val = parseFloat(values[yc.col]);
+                    if (!isNaN(val) && val > 0) {
+                        yearlyData[yc.year] = val;
+                    }
+                }
+                
+                if (Object.keys(yearlyData).length > 0) {
+                    if (!sectorData[country]) sectorData[country] = {};
+                    if (!sectorData[country][sector]) sectorData[country][sector] = {};
+                    for (const [year, val] of Object.entries(yearlyData)) {
+                        sectorData[country][sector][year] = (sectorData[country][sector][year] || 0) + val;
+                    }
+                }
+            }
         }
         
         function renderCountryList() {
@@ -303,43 +339,31 @@
             }
         }
         
-        function getDataForCountries() {
+        function getTimeSeriesData() {
             const result = {};
             for (const country of selectedCountries) {
-                const totalByYear = {};
-                for (const [key, yearlyData] of allData.entries()) {
-                    const [keyCountry] = key.split('|');
-                    if (keyCountry === country) {
-                        for (const [year, val] of Object.entries(yearlyData)) {
-                            totalByYear[year] = (totalByYear[year] || 0) + val;
-                        }
-                    }
-                }
-                if (Object.keys(totalByYear).length > 0) {
-                    result[country] = totalByYear;
+                if (totalsData[country]) {
+                    result[country] = totalsData[country];
                 }
             }
             return result;
         }
         
-        // Get sector data for selected countries
         function getSectorDataForCountries(startYear, endYear) {
             const result = {};
-            const displayCountries = selectedCountries.slice(0, 10); // Max 10 for bar chart
+            const displayCountries = selectedCountries.slice(0, 10);
             
             for (const country of displayCountries) {
+                if (!sectorData[country]) continue;
                 const sectorTotals = {};
                 for (const sector of sectors) {
                     let total = 0;
                     let count = 0;
-                    for (const [key, yearlyData] of allData.entries()) {
-                        const [keyCountry, keySector] = key.split('|');
-                        if (keyCountry === country && keySector === sector) {
-                            for (let y = startYear; y <= endYear; y++) {
-                                if (yearlyData[y]) {
-                                    total += yearlyData[y];
-                                    count++;
-                                }
+                    if (sectorData[country] && sectorData[country][sector]) {
+                        for (let y = startYear; y <= endYear; y++) {
+                            if (sectorData[country][sector][y]) {
+                                total += sectorData[country][sector][y];
+                                count++;
                             }
                         }
                     }
@@ -362,17 +386,17 @@
             document.getElementById('yearStartDisplay').textContent = startYear;
             document.getElementById('yearEndDisplay').textContent = endYear;
             
-            // Show warning if more than 10 countries
+            // Warning for sector chart
             const warningDiv = document.getElementById('sectorWarning');
             if (selectedCountries.length > 10) {
                 warningDiv.style.display = 'block';
-                warningDiv.textContent = `⚠️ Showing only top 10 of ${selectedCountries.length} selected countries in sector chart. Please deselect some for clearer view.`;
+                warningDiv.textContent = `⚠️ Showing only top 10 of ${selectedCountries.length} selected countries in sector chart.`;
             } else {
                 warningDiv.style.display = 'none';
             }
             
-            // === TIME SERIES CHART ===
-            const data = getDataForCountries();
+            // === TIME SERIES CHART (using totalsData) ===
+            const data = getTimeSeriesData();
             const years = [];
             for (let y = startYear; y <= endYear; y++) years.push(y);
             
@@ -438,18 +462,18 @@
                     maintainAspectRatio: true,
                     interaction: { mode: 'index', intersect: false },
                     plugins: {
-                        tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: ${ctx.raw?.toFixed(0) || 0} kt ${currentGas === 'co2' ? 'CO₂' : currentGas === 'ch4' ? 'CH₄' : currentGas === 'n2o' ? 'N₂O' : currentGas === 'fgas' ? 'F-gases' : 'CO₂eq'}` } },
+                        tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: ${(ctx.raw / 1000)?.toFixed(1) || 0} Mt CO₂eq` } },
                         zoom: { zoom: { wheel: { enabled: true }, mode: 'x' }, pan: { enabled: true, mode: 'x' } }
                     },
                     scales: {
                         x: { title: { display: true, text: 'Year' } },
-                        y: { title: { display: true, text: `Emissions (kt ${currentGas === 'co2' ? 'CO₂' : currentGas === 'ch4' ? 'CH₄' : currentGas === 'n2o' ? 'N₂O' : currentGas === 'fgas' ? 'F-gases' : 'CO₂eq'})` }, beginAtZero: true }
+                        y: { title: { display: true, text: 'Emissions (kt CO₂eq)' }, beginAtZero: true }
                     }
                 }
             });
             
-            // === SECTOR COMPARISON BAR CHART ===
-            const sectorData = getSectorDataForCountries(startYear, endYear);
+            // === SECTOR BAR CHART ===
+            const sectorDataResult = getSectorDataForCountries(startYear, endYear);
             const displayCountries = selectedCountries.slice(0, 10);
             
             const sectorCtx = document.getElementById('sectorChart').getContext('2d');
@@ -457,28 +481,25 @@
             
             const sectorDatasets = sectors.map((sector, idx) => ({
                 label: sector,
-                data: displayCountries.map(c => sectorData[c]?.[sector] || 0),
+                data: displayCountries.map(c => sectorDataResult[c]?.[sector] || 0),
                 backgroundColor: sectorColors[sector] || `hsl(${idx * 60}, 70%, 50%)`,
                 borderRadius: 6
             }));
             
             currentSectorChart = new Chart(sectorCtx, {
                 type: 'bar',
-                data: {
-                    labels: displayCountries,
-                    datasets: sectorDatasets
-                },
+                data: { labels: displayCountries, datasets: sectorDatasets },
                 options: {
                     responsive: true,
                     maintainAspectRatio: true,
                     interaction: { mode: 'index', intersect: false },
                     plugins: {
-                        tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: ${ctx.raw?.toFixed(0) || 0} kt ${currentGas === 'co2' ? 'CO₂' : currentGas === 'ch4' ? 'CH₄' : currentGas === 'n2o' ? 'N₂O' : currentGas === 'fgas' ? 'F-gases' : 'CO₂eq'}` } },
+                        tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: ${ctx.raw?.toFixed(0) || 0} kt CO₂eq` } },
                         legend: { position: 'bottom' }
                     },
                     scales: {
                         x: { title: { display: true, text: 'Country' }, ticks: { maxRotation: 45, autoSkip: true } },
-                        y: { title: { display: true, text: `Average Annual Emissions (kt ${currentGas === 'co2' ? 'CO₂' : currentGas === 'ch4' ? 'CH₄' : currentGas === 'n2o' ? 'N₂O' : currentGas === 'fgas' ? 'F-gases' : 'CO₂eq'})` }, beginAtZero: true }
+                        y: { title: { display: true, text: 'Average Annual Emissions (kt CO₂eq)' }, beginAtZero: true }
                     }
                 }
             });
@@ -497,7 +518,7 @@
         });
         
         // Initialize
-        loadCSV();
+        loadTotalsData();
     </script>
 </body>
 </html>
