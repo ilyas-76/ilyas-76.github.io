@@ -665,12 +665,38 @@
 
   /* ── FLOATING STAT PARTICLES ── */
   const terms = [
-    'SPI', 'SPEI', 'SPTI', 'Data Science',
-    'μ = Σx/n', 'σ² = Σ(x-μ)²/n', 'Statistical Computing',
-    'R² = 0.94', 'β₀ + β₁x', 'Climate Analytics',
-    'Var(X+Y)', 'E[X] = μ', 'H₀: μ₁=μ₂',
-    'ρ(x,y)', 'N(0,1)', 'PhD Research'
-  ];
+    // Drought Indices
+    'SPI', 'SPEI', 'SPTI', 'PDSI', 'scPDSI', 'EDDI',
+    // Statistical Measures
+    'μ = Σx/n', 'σ² = Σ(x-μ)²/n', 'CV = σ/μ', 'MAD = Σ|x-μ|/n',
+    'ρ(x,y) = Cov/σₓσᵧ', 'R² = 1 - SSᵣₑₛ/SSₜₒₜ', 'RMSE', 'MAE',
+    // Regression
+    'β = (XᵀX)⁻¹Xᵀy', 'ŷ = β₀ + β₁x', 'logit(p) = ln(p/1-p)',
+    'LASSO: min ||y - Xβ||² + λ||β||₁', 'Ridge: min ||y - Xβ||² + λ||β||²',
+    // Time Series
+    'ARIMA(p,d,q)', 'SARIMA(P,D,Q)ₛ', 'ACF', 'PACF', 'KPSS test',
+    'H₀: unit root', 'H₁: stationary',
+    // Hypothesis Testing
+    'H₀: μ₁ = μ₂', 'H₁: μ₁ ≠ μ₂', 't = (x̄₁ - x̄₂)/SE', 'p-value',
+    'χ² = Σ(O-E)²/E', 'F = MSB/MSW', 'α = 0.05', 'Power = 1-β',
+    // Probability Distributions
+    'N(μ,σ²)', 'X ~ Bin(n,p)', 'P(X=k) = C(n,k)pᵏ(1-p)ⁿ⁻ᵏ',
+    'X ~ Poisson(λ)', 'f(x) = λe⁻λˣ', 'Φ(z) = P(Z ≤ z)',
+    // Bayesian
+    'P(θ|D) ∝ P(D|θ)P(θ)', 'MCMC', 'Metropolis-Hastings',
+    'Credible Interval (95%)', 'Prior → Posterior',
+    // Machine Learning
+    'SVM: max margin', 'k-NN', 'Random Forest', 'XGBoost',
+    'PCA: X = T Pᵀ + E', 'k-means: min Σ||xᵢ - μₖ||²',
+    'Neural Network: y = f(Wx + b)', 'ReLU', 'Dropout',
+    // Climate & Environment
+    'CO₂ ppm', 'CH₄ ppb', 'N₂O ppb', 'Global Warming Potential',
+    'IPCC AR6', 'CMIP6', 'SSP scenarios', 'Carbon Budget',
+    'GHG Inventory', 'EDGAR Database', 'Emission Factor',
+    // PhD Research
+    'PhD Research', 'Statistical Computing', 'Data Science',
+    'Reproducible Research', 'Open Science', 'Peer Review'
+];
   const container = document.getElementById('particles');
   if (container) {
     terms.forEach((term) => {
