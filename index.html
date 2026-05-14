@@ -68,7 +68,7 @@
   }
   .nav-logo span { color: var(--accent); }
 
-  /* Nav links */
+  /* Nav links - simplified */
   .nav-links { display: flex; align-items: center; gap: 4px; }
   .nav-link {
     font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
@@ -78,37 +78,6 @@
     position: relative;
   }
   .nav-link:hover { color: var(--accent); border-color: var(--border-hover); }
-
-  /* Dropdown */
-  .nav-item { position: relative; }
-  .nav-item:hover .dropdown { opacity: 1; pointer-events: all; transform: translateY(0); }
-  .dropdown {
-    position: absolute; top: calc(100% + 8px); left: 0;
-    min-width: 220px;
-    background: rgba(6,12,24,0.97);
-    border: 1px solid var(--border);
-    backdrop-filter: blur(20px);
-    opacity: 0; pointer-events: none;
-    transform: translateY(-8px);
-    transition: opacity 0.2s, transform 0.2s;
-    z-index: 300;
-  }
-  .dropdown a {
-    display: block; padding: 11px 18px;
-    font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
-    color: var(--muted2); text-decoration: none;
-    border-bottom: 1px solid var(--border);
-    transition: color 0.15s, background 0.15s;
-  }
-  .dropdown a:last-child { border-bottom: none; }
-  .dropdown a:hover { color: var(--accent); background: rgba(56,189,248,0.04); }
-  .dropdown a .dd-tag {
-    font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase;
-    padding: 2px 6px; margin-left: 8px;
-    border: 1px solid rgba(52,211,153,0.3); color: var(--accent3);
-    vertical-align: middle;
-  }
-  .dropdown a .dd-tag.soon { border-color: rgba(245,158,11,0.3); color: var(--accent4); }
 
   .nav-email {
     background: transparent; border: 1px solid var(--accent);
@@ -260,48 +229,15 @@
     margin: 16px 0 20px;
   }
 
-  /* ── DASHBOARDS SECTION ── */
+  /* ── DASHBOARDS SECTION (Simplified) ── */
   #dashboards { background: linear-gradient(to bottom, transparent, rgba(56,189,248,0.015), transparent); }
-
-  /* Sub-section tabs */
-  .tabs {
-    display: flex; gap: 0; border: 1px solid var(--border);
-    margin-bottom: 44px; width: fit-content; overflow: hidden;
-  }
-  .tab {
-    padding: 10px 24px; font-size: 10px; letter-spacing: 0.12em;
-    text-transform: uppercase; cursor: pointer; border: none;
-    background: transparent; color: var(--muted);
-    font-family: 'DM Mono', monospace;
-    transition: background 0.2s, color 0.2s;
-    border-right: 1px solid var(--border);
-  }
-  .tab:last-child { border-right: none; }
-  .tab.active { background: rgba(56,189,248,0.08); color: var(--accent); }
-  .tab:hover:not(.active) { color: var(--text); background: rgba(255,255,255,0.02); }
-
-  .tab-content { display: none; }
-  .tab-content.active { display: block; }
-
-  /* ── DASHBOARD CATEGORY HEADER ── */
-  .dash-cat-header {
-    display: flex; align-items: flex-start; justify-content: space-between;
-    gap: 24px; margin-bottom: 36px; flex-wrap: wrap;
-  }
-  .dash-cat-badge {
-    display: inline-flex; align-items: center; gap: 8px;
-    border: 1px solid rgba(52,211,153,0.25);
-    background: rgba(52,211,153,0.04);
-    padding: 6px 14px; font-size: 10px;
-    letter-spacing: 0.12em; text-transform: uppercase;
-    color: var(--accent3); margin-bottom: 12px;
-  }
 
   /* ── CARD GRID ── */
   .card-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 24px;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 30px;
+    justify-content: center;
   }
 
   /* Dashboard Card */
@@ -314,7 +250,7 @@
   }
   .dash-card:hover { transform: translateY(-6px); border-color: var(--accent); }
 
-  /* Special "featured" card */
+  /* Featured card */
   .dash-card.featured { border-color: rgba(56,189,248,0.3); }
   .dash-card.featured::before {
     content: 'FEATURED';
@@ -326,16 +262,11 @@
   .dash-card-visual {
     height: 140px; display: flex; align-items: center; justify-content: center;
     position: relative; overflow: hidden;
+    background: linear-gradient(135deg, rgba(5,150,105,0.15), rgba(56,189,248,0.08));
   }
-  /* Different gradient themes per card type */
-  .theme-climate { background: linear-gradient(135deg, rgba(5,150,105,0.15), rgba(56,189,248,0.08)); }
-  .theme-finance { background: linear-gradient(135deg, rgba(99,102,241,0.15), rgba(129,140,248,0.06)); }
-  .theme-social  { background: linear-gradient(135deg, rgba(245,158,11,0.12), rgba(239,68,68,0.06)); }
-  .theme-health  { background: linear-gradient(135deg, rgba(236,72,153,0.12), rgba(129,140,248,0.08)); }
-  .theme-generic { background: linear-gradient(135deg, rgba(56,189,248,0.10), rgba(52,211,153,0.05)); }
 
   .dash-card-icon { font-size: 52px; position: relative; z-index: 1; }
-  /* Decorative mini chart in card visual */
+  
   .mini-chart {
     position: absolute; bottom: 12px; left: 12px; right: 12px;
     height: 32px; display: flex; align-items: flex-end; gap: 3px;
@@ -349,11 +280,11 @@
 
   .dash-card-body { padding: 22px 22px 20px; }
   .dash-card-body h3 {
-    font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700;
+    font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700;
     color: var(--white); margin-bottom: 8px; line-height: 1.3;
   }
   .dash-card-body p {
-    font-size: 11px; line-height: 1.7; color: var(--muted); margin-bottom: 16px;
+    font-size: 12px; line-height: 1.7; color: var(--muted); margin-bottom: 16px;
   }
 
   .dash-card-footer {
@@ -361,15 +292,11 @@
   }
   .dash-status {
     display: inline-flex; align-items: center; gap: 6px;
-    font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase;
+    font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
   }
   .dash-status .dot { width: 6px; height: 6px; border-radius: 50%; }
-  .dash-status.live   { color: var(--accent3); }
-  .dash-status.live   .dot { background: var(--accent3); animation: pulse 2s infinite; }
-  .dash-status.soon   { color: var(--accent4); }
-  .dash-status.soon   .dot { background: var(--accent4); }
-  .dash-status.build  { color: var(--muted); }
-  .dash-status.build  .dot { background: var(--muted); }
+  .dash-status.live { color: var(--accent3); }
+  .dash-status.live .dot { background: var(--accent3); animation: pulse 2s infinite; }
 
   .dash-tags { display: flex; gap: 6px; flex-wrap: wrap; }
   .tag {
@@ -377,62 +304,6 @@
     border: 1px solid rgba(99,179,237,0.15); color: var(--muted2);
     text-transform: uppercase;
   }
-
-  /* ── CONCEPTS SECTION ── */
-  #concepts {
-    background: linear-gradient(to bottom, transparent, rgba(129,140,248,0.015), transparent);
-  }
-  .concept-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 20px;
-  }
-  .concept-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px; padding: 26px 24px;
-    transition: transform 0.3s, border-color 0.3s;
-    cursor: pointer; position: relative; overflow: hidden;
-  }
-  .concept-card:hover { transform: translateY(-5px); border-color: var(--accent2); }
-  /* Top accent line */
-  .concept-card::before {
-    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-  }
-  .concept-card.c1::before { background: linear-gradient(to right, var(--accent), transparent); }
-  .concept-card.c2::before { background: linear-gradient(to right, var(--accent2), transparent); }
-  .concept-card.c3::before { background: linear-gradient(to right, var(--accent3), transparent); }
-  .concept-card.c4::before { background: linear-gradient(to right, var(--accent4), transparent); }
-  .concept-card.c5::before { background: linear-gradient(to right, #f472b6, transparent); }
-  .concept-card.c6::before { background: linear-gradient(to right, #fb923c, transparent); }
-  .concept-card.c7::before { background: linear-gradient(to right, #a78bfa, transparent); }
-  .concept-card.c8::before { background: linear-gradient(to right, #2dd4bf, transparent); }
-
-  .concept-num {
-    font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700;
-    color: var(--muted); letter-spacing: 0.15em; margin-bottom: 12px;
-  }
-  .concept-icon { font-size: 28px; margin-bottom: 12px; display: block; }
-  .concept-card h3 {
-    font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700;
-    color: var(--white); margin-bottom: 8px; line-height: 1.3;
-  }
-  .concept-card p {
-    font-size: 11px; line-height: 1.7; color: var(--muted); margin-bottom: 16px;
-  }
-  .concept-topics { display: flex; flex-wrap: wrap; gap: 6px; }
-  .concept-topic {
-    font-size: 9px; padding: 3px 8px; letter-spacing: 0.06em;
-    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
-    color: var(--muted2); text-transform: uppercase;
-  }
-  .concept-arrow {
-    position: absolute; bottom: 20px; right: 20px;
-    font-size: 18px; color: var(--muted);
-    opacity: 0; transition: opacity 0.2s, transform 0.2s;
-    transform: translateX(-6px);
-  }
-  .concept-card:hover .concept-arrow { opacity: 1; transform: translateX(0); }
 
   /* ── ABOUT BANNER ── */
   #about {
@@ -488,9 +359,6 @@
   /* ── REVEAL ANIMATION ── */
   .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.75s ease, transform 0.75s ease; }
   .reveal.visible { opacity: 1; transform: translateY(0); }
-  .reveal-delay-1 { transition-delay: 0.1s; }
-  .reveal-delay-2 { transition-delay: 0.2s; }
-  .reveal-delay-3 { transition-delay: 0.3s; }
 
   /* ── RESPONSIVE ── */
   @media (max-width: 900px) {
@@ -503,7 +371,7 @@
     footer { padding: 28px 20px; flex-direction: column; text-align: center; }
     .hero h1 { letter-spacing: -2px; }
     .hero-stat-sep { display: none; }
-    .tabs { flex-wrap: wrap; }
+    .card-grid { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -518,46 +386,10 @@
 ════════════════════════════════════════════ -->
 <nav>
   <a href="#" class="nav-logo">Alpha<span>-Stat</span></a>
-
   <div class="nav-links">
-
-    <!-- Dashboards dropdown -->
-    <div class="nav-item">
-      <a href="#dashboards" class="nav-link">Dashboards ↓</a>
-      <div class="dropdown">
-        <!-- ══ ADD NEW DASHBOARD CATEGORIES HERE ══ -->
-        <a href="#dashboards" onclick="switchTab('climate')">
-          🌍 Climate &amp; Hydro Indicators <span class="dd-tag">Live</span>
-        </a>
-        <a href="#dashboards" onclick="switchTab('general')">
-          📊 General Analytics <span class="dd-tag">Live</span>
-        </a>
-        <!-- Example: add more categories below -->
-        <!-- <a href="#dashboards" onclick="switchTab('econ')">📉 Economic Indicators <span class="dd-tag soon">Soon</span></a> -->
-      </div>
-    </div>
-
-    <!-- Statistical Concepts dropdown -->
-    <div class="nav-item">
-      <a href="#concepts" class="nav-link">Statistical Concepts ↓</a>
-      <div class="dropdown">
-        <!-- ══ ADD NEW TOPICS HERE ══ -->
-        <a href="#concepts">📐 Basic Statistics</a>
-        <a href="#concepts">🎲 Probability Distributions</a>
-        <a href="#concepts">🧪 Design of Experiments</a>
-        <a href="#concepts">📈 Regression &amp; Correlation</a>
-        <a href="#concepts">🕐 Time Series Analysis</a>
-        <a href="#concepts">🗺️ Spatial Statistics</a>
-        <!-- <a href="#concepts">🔁 Bayesian Methods <span class="dd-tag soon">Soon</span></a> -->
-      </div>
-    </div>
-
-    <!-- ADD NEW TOP-LEVEL SECTIONS HERE -->
-    <!-- <div class="nav-item"><a href="#tools" class="nav-link">Tools</a></div> -->
-
+    <a href="#dashboards" class="nav-link">Dashboards</a>
     <a href="#about" class="nav-link">About</a>
   </div>
-
   <a href="mailto:milyas3201@gmail.com" class="nav-email">✉ milyas3201@gmail.com</a>
 </nav>
 
@@ -566,11 +398,7 @@
      HERO
 ════════════════════════════════════════════ -->
 <section class="hero" id="home">
-
-  <!-- Floating stat particles (decorative) -->
   <div class="stat-particles" id="particles"></div>
-
-  <!-- Decorative rings -->
   <div class="hero-ring ring1"></div>
   <div class="hero-ring ring2"></div>
   <div class="hero-ring ring3"></div>
@@ -584,20 +412,18 @@
   </h1>
 
   <p class="hero-descriptor">
-    Where statistical theory meets real-world data —<br>
-    interactive dashboards, animated analytics &amp; deep-dive concepts.
+    Interactive dashboards for climate analysis, drought monitoring, and statistical intelligence.
   </p>
 
-  <!-- Stats row -->
   <div class="hero-stats">
     <div class="hero-stat">
-      <div class="hero-stat-num">10<span>+</span></div>
-      <div class="hero-stat-label">Dashboards</div>
+      <div class="hero-stat-num">1<span>+</span></div>
+      <div class="hero-stat-label">Active Dashboard</div>
     </div>
     <div class="hero-stat-sep"></div>
     <div class="hero-stat">
-      <div class="hero-stat-num">6<span>+</span></div>
-      <div class="hero-stat-label">Concept Modules</div>
+      <div class="hero-stat-num">32<span></span></div>
+      <div class="hero-stat-label">Districts</div>
     </div>
     <div class="hero-stat-sep"></div>
     <div class="hero-stat">
@@ -606,10 +432,9 @@
     </div>
   </div>
 
-  <!-- CTAs -->
   <div class="hero-ctas">
-    <a href="#dashboards" class="btn-primary">Explore Dashboards</a>
-    <a href="#concepts" class="btn-ghost">Learn Statistics</a>
+    <a href="#dashboards" class="btn-primary">Explore Dashboard</a>
+    <a href="#about" class="btn-ghost">Learn More</a>
   </div>
 
   <div class="scroll-hint">
@@ -620,497 +445,51 @@
 
 
 <!-- ═══════════════════════════════════════════
-     DASHBOARDS SECTION
+     DASHBOARDS SECTION - SINGLE DASHBOARD
 ════════════════════════════════════════════ -->
 <section id="dashboards">
   <div class="container">
-
     <div class="reveal">
-      <p class="section-tag">// dashboard collection</p>
-      <h2 class="section-title">Interactive Dashboards</h2>
+      <p class="section-tag">// dashboard</p>
+      <h2 class="section-title">Drought Indices Dashboard</h2>
       <div class="section-divider"></div>
       <p class="section-desc">
-        Real-time, animated, and interactive dashboards spanning climate indicators,
-        financial analytics, and beyond. Built with Python, Streamlit, Plotly &amp; D3.
+        SPI · SPEI · SPTI analysis for 32 districts of Punjab (1981-2021). Interactive time series with drought classification.
       </p>
     </div>
 
-    <!-- TABS — add new tab buttons here when adding a new dashboard category -->
-    <div class="tabs reveal">
-      <button class="tab active" onclick="switchTab('climate', this)">🌍 Climate &amp; Hydro</button>
-      <button class="tab" onclick="switchTab('general', this)">📊 General Analytics</button>
-      <!-- ══ ADD NEW TAB HERE ══ -->
-      <!-- <button class="tab" onclick="switchTab('econ', this)">📉 Economics</button> -->
-    </div>
-
-
-    <!-- ══════════════════════════════════════
-         TAB 1: CLIMATE & HYDRO INDICATORS
-         ══ ADD NEW CLIMATE DASHBOARDS INSIDE THIS BLOCK ══
-    ════════════════════════════════════════ -->
-    <div class="tab-content active reveal" id="tab-climate">
-
-      <div class="dash-cat-header">
-        <div>
-          <div class="dash-cat-badge">🌍 Climate &amp; Hydro Indicators</div>
-          <p style="font-size:12px;color:var(--muted);max-width:520px;line-height:1.7;">
-            Drought indices, precipitation analytics, temperature time series, and
-            animated climate visualisations — built for researchers and decision-makers.
-          </p>
-        </div>
-      </div>
-
-      <div class="card-grid">
-
-        <!-- ── DASHBOARD CARD: SPEI ── -->
-        <div class="dash-card featured theme-climate" onclick="window.open('#','_blank')">
-          <div class="dash-card-visual theme-climate">
-            <span class="dash-card-icon">🌦️</span>
-            <div class="mini-chart">
-              <div class="mini-bar" style="height:40%"></div><div class="mini-bar" style="height:75%"></div>
-              <div class="mini-bar" style="height:55%"></div><div class="mini-bar" style="height:90%"></div>
-              <div class="mini-bar" style="height:30%"></div><div class="mini-bar" style="height:65%"></div>
-              <div class="mini-bar" style="height:80%"></div><div class="mini-bar" style="height:45%"></div>
-            </div>
+    <div class="card-grid reveal">
+      <!-- ONLY WORKING DASHBOARD - PUNJAB CLIMATE DASHBOARD -->
+      <div class="dash-card featured" onclick="window.open('climate-dashboard.html','_blank')">
+        <div class="dash-card-visual">
+          <span class="dash-card-icon">💧</span>
+          <div class="mini-chart">
+            <div class="mini-bar" style="height:45%"></div>
+            <div class="mini-bar" style="height:70%"></div>
+            <div class="mini-bar" style="height:30%"></div>
+            <div class="mini-bar" style="height:85%"></div>
+            <div class="mini-bar" style="height:55%"></div>
+            <div class="mini-bar" style="height:65%"></div>
+            <div class="mini-bar" style="height:40%"></div>
+            <div class="mini-bar" style="height:75%"></div>
           </div>
-          <div class="dash-card-body">
-            <h3>SPEI Dashboard</h3>
-            <p>Standardized Precipitation-Evapotranspiration Index — multi-scale drought monitoring with spatial maps and animated time series.</p>
-            <div class="dash-card-footer">
-              <div class="dash-status live"><div class="dot"></div> Live Demo</div>
-              <div class="dash-tags">
-                <span class="tag">Drought</span><span class="tag">Plotly</span>
-              </div>
+        </div>
+        <div class="dash-card-body">
+          <h3>📊 Drought Indices Dashboard</h3>
+          <p>SPI, SPEI & SPTI drought analysis for 32 districts of Punjab (1981-2021). Interactive time series with zoom & pan, plus drought category counts.</p>
+          <div class="dash-card-footer">
+            <div class="dash-status live"><div class="dot"></div> Live Demo</div>
+            <div class="dash-tags">
+              <span class="tag">SPI</span>
+              <span class="tag">SPEI</span>
+              <span class="tag">SPTI</span>
+              <span class="tag">Drought</span>
+              <span class="tag">Punjab</span>
             </div>
           </div>
         </div>
-
-        <!-- ── DASHBOARD CARD: SPI ── -->
-        <div class="dash-card theme-climate" onclick="window.open('#','_blank')">
-          <div class="dash-card-visual theme-climate">
-            <span class="dash-card-icon">🌧️</span>
-            <div class="mini-chart">
-              <div class="mini-bar" style="height:60%"></div><div class="mini-bar" style="height:35%"></div>
-              <div class="mini-bar" style="height:85%"></div><div class="mini-bar" style="height:50%"></div>
-              <div class="mini-bar" style="height:70%"></div><div class="mini-bar" style="height:40%"></div>
-              <div class="mini-bar" style="height:95%"></div><div class="mini-bar" style="height:55%"></div>
-            </div>
-          </div>
-          <div class="dash-card-body">
-            <h3>SPI Dashboard</h3>
-            <p>Standardized Precipitation Index — station-level and gridded precipitation anomaly analysis with interactive maps.</p>
-            <div class="dash-card-footer">
-              <div class="dash-status live"><div class="dot"></div> Live Demo</div>
-              <div class="dash-tags">
-                <span class="tag">Precipitation</span><span class="tag">Streamlit</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- ── DASHBOARD CARD: SPTI ── -->
-        <div class="dash-card theme-climate" onclick="window.open('#','_blank')">
-          <div class="dash-card-visual theme-climate">
-            <span class="dash-card-icon">📡</span>
-            <div class="mini-chart">
-              <div class="mini-bar" style="height:50%"></div><div class="mini-bar" style="height:70%"></div>
-              <div class="mini-bar" style="height:40%"></div><div class="mini-bar" style="height:90%"></div>
-              <div class="mini-bar" style="height:60%"></div><div class="mini-bar" style="height:80%"></div>
-              <div class="mini-bar" style="height:35%"></div><div class="mini-bar" style="height:65%"></div>
-            </div>
-          </div>
-          <div class="dash-card-body">
-            <h3>SPTI Time Series</h3>
-            <p>Standardized Precipitation-Temperature Index with animated temporal evolution, trend detection, and seasonal decomposition.</p>
-            <div class="dash-card-footer">
-              <div class="dash-status soon"><div class="dot"></div> Coming Soon</div>
-              <div class="dash-tags">
-                <span class="tag">Temperature</span><span class="tag">Animation</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- ── DASHBOARD CARD: Temperature Time Series ── -->
-        <div class="dash-card theme-climate" onclick="window.open('#','_blank')">
-          <div class="dash-card-visual theme-climate">
-            <span class="dash-card-icon">🌡️</span>
-            <div class="mini-chart">
-              <div class="mini-bar" style="height:45%"></div><div class="mini-bar" style="height:55%"></div>
-              <div class="mini-bar" style="height:65%"></div><div class="mini-bar" style="height:75%"></div>
-              <div class="mini-bar" style="height:85%"></div><div class="mini-bar" style="height:90%"></div>
-              <div class="mini-bar" style="height:95%"></div><div class="mini-bar" style="height:88%"></div>
-            </div>
-          </div>
-          <div class="dash-card-body">
-            <h3>Temperature Time Series</h3>
-            <p>Animated temperature trend analysis — warming signals, anomaly detection, and regional comparisons with multi-decadal records.</p>
-            <div class="dash-card-footer">
-              <div class="dash-status soon"><div class="dot"></div> Coming Soon</div>
-              <div class="dash-tags">
-                <span class="tag">Climate</span><span class="tag">Animation</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- ── DASHBOARD CARD: Rainfall Animation ── -->
-        <div class="dash-card theme-climate" onclick="window.open('#','_blank')">
-          <div class="dash-card-visual theme-climate">
-            <span class="dash-card-icon">💧</span>
-            <div class="mini-chart">
-              <div class="mini-bar" style="height:80%"></div><div class="mini-bar" style="height:40%"></div>
-              <div class="mini-bar" style="height:60%"></div><div class="mini-bar" style="height:30%"></div>
-              <div class="mini-bar" style="height:70%"></div><div class="mini-bar" style="height:50%"></div>
-              <div class="mini-bar" style="height:90%"></div><div class="mini-bar" style="height:75%"></div>
-            </div>
-          </div>
-          <div class="dash-card-body">
-            <h3>Rainfall Animation Atlas</h3>
-            <p>Animated monthly and seasonal rainfall patterns across Pakistan and South Asia — choropleth maps with decade-wise playback.</p>
-            <div class="dash-card-footer">
-              <div class="dash-status build"><div class="dot"></div> In Development</div>
-              <div class="dash-tags">
-                <span class="tag">Spatial</span><span class="tag">D3.js</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-                <!-- ── PUNJAB CLIMATE DASHBOARD (REAL DATA) ── -->
-        <div class="dash-card featured theme-climate" onclick="window.open('climate-dashboard.html','_blank')">
-          <div class="dash-card-visual theme-climate">
-            <span class="dash-card-icon">🌾</span>
-            <div class="mini-chart">
-              <div class="mini-bar" style="height:45%"></div>
-              <div class="mini-bar" style="height:70%"></div>
-              <div class="mini-bar" style="height:30%"></div>
-              <div class="mini-bar" style="height:85%"></div>
-              <div class="mini-bar" style="height:55%"></div>
-              <div class="mini-bar" style="height:65%"></div>
-              <div class="mini-bar" style="height:40%"></div>
-              <div class="mini-bar" style="height:75%"></div>
-            </div>
-          </div>
-          <div class="dash-card-body">
-            <h3>🌾 Punjab Climate Dashboard</h3>
-            <p>SPI, SPEI & SPTI drought analysis for 32 districts of Punjab (1981-2021). Interactive time series with zoom & pan.</p>
-            <div class="dash-card-footer">
-              <div class="dash-status live"><div class="dot"></div> Live Demo</div>
-              <div class="dash-tags">
-                <span class="tag">Drought</span>
-                <span class="tag">SPI</span>
-                <span class="tag">SPEI</span>
-                <span class="tag">SPTI</span>
-                <span class="tag">Punjab</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- ── ADD NEW CLIMATE DASHBOARD CARD HERE ── -->
-        <!--
-        <div class="dash-card theme-climate" onclick="window.open('YOUR_LINK','_blank')">
-          <div class="dash-card-visual theme-climate">
-            <span class="dash-card-icon">YOUR_EMOJI</span>
-          </div>
-          <div class="dash-card-body">
-            <h3>Your Dashboard Name</h3>
-            <p>Short description of what it shows.</p>
-            <div class="dash-card-footer">
-              <div class="dash-status live"><div class="dot"></div> Live Demo</div>
-              <div class="dash-tags"><span class="tag">Tag1</span></div>
-            </div>
-          </div>
-        </div>
-        -->
-
-      </div><!-- /card-grid -->
-    </div><!-- /tab-climate -->
-
-
-    <!-- ══════════════════════════════════════
-         TAB 2: GENERAL ANALYTICS
-         ══ ADD NEW GENERAL DASHBOARDS HERE ══
-    ════════════════════════════════════════ -->
-    <div class="tab-content" id="tab-general">
-
-      <div class="dash-cat-header">
-        <div>
-          <div class="dash-cat-badge" style="border-color:rgba(129,140,248,0.25);color:var(--accent2);background:rgba(129,140,248,0.04);">
-            📊 General Analytics
-          </div>
-          <p style="font-size:12px;color:var(--muted);max-width:520px;line-height:1.7;">
-            Business intelligence, financial KPIs, website analytics, and social media metrics —
-            interactive Streamlit and Plotly dashboards.
-          </p>
-        </div>
-      </div>
-
-      <div class="card-grid">
-
-        <div class="dash-card theme-finance" onclick="window.open('#','_blank')">
-          <div class="dash-card-visual theme-finance">
-            <span class="dash-card-icon">📊</span>
-            <div class="mini-chart">
-              <div class="mini-bar" style="height:50%;background:rgba(129,140,248,0.3)"></div>
-              <div class="mini-bar" style="height:75%;background:rgba(129,140,248,0.3)"></div>
-              <div class="mini-bar" style="height:55%;background:rgba(129,140,248,0.3)"></div>
-              <div class="mini-bar" style="height:90%;background:rgba(129,140,248,0.3)"></div>
-              <div class="mini-bar" style="height:65%;background:rgba(129,140,248,0.3)"></div>
-              <div class="mini-bar" style="height:80%;background:rgba(129,140,248,0.3)"></div>
-            </div>
-          </div>
-          <div class="dash-card-body">
-            <h3>Sales Analytics Dashboard</h3>
-            <p>Real-time sales tracking, revenue trends, product performance, and regional breakdowns with interactive filters.</p>
-            <div class="dash-card-footer">
-              <div class="dash-status live"><div class="dot"></div> Live Demo</div>
-              <div class="dash-tags"><span class="tag">Sales</span><span class="tag">Plotly</span></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="dash-card theme-finance" onclick="window.open('#','_blank')">
-          <div class="dash-card-visual theme-finance">
-            <span class="dash-card-icon">📈</span>
-          </div>
-          <div class="dash-card-body">
-            <h3>Financial KPIs Dashboard</h3>
-            <p>Revenue, profit margins, expenses tracking, ROI analysis, and financial health metrics with forecasting.</p>
-            <div class="dash-card-footer">
-              <div class="dash-status live"><div class="dot"></div> Live Demo</div>
-              <div class="dash-tags"><span class="tag">Finance</span><span class="tag">KPIs</span></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="dash-card theme-generic" onclick="window.open('#','_blank')">
-          <div class="dash-card-visual theme-generic">
-            <span class="dash-card-icon">🌐</span>
-          </div>
-          <div class="dash-card-body">
-            <h3>Website Traffic Dashboard</h3>
-            <p>Visitor analytics, page views, bounce rates, user behaviour, and traffic source breakdown.</p>
-            <div class="dash-card-footer">
-              <div class="dash-status live"><div class="dot"></div> Live Demo</div>
-              <div class="dash-tags"><span class="tag">Web</span><span class="tag">Analytics</span></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="dash-card theme-social" onclick="window.open('#','_blank')">
-          <div class="dash-card-visual theme-social">
-            <span class="dash-card-icon">📱</span>
-          </div>
-          <div class="dash-card-body">
-            <h3>Social Media Dashboard</h3>
-            <p>Engagement rates, follower growth, post performance, and cross-platform social metrics.</p>
-            <div class="dash-card-footer">
-              <div class="dash-status live"><div class="dot"></div> Live Demo</div>
-              <div class="dash-tags"><span class="tag">Social</span><span class="tag">Engagement</span></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="dash-card theme-health" onclick="window.open('#','_blank')">
-          <div class="dash-card-visual theme-health">
-            <span class="dash-card-icon">⭐</span>
-          </div>
-          <div class="dash-card-body">
-            <h3>Customer Feedback Dashboard</h3>
-            <p>Sentiment analysis, satisfaction scores, feedback trends, and customer review analytics.</p>
-            <div class="dash-card-footer">
-              <div class="dash-status soon"><div class="dot"></div> Coming Soon</div>
-              <div class="dash-tags"><span class="tag">NLP</span><span class="tag">Sentiment</span></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="dash-card theme-health" onclick="window.open('#','_blank')">
-          <div class="dash-card-visual theme-health">
-            <span class="dash-card-icon">🏥</span>
-          </div>
-          <div class="dash-card-body">
-            <h3>Healthcare Analytics Dashboard</h3>
-            <p>Patient metrics, treatment outcomes, resource utilisation, and healthcare KPIs.</p>
-            <div class="dash-card-footer">
-              <div class="dash-status soon"><div class="dot"></div> Coming Soon</div>
-              <div class="dash-tags"><span class="tag">Health</span><span class="tag">KPIs</span></div>
-            </div>
-          </div>
-        </div>
-
-      </div><!-- /card-grid -->
-    </div><!-- /tab-general -->
-
-    <!-- ══ ADD NEW TAB CONTENT BLOCK HERE ══ -->
-    <!--
-    <div class="tab-content" id="tab-econ">
-      <div class="card-grid">
-        ... cards go here ...
       </div>
     </div>
-    -->
-
-  </div><!-- /container -->
-</section>
-
-
-<!-- ═══════════════════════════════════════════
-     STATISTICAL CONCEPTS SECTION
-     ══ ADD NEW CONCEPT CARDS HERE ══
-════════════════════════════════════════════ -->
-<section id="concepts">
-  <div class="container">
-
-    <div class="reveal">
-      <p class="section-tag">// statistical concepts</p>
-      <h2 class="section-title">Concept Library</h2>
-      <div class="section-divider" style="background:linear-gradient(to right,var(--accent2),transparent)"></div>
-      <p class="section-desc">
-        Topic-wise statistical guides — from foundational theory to advanced methods.
-        Interactive examples, formulas, and real-data illustrations.
-      </p>
-    </div>
-
-    <div class="concept-grid reveal">
-
-      <!-- ── CONCEPT 1: Basic Statistics ── -->
-        <div class="concept-card c1" onclick="window.open('basic-stats.html','_blank')">
-        <div class="concept-num">01</div>
-        <span class="concept-icon">📐</span>
-        <h3>Basic Statistics</h3>
-        <p>Measures of central tendency, dispersion, shape, and data summarisation fundamentals.</p>
-        <div class="concept-topics">
-          <span class="concept-topic">Mean / Median</span>
-          <span class="concept-topic">Variance</span>
-          <span class="concept-topic">Skewness</span>
-          <span class="concept-topic">Kurtosis</span>
-        </div>
-        <span class="concept-arrow">→</span>
-      </div>
-
-      <!-- ── CONCEPT 2: Probability Distributions ── -->
-      <div class="concept-card c2" onclick="window.open('#','_blank')">
-        <div class="concept-num">02</div>
-        <span class="concept-icon">🎲</span>
-        <h3>Probability Distributions</h3>
-        <p>Discrete and continuous distributions, PMFs, PDFs, CDFs and their applications.</p>
-        <div class="concept-topics">
-          <span class="concept-topic">Normal</span>
-          <span class="concept-topic">Binomial</span>
-          <span class="concept-topic">Poisson</span>
-          <span class="concept-topic">Gamma</span>
-        </div>
-        <span class="concept-arrow">→</span>
-      </div>
-
-      <!-- ── CONCEPT 3: Design of Experiments ── -->
-      <div class="concept-card c3" onclick="window.open('#','_blank')">
-        <div class="concept-num">03</div>
-        <span class="concept-icon">🧪</span>
-        <h3>Design of Experiments</h3>
-        <p>CRD, RCBD, factorial designs, blocking, ANOVA, and response surface methodology.</p>
-        <div class="concept-topics">
-          <span class="concept-topic">CRD</span>
-          <span class="concept-topic">RCBD</span>
-          <span class="concept-topic">Factorial</span>
-          <span class="concept-topic">ANOVA</span>
-        </div>
-        <span class="concept-arrow">→</span>
-      </div>
-
-      <!-- ── CONCEPT 4: Regression & Correlation ── -->
-      <div class="concept-card c4" onclick="window.open('#','_blank')">
-        <div class="concept-num">04</div>
-        <span class="concept-icon">📈</span>
-        <h3>Regression &amp; Correlation</h3>
-        <p>Simple, multiple, logistic and non-linear regression; Pearson, Spearman, and partial correlation.</p>
-        <div class="concept-topics">
-          <span class="concept-topic">OLS</span>
-          <span class="concept-topic">Logistic</span>
-          <span class="concept-topic">Pearson r</span>
-          <span class="concept-topic">Ridge</span>
-        </div>
-        <span class="concept-arrow">→</span>
-      </div>
-
-      <!-- ── CONCEPT 5: Time Series ── -->
-      <div class="concept-card c5" onclick="window.open('#','_blank')">
-        <div class="concept-num">05</div>
-        <span class="concept-icon">🕐</span>
-        <h3>Time Series Analysis</h3>
-        <p>Stationarity, ARIMA, seasonal decomposition, forecasting, and change-point detection.</p>
-        <div class="concept-topics">
-          <span class="concept-topic">ARIMA</span>
-          <span class="concept-topic">ACF/PACF</span>
-          <span class="concept-topic">Holt-Winters</span>
-          <span class="concept-topic">STL</span>
-        </div>
-        <span class="concept-arrow">→</span>
-      </div>
-
-      <!-- ── CONCEPT 6: Spatial Statistics ── -->
-      <div class="concept-card c6" onclick="window.open('#','_blank')">
-        <div class="concept-num">06</div>
-        <span class="concept-icon">🗺️</span>
-        <h3>Spatial Statistics</h3>
-        <p>Spatial autocorrelation, kriging, variograms, geographically weighted regression.</p>
-        <div class="concept-topics">
-          <span class="concept-topic">Moran's I</span>
-          <span class="concept-topic">Kriging</span>
-          <span class="concept-topic">GWR</span>
-          <span class="concept-topic">Variogram</span>
-        </div>
-        <span class="concept-arrow">→</span>
-      </div>
-
-      <!-- ── CONCEPT 7: Bayesian (example future topic) ── -->
-      <div class="concept-card c7" onclick="window.open('#','_blank')">
-        <div class="concept-num">07</div>
-        <span class="concept-icon">🔁</span>
-        <h3>Bayesian Statistics</h3>
-        <p>Prior and posterior distributions, Bayes' theorem, MCMC methods, and Bayesian inference.</p>
-        <div class="concept-topics">
-          <span class="concept-topic">Bayes Theorem</span>
-          <span class="concept-topic">MCMC</span>
-          <span class="concept-topic">Prior/Posterior</span>
-        </div>
-        <span class="concept-arrow">→</span>
-      </div>
-
-      <!-- ── CONCEPT 8: Multivariate ── -->
-      <div class="concept-card c8" onclick="window.open('#','_blank')">
-        <div class="concept-num">08</div>
-        <span class="concept-icon">🔬</span>
-        <h3>Multivariate Analysis</h3>
-        <p>PCA, factor analysis, cluster analysis, discriminant analysis, and MANOVA.</p>
-        <div class="concept-topics">
-          <span class="concept-topic">PCA</span>
-          <span class="concept-topic">Clustering</span>
-          <span class="concept-topic">LDA</span>
-          <span class="concept-topic">MANOVA</span>
-        </div>
-        <span class="concept-arrow">→</span>
-      </div>
-
-      <!-- ══ ADD NEW CONCEPT CARD HERE ══ -->
-      <!--
-      <div class="concept-card c1" onclick="window.open('#','_blank')">
-        <div class="concept-num">09</div>
-        <span class="concept-icon">YOUR_EMOJI</span>
-        <h3>Your Topic Name</h3>
-        <p>Brief description of this statistical topic.</p>
-        <div class="concept-topics">
-          <span class="concept-topic">Subtopic 1</span>
-          <span class="concept-topic">Subtopic 2</span>
-        </div>
-        <span class="concept-arrow">→</span>
-      </div>
-      -->
-
-    </div><!-- /concept-grid -->
   </div>
 </section>
 
@@ -1123,8 +502,8 @@
     <div class="about-inner reveal">
       <div class="about-left">
         <h2>Built by a<br><em>statistician</em>,<br>for everyone.</h2>
-        <p>Alpha-Stat is a personal research and education platform developed by a PhD scholar of Statistics — bridging rigorous statistical methods with interactive, accessible data science.</p>
-        <p>Every dashboard and concept module is grounded in academic depth, designed for students, researchers, and data professionals alike.</p>
+        <p>Alpha-Stat-Lab is a personal research and education platform developed by a PhD scholar of Statistics — bridging rigorous statistical methods with interactive, accessible data science.</p>
+        <p>Every dashboard is grounded in academic depth, designed for researchers, students, and data professionals.</p>
         <a href="mailto:milyas3201@gmail.com" class="btn-ghost" style="display:inline-block;margin-top:20px">Get in Touch →</a>
       </div>
       <div class="about-right">
@@ -1138,7 +517,7 @@
         <div class="about-stat">
           <div class="about-stat-icon">🐍</div>
           <div class="about-stat-text">
-            <h4>Python · R · Streamlit · Plotly</h4>
+            <h4>Python · R · JavaScript</h4>
             <p>Full-stack data science — from raw climate data to interactive web deployments.</p>
           </div>
         </div>
@@ -1159,9 +538,9 @@
      FOOTER
 ════════════════════════════════════════════ -->
 <footer>
-  <div class="footer-logo">Alpha<span>-Stat<span>-Lab</span></span></div>
+  <div class="footer-logo">Alpha<span>-Stat</span></div>
   <a href="mailto:milyas3201@gmail.com" class="email-link">✉ milyas3201@gmail.com</a>
-  <p>© 2025 Alpha-Stat-Lab · Statistics &amp; Data Science</p>
+  <p>© 2025 Alpha-Stat-Lab · Climate Data Analytics</p>
 </footer>
 
 
@@ -1173,36 +552,27 @@
   }, { threshold: 0.08 });
   reveals.forEach(r => obs.observe(r));
 
-  /* ── TAB SWITCHING ── */
-  function switchTab(id, btn) {
-    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    const content = document.getElementById('tab-' + id);
-    if (content) content.classList.add('active');
-    if (btn) btn.classList.add('active');
-    // Scroll to dashboards section smoothly
-    document.getElementById('dashboards').scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
-
   /* ── FLOATING STAT PARTICLES ── */
   const terms = [
-    'μ = Σx/n', 'σ² = Σ(x-μ)²/n', 'P(A|B)', 'ARIMA(p,d,q)',
-    'R² = 0.94', 'β₀ + β₁x', 'SPEI · SPI', '∂L/∂β = 0',
-    'Var(X+Y)', 'E[X] = μ', 'H₀: μ₁=μ₂', 'F = MSB/MSW',
-    'ρ(x,y)', 'λ = 0.02', 'N(0,1)', 'χ²(k)', 'Γ(α,β)',
-    'Cov(X,Y)', 'AIC = 2k', 'Z = (x-μ)/σ'
+    'SPI', 'SPEI', 'SPTI', 'Drought Monitor',
+    'μ = Σx/n', 'σ² = Σ(x-μ)²/n', 'Punjab Climate',
+    'R² = 0.94', 'β₀ + β₁x', 'SPEI · SPI',
+    'Var(X+Y)', 'E[X] = μ', 'H₀: μ₁=μ₂',
+    'ρ(x,y)', 'N(0,1)', '32 Districts'
   ];
   const container = document.getElementById('particles');
-  terms.forEach((term, i) => {
-    const p = document.createElement('div');
-    p.className = 'particle';
-    p.textContent = term;
-    p.style.left = (Math.random() * 95) + '%';
-    p.style.animationDuration = (18 + Math.random() * 20) + 's';
-    p.style.animationDelay = (Math.random() * 20) + 's';
-    p.style.fontSize = (9 + Math.random() * 4) + 'px';
-    container.appendChild(p);
-  });
+  if (container) {
+    terms.forEach((term) => {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      p.textContent = term;
+      p.style.left = (Math.random() * 95) + '%';
+      p.style.animationDuration = (18 + Math.random() * 20) + 's';
+      p.style.animationDelay = (Math.random() * 20) + 's';
+      p.style.fontSize = (9 + Math.random() * 4) + 'px';
+      container.appendChild(p);
+    });
+  }
 </script>
 </body>
 </html>
