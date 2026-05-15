@@ -1,0 +1,66 @@
+<section id="dashboards" aria-labelledby="dashboards-heading">
+  <div class="container">
+    <div class="reveal">
+      <p class="section-tag">// interactive dashboards</p>
+      <h2 class="section-title" id="dashboards-heading">Climate Data Visualization Tools</h2>
+      <div class="section-divider"></div>
+      <p class="section-desc">
+        Explore climate, drought, and greenhouse gas emissions data through research-grade interactive dashboards — built with Python, Plotly, and Chart.js.
+      </p>
+    </div>
+
+    <div class="card-grid reveal">
+      <article class="dash-card featured" onclick="window.open('drought-dashboard/climate-dashboard.html','_blank')" role="button" tabindex="0" aria-label="Open Drought Indices Dashboard">
+        <div class="dash-card-visual">
+          <span class="dash-card-icon" aria-hidden="true">💧</span>
+          <div class="mini-chart" aria-hidden="true">
+            <div class="mini-bar" style="height:45%"></div>
+            <div class="mini-bar" style="height:70%"></div>
+            <div class="mini-bar" style="height:30%"></div>
+            <div class="mini-bar" style="height:85%"></div>
+            <div class="mini-bar" style="height:55%"></div>
+            <div class="mini-bar" style="height:65%"></div>
+            <div class="mini-bar" style="height:40%"></div>
+            <div class="mini-bar" style="height:75%"></div>
+          </div>
+        </div>
+        <div class="dash-card-body">
+          <h3>Drought Indices Dashboard — SPI, SPEI &amp; SPTI</h3>
+          <p>Interactive drought monitoring for 32 districts of Punjab, Pakistan (1981–2021). Analyse Standardised Precipitation Index (SPI), Standardised Precipitation Evapotranspiration Index (SPEI), and Standardised Precipitation Temperature Index (SPTI) with zoom, pan, and drought category breakdowns.</p>
+          <div class="dash-card-footer">
+            <div class="dash-status live"><div class="dot"></div> Live Demo</div>
+            <div class="dash-tags">
+              <span class="tag">SPI</span><span class="tag">SPEI</span><span class="tag">SPTI</span><span class="tag">Drought</span><span class="tag">Punjab</span>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="dash-card featured" onclick="window.open('ghg-dashboard/ghg-dashboard.html','_blank')" role="button" tabindex="0" aria-label="Open GHG Emissions Monitor">
+        <div class="dash-card-visual" style="background: linear-gradient(135deg, #1a472a, #2ecc71);">
+          <span class="dash-card-icon" aria-hidden="true">🌍</span>
+          <div class="mini-chart" aria-hidden="true">
+            <div class="mini-bar" style="background:#f39c12; height:60%"></div>
+            <div class="mini-bar" style="background:#e74c3c; height:75%"></div>
+            <div class="mini-bar" style="background:#3498db; height:50%"></div>
+            <div class="mini-bar" style="background:#2ecc71; height:80%"></div>
+            <div class="mini-bar" style="background:#9b59b6; height:45%"></div>
+            <div class="mini-bar" style="background:#1abc9c; height:65%"></div>
+            <div class="mini-bar" style="background:#e67e22; height:55%"></div>
+            <div class="mini-bar" style="background:#27ae60; height:70%"></div>
+          </div>
+        </div>
+        <div class="dash-card-body">
+          <h3>Global GHG Emissions Monitor — EDGAR Data 1990–2024</h3>
+          <p>Track and compare global greenhouse gas (GHG) emissions by country and sector using EDGAR data (1990–2024). Analyse CO₂, CH₄, N₂O and other gases with multi-country comparisons, sector filters, and interactive time-series charts aligned with IPCC AR6 reporting standards.</p>
+          <div class="dash-card-footer">
+            <div class="dash-status live"><div class="dot"></div> Live Demo</div>
+            <div class="dash-tags">
+              <span class="tag">GHG</span><span class="tag">CO₂</span><span class="tag">Climate</span><span class="tag">EDGAR</span><span class="tag">IPCC</span>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
