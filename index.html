@@ -1,494 +1,473 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-JV8ML3GKH2"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-JV8ML3GKH2');
-    </script>
-    
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alpha-Stat | Statistical Intelligence · Machine Learning · Data Science Research</title>
+<meta name="description" content="Alpha-Stat — PhD-level platform for statistics, machine learning, deep learning, climate data analysis, interactive dashboards, animated visualizations and trained AI models. SPI, SPEI, SPTI drought indices, Bayesian inference, time series analysis.">
+<meta name="keywords" content="statistics, machine learning, deep learning, data science, PhD research, SPI, SPEI, SPTI, drought analysis, time series, Bayesian inference, regression, neural networks, Python, R, climate analysis, Punjab districts, interactive dashboards, data visualization, hypothesis testing, PCA, clustering, gradient descent, transformer models, statistical modeling, alphastat, alphastatlab">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#04080f; --bg2:#080e1a; --surface:#0d1525;
+    --border:rgba(99,179,237,0.12);
+    --accent:#38bdf8; --accent2:#818cf8; --accent3:#34d399; --accent4:#f472b6; --accent5:#fb923c;
+    --text:#e2e8f0; --muted:#64748b; --white:#f8fafc;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;overflow-x:hidden;cursor:none}
 
-    <title>AlphaStatLab | Statistical Consulting, Data Science & Climate Dashboards</title>
-    <meta name="description" content="AlphaStatLab offers PhD-level statistical consulting, interactive climate data dashboards, and data science services. Specialising in drought analysis (SPI, SPEI), GHG emissions monitoring, time series analysis, machine learning, and research support.">
-    <meta name="keywords" content="statistical consulting, data science, climate dashboard, drought analysis, SPI, SPEI, SPTI, greenhouse gas emissions, GHG dashboard, EDGAR data, time series analysis, machine learning, deep learning, Python, R, interactive dashboard, Plotly, Chart.js, Streamlit, PhD statistician">
-    <meta name="author" content="Muhammad Ilyas — PhD Statistics, Quaid-i-Azam University, Islamabad">
-    <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://alphastatlab.com/">
+  .cursor{width:10px;height:10px;background:var(--accent);border-radius:50%;position:fixed;top:0;left:0;pointer-events:none;z-index:9999;transition:transform 0.15s ease;mix-blend-mode:screen}
+  .cursor-ring{width:36px;height:36px;border:1px solid rgba(56,189,248,0.4);border-radius:50%;position:fixed;top:0;left:0;pointer-events:none;z-index:9998;transition:transform 0.35s ease}
 
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://alphastatlab.com/">
-    <meta property="og:title" content="AlphaStatLab | Statistical Consulting & Climate Data Dashboards">
-    <meta property="og:description" content="PhD-level statistical consulting, interactive climate dashboards (drought indices, GHG emissions), and data science services.">
-    <meta property="og:site_name" content="AlphaStatLab">
-    <meta property="og:locale" content="en_US">
+  body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(56,189,248,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(56,189,248,0.03) 1px,transparent 1px);background-size:48px 48px;pointer-events:none;z-index:0}
 
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="AlphaStatLab | Statistical Consulting & Climate Data Dashboards">
-    <meta name="twitter:description" content="Interactive climate dashboards and PhD-level statistical consulting services.">
+  .orb{position:fixed;border-radius:50%;filter:blur(100px);pointer-events:none;z-index:0}
+  .orb1{width:600px;height:600px;background:#0ea5e9;top:-200px;left:-150px;opacity:0.15;animation:floatorb 18s ease-in-out infinite alternate}
+  .orb2{width:500px;height:500px;background:#6366f1;bottom:-100px;right:-100px;opacity:0.15;animation:floatorb 22s ease-in-out infinite alternate-reverse}
+  .orb3{width:300px;height:300px;background:#10b981;top:50%;left:50%;opacity:0.1;animation:floatorb 14s ease-in-out infinite alternate}
+  .orb4{width:250px;height:250px;background:#f472b6;top:30%;right:10%;opacity:0.08;animation:floatorb 19s ease-in-out infinite alternate}
+  @keyframes floatorb{from{transform:translate(0,0) scale(1)}to{transform:translate(40px,30px) scale(1.1)}}
 
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3CradialGradient id='shine' cx='30%25' cy='30%25' r='70%25'%3E%3Cstop offset='0%25' stop-color='%23ffffff' stop-opacity='0.6'/%3E%3Cstop offset='100%25' stop-color='%23000000' stop-opacity='0'/%3E%3C/radialGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='20' fill='%23000000'/%3E%3Ctext x='50' y='72' font-size='58' text-anchor='middle' fill='%23ffffff' font-family='Georgia, serif' font-weight='bold'%3Eα%3C/text%3E%3Cline x1='25' y1='30' x2='75' y2='70' stroke='%23e74c3c' stroke-width='6' stroke-linecap='round' /%3E%3Crect width='100' height='100' rx='20' fill='url(%23shine)'/%3E%3C/svg%3E">
-    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3CradialGradient id='shine' cx='30%25' cy='30%25' r='70%25'%3E%3Cstop offset='0%25' stop-color='%23ffffff' stop-opacity='0.6'/%3E%3Cstop offset='100%25' stop-color='%23000000' stop-opacity='0'/%3E%3C/radialGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='20' fill='%23000000'/%3E%3Ctext x='50' y='72' font-size='58' text-anchor='middle' fill='%23ffffff' font-family='Georgia, serif' font-weight='bold'%3Eα%3C/text%3E%3Cline x1='25' y1='30' x2='75' y2='70' stroke='%23e74c3c' stroke-width='6' stroke-linecap='round' /%3E%3Crect width='100' height='100' rx='20' fill='url(%23shine)'/%3E%3C/svg%3E">
-    <meta name="theme-color" content="#000000">
+  /* FLOATING SYMBOLS */
+  .symbols-layer{position:fixed;inset:0;pointer-events:none;z-index:1;overflow:hidden}
+  .fsym{position:absolute;font-family:'DM Mono',monospace;pointer-events:none;user-select:none;animation:floatsym linear infinite;opacity:0}
+  @keyframes floatsym{
+    0%{transform:translateY(100vh) rotate(0deg);opacity:0}
+    5%{opacity:1}
+    90%{opacity:0.8}
+    100%{transform:translateY(-150px) rotate(360deg);opacity:0}
+  }
 
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+  /* SOLAR SYSTEMS */
+  .solar-system{position:fixed;pointer-events:none;z-index:1}
+  .solar1{width:280px;height:280px;top:70px;right:90px}
+  .solar2{width:200px;height:200px;bottom:110px;left:70px}
+  .solar3{width:160px;height:160px;top:45%;left:3%}
 
-    <style>
-        :root {
-            --bg: #020810;
-            --surface: #0b1220;
-            --border: rgba(99,179,237,0.10);
-            --accent: #38bdf8;
-            --accent3: #34d399;
-            --text: #e2e8f0;
-            --muted: #64748b;
-            --muted2: #94a3b8;
-            --white: #f8fafc;
-        }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        html { scroll-behavior: smooth; }
-        body {
-            background: var(--bg);
-            color: var(--text);
-            font-family: 'DM Mono', monospace;
-            overflow-x: hidden;
-        }
-        body::before {
-            content: '';
-            position: fixed; inset: 0;
-            background-image: linear-gradient(rgba(56,189,248,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(56,189,248,0.025) 1px, transparent 1px);
-            background-size: 52px 52px;
-            pointer-events: none; z-index: 0;
-        }
-        
-        /* Floating particles animation */
-        .stat-particles {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            pointer-events: none;
-            z-index: 1;
-        }
-        .particle {
-            position: absolute;
-            font-family: 'DM Mono', monospace;
-            color: rgba(56,189,248,0.15);
-            font-size: 11px;
-            letter-spacing: 0.05em;
-            white-space: nowrap;
-            pointer-events: none;
-            animation: drift linear infinite;
-            z-index: 1;
-        }
-        @keyframes drift {
-            0% {
-                transform: translateY(100vh) translateX(-20px) rotate(0deg);
-                opacity: 0;
-            }
-            10% {
-                opacity: 0.8;
-            }
-            90% {
-                opacity: 0.6;
-            }
-            100% {
-                transform: translateY(-100px) translateX(20px) rotate(360deg);
-                opacity: 0;
-            }
-        }
-        
-        .orb { position: fixed; border-radius: 50%; filter: blur(110px); pointer-events: none; z-index: 0; }
-        .orb1 { width: 700px; height: 700px; background: #0369a1; top: -250px; left: -200px; opacity: 0.14; animation: floatorb 20s ease-in-out infinite alternate; }
-        .orb2 { width: 500px; height: 500px; background: #4f46e5; bottom: -100px; right: -100px; opacity: 0.12; animation: floatorb 25s ease-in-out infinite alternate-reverse; }
-        .orb3 { width: 350px; height: 350px; background: #059669; top: 45%; left: 55%; opacity: 0.10; animation: floatorb 16s ease-in-out infinite alternate; }
-        @keyframes floatorb {
-            from { transform: translate(0,0) scale(1); }
-            to   { transform: translate(50px,35px) scale(1.12); }
-        }
-        
-        .hero-ring {
-            position: absolute;
-            border-radius: 50%;
-            border: 1px solid rgba(56,189,248,0.07);
-            pointer-events: none;
-            z-index: 0;
-        }
-        .ring1 { width: 600px; height: 600px; top: 50%; left: 50%; transform: translate(-50%,-50%); animation: rotate 60s linear infinite; }
-        .ring2 { width: 900px; height: 900px; top: 50%; left: 50%; transform: translate(-50%,-50%); animation: rotate 90s linear infinite reverse; }
-        .ring3 { width: 1200px; height: 1200px; top: 50%; left: 50%; transform: translate(-50%,-50%); border-style: dashed; animation: rotate 120s linear infinite; }
-        @keyframes rotate { to { transform: translate(-50%,-50%) rotate(360deg); } }
-        
-        nav {
-            position: fixed; top: 0; left: 0; right: 0;
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 0 52px; height: 64px;
-            background: rgba(2,8,16,0.75);
-            backdrop-filter: blur(18px);
-            border-bottom: 1px solid var(--border);
-            z-index: 200;
-        }
-        .nav-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 20px; letter-spacing: -0.5px; text-decoration: none; }
-        .nav-logo .alpha { color: var(--white); }
-        .nav-logo .stat { color: var(--accent); }
-        .nav-logo .lab { color: var(--accent3); }
-        .nav-links { display: flex; align-items: center; gap: 4px; }
-        .nav-link { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted2); text-decoration: none; padding: 6px 14px; border: 1px solid transparent; transition: color 0.2s, border-color 0.2s; }
-        .nav-link:hover { color: var(--accent); border-color: rgba(56,189,248,0.4); }
-        .nav-email { background: transparent; border: 1px solid var(--accent); color: var(--accent); padding: 6px 16px; font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-decoration: none; transition: background 0.2s, color 0.2s; white-space: nowrap; }
-        .nav-email:hover { background: var(--accent); color: var(--bg); }
-        
-        .hero {
-            min-height: 80vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 100px 24px 60px;
-            position: relative;
-            z-index: 2;
-        }
-        .hero h1 { font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(48px, 8vw, 90px); line-height: 1; letter-spacing: -1px; margin-bottom: 20px; position: relative; white-space: nowrap; }
-        .hero h1 .alpha { color: var(--white); }
-        .hero h1 .stat { color: var(--accent); }
-        .hero h1 .lab { color: var(--accent3); }
-        .hero-descriptor { font-family: 'Instrument Serif', serif; font-style: italic; font-size: clamp(18px, 2.2vw, 24px); color: var(--muted2); margin: 20px 0 30px; max-width: 700px; line-height: 1.65; }
-        .hero-ctas { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; margin-top: 20px; }
-        .btn-primary { background: var(--accent); color: var(--bg); padding: 14px 32px; font-family: 'DM Mono', monospace; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; border: none; cursor: pointer; transition: opacity 0.2s, transform 0.2s; display: inline-block; }
-        .btn-primary:hover { opacity: 0.88; transform: translateY(-2px); }
-        .btn-ghost { background: transparent; color: var(--text); padding: 14px 32px; font-family: 'DM Mono', monospace; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; border: 1px solid var(--border); cursor: pointer; transition: border-color 0.2s, color 0.2s, transform 0.2s; display: inline-block; }
-        .btn-ghost:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
-        .scroll-hint { position: absolute; bottom: 36px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 8px; color: var(--muted); font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; animation: bob 3s ease-in-out infinite; }
-        .scroll-line { width: 1px; height: 50px; background: linear-gradient(to bottom, var(--accent), transparent); }
-        @keyframes bob { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(8px)} }
-        
-        section { padding: 60px 0 80px; position: relative; z-index: 2; }
-        .container { max-width: 1200px; margin: 0 auto; padding: 0 52px; }
-        .section-tag { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
-        .section-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: clamp(30px, 4.5vw, 52px); line-height: 1.05; letter-spacing: -1.5px; color: var(--white); margin-bottom: 16px; }
-        .section-desc { font-size: 13px; line-height: 1.85; color: var(--muted); max-width: 560px; margin-bottom: 52px; }
-        .section-divider { width: 48px; height: 2px; background: linear-gradient(to right, var(--accent), transparent); margin: 16px 0 20px; }
-        
-        #dashboards { background: linear-gradient(to bottom, transparent, rgba(56,189,248,0.015), transparent); }
-        .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px; justify-content: center; margin-top: 40px; }
-        .dash-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; transition: transform 0.3s ease, border-color 0.3s ease; cursor: pointer; position: relative; }
-        .dash-card:hover { transform: translateY(-6px); border-color: var(--accent); }
-        .dash-card.featured { border-color: rgba(56,189,248,0.3); }
-        .dash-card.featured::before { content: 'FEATURED'; position: absolute; top: 12px; right: 12px; font-size: 9px; letter-spacing: 0.15em; padding: 3px 8px; background: var(--accent); color: var(--bg); }
-        .dash-card-visual { height: 140px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; background: linear-gradient(135deg, rgba(5,150,105,0.15), rgba(56,189,248,0.08)); }
-        .dash-card-icon { font-size: 52px; position: relative; z-index: 1; }
-        .mini-chart { position: absolute; bottom: 12px; left: 12px; right: 12px; height: 32px; display: flex; align-items: flex-end; gap: 3px; }
-        .mini-bar { flex: 1; border-radius: 2px 2px 0 0; background: rgba(56,189,248,0.25); transition: height 0.3s; }
-        .dash-card:hover .mini-bar { background: rgba(56,189,248,0.45); }
-        .dash-card-body { padding: 22px; }
-        .dash-card-body h3 { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; color: var(--white); margin-bottom: 8px; }
-        .dash-card-body p { font-size: 12px; line-height: 1.7; color: var(--muted); margin-bottom: 16px; }
-        .dash-card-footer { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
-        .dash-status { display: inline-flex; align-items: center; gap: 6px; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; }
-        .dash-status .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent3); animation: pulse 2s infinite; }
-        .dash-status.live { color: var(--accent3); }
-        @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.5)} }
-        .dash-tags { display: flex; gap: 6px; flex-wrap: wrap; }
-        .tag { font-size: 9px; padding: 3px 8px; letter-spacing: 0.07em; border: 1px solid rgba(99,179,237,0.15); color: var(--muted2); text-transform: uppercase; }
-        
-        .services { background: linear-gradient(to bottom, transparent, rgba(129,140,248,0.015), transparent); }
-        .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; margin-top: 40px; }
-        .service-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 28px 24px; transition: transform 0.3s, border-color 0.3s; text-align: center; }
-        .service-card:hover { transform: translateY(-5px); border-color: var(--accent); }
-        .service-icon { font-size: 40px; margin-bottom: 16px; }
-        .service-card h3 { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; color: var(--white); margin-bottom: 12px; }
-        .service-card p { font-size: 12px; line-height: 1.7; color: var(--muted); margin-bottom: 20px; }
-        .service-btn { display: inline-block; padding: 8px 20px; background: transparent; border: 1px solid var(--accent); color: var(--accent); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; transition: all 0.2s; border-radius: 30px; }
-        .service-btn:hover { background: var(--accent); color: var(--bg); }
-        
-        #about { padding: 60px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
-        .about-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
-        .about-left h2 { font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(28px, 4vw, 44px); letter-spacing: -1px; color: var(--white); line-height: 1.1; margin-bottom: 20px; }
-        .about-left h2 em { font-family: 'Instrument Serif', serif; font-style: italic; color: var(--accent); font-weight: 400; }
-        .about-left p { font-size: 12px; line-height: 1.9; color: var(--muted); margin-bottom: 14px; }
-        .university { color: var(--accent3); font-weight: bold; margin-top: 10px; }
-        .about-right { display: flex; flex-direction: column; gap: 18px; }
-        .about-stat { display: flex; align-items: center; gap: 20px; padding: 20px 24px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; transition: transform 0.2s, border-color 0.2s; }
-        .about-stat:hover { transform: translateX(5px); border-color: var(--accent); }
-        .about-stat-icon { font-size: 32px; }
-        .about-stat-text h4 { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; color: var(--white); margin-bottom: 6px; }
-        .about-stat-text p { font-size: 12px; line-height: 1.6; color: var(--muted); }
-        
-        .social-links { display: flex; gap: 16px; margin-top: 20px; flex-wrap: wrap; }
-        .social-btn { display: inline-flex; align-items: center; gap: 8px; background: var(--surface); border: 1px solid var(--border); padding: 10px 20px; border-radius: 40px; font-size: 12px; color: var(--white); text-decoration: none; transition: all 0.2s; }
-        .social-btn:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
-        
-        footer { border-top: 1px solid var(--border); padding: 36px 52px; display: flex; align-items: center; justify-content: space-between; position: relative; z-index: 2; flex-wrap: wrap; gap: 16px; }
-        .footer-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 16px; }
-        .footer-logo .alpha { color: var(--white); }
-        .footer-logo .stat { color: var(--accent); }
-        .footer-logo .lab { color: var(--accent3); }
-        .footer-center { display: flex; gap: 24px; flex-wrap: wrap; justify-content: center; }
-        .footer-center a { font-size: 11px; color: var(--muted2); text-decoration: none; transition: color 0.2s; }
-        .footer-center a:hover { color: var(--accent); }
-        footer p { font-size: 10px; color: var(--muted); }
-        
-        .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.75s ease, transform 0.75s ease; }
-        .reveal.visible { opacity: 1; transform: translateY(0); }
-        
-        @media (max-width: 768px) {
-            nav { padding: 0 20px; }
-            .nav-links { display: none; }
-            .container { padding: 0 20px; }
-            footer { flex-direction: column; text-align: center; }
-            .hero h1 { font-size: clamp(40px, 7vw, 70px); white-space: normal; }
-            .card-grid { grid-template-columns: 1fr; }
-            .about-inner { grid-template-columns: 1fr; gap: 40px; }
-        }
-    </style>
+  .orbit-ring{position:absolute;inset:0;border-radius:50%;border:1px solid rgba(56,189,248,0.1)}
+  .orbit-ring-2{position:absolute;border-radius:50%;border:1px solid rgba(129,140,248,0.08)}
+
+  .orbit-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);border-radius:50%;display:flex;align-items:center;justify-content:center}
+
+  .planet{position:absolute;border-radius:50%;top:50%;left:50%;transform-origin:0 0}
+
+  /* solar1 */
+  .solar1 .orbit-center{width:40px;height:40px;background:radial-gradient(circle at 35% 35%,#60a5fa,#1e3a8a);box-shadow:0 0 24px rgba(96,165,250,0.6);font-size:18px}
+  .solar1 .orbit-ring-2{inset:20px}
+  .solar1 .p1{width:13px;height:13px;background:radial-gradient(circle at 35% 35%,#34d399,#065f46);box-shadow:0 0 12px rgba(52,211,153,0.8);margin:-6.5px;animation:orb1a 5s linear infinite}
+  .solar1 .p2{width:9px;height:9px;background:radial-gradient(circle at 35% 35%,#f472b6,#831843);box-shadow:0 0 10px rgba(244,114,182,0.8);margin:-4.5px;animation:orb1b 9s linear infinite}
+  @keyframes orb1a{from{transform:rotate(0deg) translateX(120px) rotate(0deg)}to{transform:rotate(360deg) translateX(120px) rotate(-360deg)}}
+  @keyframes orb1b{from{transform:rotate(60deg) translateX(85px) rotate(-60deg)}to{transform:rotate(420deg) translateX(85px) rotate(-420deg)}}
+
+  /* solar2 */
+  .solar2 .orbit-center{width:30px;height:30px;background:radial-gradient(circle at 35% 35%,#fb923c,#7c2d12);box-shadow:0 0 18px rgba(251,146,60,0.6);font-size:14px}
+  .solar2 .p1{width:9px;height:9px;background:radial-gradient(circle at 35% 35%,#818cf8,#312e81);box-shadow:0 0 10px rgba(129,140,248,0.8);margin:-4.5px;animation:orb2a 7s linear infinite}
+  .solar2 .p2{width:7px;height:7px;background:radial-gradient(circle at 35% 35%,#38bdf8,#0c4a6e);box-shadow:0 0 8px rgba(56,189,248,0.8);margin:-3.5px;animation:orb2b 11s linear infinite reverse}
+  @keyframes orb2a{from{transform:rotate(0deg) translateX(80px) rotate(0deg)}to{transform:rotate(360deg) translateX(80px) rotate(-360deg)}}
+  @keyframes orb2b{from{transform:rotate(90deg) translateX(60px) rotate(-90deg)}to{transform:rotate(450deg) translateX(60px) rotate(-450deg)}}
+
+  /* solar3 */
+  .solar3 .orbit-center{width:24px;height:24px;background:radial-gradient(circle at 35% 35%,#34d399,#065f46);box-shadow:0 0 14px rgba(52,211,153,0.5);font-size:11px}
+  .solar3 .p1{width:7px;height:7px;background:radial-gradient(circle at 35% 35%,#fb923c,#7c2d12);box-shadow:0 0 8px rgba(251,146,60,0.7);margin:-3.5px;animation:orb3a 8s linear infinite}
+  .solar3 .p2{width:5px;height:5px;background:radial-gradient(circle at 35% 35%,#f472b6,#831843);box-shadow:0 0 6px rgba(244,114,182,0.7);margin:-2.5px;animation:orb3b 14s linear infinite reverse}
+  @keyframes orb3a{from{transform:rotate(0deg) translateX(65px) rotate(0deg)}to{transform:rotate(360deg) translateX(65px) rotate(-360deg)}}
+  @keyframes orb3b{from{transform:rotate(180deg) translateX(48px) rotate(-180deg)}to{transform:rotate(540deg) translateX(48px) rotate(-540deg)}}
+
+  /* NAV */
+  nav{position:fixed;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:0 48px;height:64px;background:rgba(4,8,15,0.75);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);z-index:100}
+  .nav-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:20px;letter-spacing:-0.5px;color:var(--white);text-decoration:none}
+  .nav-logo span{color:var(--accent)}
+  .nav-links{display:flex;gap:32px;list-style:none}
+  .nav-links a{color:var(--muted);text-decoration:none;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;transition:color 0.2s}
+  .nav-links a:hover{color:var(--accent)}
+  .nav-cta{background:transparent;border:1px solid var(--accent);color:var(--accent);padding:8px 18px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;cursor:none;transition:background 0.2s,color 0.2s}
+  .nav-cta:hover{background:var(--accent);color:var(--bg)}
+
+  /* HERO */
+  .hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:120px 24px 80px;position:relative;z-index:2}
+  .hero-tag{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--border);background:rgba(56,189,248,0.05);padding:6px 16px;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent);margin-bottom:32px;animation:fadein 0.8s ease both}
+  .hero-tag::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--accent3);animation:pulse 2s infinite}
+  @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(1.4)}}
+
+  .hero h1{font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(52px,9vw,108px);line-height:0.95;letter-spacing:-3px;color:var(--white);margin-bottom:8px;animation:fadein 0.8s 0.1s ease both}
+  .hero h1 .accent{color:var(--accent)}
+  .hero h1 .serif{font-family:'Instrument Serif',serif;font-style:italic;color:var(--accent2);font-weight:400}
+
+  .hero-sub{font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(18px,2.5vw,26px);color:var(--muted);margin:24px 0 16px;max-width:600px;line-height:1.6;animation:fadein 0.8s 0.2s ease both}
+
+  .hero-keywords{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-width:720px;margin:0 auto 40px;animation:fadein 0.8s 0.28s ease both}
+  .kw{font-size:10px;letter-spacing:0.1em;text-transform:uppercase;padding:4px 10px;border:1px solid rgba(99,179,237,0.14);color:rgba(100,116,139,0.8);background:rgba(56,189,248,0.03);border-radius:2px;transition:color 0.3s,border-color 0.3s}
+  .kw:hover{color:var(--accent);border-color:var(--accent)}
+
+  .hero-btns{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;animation:fadein 0.8s 0.35s ease both}
+  .btn-primary{background:var(--accent);color:var(--bg);padding:14px 32px;font-family:'DM Mono',monospace;font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none;cursor:none;transition:opacity 0.2s,transform 0.2s;display:inline-block}
+  .btn-primary:hover{opacity:0.85;transform:translateY(-2px)}
+  .btn-ghost{border:1px solid var(--border);color:var(--text);padding:14px 32px;font-family:'DM Mono',monospace;font-size:12px;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none;cursor:none;transition:border-color 0.2s,color 0.2s;display:inline-block}
+  .btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+
+  /* TICKER */
+  .stats-bar{width:100%;overflow:hidden;border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:rgba(13,21,37,0.6);padding:14px 0;position:relative;z-index:2}
+  .ticker-track{display:flex;gap:64px;white-space:nowrap;animation:ticker 45s linear infinite}
+  @keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+  .ticker-item{display:flex;align-items:center;gap:10px;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted)}
+  .ticker-item strong{color:var(--accent3);font-weight:500}
+  .ticker-dot{width:4px;height:4px;border-radius:50%;background:var(--border);flex-shrink:0}
+
+  section{position:relative;z-index:2}
+  .section-label{font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--accent);margin-bottom:12px}
+  .section-title{font-family:'Syne',sans-serif;font-weight:700;font-size:clamp(32px,5vw,56px);line-height:1.05;letter-spacing:-1.5px;color:var(--white);margin-bottom:16px}
+  .section-desc{font-size:14px;line-height:1.8;color:var(--muted);max-width:480px}
+  .container{max-width:1200px;margin:0 auto;padding:0 48px}
+
+  /* FEATURES */
+  .features{padding:120px 0}
+  .features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);margin-top:72px}
+  .feature-card{background:var(--bg);padding:40px 36px;transition:background 0.3s;position:relative;overflow:hidden}
+  .feature-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(56,189,248,0.04),transparent);opacity:0;transition:opacity 0.3s}
+  .feature-card:hover{background:var(--surface)}
+  .feature-card:hover::before{opacity:1}
+  .feature-icon{width:44px;height:44px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:24px;background:var(--bg2);position:relative;z-index:1}
+  .feature-card h3{font-family:'Syne',sans-serif;font-size:16px;font-weight:600;color:var(--white);margin-bottom:10px;letter-spacing:-0.3px;position:relative;z-index:1}
+  .feature-card p{font-size:12px;line-height:1.8;color:var(--muted);position:relative;z-index:1}
+  .feature-num{position:absolute;top:16px;right:20px;font-size:11px;color:rgba(56,189,248,0.2);letter-spacing:0.1em}
+
+  /* MODULES */
+  .modules{padding:120px 0;background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+  .modules-layout{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;margin-top:72px}
+  .modules-list{display:flex;flex-direction:column;gap:2px}
+  .module-item{display:flex;align-items:center;gap:16px;padding:18px 20px;border:1px solid transparent;cursor:none;transition:all 0.2s;position:relative}
+  .module-item.active,.module-item:hover{border-color:var(--border);background:var(--surface)}
+  .module-item.active::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--accent)}
+  .module-dot{width:8px;height:8px;border-radius:50%;background:var(--muted);flex-shrink:0;transition:background 0.2s}
+  .module-item.active .module-dot,.module-item:hover .module-dot{background:var(--accent)}
+  .module-name{font-size:13px;color:var(--text);letter-spacing:0.02em}
+  .module-tag{margin-left:auto;font-size:10px;padding:3px 8px;border:1px solid var(--border);color:var(--muted);text-transform:uppercase;letter-spacing:0.08em}
+  .module-tag.live{border-color:rgba(52,211,153,0.3);color:var(--accent3)}
+  .module-preview{border:1px solid var(--border);background:var(--bg);padding:32px;min-height:320px;display:flex;flex-direction:column;justify-content:flex-end;position:relative;overflow:hidden}
+  .preview-chart{position:absolute;inset:0;display:flex;align-items:flex-end;gap:4px;padding:24px;opacity:0.5}
+  .bar{flex:1;border-radius:2px 2px 0 0;background:linear-gradient(to top,var(--accent),var(--accent2));animation:growbar 1s ease both}
+  @keyframes growbar{from{height:0 !important}}
+  .preview-info{position:relative;z-index:1}
+  .preview-title{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:var(--white);margin-bottom:6px}
+  .preview-desc{font-size:11px;color:var(--muted);line-height:1.7}
+
+  /* ABOUT */
+  .about{padding:120px 0}
+  .about-layout{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
+  .about-card{border:1px solid var(--border);background:var(--surface);padding:40px;position:relative}
+  .about-card::before{content:'α';position:absolute;top:-1px;right:32px;font-family:'Instrument Serif',serif;font-size:120px;color:rgba(56,189,248,0.06);line-height:1;pointer-events:none}
+  .profile-row{display:flex;align-items:center;gap:16px;margin-bottom:24px}
+  .profile-avatar{width:52px;height:52px;border:1px solid var(--border);background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:18px;color:var(--bg);flex-shrink:0}
+  .profile-name{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--white)}
+  .profile-role{font-size:11px;color:var(--accent);letter-spacing:0.08em;text-transform:uppercase;margin-top:2px}
+  .about-bio{font-size:13px;line-height:1.9;color:var(--muted)}
+  .about-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+  .tag{font-size:10px;letter-spacing:0.1em;text-transform:uppercase;padding:4px 10px;border:1px solid var(--border);color:var(--muted)}
+
+  /* CTA */
+  .cta-section{padding:120px 48px;text-align:center;background:var(--bg2);border-top:1px solid var(--border);position:relative;overflow:hidden}
+  .cta-section::before{content:'α';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:'Instrument Serif',serif;font-size:400px;color:rgba(56,189,248,0.025);pointer-events:none;line-height:1}
+  .cta-section h2{font-family:'Syne',sans-serif;font-size:clamp(36px,6vw,72px);font-weight:800;color:var(--white);letter-spacing:-2px;line-height:1;margin-bottom:20px;position:relative;z-index:1}
+  .cta-section p{font-size:14px;color:var(--muted);margin-bottom:40px;position:relative;z-index:1}
+
+  footer{border-top:1px solid var(--border);padding:32px 48px;display:flex;align-items:center;justify-content:space-between;position:relative;z-index:2}
+  footer .logo-f{font-family:'Syne',sans-serif;font-weight:800;font-size:16px;color:var(--white)}
+  footer .logo-f span{color:var(--accent)}
+  footer p{font-size:11px;color:var(--muted)}
+  footer nav{display:flex;gap:24px}
+  footer nav a{font-size:11px;color:var(--muted);text-decoration:none;transition:color 0.2s}
+  footer nav a:hover{color:var(--accent)}
+
+  @keyframes fadein{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+  .reveal{opacity:0;transform:translateY(30px);transition:opacity 0.7s ease,transform 0.7s ease}
+  .reveal.visible{opacity:1;transform:translateY(0)}
+
+  @media(max-width:768px){
+    nav{padding:0 20px} .nav-links{display:none} .container{padding:0 20px}
+    .features-grid{grid-template-columns:1fr}
+    .modules-layout,.about-layout{grid-template-columns:1fr;gap:40px}
+    .hero h1{letter-spacing:-2px}
+    footer{flex-direction:column;gap:16px;text-align:center}
+    .solar-system{display:none}
+  }
+</style>
 </head>
 <body>
 
-<div class="orb orb1"></div>
-<div class="orb orb2"></div>
-<div class="orb orb3"></div>
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursor-ring"></div>
+<div class="orb orb1"></div><div class="orb orb2"></div><div class="orb orb3"></div><div class="orb orb4"></div>
 
+<!-- FLOATING SYMBOLS -->
+<div class="symbols-layer" id="symbolsLayer"></div>
+
+<!-- SOLAR SYSTEM 1 — top right, blue star -->
+<div class="solar-system solar1">
+  <div class="orbit-ring"></div>
+  <div class="orbit-ring-2"></div>
+  <div class="orbit-center">🌐</div>
+  <div class="planet p1"></div>
+  <div class="planet p2"></div>
+</div>
+
+<!-- SOLAR SYSTEM 2 — bottom left, orange star -->
+<div class="solar-system solar2">
+  <div class="orbit-ring"></div>
+  <div class="orbit-center">📡</div>
+  <div class="planet p1"></div>
+  <div class="planet p2"></div>
+</div>
+
+<!-- SOLAR SYSTEM 3 — mid left, green star -->
+<div class="solar-system solar3">
+  <div class="orbit-ring"></div>
+  <div class="orbit-center">⚡</div>
+  <div class="planet p1"></div>
+  <div class="planet p2"></div>
+</div>
+
+<!-- NAV -->
 <nav>
-    <a href="#" class="nav-logo"><span class="alpha">Alpha</span><span class="stat">Stat</span><span class="lab">Lab</span></a>
-    <div class="nav-links">
-        <a href="#dashboards" class="nav-link">Dashboards</a>
-        <a href="#services" class="nav-link">Services</a>
-        <a href="#about" class="nav-link">About</a>
-    </div>
-    <a href="mailto:milyas3201@gmail.com" class="nav-email">✉ milyas3201@gmail.com</a>
+  <a href="#" class="nav-logo">Alpha<span>-Stat</span></a>
+  <ul class="nav-links">
+    <li><a href="#features">Features</a></li>
+    <li><a href="#modules">Modules</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <button class="nav-cta">Explore →</button>
 </nav>
 
-<section class="hero" id="home">
-    <div class="stat-particles" id="particles"></div>
-    <div class="hero-ring ring1"></div>
-    <div class="hero-ring ring2"></div>
-    <div class="hero-ring ring3"></div>
-    
-    <h1>
-        <span class="alpha">Alpha</span><span class="stat">Stat</span><span class="lab">Lab</span>
-    </h1>
-    <p class="hero-descriptor">
-        PhD-level statistical consulting &amp; interactive data science dashboards — turning complex climate and environmental data into clear, actionable insights.
-    </p>
-    <div class="hero-ctas">
-        <a href="#dashboards" class="btn-primary">Explore Dashboards</a>
-        <a href="#services" class="btn-ghost">Our Services</a>
-    </div>
-    <div class="scroll-hint">
-        <div class="scroll-line"></div>
-        scroll
-    </div>
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-tag">PhD Research Platform · Statistics · ML · Climate Science</div>
+  <h1>Alpha<span class="accent">-</span><br><span class="serif">Stat</span></h1>
+  <p class="hero-sub">Where statistical theory meets machine learning intelligence. Dashboards, concepts, animated visualizations & trained models.</p>
+
+  <div class="hero-keywords">
+    <span class="kw">Bayesian Inference</span>
+    <span class="kw">Time Series</span>
+    <span class="kw">SPI · SPEI · SPTI</span>
+    <span class="kw">Drought Analysis</span>
+    <span class="kw">Neural Networks</span>
+    <span class="kw">Hypothesis Testing</span>
+    <span class="kw">PCA</span>
+    <span class="kw">Regression</span>
+    <span class="kw">Climate Modeling</span>
+    <span class="kw">Punjab Districts</span>
+    <span class="kw">Deep Learning</span>
+    <span class="kw">Gradient Descent</span>
+    <span class="kw">Random Forest</span>
+    <span class="kw">Transformers</span>
+    <span class="kw">Spatial Statistics</span>
+    <span class="kw">Data Visualization</span>
+    <span class="kw">LSTM Forecasting</span>
+    <span class="kw">K-Means Clustering</span>
+  </div>
+
+  <div class="hero-btns">
+    <a href="#modules" class="btn-primary">Explore Modules</a>
+    <a href="#about" class="btn-ghost">About the Author</a>
+  </div>
 </section>
 
-<section id="dashboards">
-    <div class="container">
-        <div class="reveal">
-            <p class="section-tag">// interactive dashboards</p>
-            <h2 class="section-title">Climate Data Visualization Tools</h2>
-            <div class="section-divider"></div>
-            <p class="section-desc">
-                Explore climate, drought, and greenhouse gas emissions data through research-grade interactive dashboards.
-            </p>
-        </div>
-        <div class="card-grid reveal">
-            <div class="dash-card featured" onclick="window.open('drought-dashboard/climate-dashboard.html','_blank')">
-                <div class="dash-card-visual">
-                    <span class="dash-card-icon">💧</span>
-                    <div class="mini-chart">
-                        <div class="mini-bar" style="height:45%"></div>
-                        <div class="mini-bar" style="height:70%"></div>
-                        <div class="mini-bar" style="height:30%"></div>
-                        <div class="mini-bar" style="height:85%"></div>
-                        <div class="mini-bar" style="height:55%"></div>
-                        <div class="mini-bar" style="height:65%"></div>
-                        <div class="mini-bar" style="height:40%"></div>
-                        <div class="mini-bar" style="height:75%"></div>
-                    </div>
-                </div>
-                <div class="dash-card-body">
-                    <h3>Drought Indices Dashboard — SPI, SPEI &amp; SPTI</h3>
-                    <p>Interactive drought monitoring for 32 districts of Punjab, Pakistan (1981–2021). Analyse SPI, SPEI, and SPTI with zoom, pan, and drought category breakdowns.</p>
-                    <div class="dash-card-footer">
-                        <div class="dash-status live"><div class="dot"></div> Live Demo</div>
-                        <div class="dash-tags">
-                            <span class="tag">SPI</span><span class="tag">SPEI</span><span class="tag">SPTI</span><span class="tag">Drought</span><span class="tag">Punjab</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="dash-card featured" onclick="window.open('ghg-dashboard/ghg-dashboard.html','_blank')">
-                <div class="dash-card-visual" style="background: linear-gradient(135deg, #1a472a, #2ecc71);">
-                    <span class="dash-card-icon">🌍</span>
-                    <div class="mini-chart">
-                        <div class="mini-bar" style="background:#f39c12; height:60%"></div>
-                        <div class="mini-bar" style="background:#e74c3c; height:75%"></div>
-                        <div class="mini-bar" style="background:#3498db; height:50%"></div>
-                        <div class="mini-bar" style="background:#2ecc71; height:80%"></div>
-                        <div class="mini-bar" style="background:#9b59b6; height:45%"></div>
-                        <div class="mini-bar" style="background:#1abc9c; height:65%"></div>
-                        <div class="mini-bar" style="background:#e67e22; height:55%"></div>
-                        <div class="mini-bar" style="background:#27ae60; height:70%"></div>
-                    </div>
-                </div>
-                <div class="dash-card-body">
-                    <h3>Global GHG Emissions Monitor — EDGAR Data 1990–2024</h3>
-                    <p>Track and compare global greenhouse gas emissions by country and sector using EDGAR data. Multi-country comparison and sector breakdown charts.</p>
-                    <div class="dash-card-footer">
-                        <div class="dash-status live"><div class="dot"></div> Live Demo</div>
-                        <div class="dash-tags">
-                            <span class="tag">GHG</span><span class="tag">CO₂</span><span class="tag">Climate</span><span class="tag">EDGAR</span><span class="tag">IPCC</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+<!-- TICKER -->
+<div class="stats-bar">
+  <div class="ticker-track">
+    <div class="ticker-item"><strong>Statistics</strong> Descriptive · Inferential · Bayesian · Frequentist</div>
+    <div class="ticker-dot"></div>
+    <div class="ticker-item"><strong>Machine Learning</strong> Regression · Classification · Clustering · XGBoost</div>
+    <div class="ticker-dot"></div>
+    <div class="ticker-item"><strong>Deep Learning</strong> CNN · LSTM · RNN · Transformers · Attention</div>
+    <div class="ticker-dot"></div>
+    <div class="ticker-item"><strong>Climate</strong> SPI · SPEI · SPTI · Drought Indices · 36 Punjab Districts</div>
+    <div class="ticker-dot"></div>
+    <div class="ticker-item"><strong>Mathematics</strong> ∑ Linear Algebra · ∫ Calculus · P(A|B) Probability · H(x) Entropy</div>
+    <div class="ticker-dot"></div>
+    <div class="ticker-item"><strong>Visualization</strong> Animated Plots · Dashboards · Time Series · Spatial Maps</div>
+    <div class="ticker-dot"></div>
+    <div class="ticker-item"><strong>Statistics</strong> Descriptive · Inferential · Bayesian · Frequentist</div>
+    <div class="ticker-dot"></div>
+    <div class="ticker-item"><strong>Machine Learning</strong> Regression · Classification · Clustering · XGBoost</div>
+    <div class="ticker-dot"></div>
+    <div class="ticker-item"><strong>Deep Learning</strong> CNN · LSTM · RNN · Transformers · Attention</div>
+    <div class="ticker-dot"></div>
+    <div class="ticker-item"><strong>Climate</strong> SPI · SPEI · SPTI · Drought Indices · 36 Punjab Districts</div>
+    <div class="ticker-dot"></div>
+    <div class="ticker-item"><strong>Mathematics</strong> ∑ Linear Algebra · ∫ Calculus · P(A|B) Probability · H(x) Entropy</div>
+    <div class="ticker-dot"></div>
+    <div class="ticker-item"><strong>Visualization</strong> Animated Plots · Dashboards · Time Series · Spatial Maps</div>
+    <div class="ticker-dot"></div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+  <div class="container">
+    <div class="reveal">
+      <p class="section-label">// what you'll find</p>
+      <h2 class="section-title">Everything a data<br>scientist needs</h2>
     </div>
+    <div class="features-grid reveal">
+      <div class="feature-card"><span class="feature-num">01</span><div class="feature-icon">📊</div><h3>Interactive Dashboards</h3><p>Real-time SPI, SPEI, SPTI drought indices for 36 Punjab districts (1981–2021). Built with Streamlit & Plotly. Filter by district and year range.</p></div>
+      <div class="feature-card"><span class="feature-num">02</span><div class="feature-icon">🎬</div><h3>Animated Visualizations</h3><p>Watch algorithms run step-by-step — gradient descent, PCA, k-means, Bayesian updates, and climate trend animations with frame-by-frame control.</p></div>
+      <div class="feature-card"><span class="feature-num">03</span><div class="feature-icon">🤖</div><h3>ML / DL Models</h3><p>Live trained models — LSTM time series forecasting, CNN classifiers, XGBoost, random forest, and regression. Run real predictions in-browser.</p></div>
+      <div class="feature-card"><span class="feature-num">04</span><div class="feature-icon">📐</div><h3>Statistical Concepts</h3><p>Hypothesis testing, Bayesian inference, MLE, confidence intervals, ANOVA, chi-square — explained with interactive sliders and mathematical proofs.</p></div>
+      <div class="feature-card"><span class="feature-num">05</span><div class="feature-icon">🧠</div><h3>Deep Learning Theory</h3><p>CNN architectures, LSTM cells, attention mechanisms, transformer models, backpropagation — explored with visual intuition and live Python demos.</p></div>
+      <div class="feature-card"><span class="feature-num">06</span><div class="feature-icon">🌦️</div><h3>Climate Research</h3><p>Drought monitoring, precipitation analysis, evapotranspiration modeling across Punjab, Pakistan. Spatial and temporal statistical analysis (1981–2021).</p></div>
+    </div>
+  </div>
 </section>
 
-<section id="services" class="services">
-    <div class="container">
-        <div class="reveal">
-            <p class="section-tag">// services</p>
-            <h2 class="section-title">Statistical Consulting &amp; Data Science Services</h2>
-            <div class="section-divider"></div>
-            <p class="section-desc">
-                Leverage PhD-level expertise for your data analysis, research methodology, and dashboard development — serving academic researchers, NGOs, and businesses worldwide.
-            </p>
-        </div>
-        <div class="services-grid reveal">
-            <div class="service-card">
-                <div class="service-icon">📊</div>
-                <h3>Statistical Data Analysis</h3>
-                <p>Expert statistical modelling, hypothesis testing, regression analysis, time series analysis (ARIMA, SARIMA), and advanced analytics for climate research, medical studies, and business intelligence.</p>
-                <a href="mailto:milyas3201@gmail.com?subject=Data%20Analysis%20Inquiry" class="service-btn">Inquire →</a>
-            </div>
-            <div class="service-card">
-                <div class="service-icon">📈</div>
-                <h3>Interactive Dashboard Development</h3>
-                <p>Custom interactive dashboards for climate analytics, environmental monitoring, business intelligence, and academic research. Built with Streamlit, Plotly, Chart.js, and D3.js.</p>
-                <a href="mailto:milyas3201@gmail.com?subject=Dashboard%20Creation%20Inquiry" class="service-btn">Inquire →</a>
-            </div>
-            <div class="service-card">
-                <div class="service-icon">🔬</div>
-                <h3>Academic Research Support</h3>
-                <p>PhD-level assistance for statistical methodology, data interpretation, academic writing, and publication-ready figures. Published in Springer journals.</p>
-                <a href="mailto:milyas3201@gmail.com?subject=Research%20Support%20Inquiry" class="service-btn">Inquire →</a>
-            </div>
-        </div>
+<!-- MODULES -->
+<section class="modules" id="modules">
+  <div class="container">
+    <div class="reveal">
+      <p class="section-label">// modules</p>
+      <h2 class="section-title">Explore the platform</h2>
+      <p class="section-desc">Each module is a dedicated space — dashboards link to live Streamlit apps, models are interactive and real.</p>
     </div>
+    <div class="modules-layout reveal">
+      <div class="modules-list">
+        <div class="module-item active" onclick="setModule(this,'Punjab Climate Dashboard','SPI · SPEI · SPTI drought indices for 36 districts of Punjab, Pakistan. Interactive time series (1981–2021) with drought classification.')">
+          <div class="module-dot"></div><span class="module-name">Punjab Climate Dashboard</span><span class="module-tag live">Live</span>
+        </div>
+        <div class="module-item" onclick="setModule(this,'ML Model Zoo','Trained ML models — linear regression, SVMs, decision trees, random forest, and XGBoost. Run predictions live with your own inputs.')">
+          <div class="module-dot"></div><span class="module-name">ML Model Zoo</span><span class="module-tag live">Live</span>
+        </div>
+        <div class="module-item" onclick="setModule(this,'Deep Learning Lab','LSTM time series forecasting, CNN classifiers, and transformer demos with visual architecture walkthroughs and layer-by-layer explanations.')">
+          <div class="module-dot"></div><span class="module-name">Deep Learning Lab</span><span class="module-tag">Soon</span>
+        </div>
+        <div class="module-item" onclick="setModule(this,'Animation Gallery','Gradient descent, k-means clustering, PCA decomposition, Bayesian updates — animated frame by frame in real time. Watch math come alive.')">
+          <div class="module-dot"></div><span class="module-name">Animation Gallery</span><span class="module-tag live">Live</span>
+        </div>
+        <div class="module-item" onclick="setModule(this,'Concept Library','Hypothesis testing, MLE, Bayesian inference, ANOVA, regression theory — with interactive sliders, proofs, and worked examples.')">
+          <div class="module-dot"></div><span class="module-name">Concept Library</span><span class="module-tag">Soon</span>
+        </div>
+        <div class="module-item" onclick="setModule(this,'Research Blog','PhD notes, climate science tutorials, paper breakdowns, and statistical modeling insights from active research in Pakistan.')">
+          <div class="module-dot"></div><span class="module-name">Research Blog</span><span class="module-tag">Soon</span>
+        </div>
+      </div>
+      <div class="module-preview" id="module-preview">
+        <div class="preview-chart" id="preview-chart">
+          <div class="bar" style="height:40%"></div><div class="bar" style="height:65%"></div>
+          <div class="bar" style="height:85%"></div><div class="bar" style="height:55%"></div>
+          <div class="bar" style="height:72%"></div><div class="bar" style="height:48%"></div>
+          <div class="bar" style="height:91%"></div><div class="bar" style="height:63%"></div>
+        </div>
+        <div class="preview-info">
+          <div class="preview-title" id="preview-title">Punjab Climate Dashboard</div>
+          <div class="preview-desc" id="preview-desc">SPI · SPEI · SPTI drought indices for 36 districts of Punjab, Pakistan. Interactive time series (1981–2021) with drought classification.</div>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
 
-<section id="about">
-    <div class="container">
-        <div class="about-inner reveal">
-            <div class="about-left">
-                <h2>Built by a<br><em>statistician</em>,<br>for everyone.</h2>
-                <p>AlphaStatLab is a personal research and consulting platform developed by <strong>Muhammad Ilyas</strong> — a PhD scholar in Statistics at Quaid-i-Azam University, Islamabad, Pakistan.</p>
-                <p>Specialist areas include spatiotemporal drought monitoring, climate change analysis, machine learning and deep learning for environmental forecasting, and biostatistics.</p>
-                <p class="university">🎓 PhD Statistics · Quaid-i-Azam University, Islamabad, Pakistan</p>
-                <div class="social-links">
-                    <a href="mailto:milyas3201@gmail.com" class="social-btn">📧 Email</a>
-                    <a href="https://www.linkedin.com/in/muhammad-ilyas-statistics" target="_blank" class="social-btn">🔗 LinkedIn</a>
-                    <a href="https://www.researchgate.net/profile/Muhammad-Ilyas-144" target="_blank" class="social-btn">📚 ResearchGate</a>
-                </div>
-            </div>
-            <div class="about-right">
-                <div class="about-stat">
-                    <div class="about-stat-icon">🎓</div>
-                    <div class="about-stat-text">
-                        <h4>PhD Scholar — Climate Statistics &amp; Machine Learning</h4>
-                        <p>Research in spatiotemporal drought monitoring, machine learning, and deep learning for climate forecasting. Published in Springer journals.</p>
-                    </div>
-                </div>
-                <div class="about-stat">
-                    <div class="about-stat-icon">💼</div>
-                    <div class="about-stat-text">
-                        <h4>Research &amp; Professional Experience</h4>
-                        <p>Research Intern at Pakistan Meteorological Department. Part-time Biostatistician at HBS Medical &amp; Dental College. Freelance Data Analyst with 5+ years experience.</p>
-                    </div>
-                </div>
-                <div class="about-stat">
-                    <div class="about-stat-icon">🛠️</div>
-                    <div class="about-stat-text">
-                        <h4>Technical Stack &amp; Expertise</h4>
-                        <p>Python, R, JavaScript, SQL · Machine Learning, Deep Learning, Time Series Analysis · Dashboard Development (Streamlit, Plotly, Chart.js).</p>
-                    </div>
-                </div>
-                <div class="about-stat">
-                    <div class="about-stat-icon">📫</div>
-                    <div class="about-stat-text">
-                        <h4>Open for Global Collaboration</h4>
-                        <p>Research partnerships, statistical consulting, and dashboard development worldwide. Connect on LinkedIn or ResearchGate.</p>
-                    </div>
-                </div>
-            </div>
+<!-- ABOUT -->
+<section class="about" id="about">
+  <div class="container">
+    <div class="about-layout reveal">
+      <div>
+        <p class="section-label">// about</p>
+        <h2 class="section-title">Built by a researcher,<br>for researchers</h2>
+        <p class="section-desc" style="margin-top:16px">Alpha-Stat documents a PhD journey through statistics, climate science, and machine learning — making complex ideas accessible, visual, and interactive for the global research community.</p>
+        <div class="hero-btns" style="margin-top:32px">
+          <a href="https://github.com/ilyas-76" target="_blank" class="btn-primary">GitHub Profile</a>
         </div>
+      </div>
+      <div class="about-card">
+        <div class="profile-row">
+          <div class="profile-avatar">α</div>
+          <div>
+            <div class="profile-name">Ilyas</div>
+            <div class="profile-role">PhD Scholar · Data Scientist · Climate Researcher</div>
+          </div>
+        </div>
+        <p class="about-bio">PhD researcher specializing in statistical modeling, drought index analysis (SPI/SPEI/SPTI), machine learning, and deep learning. Building Alpha-Stat to share knowledge, visualize concepts, and deploy trained models for the global academic and research community.</p>
+        <div class="about-tags">
+          <span class="tag">Statistics</span><span class="tag">Machine Learning</span>
+          <span class="tag">Deep Learning</span><span class="tag">Climate Science</span>
+          <span class="tag">Python</span><span class="tag">R</span>
+          <span class="tag">SPI · SPEI · SPTI</span><span class="tag">Time Series</span>
+          <span class="tag">Bayesian</span><span class="tag">LSTM</span>
+        </div>
+      </div>
     </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section" id="contact">
+  <h2>Start exploring<br><span style="color:var(--accent)">Alpha-Stat</span></h2>
+  <p>Dashboards · Models · Animations · Climate Research — all in one place.</p>
+  <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;position:relative;z-index:1">
+    <a href="https://github.com/ilyas-76" target="_blank" class="btn-primary">View on GitHub</a>
+    <a href="#features" class="btn-ghost">Explore Features</a>
+  </div>
 </section>
 
 <footer>
-    <div class="footer-logo">
-        <span class="alpha">Alpha</span><span class="stat">Stat</span><span class="lab">Lab</span>
-    </div>
-    <div class="footer-center">
-        <a href="https://www.linkedin.com/in/muhammad-ilyas-statistics" target="_blank">LinkedIn</a>
-        <a href="https://www.researchgate.net/profile/Muhammad-Ilyas-144" target="_blank">ResearchGate</a>
-        <a href="mailto:milyas3201@gmail.com">Email</a>
-    </div>
-    <p>© 2025 AlphaStatLab · Statistical Consulting &amp; Data Science · Islamabad, Pakistan</p>
+  <div class="logo-f">Alpha<span>-Stat</span></div>
+  <p>© 2025 Alpha-Stat · Ilyas · PhD Research · Statistics · ML · Climate Science</p>
+  <nav>
+    <a href="https://github.com/ilyas-76" target="_blank">GitHub</a>
+    <a href="#features">Features</a>
+    <a href="#about">About</a>
+  </nav>
 </footer>
 
-<script data-goatcounter="https://alphastatlab.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
-
 <script>
-    // Scroll reveal animation
-    const reveals = document.querySelectorAll('.reveal');
-    const observer = new IntersectionObserver(entries => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
-            }
-        });
-    }, { threshold: 0.1 });
-    reveals.forEach(reveal => observer.observe(reveal));
-    
-    // Floating statistical particles - they will drift up randomly
-    const terms = [
-        'SPI', 'SPEI', 'SPTI', 'PDSI', 'scPDSI', 'EDDI',
-        'μ = Σx/n', 'σ² = Σ(x-μ)²/n', 'CV = σ/μ', 'MAD = Σ|x-μ|/n',
-        'ρ(x,y) = Cov/σₓσᵧ', 'R² = 1 - SSᵣₑₛ/SSₜₒₜ', 'RMSE', 'MAE',
-        'β = (XᵀX)⁻¹Xᵀy', 'ŷ = β₀ + β₁x', 'logit(p) = ln(p/1-p)',
-        'LASSO', 'Ridge', 'ARIMA(p,d,q)', 'SARIMA(P,D,Q)ₛ', 'ACF', 'PACF',
-        'H₀: μ₁ = μ₂', 't = (x̄₁ - x̄₂)/SE', 'p-value', 'χ² = Σ(O-E)²/E',
-        'N(μ,σ²)', 'X ~ Bin(n,p)', 'X ~ Poisson(λ)', 'MCMC', 'Metropolis-Hastings',
-        'SVM', 'Random Forest', 'XGBoost', 'PCA', 'k-means',
-        'CO₂ ppm', 'CH₄ ppb', 'N₂O ppb', 'GWP', 'IPCC AR6', 'CMIP6',
-        'PhD Research', 'Statistical Computing', 'Data Science', 'Climate Analytics',
-        'Drought Index', 'GHG Emissions', 'Deep Learning', 'LSTM', 'Time Series'
-    ];
-    
-    const container = document.getElementById('particles');
-    if (container) {
-        terms.forEach((term) => {
-            const p = document.createElement('div');
-            p.className = 'particle';
-            p.textContent = term;
-            p.style.left = Math.random() * 100 + '%';
-            p.style.animationDuration = (15 + Math.random() * 25) + 's';
-            p.style.animationDelay = (Math.random() * 20) + 's';
-            p.style.fontSize = (9 + Math.random() * 6) + 'px';
-            p.style.opacity = 0.3 + Math.random() * 0.5;
-            container.appendChild(p);
-        });
-    }
-</script>
+// Cursor
+const cursor=document.getElementById('cursor'),ring=document.getElementById('cursor-ring');
+document.addEventListener('mousemove',e=>{
+  cursor.style.transform=`translate(${e.clientX-5}px,${e.clientY-5}px)`;
+  ring.style.transform=`translate(${e.clientX-18}px,${e.clientY-18}px)`;
+});
 
+// ===== FLOATING SYMBOLS =====
+const symGroups=[
+  // Greek / Math operators
+  {syms:['∑','∫','∂','∇','∞','√','π','μ','σ','λ','θ','α','β','γ','δ','ε','Φ','Ψ','Ω','ρ','κ','η','τ','ζ'],color:'#38bdf8',sizes:[13,17,21,26]},
+  // Stats notation
+  {syms:['x̄','P(A|B)','H₀','H₁','R²','χ²','p<.05','N(μ,σ²)','MLE','MAP','KL(P‖Q)','E[X]','Var(X)','β̂','ŷ'],color:'#818cf8',sizes:[10,12,14]},
+  // Climate & Earth
+  {syms:['🌧️','🌡️','☁️','🌊','❄️','🌪️','⛅','🌦️','💧','🏔️','🌱','🌍','🛰️','📡'],color:'#34d399',sizes:[15,19,23]},
+  // ML / Data science
+  {syms:['⚡','🧠','🔬','🔭','⚙️','🔗','📈','📉','🎯','🧮','🤖','💡','🧬'],color:'#f472b6',sizes:[13,17,21]},
+  // Numbers & stats values
+  {syms:['1.96','0.05','3.14','2.58','N(0,1)','t=2.3','z=1.64','CI 95%','σ²','df=n-1','AIC','BIC','RMSE'],color:'#fb923c',sizes:[9,11,13]},
+  // Matrix / formula snippets
+  {syms:['[W·x+b]','softmax','relu(x)','∇L','Σxᵢyᵢ','argmin','log P','∏pᵢ'],color:'#a78bfa',sizes:[9,11]},
+];
+
+const layer=document.getElementById('symbolsLayer');
+for(let i=0;i<65;i++){
+  const grp=symGroups[Math.floor(Math.random()*symGroups.length)];
+  const sym=grp.syms[Math.floor(Math.random()*grp.syms.length)];
+  const size=grp.sizes[Math.floor(Math.random()*grp.sizes.length)];
+  const opacity=(0.07+Math.random()*0.25).toFixed(2);
+  const el=document.createElement('span');
+  el.className='fsym';
+  el.textContent=sym;
+  el.style.cssText=`left:${Math.random()*100}%;font-size:${size}px;color:${grp.color};opacity:${opacity};animation-duration:${11+Math.random()*22}s;animation-delay:${-Math.random()*22}s;`;
+  layer.appendChild(el);
+}
+
+// Module switcher
+function setModule(el,title,desc){
+  document.querySelectorAll('.module-item').forEach(i=>i.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('preview-title').textContent=title;
+  document.getElementById('preview-desc').textContent=desc;
+  document.querySelectorAll('#preview-chart .bar').forEach(b=>{b.style.height=(30+Math.random()*65)+'%'});
+}
+
+// Scroll reveal
+const obs=new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('visible')}),{threshold:0.1});
+document.querySelectorAll('.reveal').forEach(r=>obs.observe(r));
+</script>
 </body>
 </html>
