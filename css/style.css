@@ -1,3 +1,8 @@
+/* FORCE STYLES - OVERRIDE ANY CACHING */
+body {
+  background: #020810 !important;
+  color: #e2e8f0 !important;
+}
 :root {
   --bg: #020810;
   --bg2: #060c18;
