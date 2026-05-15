@@ -15,7 +15,8 @@
 
     <title>AlphaStatLab | Statistical Consulting, Data Science & Climate Dashboards</title>
     <meta name="description" content="AlphaStatLab offers PhD-level statistical consulting, interactive climate data dashboards, and data science services. Specialising in drought analysis (SPI, SPEI), GHG emissions monitoring, time series analysis, machine learning, and research support.">
-    <meta name="keywords" content="statistical consulting, data science, climate dashboard, drought analysis, SPI, SPEI, SPTI, greenhouse gas emissions, GHG dashboard, EDGAR data, time series analysis, machine learning, deep learning, Python, R, interactive dashboard, Plotly, Chart.js, Streamlit, PhD statistician">
+    <!-- EXPANDED KEYWORDS for SEO traffic -->
+    <meta name="keywords" content="statistical consulting, data science, climate dashboard, drought analysis, SPI, SPEI, SPTI, PDSI, drought monitoring Pakistan, greenhouse gas emissions, GHG dashboard, EDGAR data, IPCC AR6, CMIP6, CO2 emissions, CH4 methane, N2O nitrous oxide, time series analysis, ARIMA, SARIMA, machine learning, deep learning, LSTM forecasting, random forest, XGBoost, neural networks, Python, R, interactive dashboard, Plotly, Chart.js, Streamlit, D3.js, PhD statistician, Bayesian inference, hypothesis testing, regression analysis, PCA, k-means clustering, spatial statistics, spatiotemporal analysis, Punjab districts Pakistan, climate change analysis, evapotranspiration, precipitation analysis, biostatistics, academic research support, statistical modeling, data visualization, Quaid-i-Azam University, Muhammad Ilyas statistician, alphastatlab, alphastat, climate data science, environmental statistics, freelance data analyst Pakistan, research consulting, publication support, confidence intervals, ANOVA, chi-square test, MLE, MAP estimation, gradient descent, backpropagation, transformer models, attention mechanism">
     <meta name="author" content="Muhammad Ilyas — PhD Statistics, Quaid-i-Azam University, Islamabad">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://alphastatlab.com/">
@@ -79,6 +80,9 @@
         .particle {
             position: absolute;
             font-family: 'DM Mono', monospace;
+            color: rgba(56,189,248,0.15);
+            font-size: 11px;
+            letter-spacing: 0.05em;
             white-space: nowrap;
             pointer-events: none;
             animation: drift linear infinite;
@@ -100,12 +104,76 @@
                 opacity: 0;
             }
         }
+
+        /* ── FLOATING BACKGROUND SYMBOLS (new) ── */
+        .bg-symbols-layer {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+        .bgsym {
+            position: absolute;
+            font-family: 'DM Mono', monospace;
+            pointer-events: none;
+            user-select: none;
+            animation: bgsym-rise linear infinite;
+            will-change: transform, opacity;
+        }
+        @keyframes bgsym-rise {
+            0%   { transform: translateY(105vh) rotate(0deg);   opacity: 0; }
+            6%   { opacity: 1; }
+            88%  { opacity: 1; }
+            100% { transform: translateY(-140px) rotate(360deg); opacity: 0; }
+        }
+
+        /* ── ORBITING SOLAR SYSTEMS (new) ── */
+        .solar-system { position: fixed; pointer-events: none; z-index: 1; }
+        .solar1 { width: 260px; height: 260px; top: 72px;  right: 80px;  }
+        .solar2 { width: 190px; height: 190px; bottom: 100px; left: 60px; }
+        .solar3 { width: 150px; height: 150px; top: 42%;  left: 2%;  }
+
+        .orbit-ring  { position: absolute; inset: 0; border-radius: 50%; border: 1px solid rgba(56,189,248,0.10); }
+        .orbit-ring2 { position: absolute; border-radius: 50%; border: 1px solid rgba(129,140,248,0.07); }
+
+        .orbit-center {
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%,-50%);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .planet { position: absolute; border-radius: 50%; top: 50%; left: 50%; transform-origin: 0 0; }
+
+        /* solar1 — blue star */
+        .solar1 .orbit-center { width:38px; height:38px; background:radial-gradient(circle at 35% 35%,#60a5fa,#1e3a8a); box-shadow:0 0 22px rgba(96,165,250,0.55); font-size:17px; }
+        .solar1 .orbit-ring2  { inset: 22px; }
+        .solar1 .p1 { width:12px; height:12px; background:radial-gradient(circle at 35% 35%,#34d399,#065f46); box-shadow:0 0 10px rgba(52,211,153,0.8); margin:-6px; animation:s1p1 5.5s linear infinite; }
+        .solar1 .p2 { width:8px;  height:8px;  background:radial-gradient(circle at 35% 35%,#f472b6,#831843); box-shadow:0 0 9px rgba(244,114,182,0.8); margin:-4px; animation:s1p2 9s   linear infinite; }
+        @keyframes s1p1 { from{transform:rotate(0deg)   translateX(112px) rotate(0deg)}   to{transform:rotate(360deg)  translateX(112px) rotate(-360deg)} }
+        @keyframes s1p2 { from{transform:rotate(55deg)  translateX(82px)  rotate(-55deg)} to{transform:rotate(415deg)  translateX(82px)  rotate(-415deg)} }
+
+        /* solar2 — orange star */
+        .solar2 .orbit-center { width:28px; height:28px; background:radial-gradient(circle at 35% 35%,#fb923c,#7c2d12); box-shadow:0 0 16px rgba(251,146,60,0.55); font-size:13px; }
+        .solar2 .p1 { width:9px;  height:9px;  background:radial-gradient(circle at 35% 35%,#818cf8,#312e81); box-shadow:0 0 9px rgba(129,140,248,0.8); margin:-4.5px; animation:s2p1 7s   linear infinite; }
+        .solar2 .p2 { width:6px;  height:6px;  background:radial-gradient(circle at 35% 35%,#38bdf8,#0c4a6e); box-shadow:0 0 7px rgba(56,189,248,0.8);   margin:-3px;   animation:s2p2 12s  linear infinite reverse; }
+        @keyframes s2p1 { from{transform:rotate(0deg)   translateX(76px) rotate(0deg)}   to{transform:rotate(360deg)  translateX(76px) rotate(-360deg)} }
+        @keyframes s2p2 { from{transform:rotate(100deg) translateX(56px) rotate(-100deg)} to{transform:rotate(460deg)  translateX(56px) rotate(-460deg)} }
+
+        /* solar3 — green star */
+        .solar3 .orbit-center { width:22px; height:22px; background:radial-gradient(circle at 35% 35%,#34d399,#065f46); box-shadow:0 0 13px rgba(52,211,153,0.5); font-size:10px; }
+        .solar3 .p1 { width:7px;  height:7px;  background:radial-gradient(circle at 35% 35%,#fb923c,#7c2d12); box-shadow:0 0 7px rgba(251,146,60,0.7); margin:-3.5px; animation:s3p1 8s   linear infinite; }
+        .solar3 .p2 { width:5px;  height:5px;  background:radial-gradient(circle at 35% 35%,#f472b6,#831843); box-shadow:0 0 6px rgba(244,114,182,0.7); margin:-2.5px; animation:s3p2 13s  linear infinite reverse; }
+        @keyframes s3p1 { from{transform:rotate(0deg)   translateX(62px) rotate(0deg)}   to{transform:rotate(360deg)  translateX(62px) rotate(-360deg)} }
+        @keyframes s3p2 { from{transform:rotate(170deg) translateX(46px) rotate(-170deg)} to{transform:rotate(530deg)  translateX(46px) rotate(-530deg)} }
+
+        @media(max-width:768px){ .solar-system{ display:none; } .bg-symbols-layer{ display:none; } }
+        /* ── END NEW ── */
         
         .orb { position: fixed; border-radius: 50%; filter: blur(110px); pointer-events: none; z-index: 0; }
         .orb1 { width: 700px; height: 700px; background: #0369a1; top: -250px; left: -200px; opacity: 0.14; animation: floatorb 20s ease-in-out infinite alternate; }
         .orb2 { width: 500px; height: 500px; background: #4f46e5; bottom: -100px; right: -100px; opacity: 0.12; animation: floatorb 25s ease-in-out infinite alternate-reverse; }
         .orb3 { width: 350px; height: 350px; background: #059669; top: 45%; left: 55%; opacity: 0.10; animation: floatorb 16s ease-in-out infinite alternate; }
-        .orb4 { width: 150px; height: 150px; background: #f472b6; top: 15%; right: 5%; opacity: 0.15; animation: floatorb 19s ease-in-out infinite alternate; }
         @keyframes floatorb {
             from { transform: translate(0,0) scale(1); }
             to   { transform: translate(50px,35px) scale(1.12); }
@@ -252,10 +320,10 @@
 <div class="orb orb1"></div>
 <div class="orb orb2"></div>
 <div class="orb orb3"></div>
- 
+
 <!-- ── FLOATING BACKGROUND SYMBOLS (new) ── -->
 <div class="bg-symbols-layer" id="bgSymbolsLayer"></div>
- 
+
 <!-- ── ORBITING SOLAR SYSTEMS (new) ── -->
 <div class="solar-system solar1">
     <div class="orbit-ring"></div>
@@ -470,21 +538,19 @@
 <script data-goatcounter="https://alphastatlab.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 
 <script>
-    // Scroll reveal animation
+    // ── Your original scroll reveal (unchanged) ──
     const reveals = document.querySelectorAll('.reveal');
     const observer = new IntersectionObserver(entries => {
         entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
-            }
+            if (entry.isIntersecting) entry.target.classList.add('visible');
         });
     }, { threshold: 0.1 });
     reveals.forEach(reveal => observer.observe(reveal));
-    
-    // ===== ENHANCED FLOATING SYMBOLS (6 Categories) =====
-    const symbolGroups = [
-        // Greek / Math operators
-        { syms: ['∑', '∫', '∂', '∇', '∞', '√', 'π', 'μ', 'σ', 'λ', 'θ','μ = Σx/n', 'σ² = Σ(x-μ)²/n', 'CV = σ/μ', 'MAD = Σ|x-μ|/n',
+
+    // ── Your original stat-particles (unchanged) ──
+    const terms = [
+        'SPI', 'SPEI', 'SPTI', 'PDSI', 'scPDSI', 'EDDI',
+        'μ = Σx/n', 'σ² = Σ(x-μ)²/n', 'CV = σ/μ', 'MAD = Σ|x-μ|/n',
         'ρ(x,y) = Cov/σₓσᵧ', 'R² = 1 - SSᵣₑₛ/SSₜₒₜ', 'RMSE', 'MAE',
         'β = (XᵀX)⁻¹Xᵀy', 'ŷ = β₀ + β₁x', 'logit(p) = ln(p/1-p)',
         'LASSO', 'Ridge', 'ARIMA(p,d,q)', 'SARIMA(P,D,Q)ₛ', 'ACF', 'PACF',
@@ -493,50 +559,52 @@
         'SVM', 'Random Forest', 'XGBoost', 'PCA', 'k-means',
         'CO₂ ppm', 'CH₄ ppb', 'N₂O ppb', 'GWP', 'IPCC AR6', 'CMIP6',
         'PhD Research', 'Statistical Computing', 'Data Science', 'Climate Analytics',
-        'Drought Index', 'GHG Emissions', 'Deep Learning', 'LSTM', 'Time Series', 'α', 'β', 'γ', 'δ', 'ε', 'Φ', 'Ψ', 'Ω', 'ρ', 'κ', 'η', 'τ', 'ζ'], color: '#38bdf8', sizes: [13, 17, 21, 26] },
-        // Stats notation
-        { syms: ['x̄', 'P(A|B)', 'H₀', 'H₁', 'R²', 'χ²', 'p<.05', 'N(μ,σ²)', 'MLE', 'MAP', 'KL(P‖Q)', 'E[X]', 'Var(X)', 'β̂', 'ŷ'], color: '#818cf8', sizes: [10, 12, 14] },
-        // Climate & Earth
-        { syms: ['🌧️', '🌡️', '☁️', '🌊', '❄️', '🌪️', '⛅', '🌦️', '💧', '🏔️', '🌱', '🌍', '🛰️', '📡'], color: '#34d399', sizes: [15, 19, 23] },
-        // ML / Data science
-        { syms: ['⚡', '🔬', '🔭', '⚙️', '🔗', '📈', '📉', '🎯', '🧮', '💡', '🧬'], color: '#f472b6', sizes: [13, 17, 21] },
-        // Numbers & stats values
-        { syms: ['1.96', '0.05', '3.14', '2.58', 'N(0,1)', 't=2.3', 'z=1.64', 'CI 95%', 'σ²', 'df=n-1', 'AIC', 'BIC', 'RMSE'], color: '#fb923c', sizes: [9, 11, 13] },
-        // Matrix / formula snippets
-        { syms: ['[W·x+b]', 'softmax', 'relu(x)', '∇L', 'Σxᵢyᵢ', 'argmin', 'log P', '∏pᵢ', '∂L/∂θ'], color: '#a78bfa', sizes: [9, 11] },
+        'Drought Index', 'GHG Emissions', 'Deep Learning', 'LSTM', 'Time Series'
     ];
-    
     const container = document.getElementById('particles');
     if (container) {
-        // Create 75 floating symbols
-        for (let i = 0; i < 75; i++) {
-            const group = symbolGroups[Math.floor(Math.random() * symbolGroups.length)];
-            const symbol = group.syms[Math.floor(Math.random() * group.syms.length)];
-            const size = group.sizes[Math.floor(Math.random() * group.sizes.length)];
-            const opacity = (0.07 + Math.random() * 0.25).toFixed(2);
-            
+        terms.forEach((term) => {
             const p = document.createElement('div');
             p.className = 'particle';
-            p.textContent = symbol;
+            p.textContent = term;
             p.style.left = Math.random() * 100 + '%';
-            p.style.fontSize = size + 'px';
-            p.style.color = group.color;
-            p.style.opacity = opacity;
-            p.style.animationDuration = (11 + Math.random() * 22) + 's';
-            p.style.animationDelay = (Math.random() * 22) + 's';
-            p.style.transform = `rotate(${Math.random() * 360}deg)`;
+            p.style.animationDuration = (15 + Math.random() * 25) + 's';
+            p.style.animationDelay = (Math.random() * 20) + 's';
+            p.style.fontSize = (9 + Math.random() * 6) + 'px';
+            p.style.opacity = 0.3 + Math.random() * 0.5;
             container.appendChild(p);
-        }
-    }
-    
-    // Keyboard accessibility for cards
-    document.querySelectorAll('.dash-card').forEach(card => {
-        card.addEventListener('keydown', e => {
-            if (e.key === 'Enter' || e.key === ' ') {
-                card.click();
-            }
         });
-    });
+    }
+
+    // ── NEW: Full-page floating background symbols ──
+    const symGroups = [
+        // Greek / Math
+        { syms: ['∑','∫','∂','∇','∞','√','π','μ','σ','λ','θ','α','β','γ','δ','ε','Φ','Ψ','Ω','ρ','κ','η','ζ'], color: 'rgba(56,189,248,OP)',   sizes: [13,17,22,27] },
+        // Stats notation
+        { syms: ['x̄','P(A|B)','H₀','H₁','R²','χ²','p<.05','N(μ,σ²)','MLE','MAP','KL(P‖Q)','E[X]','Var(X)','β̂','ŷ'], color: 'rgba(129,140,248,OP)', sizes: [10,12,14] },
+        // Climate & Earth
+        { syms: ['🌧️','🌡️','☁️','🌊','❄️','🌪️','⛅','🌦️','💧','🏔️','🌱','🌍','🛰️','📡'], color: 'rgba(52,211,153,OP)',  sizes: [15,19,23] },
+        // ML / Data Science
+        { syms: ['⚡','🧠','🔬','🔭','⚙️','🔗','📈','📉','🎯','🧮','🤖','💡','🧬'], color: 'rgba(244,114,182,OP)', sizes: [13,17,21] },
+        // Values
+        { syms: ['1.96','0.05','3.14','2.58','N(0,1)','t=2.3','z=1.64','CI 95%','σ²','AIC','BIC','RMSE','df=n-1'], color: 'rgba(251,146,60,OP)',  sizes: [9,11,13] },
+        // Formulas
+        { syms: ['[W·x+b]','softmax','relu(x)','∇L','Σxᵢyᵢ','argmin','log P','∏pᵢ','tanh','sigmoid'], color: 'rgba(167,139,250,OP)', sizes: [9,11] },
+    ];
+
+    const bgLayer = document.getElementById('bgSymbolsLayer');
+    for (let i = 0; i < 60; i++) {
+        const grp = symGroups[Math.floor(Math.random() * symGroups.length)];
+        const sym  = grp.syms[Math.floor(Math.random() * grp.syms.length)];
+        const size = grp.sizes[Math.floor(Math.random() * grp.sizes.length)];
+        const op   = (0.06 + Math.random() * 0.22).toFixed(2);
+        const color = grp.color.replace('OP', op);
+        const el = document.createElement('span');
+        el.className = 'bgsym';
+        el.textContent = sym;
+        el.style.cssText = `left:${Math.random()*100}%;font-size:${size}px;color:${color};animation-duration:${12+Math.random()*22}s;animation-delay:-${Math.random()*22}s;`;
+        bgLayer.appendChild(el);
+    }
 </script>
 
 </body>
