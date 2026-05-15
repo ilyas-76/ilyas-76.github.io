@@ -79,9 +79,6 @@
         .particle {
             position: absolute;
             font-family: 'DM Mono', monospace;
-            color: rgba(56,189,248,0.15);
-            font-size: 11px;
-            letter-spacing: 0.05em;
             white-space: nowrap;
             pointer-events: none;
             animation: drift linear infinite;
@@ -108,6 +105,8 @@
         .orb1 { width: 700px; height: 700px; background: #0369a1; top: -250px; left: -200px; opacity: 0.14; animation: floatorb 20s ease-in-out infinite alternate; }
         .orb2 { width: 500px; height: 500px; background: #4f46e5; bottom: -100px; right: -100px; opacity: 0.12; animation: floatorb 25s ease-in-out infinite alternate-reverse; }
         .orb3 { width: 350px; height: 350px; background: #059669; top: 45%; left: 55%; opacity: 0.10; animation: floatorb 16s ease-in-out infinite alternate; }
+        .orb4 { width: 250px; height: 250px; background: #f472b6; top: 30%; right: 10%; opacity: 0.08; animation: floatorb 19s ease-in-out infinite alternate; }
+        
         @keyframes floatorb {
             from { transform: translate(0,0) scale(1); }
             to   { transform: translate(50px,35px) scale(1.12); }
@@ -254,6 +253,7 @@
 <div class="orb orb1"></div>
 <div class="orb orb2"></div>
 <div class="orb orb3"></div>
+<div class="orb orb4"></div>
 
 <nav>
     <a href="#" class="nav-logo"><span class="alpha">Alpha</span><span class="stat">Stat</span><span class="lab">Lab</span></a>
@@ -448,67 +448,64 @@
 <script data-goatcounter="https://alphastatlab.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 
 <script>
-// Scroll reveal animation
-const reveals = document.querySelectorAll('.reveal');
-const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
+    // Scroll reveal animation
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.1 });
+    reveals.forEach(reveal => observer.observe(reveal));
+    
+    // ===== ENHANCED FLOATING SYMBOLS (6 Categories) =====
+    const symbolGroups = [
+        // Greek / Math operators
+        { syms: ['∑', '∫', '∂', '∇', '∞', '√', 'π', 'μ', 'σ', 'λ', 'θ', 'α', 'β', 'γ', 'δ', 'ε', 'Φ', 'Ψ', 'Ω', 'ρ', 'κ', 'η', 'τ', 'ζ'], color: '#38bdf8', sizes: [13, 17, 21, 26] },
+        // Stats notation
+        { syms: ['x̄', 'P(A|B)', 'H₀', 'H₁', 'R²', 'χ²', 'p<.05', 'N(μ,σ²)', 'MLE', 'MAP', 'KL(P‖Q)', 'E[X]', 'Var(X)', 'β̂', 'ŷ'], color: '#818cf8', sizes: [10, 12, 14] },
+        // Climate & Earth
+        { syms: ['🌧️', '🌡️', '☁️', '🌊', '❄️', '🌪️', '⛅', '🌦️', '💧', '🏔️', '🌱', '🌍', '🛰️', '📡'], color: '#34d399', sizes: [15, 19, 23] },
+        // ML / Data science
+        { syms: ['⚡', '🧠', '🔬', '🔭', '⚙️', '🔗', '📈', '📉', '🎯', '🧮', '🤖', '💡', '🧬'], color: '#f472b6', sizes: [13, 17, 21] },
+        // Numbers & stats values
+        { syms: ['1.96', '0.05', '3.14', '2.58', 'N(0,1)', 't=2.3', 'z=1.64', 'CI 95%', 'σ²', 'df=n-1', 'AIC', 'BIC', 'RMSE'], color: '#fb923c', sizes: [9, 11, 13] },
+        // Matrix / formula snippets
+        { syms: ['[W·x+b]', 'softmax', 'relu(x)', '∇L', 'Σxᵢyᵢ', 'argmin', 'log P', '∏pᵢ', '∂L/∂θ'], color: '#a78bfa', sizes: [9, 11] },
+    ];
+    
+    const container = document.getElementById('particles');
+    if (container) {
+        // Create 75 floating symbols
+        for (let i = 0; i < 75; i++) {
+            const group = symbolGroups[Math.floor(Math.random() * symbolGroups.length)];
+            const symbol = group.syms[Math.floor(Math.random() * group.syms.length)];
+            const size = group.sizes[Math.floor(Math.random() * group.sizes.length)];
+            const opacity = (0.07 + Math.random() * 0.25).toFixed(2);
+            
+            const p = document.createElement('div');
+            p.className = 'particle';
+            p.textContent = symbol;
+            p.style.left = Math.random() * 100 + '%';
+            p.style.fontSize = size + 'px';
+            p.style.color = group.color;
+            p.style.opacity = opacity;
+            p.style.animationDuration = (11 + Math.random() * 22) + 's';
+            p.style.animationDelay = (Math.random() * 22) + 's';
+            p.style.transform = `rotate(${Math.random() * 360}deg)`;
+            container.appendChild(p);
         }
-    });
-}, { threshold: 0.1 });
-reveals.forEach(reveal => observer.observe(reveal));
-
-// ===== ENHANCED FLOATING SYMBOLS (6 Categories) =====
-const symbolGroups = [
-    // Greek / Math operators
-    { syms: ['∑', '∫', '∂', '∇', '∞', '√', 'π', 'μ', 'σ', 'λ', 'θ', 'α', 'β', 'γ', 'δ', 'ε', 'Φ', 'Ψ', 'Ω', 'ρ', 'κ', 'η', 'τ', 'ζ'], color: '#38bdf8', sizes: [13, 17, 21, 26] },
-    // Stats notation
-    { syms: ['x̄', 'P(A|B)', 'H₀', 'H₁', 'R²', 'χ²', 'p<.05', 'N(μ,σ²)', 'MLE', 'MAP', 'KL(P‖Q)', 'E[X]', 'Var(X)', 'β̂', 'ŷ'], color: '#818cf8', sizes: [10, 12, 14] },
-    // Climate & Earth
-    { syms: ['🌧️', '🌡️', '☁️', '🌊', '❄️', '🌪️', '⛅', '🌦️', '💧', '🏔️', '🌱', '🌍', '🛰️', '📡'], color: '#34d399', sizes: [15, 19, 23] },
-    // ML / Data science
-    { syms: ['⚡', '🧠', '🔬', '🔭', '⚙️', '🔗', '📈', '📉', '🎯', '🧮', '🤖', '💡', '🧬'], color: '#f472b6', sizes: [13, 17, 21] },
-    // Numbers & stats values
-    { syms: ['1.96', '0.05', '3.14', '2.58', 'N(0,1)', 't=2.3', 'z=1.64', 'CI 95%', 'σ²', 'df=n-1', 'AIC', 'BIC', 'RMSE'], color: '#fb923c', sizes: [9, 11, 13] },
-    // Matrix / formula snippets
-    { syms: ['[W·x+b]', 'softmax', 'relu(x)', '∇L', 'Σxᵢyᵢ', 'argmin', 'log P', '∏pᵢ', '∂L/∂θ'], color: '#a78bfa', sizes: [9, 11] },
-];
-
-const container = document.getElementById('particles');
-if (container) {
-    // Create 75 floating symbols
-    for (let i = 0; i < 75; i++) {
-        const group = symbolGroups[Math.floor(Math.random() * symbolGroups.length)];
-        const symbol = group.syms[Math.floor(Math.random() * group.syms.length)];
-        const size = group.sizes[Math.floor(Math.random() * group.sizes.length)];
-        const opacity = (0.07 + Math.random() * 0.25).toFixed(2);
-        
-        const p = document.createElement('div');
-        p.className = 'particle';
-        p.textContent = symbol;
-        p.style.left = Math.random() * 100 + '%';
-        p.style.fontSize = size + 'px';
-        p.style.color = group.color;
-        p.style.opacity = opacity;
-        p.style.animationDuration = (11 + Math.random() * 22) + 's';
-        p.style.animationDelay = (Math.random() * 22) + 's';
-        p.style.transform = `rotate(${Math.random() * 360}deg)`;
-        container.appendChild(p);
     }
-}
-
-// ===== ENHANCED TICKER KEYWORDS =====
-// Add more diverse terms to your ticker if you want - update the HTML directly
-
-// ===== KEYBOARD ACCESSIBILITY FOR CARDS =====
-document.querySelectorAll('.dash-card').forEach(card => {
-    card.addEventListener('keydown', e => {
-        if (e.key === 'Enter' || e.key === ' ') {
-            card.click();
-        }
+    
+    // Keyboard accessibility for cards
+    document.querySelectorAll('.dash-card').forEach(card => {
+        card.addEventListener('keydown', e => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                card.click();
+            }
+        });
     });
-});
 </script>
 
 </body>
