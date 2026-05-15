@@ -105,8 +105,7 @@
         .orb1 { width: 700px; height: 700px; background: #0369a1; top: -250px; left: -200px; opacity: 0.14; animation: floatorb 20s ease-in-out infinite alternate; }
         .orb2 { width: 500px; height: 500px; background: #4f46e5; bottom: -100px; right: -100px; opacity: 0.12; animation: floatorb 25s ease-in-out infinite alternate-reverse; }
         .orb3 { width: 350px; height: 350px; background: #059669; top: 45%; left: 55%; opacity: 0.10; animation: floatorb 16s ease-in-out infinite alternate; }
-        .orb4 { width: 250px; height: 250px; background: #f472b6; top: 30%; right: 10%; opacity: 0.08; animation: floatorb 19s ease-in-out infinite alternate; }
-        
+        .orb4 { width: 150px; height: 150px; background: #f472b6; top: 15%; right: 5%; opacity: 0.15; animation: floatorb 19s ease-in-out infinite alternate; }
         @keyframes floatorb {
             from { transform: translate(0,0) scale(1); }
             to   { transform: translate(50px,35px) scale(1.12); }
@@ -462,13 +461,22 @@
     // ===== ENHANCED FLOATING SYMBOLS (6 Categories) =====
     const symbolGroups = [
         // Greek / Math operators
-        { syms: ['∑', '∫', '∂', '∇', '∞', '√', 'π', 'μ', 'σ', 'λ', 'θ', 'α', 'β', 'γ', 'δ', 'ε', 'Φ', 'Ψ', 'Ω', 'ρ', 'κ', 'η', 'τ', 'ζ'], color: '#38bdf8', sizes: [13, 17, 21, 26] },
+        { syms: ['∑', '∫', '∂', '∇', '∞', '√', 'π', 'μ', 'σ', 'λ', 'θ','μ = Σx/n', 'σ² = Σ(x-μ)²/n', 'CV = σ/μ', 'MAD = Σ|x-μ|/n',
+        'ρ(x,y) = Cov/σₓσᵧ', 'R² = 1 - SSᵣₑₛ/SSₜₒₜ', 'RMSE', 'MAE',
+        'β = (XᵀX)⁻¹Xᵀy', 'ŷ = β₀ + β₁x', 'logit(p) = ln(p/1-p)',
+        'LASSO', 'Ridge', 'ARIMA(p,d,q)', 'SARIMA(P,D,Q)ₛ', 'ACF', 'PACF',
+        'H₀: μ₁ = μ₂', 't = (x̄₁ - x̄₂)/SE', 'p-value', 'χ² = Σ(O-E)²/E',
+        'N(μ,σ²)', 'X ~ Bin(n,p)', 'X ~ Poisson(λ)', 'MCMC', 'Metropolis-Hastings',
+        'SVM', 'Random Forest', 'XGBoost', 'PCA', 'k-means',
+        'CO₂ ppm', 'CH₄ ppb', 'N₂O ppb', 'GWP', 'IPCC AR6', 'CMIP6',
+        'PhD Research', 'Statistical Computing', 'Data Science', 'Climate Analytics',
+        'Drought Index', 'GHG Emissions', 'Deep Learning', 'LSTM', 'Time Series', 'α', 'β', 'γ', 'δ', 'ε', 'Φ', 'Ψ', 'Ω', 'ρ', 'κ', 'η', 'τ', 'ζ'], color: '#38bdf8', sizes: [13, 17, 21, 26] },
         // Stats notation
         { syms: ['x̄', 'P(A|B)', 'H₀', 'H₁', 'R²', 'χ²', 'p<.05', 'N(μ,σ²)', 'MLE', 'MAP', 'KL(P‖Q)', 'E[X]', 'Var(X)', 'β̂', 'ŷ'], color: '#818cf8', sizes: [10, 12, 14] },
         // Climate & Earth
         { syms: ['🌧️', '🌡️', '☁️', '🌊', '❄️', '🌪️', '⛅', '🌦️', '💧', '🏔️', '🌱', '🌍', '🛰️', '📡'], color: '#34d399', sizes: [15, 19, 23] },
         // ML / Data science
-        { syms: ['⚡', '🧠', '🔬', '🔭', '⚙️', '🔗', '📈', '📉', '🎯', '🧮', '🤖', '💡', '🧬'], color: '#f472b6', sizes: [13, 17, 21] },
+        { syms: ['⚡', '🔬', '🔭', '⚙️', '🔗', '📈', '📉', '🎯', '🧮', '💡', '🧬'], color: '#f472b6', sizes: [13, 17, 21] },
         // Numbers & stats values
         { syms: ['1.96', '0.05', '3.14', '2.58', 'N(0,1)', 't=2.3', 'z=1.64', 'CI 95%', 'σ²', 'df=n-1', 'AIC', 'BIC', 'RMSE'], color: '#fb923c', sizes: [9, 11, 13] },
         // Matrix / formula snippets
