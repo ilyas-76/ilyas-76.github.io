@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-JV8ML3GKH2"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-JV8ML3GKH2');
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Energy Dashboards | AlphaStatLab</title>
+    <meta name="description" content="Interactive energy dashboards for renewable energy production, consumption patterns, grid stability, and energy efficiency monitoring.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://alphastatlab.com/categories/energy.html">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3CradialGradient id='shine' cx='30%25' cy='30%25' r='70%25'%3E%3Cstop offset='0%25' stop-color='%23ffffff' stop-opacity='0.6'/%3E%3Cstop offset='100%25' stop-color='%23000000' stop-opacity='0'/%3E%3C/radialGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='20' fill='%23000000'/%3E%3Ctext x='50' y='72' font-size='58' text-anchor='middle' fill='%23ffffff' font-family='Georgia, serif' font-weight='bold'%3Eα%3C/text%3E%3Cline x1='25' y1='30' x2='75' y2='70' stroke='%23e74c3c' stroke-width='6' stroke-linecap='round' /%3E%3Crect width='100' height='100' rx='20' fill='url(%23shine)'/%3E%3C/svg%3E">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+    <style>
+        :root { --bg: #020810; --surface: #0b1220; --border: rgba(99,179,237,0.10); --accent: #38bdf8; --accent3: #34d399; --text: #e2e8f0; --muted: #64748b; --muted2: #94a3b8; --white: #f8fafc; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { background: var(--bg); color: var(--text); font-family: 'DM Mono', monospace; overflow-x: hidden; }
+        body::before { content: ''; position: fixed; inset: 0; background-image: linear-gradient(rgba(56,189,248,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(56,189,248,0.025) 1px, transparent 1px); background-size: 52px 52px; pointer-events: none; z-index: 0; }
+        .stat-particles { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; pointer-events: none; z-index: 1; }
+        .particle { position: absolute; font-family: 'DM Mono', monospace; color: rgba(56,189,248,0.15); font-size: 11px; letter-spacing: 0.05em; white-space: nowrap; pointer-events: none; animation: drift linear infinite; z-index: 1; }
+        @keyframes drift { 0% { transform: translateY(100vh) translateX(-20px) rotate(0deg); opacity: 0; } 10% { opacity: 0.8; } 90% { opacity: 0.6; } 100% { transform: translateY(-100px) translateX(20px) rotate(360deg); opacity: 0; } }
+        .bg-symbols-layer { position: fixed; inset: 0; pointer-events: none; z-index: 1; overflow: hidden; }
+        .bgsym { position: absolute; font-family: 'DM Mono', monospace; pointer-events: none; user-select: none; animation: bgsym-rise linear infinite; }
+        @keyframes bgsym-rise { 0% { transform: translateY(105vh) rotate(0deg); opacity: 0; } 6% { opacity: 1; } 88% { opacity: 1; } 100% { transform: translateY(-140px) rotate(360deg); opacity: 0; } }
+        .solar-system { position: fixed; pointer-events: none; z-index: 1; }
+        .solar1 { width: 260px; height: 260px; top: 72px; right: 80px; }
+        .solar2 { width: 190px; height: 190px; bottom: 100px; left: 60px; }
+        .solar3 { width: 150px; height: 150px; top: 42%; left: 2%; }
+        .orbit-ring { position: absolute; inset: 0; border-radius: 50%; border: 1px solid rgba(56,189,248,0.10); }
+        .orbit-ring2 { position: absolute; border-radius: 50%; border: 1px solid rgba(129,140,248,0.07); }
+        .orbit-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .planet { position: absolute; border-radius: 50%; top: 50%; left: 50%; transform-origin: 0 0; }
+        .solar1 .orbit-center { width:38px; height:38px; background:radial-gradient(circle at 35% 35%,#60a5fa,#1e3a8a); box-shadow:0 0 22px rgba(96,165,250,0.55); font-size:17px; }
+        .solar1 .orbit-ring2 { inset: 22px; }
+        .solar1 .p1 { width:12px; height:12px; background:radial-gradient(circle at 35% 35%,#34d399,#065f46); box-shadow:0 0 10px rgba(52,211,153,0.8); margin:-6px; animation:s1p1 5.5s linear infinite; }
+        .solar1 .p2 { width:8px; height:8px; background:radial-gradient(circle at 35% 35%,#f472b6,#831843); box-shadow:0 0 9px rgba(244,114,182,0.8); margin:-4px; animation:s1p2 9s linear infinite; }
+        @keyframes s1p1 { from{transform:rotate(0deg) translateX(112px) rotate(0deg)} to{transform:rotate(360deg) translateX(112px) rotate(-360deg)} }
+        @keyframes s1p2 { from{transform:rotate(55deg) translateX(82px) rotate(-55deg)} to{transform:rotate(415deg) translateX(82px) rotate(-415deg)} }
+        .solar2 .orbit-center { width:28px; height:28px; background:radial-gradient(circle at 35% 35%,#fb923c,#7c2d12); box-shadow:0 0 16px rgba(251,146,60,0.55); font-size:13px; }
+        .solar2 .p1 { width:9px; height:9px; background:radial-gradient(circle at 35% 35%,#818cf8,#312e81); box-shadow:0 0 9px rgba(129,140,248,0.8); margin:-4.5px; animation:s2p1 7s linear infinite; }
+        .solar2 .p2 { width:6px; height:6px; background:radial-gradient(circle at 35% 35%,#38bdf8,#0c4a6e); box-shadow:0 0 7px rgba(56,189,248,0.8); margin:-3px; animation:s2p2 12s linear infinite reverse; }
+        @keyframes s2p1 { from{transform:rotate(0deg) translateX(76px) rotate(0deg)} to{transform:rotate(360deg) translateX(76px) rotate(-360deg)} }
+        @keyframes s2p2 { from{transform:rotate(100deg) translateX(56px) rotate(-100deg)} to{transform:rotate(460deg) translateX(56px) rotate(-460deg)} }
+        .solar3 .orbit-center { width:22px; height:22px; background:radial-gradient(circle at 35% 35%,#34d399,#065f46); box-shadow:0 0 13px rgba(52,211,153,0.5); font-size:10px; }
+        .solar3 .p1 { width:7px; height:7px; background:radial-gradient(circle at 35% 35%,#fb923c,#7c2d12); box-shadow:0 0 7px rgba(251,146,60,0.7); margin:-3.5px; animation:s3p1 8s linear infinite; }
+        .solar3 .p2 { width:5px; height:5px; background:radial-gradient(circle at 35% 35%,#f472b6,#831843); box-shadow:0 0 6px rgba(244,114,182,0.7); margin:-2.5px; animation:s3p2 13s linear infinite reverse; }
+        @keyframes s3p1 { from{transform:rotate(0deg) translateX(62px) rotate(0deg)} to{transform:rotate(360deg) translateX(62px) rotate(-360deg)} }
+        @keyframes s3p2 { from{transform:rotate(170deg) translateX(46px) rotate(-170deg)} to{transform:rotate(530deg) translateX(46px) rotate(-530deg)} }
+        @media(max-width:768px){ .solar-system{ display:none; } .bg-symbols-layer{ display:none; } }
+        .orb { position: fixed; border-radius: 50%; filter: blur(110px); pointer-events: none; z-index: 0; }
+        .orb1 { width: 700px; height: 700px; background: #0369a1; top: -250px; left: -200px; opacity: 0.14; animation: floatorb 20s ease-in-out infinite alternate; }
+        .orb2 { width: 500px; height: 500px; background: #4f46e5; bottom: -100px; right: -100px; opacity: 0.12; animation: floatorb 25s ease-in-out infinite alternate-reverse; }
+        .orb3 { width: 350px; height: 350px; background: #059669; top: 45%; left: 55%; opacity: 0.10; animation: floatorb 16s ease-in-out infinite alternate; }
+        @keyframes floatorb { from { transform: translate(0,0) scale(1); } to { transform: translate(50px,35px) scale(1.12); } }
+        .hero-ring { position: absolute; border-radius: 50%; border: 1px solid rgba(56,189,248,0.07); pointer-events: none; z-index: 0; }
+        .ring1 { width: 600px; height: 600px; top: 50%; left: 50%; transform: translate(-50%,-50%); animation: rotate 60s linear infinite; }
+        .ring2 { width: 900px; height: 900px; top: 50%; left: 50%; transform: translate(-50%,-50%); animation: rotate 90s linear infinite reverse; }
+        .ring3 { width: 1200px; height: 1200px; top: 50%; left: 50%; transform: translate(-50%,-50%); border-style: dashed; animation: rotate 120s linear infinite; }
+        @keyframes rotate { to { transform: translate(-50%,-50%) rotate(360deg); } }
+        nav { position: fixed; top: 0; left: 0; right: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 52px; height: 64px; background: rgba(2,8,16,0.75); backdrop-filter: blur(18px); border-bottom: 1px solid var(--border); z-index: 200; }
+        .nav-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 20px; letter-spacing: -0.5px; text-decoration: none; }
+        .nav-logo .alpha { color: var(--white); }
+        .nav-logo .stat { color: var(--accent); }
+        .nav-logo .lab { color: var(--accent3); }
+        .nav-links { display: flex; align-items: center; gap: 4px; }
+        .nav-link { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted2); text-decoration: none; padding: 6px 14px; border: 1px solid transparent; transition: color 0.2s, border-color 0.2s; }
+        .nav-link:hover { color: var(--accent); border-color: rgba(56,189,248,0.4); }
+        .nav-email { background: transparent; border: 1px solid var(--accent); color: var(--accent); padding: 6px 16px; font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-decoration: none; transition: background 0.2s, color 0.2s; white-space: nowrap; }
+        .nav-email:hover { background: var(--accent); color: var(--bg); }
+        .hero { min-height: 40vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 120px 24px 60px; position: relative; z-index: 2; }
+        .hero h1 { font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(48px, 8vw, 90px); line-height: 1; letter-spacing: -1px; margin-bottom: 20px; }
+        .hero h1 .alpha { color: var(--white); }
+        .hero h1 .stat { color: var(--accent); }
+        .hero h1 .lab { color: var(--accent3); }
+        .hero-descriptor { font-family: 'Instrument Serif', serif; font-style: italic; font-size: clamp(18px, 2.2vw, 24px); color: var(--muted2); margin: 20px 0 30px; max-width: 700px; line-height: 1.65; }
+        .back-link { display: inline-block; margin-top: 20px; color: var(--accent); text-decoration: none; font-size: 12px; }
+        .back-link:hover { text-decoration: underline; }
+        section { padding: 60px 0 80px; position: relative; z-index: 2; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 52px; }
+        .section-tag { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
+        .section-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: clamp(30px, 4.5vw, 52px); line-height: 1.05; letter-spacing: -1.5px; color: var(--white); margin-bottom: 16px; }
+        .section-desc { font-size: 13px; line-height: 1.85; color: var(--muted); max-width: 560px; margin-bottom: 52px; }
+        .section-divider { width: 48px; height: 2px; background: linear-gradient(to right, var(--accent), transparent); margin: 16px 0 20px; }
+        .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px; justify-content: center; margin-top: 40px; }
+        .dash-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; transition: transform 0.3s ease, border-color 0.3s ease; cursor: pointer; position: relative; }
+        .dash-card:hover { transform: translateY(-6px); border-color: var(--accent); }
+        .dash-card.featured { border-color: rgba(56,189,248,0.3); }
+        .dash-card.featured::before { content: 'FEATURED'; position: absolute; top: 12px; right: 12px; font-size: 9px; letter-spacing: 0.15em; padding: 3px 8px; background: var(--accent); color: var(--bg); }
+        .dash-card-visual { height: 140px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; background: linear-gradient(135deg, rgba(5,150,105,0.15), rgba(56,189,248,0.08)); }
+        .dash-card-icon { font-size: 52px; }
+        .mini-chart { position: absolute; bottom: 12px; left: 12px; right: 12px; height: 32px; display: flex; align-items: flex-end; gap: 3px; }
+        .mini-bar { flex: 1; border-radius: 2px 2px 0 0; background: rgba(56,189,248,0.25); transition: height 0.3s; }
+        .dash-card-body { padding: 22px; }
+        .dash-card-body h3 { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; color: var(--white); margin-bottom: 8px; }
+        .dash-card-body p { font-size: 12px; line-height: 1.7; color: var(--muted); margin-bottom: 16px; }
+        .dash-card-footer { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+        .dash-status { display: inline-flex; align-items: center; gap: 6px; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; }
+        .dash-status .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent3); animation: pulse 2s infinite; }
+        .dash-status.live { color: var(--accent3); }
+        @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.5)} }
+        .dash-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+        .tag { font-size: 9px; padding: 3px 8px; letter-spacing: 0.07em; border: 1px solid rgba(99,179,237,0.15); color: var(--muted2); text-transform: uppercase; }
+        footer { border-top: 1px solid var(--border); padding: 36px 52px; display: flex; align-items: center; justify-content: space-between; position: relative; z-index: 2; flex-wrap: wrap; gap: 16px; }
+        .footer-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 16px; }
+        .footer-logo .alpha { color: var(--white); }
+        .footer-logo .stat { color: var(--accent); }
+        .footer-logo .lab { color: var(--accent3); }
+        .footer-center { display: flex; gap: 24px; flex-wrap: wrap; justify-content: center; }
+        .footer-center a { font-size: 11px; color: var(--muted2); text-decoration: none; transition: color 0.2s; }
+        .footer-center a:hover { color: var(--accent); }
+        footer p { font-size: 10px; color: var(--muted); }
+        .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.75s ease, transform 0.75s ease; }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+        @media (max-width: 768px) { nav { padding: 0 20px; } .nav-links { display: none; } .container { padding: 0 20px; } footer { flex-direction: column; text-align: center; } .hero h1 { font-size: clamp(40px, 7vw, 70px); white-space: normal; } .card-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+<div class="orb orb1"></div><div class="orb orb2"></div><div class="orb orb3"></div>
+<div class="bg-symbols-layer" id="bgSymbolsLayer"></div>
+<div class="solar-system solar1"><div class="orbit-ring"></div><div class="orbit-ring2"></div><div class="orbit-center">🌐</div><div class="planet p1"></div><div class="planet p2"></div></div>
+<div class="solar-system solar2"><div class="orbit-ring"></div><div class="orbit-center">📡</div><div class="planet p1"></div><div class="planet p2"></div></div>
+<div class="solar-system solar3"><div class="orbit-ring"></div><div class="orbit-center">⚡</div><div class="planet p1"></div><div class="planet p2"></div></div>
+<nav><a href="../index.html" class="nav-logo"><span class="alpha">Alpha</span><span class="stat">Stat</span><span class="lab">Lab</span></a><div class="nav-links"><a href="../index.html#categories" class="nav-link">Categories</a><a href="../index.html#services" class="nav-link">Services</a><a href="../index.html#about" class="nav-link">About</a></div><a href="mailto:milyas3201@gmail.com" class="nav-email">✉ milyas3201@gmail.com</a></nav>
+<section class="hero" id="home"><h1><span class="alpha">Energy</span><span class="stat"> &amp; </span><span class="lab">Utilities</span></h1><p class="hero-descriptor">Interactive dashboards for renewable energy production, consumption patterns, grid stability, and energy efficiency monitoring.</p><a href="../index.html#categories" class="back-link">← Back to Categories</a></section>
+<section id="dashboards"><div class="container"><div class="reveal"><p class="section-tag">// energy dashboards</p><h2 class="section-title">Energy & Utilities Dashboards</h2><div class="section-divider"></div><p class="section-desc">Interactive dashboards for energy analytics, grid monitoring, and sustainability tracking.</p></div><div class="card-grid reveal">
+<div class="dash-card featured" onclick="window.open('#','_blank')"><div class="dash-card-visual"><span class="dash-card-icon">⚡</span><div class="mini-chart"><div class="mini-bar" style="height:45%"></div><div class="mini-bar" style="height:70%"></div><div class="mini-bar" style="height:30%"></div><div class="mini-bar" style="height:85%"></div><div class="mini-bar" style="height:55%"></div><div class="mini-bar" style="height:65%"></div><div class="mini-bar" style="height:40%"></div><div class="mini-bar" style="height:75%"></div></div></div><div class="dash-card-body"><h3>Renewable Energy Dashboard</h3><p>Solar, wind, and hydro power generation tracking, capacity factors, and renewable penetration analysis.</p><div class="dash-card-footer"><div class="dash-status soon"><div class="dot"></div> Coming Soon</div><div class="dash-tags"><span class="tag">Solar</span><span class="tag">Wind</span><span class="tag">Renewable</span></div></div></div></div>
+<div class="dash-card featured" onclick="window.open('#','_blank')"><div class="dash-card-visual"><span class="dash-card-icon">📉</span><div class="mini-chart"><div class="mini-bar" style="height:60%"></div><div class="mini-bar" style="height:75%"></div><div class="mini-bar" style="height:50%"></div><div class="mini-bar" style="height:80%"></div><div class="mini-bar" style="height:45%"></div><div class="mini-bar" style="height:65%"></div><div class="mini-bar" style="height:55%"></div><div class="mini-bar" style="height:70%"></div></div></div><div class="dash-card-body"><h3>Energy Consumption Dashboard</h3><p>Real-time and historical energy usage patterns, peak demand analysis, and load forecasting.</p><div class="dash-card-footer"><div class="dash-status soon"><div class="dot"></div> Coming Soon</div><div class="dash-tags"><span class="tag">Consumption</span><span class="tag">Demand</span><span class="tag">Load</span></div></div></div></div>
+<div class="dash-card" onclick="window.open('#','_blank')"><div class="dash-card-visual"><span class="dash-card-icon">🏭</span><div class="mini-chart"><div class="mini-bar" style="height:50%"></div><div class="mini-bar" style="height:60%"></div><div class="mini-bar" style="height:70%"></div><div class="mini-bar" style="height:80%"></div><div class="mini-bar" style="height:65%"></div><div class="mini-bar" style="height:75%"></div><div class="mini-bar" style="height:85%"></div><div class="mini-bar" style="height:55%"></div></div></div><div class="dash-card-body"><h3>Grid Stability Monitor</h3><p>Frequency response, voltage regulation, grid reliability indices, and outage management metrics.</p><div class="dash-card-footer"><div class="dash-status soon"><div class="dot"></div> Coming Soon</div><div class="dash-tags"><span class="tag">Grid</span><span class="tag">Stability</span><span class="tag">Outage</span></div></div></div></div>
+<div class="dash-card" onclick="window.open('#','_blank')"><div class="dash-card-visual"><span class="dash-card-icon">🔋</span><div class="mini-chart"><div class="mini-bar" style="height:30%"></div><div class="mini-bar" style="height:80%"></div><div class="mini-bar" style="height:45%"></div><div class="mini-bar" style="height:90%"></div><div class="mini-bar" style="height:35%"></div><div class="mini-bar" style="height:70%"></div><div class="mini-bar" style="height:60%"></div><div class="mini-bar" style="height:85%"></div></div></div><div class="dash-card-body"><h3>Energy Storage Dashboard</h3><p>Battery storage performance, charge/discharge cycles, and energy arbitrage analytics.</p><div class="dash-card-footer"><div class="dash-status soon"><div class="dot"></div> Coming Soon</div><div class="dash-tags"><span class="tag">Storage</span><span class="tag">Battery</span><span class="tag">Arbitrage</span></div></div></div></div>
+<div class="dash-card" onclick="window.open('#','_blank')"><div class="dash-card-visual"><span class="dash-card-icon">🌿</span><div class="mini-chart"><div class="mini-bar" style="height:55%"></div><div class="mini-bar" style="height:58%"></div><div class="mini-bar" style="height:62%"></div><div class="mini-bar" style="height:67%"></div><div class="mini-bar" style="height:72%"></div><div class="mini-bar" style="height:78%"></div><div class="mini-bar" style="height:84%"></div><div class="mini-bar" style="height:89%"></div></div></div><div class="dash-card-body"><h3>Carbon Emissions Tracker</h3><p>CO2 emissions by sector, carbon intensity of electricity, and emissions reduction progress.</p><div class="dash-card-footer"><div class="dash-status soon"><div class="dot"></div> Coming Soon</div><div class="dash-tags"><span class="tag">Carbon</span><span class="tag">Emissions</span><span class="tag">NetZero</span></div></div></div></div>
+</div></div></section>
+<footer><div class="footer-logo"><span class="alpha">Alpha</span><span class="stat">Stat</span><span class="lab">Lab</span></div><div class="footer-center"><a href="https://www.linkedin.com/in/muhammad-ilyas-statistics" target="_blank">LinkedIn</a><a href="https://www.researchgate.net/profile/Muhammad-Ilyas-144" target="_blank">ResearchGate</a><a href="mailto:milyas3201@gmail.com">Email</a></div><p>© 2025 AlphaStatLab · Statistical Consulting &amp; Data Science · Islamabad, Pakistan</p></footer>
+<script data-goatcounter="https://alphastatlab.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<script>
+const reveals=document.querySelectorAll('.reveal');const observer=new IntersectionObserver(entries=>{entries.forEach(entry=>{if(entry.isIntersecting)entry.target.classList.add('visible');});},{threshold:0.1});reveals.forEach(reveal=>observer.observe(reveal));
+const symGroups=[{syms:['∑','∫','∂','∇','∞','√','π','μ','σ','λ','θ','α','β','γ','δ','ε','Φ','Ψ','Ω','ρ','κ','η','ζ'],color:'rgba(56,189,248,OP)',sizes:[13,17,22,27]},{syms:['x̄','P(A|B)','H₀','H₁','R²','χ²','p<.05','N(μ,σ²)','MLE','MAP','KL(P‖Q)','E[X]','Var(X)','β̂','ŷ'],color:'rgba(129,140,248,OP)',sizes:[10,12,14]},{syms:['🌧️','🌡️','☁️','🌊','❄️','🌪️','⛅','🌦️','💧','🏔️','🌱','🌍','🛰️','📡'],color:'rgba(52,211,153,OP)',sizes:[15,19,23]},{syms:['⚡','🧠','🔬','🔭','⚙️','🔗','📈','📉','🎯','🧮','🤖','💡','🧬'],color:'rgba(244,114,182,OP)',sizes:[13,17,21]},{syms:['1.96','0.05','3.14','2.58','N(0,1)','t=2.3','z=1.64','CI 95%','σ²','AIC','BIC','RMSE','df=n-1'],color:'rgba(251,146,60,OP)',sizes:[9,11,13]},{syms:['[W·x+b]','softmax','relu(x)','∇L','Σxᵢyᵢ','argmin','log P','∏pᵢ','tanh','sigmoid'],color:'rgba(167,139,250,OP)',sizes:[9,11]}];
+const bgLayer=document.getElementById('bgSymbolsLayer');for(let i=0;i<60;i++){const grp=symGroups[Math.floor(Math.random()*symGroups.length)];const sym=grp.syms[Math.floor(Math.random()*grp.syms.length)];const size=grp.sizes[Math.floor(Math.random()*grp.sizes.length)];const op=(0.06+Math.random()*0.22).toFixed(2);const color=grp.color.replace('OP',op);const el=document.createElement('span');el.className='bgsym';el.textContent=sym;el.style.cssText=`left:${Math.random()*100}%;font-size:${size}px;color:${color};animation-duration:${12+Math.random()*22}s;animation-delay:-${Math.random()*22}s;`;bgLayer.appendChild(el);}
+</script>
+</body>
+</html>
