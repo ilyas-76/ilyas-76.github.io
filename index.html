@@ -21,18 +21,18 @@
     <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
     <link rel="canonical" href="https://alphastatlab.com/">
 
-    <!-- OPEN GRAPH (Facebook / LinkedIn / WhatsApp) -->
+    <!-- OPEN GRAPH -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://alphastatlab.com/">
     <meta property="og:title" content="AlphaStatLab | Statistical Consulting & Climate Data Dashboards">
-    <meta property="og:description" content="PhD-level statistical consulting, interactive climate dashboards (drought indices, GHG emissions), and data science services. Expert in SPI, SPEI, ARIMA, machine learning, and research support.">
+    <meta property="og:description" content="PhD-level statistical consulting, interactive climate dashboards (drought indices, GHG emissions), and data science services.">
     <meta property="og:site_name" content="AlphaStatLab">
     <meta property="og:locale" content="en_US">
 
     <!-- TWITTER CARD -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="AlphaStatLab | Statistical Consulting & Climate Data Dashboards">
-    <meta name="twitter:description" content="Interactive climate dashboards, drought analysis (SPI, SPEI, SPTI), GHG emissions monitoring, and PhD-level statistical consulting services.">
+    <meta name="twitter:description" content="Interactive climate dashboards and PhD-level statistical consulting services.">
     <meta name="twitter:creator" content="@alphastatlab">
 
     <!-- FAVICON / SITE ICON -->
@@ -42,8 +42,8 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
     
-    <!-- External CSS -->
-    <link rel="stylesheet" href="css/style.css">
+    <!-- External CSS - Force reload by adding version parameter -->
+    <link rel="stylesheet" href="css/style.css?v=2">
 </head>
 <body>
 
@@ -51,7 +51,7 @@
 <div class="orb orb2"></div>
 <div class="orb orb3"></div>
 
-<!-- Load sections -->
+<!-- Load sections in correct order -->
 <div id="nav-placeholder"></div>
 <div id="hero-placeholder"></div>
 <div id="dashboards-placeholder"></div>
@@ -64,10 +64,10 @@
         async src="//gc.zgo.at/count.js"></script>
 
 <!-- External JavaScript -->
-<script src="js/main.js"></script>
+<script src="js/main.js?v=2"></script>
 
 <script>
-    // Load all sections dynamically
+    // Load all sections dynamically in correct order
     fetch('sections/nav.html').then(r => r.text()).then(data => {
         document.getElementById('nav-placeholder').innerHTML = data;
     });
