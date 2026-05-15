@@ -13,15 +13,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- PRIMARY SEO META TAGS -->
     <title>AlphaStatLab | Statistical Consulting, Data Science & Climate Dashboards</title>
-    <meta name="description" content="AlphaStatLab offers PhD-level statistical consulting, interactive climate data dashboards, and data science services. Specialising in drought analysis (SPI, SPEI), GHG emissions monitoring, time series analysis, machine learning, and research support. Based in Islamabad, Pakistan — serving clients globally.">
-    <meta name="keywords" content="statistical consulting, data science, climate dashboard, drought analysis, SPI, SPEI, SPTI, greenhouse gas emissions, GHG dashboard, EDGAR data, time series analysis, machine learning, deep learning, Python, R, interactive dashboard, Plotly, Chart.js, Streamlit, PhD statistician, climate statistics, Punjab drought, ARIMA, regression analysis, hypothesis testing, biostatistics, research support, data visualization, statistical modeling, climate change analysis, spatiotemporal analysis, ArcGIS, freelance data analyst, Islamabad, Pakistan, Quaid-i-Azam University">
+    <meta name="description" content="AlphaStatLab offers PhD-level statistical consulting, interactive climate data dashboards, and data science services. Specialising in drought analysis (SPI, SPEI), GHG emissions monitoring, time series analysis, machine learning, and research support.">
+    <meta name="keywords" content="statistical consulting, data science, climate dashboard, drought analysis, SPI, SPEI, SPTI, greenhouse gas emissions, GHG dashboard, EDGAR data, time series analysis, machine learning, deep learning, Python, R, interactive dashboard, Plotly, Chart.js, Streamlit, PhD statistician">
     <meta name="author" content="Muhammad Ilyas — PhD Statistics, Quaid-i-Azam University, Islamabad">
-    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+    <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://alphastatlab.com/">
 
-    <!-- OPEN GRAPH -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://alphastatlab.com/">
     <meta property="og:title" content="AlphaStatLab | Statistical Consulting & Climate Data Dashboards">
@@ -29,68 +27,51 @@
     <meta property="og:site_name" content="AlphaStatLab">
     <meta property="og:locale" content="en_US">
 
-    <!-- TWITTER CARD -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="AlphaStatLab | Statistical Consulting & Climate Data Dashboards">
     <meta name="twitter:description" content="Interactive climate dashboards and PhD-level statistical consulting services.">
-    <meta name="twitter:creator" content="@alphastatlab">
 
-    <!-- FAVICON / SITE ICON -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3CradialGradient id='shine' cx='30%25' cy='30%25' r='70%25'%3E%3Cstop offset='0%25' stop-color='%23ffffff' stop-opacity='0.6'/%3E%3Cstop offset='100%25' stop-color='%23000000' stop-opacity='0'/%3E%3C/radialGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='20' fill='%23000000'/%3E%3Ctext x='50' y='72' font-size='58' text-anchor='middle' fill='%23ffffff' font-family='Georgia, serif' font-weight='bold'%3Eα%3C/text%3E%3Cline x1='25' y1='30' x2='75' y2='70' stroke='%23e74c3c' stroke-width='6' stroke-linecap='round' /%3E%3Crect width='100' height='100' rx='20' fill='url(%23shine)'/%3E%3C/svg%3E">
     <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3CradialGradient id='shine' cx='30%25' cy='30%25' r='70%25'%3E%3Cstop offset='0%25' stop-color='%23ffffff' stop-opacity='0.6'/%3E%3Cstop offset='100%25' stop-color='%23000000' stop-opacity='0'/%3E%3C/radialGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='20' fill='%23000000'/%3E%3Ctext x='50' y='72' font-size='58' text-anchor='middle' fill='%23ffffff' font-family='Georgia, serif' font-weight='bold'%3Eα%3C/text%3E%3Cline x1='25' y1='30' x2='75' y2='70' stroke='%23e74c3c' stroke-width='6' stroke-linecap='round' /%3E%3Crect width='100' height='100' rx='20' fill='url(%23shine)'/%3E%3C/svg%3E">
     <meta name="theme-color" content="#000000">
 
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
-    
-    <!-- COMPLETE CSS STYLES (embedded directly) -->
+
     <style>
         :root {
             --bg: #020810;
-            --bg2: #060c18;
             --surface: #0b1220;
-            --surface2: #0f1828;
             --border: rgba(99,179,237,0.10);
-            --border-hover: rgba(56,189,248,0.4);
             --accent: #38bdf8;
-            --accent2: #818cf8;
             --accent3: #34d399;
-            --accent4: #f59e0b;
             --text: #e2e8f0;
             --muted: #64748b;
             --muted2: #94a3b8;
             --white: #f8fafc;
         }
-
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         html { scroll-behavior: smooth; }
-
         body {
             background: var(--bg);
             color: var(--text);
             font-family: 'DM Mono', monospace;
             overflow-x: hidden;
         }
-
         body::before {
             content: '';
             position: fixed; inset: 0;
-            background-image:
-                linear-gradient(rgba(56,189,248,0.025) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(56,189,248,0.025) 1px, transparent 1px);
+            background-image: linear-gradient(rgba(56,189,248,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(56,189,248,0.025) 1px, transparent 1px);
             background-size: 52px 52px;
             pointer-events: none; z-index: 0;
         }
-
         .orb { position: fixed; border-radius: 50%; filter: blur(110px); pointer-events: none; z-index: 0; }
         .orb1 { width: 700px; height: 700px; background: #0369a1; top: -250px; left: -200px; opacity: 0.14; animation: floatorb 20s ease-in-out infinite alternate; }
         .orb2 { width: 500px; height: 500px; background: #4f46e5; bottom: -100px; right: -100px; opacity: 0.12; animation: floatorb 25s ease-in-out infinite alternate-reverse; }
         .orb3 { width: 350px; height: 350px; background: #059669; top: 45%; left: 55%; opacity: 0.10; animation: floatorb 16s ease-in-out infinite alternate; }
-
         @keyframes floatorb {
             from { transform: translate(0,0) scale(1); }
             to   { transform: translate(50px,35px) scale(1.12); }
         }
-
         nav {
             position: fixed; top: 0; left: 0; right: 0;
             display: flex; align-items: center; justify-content: space-between;
@@ -100,407 +81,96 @@
             border-bottom: 1px solid var(--border);
             z-index: 200;
         }
-
-        .nav-logo {
-            font-family: 'Syne', sans-serif; font-weight: 800; font-size: 20px;
-            letter-spacing: -0.5px; text-decoration: none;
-        }
+        .nav-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 20px; letter-spacing: -0.5px; text-decoration: none; }
         .nav-logo .alpha { color: var(--white); }
         .nav-logo .stat { color: var(--accent); }
         .nav-logo .lab { color: var(--accent3); }
-
         .nav-links { display: flex; align-items: center; gap: 4px; }
-        .nav-link {
-            font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
-            color: var(--muted2); text-decoration: none;
-            padding: 6px 14px; border: 1px solid transparent;
-            transition: color 0.2s, border-color 0.2s;
-        }
-        .nav-link:hover { color: var(--accent); border-color: var(--border-hover); }
-
-        .nav-email {
-            background: transparent; border: 1px solid var(--accent);
-            color: var(--accent); padding: 6px 16px;
-            font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.1em;
-            text-decoration: none; transition: background 0.2s, color 0.2s; white-space: nowrap;
-        }
+        .nav-link { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted2); text-decoration: none; padding: 6px 14px; border: 1px solid transparent; transition: color 0.2s, border-color 0.2s; }
+        .nav-link:hover { color: var(--accent); border-color: rgba(56,189,248,0.4); }
+        .nav-email { background: transparent; border: 1px solid var(--accent); color: var(--accent); padding: 6px 16px; font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-decoration: none; transition: background 0.2s, color 0.2s; white-space: nowrap; }
         .nav-email:hover { background: var(--accent); color: var(--bg); }
-
-        .hero {
-            min-height: 80vh; display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
-            text-align: center; padding: 100px 24px 60px;
-            position: relative; z-index: 1;
-        }
-
-        .stat-particles {
-            position: absolute; inset: 0; overflow: hidden; pointer-events: none;
-        }
-        .particle {
-            position: absolute; font-family: 'DM Mono', monospace;
-            color: rgba(56,189,248,0.18); font-size: 11px; letter-spacing: 0.05em;
-            animation: drift linear infinite;
-            white-space: nowrap;
-        }
-
-        @keyframes drift {
-            from { transform: translateY(100vh) rotate(-5deg); opacity: 0; }
-            10%  { opacity: 1; }
-            90%  { opacity: 0.6; }
-            to   { transform: translateY(-120px) rotate(5deg); opacity: 0; }
-        }
-
-        .hero-ring {
-            position: absolute; border-radius: 50%;
-            border: 1px solid rgba(56,189,248,0.07);
-            pointer-events: none;
-        }
-        .ring1 { width: 600px; height: 600px; top: 50%; left: 50%; transform: translate(-50%,-50%); animation: rotate 60s linear infinite; }
-        .ring2 { width: 900px; height: 900px; top: 50%; left: 50%; transform: translate(-50%,-50%); animation: rotate 90s linear infinite reverse; }
-        .ring3 { width: 1200px; height: 1200px; top: 50%; left: 50%; transform: translate(-50%,-50%); border-style: dashed; animation: rotate 120s linear infinite; }
-
-        @keyframes rotate { to { transform: translate(-50%,-50%) rotate(360deg); } }
-
-        .ring1::after, .ring2::after {
-            content: '';
-            position: absolute; width: 6px; height: 6px; border-radius: 50%;
-            background: var(--accent); top: -3px; left: 50%; transform: translateX(-50%);
-            box-shadow: 0 0 12px var(--accent);
-        }
-
-        .hero h1 {
-            font-family: 'Syne', sans-serif;
-            font-weight: 800;
-            font-size: clamp(48px, 8vw, 90px);
-            line-height: 1;
-            letter-spacing: -1px;
-            margin-bottom: 20px;
-            position: relative;
-            z-index: 2;
-            white-space: nowrap;
-        }
+        .hero { min-height: 80vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 100px 24px 60px; position: relative; z-index: 1; }
+        .hero h1 { font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(48px, 8vw, 90px); line-height: 1; letter-spacing: -1px; margin-bottom: 20px; position: relative; z-index: 2; white-space: nowrap; }
         .hero h1 .alpha { color: var(--white); }
         .hero h1 .stat { color: var(--accent); }
         .hero h1 .lab { color: var(--accent3); }
-
-        .hero-descriptor {
-            font-family: 'Instrument Serif', serif;
-            font-style: italic;
-            font-size: clamp(18px, 2.2vw, 24px);
-            color: var(--muted2);
-            margin: 20px 0 30px;
-            max-width: 700px;
-            line-height: 1.65;
-            position: relative;
-            z-index: 2;
-        }
-
-        .hero-ctas { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; position: relative; z-index: 2; }
-        .btn-primary {
-            background: var(--accent); color: var(--bg);
-            padding: 14px 32px; font-family: 'DM Mono', monospace;
-            font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase;
-            text-decoration: none; border: none; cursor: pointer;
-            transition: opacity 0.2s, transform 0.2s;
-            display: inline-block;
-        }
+        .hero-descriptor { font-family: 'Instrument Serif', serif; font-style: italic; font-size: clamp(18px, 2.2vw, 24px); color: var(--muted2); margin: 20px 0 30px; max-width: 700px; line-height: 1.65; position: relative; z-index: 2; }
+        .hero-ctas { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; position: relative; z-index: 2; margin-top: 20px; }
+        .btn-primary { background: var(--accent); color: var(--bg); padding: 14px 32px; font-family: 'DM Mono', monospace; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; border: none; cursor: pointer; transition: opacity 0.2s, transform 0.2s; display: inline-block; }
         .btn-primary:hover { opacity: 0.88; transform: translateY(-2px); }
-
-        .btn-ghost {
-            background: transparent; color: var(--text);
-            padding: 14px 32px; font-family: 'DM Mono', monospace;
-            font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase;
-            text-decoration: none; border: 1px solid var(--border);
-            cursor: pointer; transition: border-color 0.2s, color 0.2s, transform 0.2s;
-            display: inline-block;
-        }
+        .btn-ghost { background: transparent; color: var(--text); padding: 14px 32px; font-family: 'DM Mono', monospace; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; border: 1px solid var(--border); cursor: pointer; transition: border-color 0.2s, color 0.2s, transform 0.2s; display: inline-block; }
         .btn-ghost:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
-
-        .scroll-hint {
-            position: absolute; bottom: 36px; left: 50%; transform: translateX(-50%);
-            display: flex; flex-direction: column; align-items: center; gap: 8px;
-            color: var(--muted); font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase;
-            z-index: 2; animation: bob 3s ease-in-out infinite;
-        }
+        .scroll-hint { position: absolute; bottom: 36px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 8px; color: var(--muted); font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; z-index: 2; animation: bob 3s ease-in-out infinite; }
         .scroll-line { width: 1px; height: 50px; background: linear-gradient(to bottom, var(--accent), transparent); }
-
         @keyframes bob { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(8px)} }
-
         section { padding: 60px 0 80px; position: relative; z-index: 1; }
         .container { max-width: 1200px; margin: 0 auto; padding: 0 52px; }
-        .section-tag {
-            font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
-            color: var(--accent); margin-bottom: 10px;
-        }
-        .section-title {
-            font-family: 'Syne', sans-serif; font-weight: 700;
-            font-size: clamp(30px, 4.5vw, 52px); line-height: 1.05;
-            letter-spacing: -1.5px; color: var(--white); margin-bottom: 16px;
-        }
-        .section-desc {
-            font-size: 13px; line-height: 1.85; color: var(--muted);
-            max-width: 560px; margin-bottom: 52px;
-        }
-        .section-divider {
-            width: 48px; height: 2px;
-            background: linear-gradient(to right, var(--accent), transparent);
-            margin: 16px 0 20px;
-        }
-
+        .section-tag { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
+        .section-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: clamp(30px, 4.5vw, 52px); line-height: 1.05; letter-spacing: -1.5px; color: var(--white); margin-bottom: 16px; }
+        .section-desc { font-size: 13px; line-height: 1.85; color: var(--muted); max-width: 560px; margin-bottom: 52px; }
+        .section-divider { width: 48px; height: 2px; background: linear-gradient(to right, var(--accent), transparent); margin: 16px 0 20px; }
         #dashboards { background: linear-gradient(to bottom, transparent, rgba(56,189,248,0.015), transparent); }
-
-        .card-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 30px;
-            justify-content: center;
-        }
-
-        .dash-card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            overflow: hidden;
-            transition: transform 0.3s ease, border-color 0.3s ease;
-            cursor: pointer;
-            position: relative;
-        }
+        .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px; justify-content: center; margin-top: 40px; }
+        .dash-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; transition: transform 0.3s ease, border-color 0.3s ease; cursor: pointer; position: relative; }
         .dash-card:hover { transform: translateY(-6px); border-color: var(--accent); }
         .dash-card.featured { border-color: rgba(56,189,248,0.3); }
-        .dash-card.featured::before {
-            content: 'FEATURED';
-            position: absolute; top: 12px; right: 12px;
-            font-size: 9px; letter-spacing: 0.15em;
-            padding: 3px 8px; background: var(--accent); color: var(--bg);
-        }
-
-        .dash-card-visual {
-            height: 140px; display: flex; align-items: center; justify-content: center;
-            position: relative; overflow: hidden;
-            background: linear-gradient(135deg, rgba(5,150,105,0.15), rgba(56,189,248,0.08));
-        }
+        .dash-card.featured::before { content: 'FEATURED'; position: absolute; top: 12px; right: 12px; font-size: 9px; letter-spacing: 0.15em; padding: 3px 8px; background: var(--accent); color: var(--bg); }
+        .dash-card-visual { height: 140px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; background: linear-gradient(135deg, rgba(5,150,105,0.15), rgba(56,189,248,0.08)); }
         .dash-card-icon { font-size: 52px; position: relative; z-index: 1; }
-        .mini-chart {
-            position: absolute; bottom: 12px; left: 12px; right: 12px;
-            height: 32px; display: flex; align-items: flex-end; gap: 3px;
-        }
-        .mini-bar {
-            flex: 1; border-radius: 2px 2px 0 0;
-            background: rgba(56,189,248,0.25);
-            transition: height 0.3s;
-        }
-        .dash-card:hover .mini-bar { background: rgba(56,189,248,0.45); }
-
-        .dash-card-body { padding: 22px 22px 20px; }
-        .dash-card-body h3 {
-            font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700;
-            color: var(--white); margin-bottom: 8px; line-height: 1.3;
-        }
-        .dash-card-body p {
-            font-size: 12px; line-height: 1.7; color: var(--muted); margin-bottom: 16px;
-        }
-
-        .dash-card-footer {
-            display: flex; align-items: center; justify-content: space-between;
-        }
-        .dash-status {
-            display: inline-flex; align-items: center; gap: 6px;
-            font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
-        }
-        .dash-status .dot { width: 6px; height: 6px; border-radius: 50%; }
+        .dash-card-body { padding: 22px; }
+        .dash-card-body h3 { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; color: var(--white); margin-bottom: 8px; }
+        .dash-card-body p { font-size: 12px; line-height: 1.7; color: var(--muted); margin-bottom: 16px; }
+        .dash-card-footer { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+        .dash-status { display: inline-flex; align-items: center; gap: 6px; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; }
+        .dash-status .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent3); animation: pulse 2s infinite; }
         .dash-status.live { color: var(--accent3); }
-        .dash-status.live .dot { background: var(--accent3); animation: pulse 2s infinite; }
-
         @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.5)} }
-
         .dash-tags { display: flex; gap: 6px; flex-wrap: wrap; }
-        .tag {
-            font-size: 9px; padding: 3px 8px; letter-spacing: 0.07em;
-            border: 1px solid rgba(99,179,237,0.15); color: var(--muted2);
-            text-transform: uppercase;
-        }
-
+        .tag { font-size: 9px; padding: 3px 8px; letter-spacing: 0.07em; border: 1px solid rgba(99,179,237,0.15); color: var(--muted2); text-transform: uppercase; }
         .services { background: linear-gradient(to bottom, transparent, rgba(129,140,248,0.015), transparent); }
-        .services-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 24px;
-            margin-top: 40px;
-        }
-        .service-card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 28px 24px;
-            transition: transform 0.3s, border-color 0.3s;
-            text-align: center;
-        }
-        .service-card:hover { transform: translateY(-5px); border-color: var(--accent2); }
+        .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; margin-top: 40px; }
+        .service-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 28px 24px; transition: transform 0.3s, border-color 0.3s; text-align: center; }
+        .service-card:hover { transform: translateY(-5px); border-color: var(--accent); }
         .service-icon { font-size: 40px; margin-bottom: 16px; }
-        .service-card h3 {
-            font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700;
-            color: var(--white); margin-bottom: 12px;
-        }
-        .service-card p {
-            font-size: 12px; line-height: 1.7; color: var(--muted); margin-bottom: 20px;
-        }
-        .service-btn {
-            display: inline-block;
-            padding: 8px 20px;
-            background: transparent;
-            border: 1px solid var(--accent);
-            color: var(--accent);
-            font-size: 11px;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            text-decoration: none;
-            transition: all 0.2s;
-            border-radius: 30px;
-        }
+        .service-card h3 { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; color: var(--white); margin-bottom: 12px; }
+        .service-card p { font-size: 12px; line-height: 1.7; color: var(--muted); margin-bottom: 20px; }
+        .service-btn { display: inline-block; padding: 8px 20px; background: transparent; border: 1px solid var(--accent); color: var(--accent); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; transition: all 0.2s; border-radius: 30px; }
         .service-btn:hover { background: var(--accent); color: var(--bg); }
-
-        #about {
-            padding: 60px 0;
-            border-top: 1px solid var(--border);
-            border-bottom: 1px solid var(--border);
-        }
-        .about-inner {
-            display: grid; grid-template-columns: 1fr 1fr;
-            gap: 64px;
-            align-items: center;
-        }
-        .about-left h2 {
-            font-family: 'Syne', sans-serif; font-weight: 800;
-            font-size: clamp(28px, 4vw, 44px);
-            letter-spacing: -1px;
-            color: var(--white);
-            line-height: 1.1;
-            margin-bottom: 20px;
-        }
-        .about-left h2 em {
-            font-family: 'Instrument Serif', serif;
-            font-style: italic;
-            color: var(--accent);
-            font-weight: 400;
-        }
-        .about-left p {
-            font-size: 12px;
-            line-height: 1.9;
-            color: var(--muted);
-            margin-bottom: 14px;
-        }
-        .university {
-            color: var(--accent3);
-            font-weight: bold;
-            margin-top: 10px;
-        }
+        #about { padding: 60px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+        .about-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
+        .about-left h2 { font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(28px, 4vw, 44px); letter-spacing: -1px; color: var(--white); line-height: 1.1; margin-bottom: 20px; }
+        .about-left h2 em { font-family: 'Instrument Serif', serif; font-style: italic; color: var(--accent); font-weight: 400; }
+        .about-left p { font-size: 12px; line-height: 1.9; color: var(--muted); margin-bottom: 14px; }
+        .university { color: var(--accent3); font-weight: bold; margin-top: 10px; }
         .about-right { display: flex; flex-direction: column; gap: 18px; }
-        .about-stat {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            padding: 20px 24px;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            transition: transform 0.2s, border-color 0.2s;
-        }
-        .about-stat:hover { transform: translateX(5px); border-color: var(--accent2); }
-        .about-stat-icon { font-size: 32px; flex-shrink: 0; }
-        .about-stat-text h4 {
-            font-family: 'Syne', sans-serif;
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--white);
-            margin-bottom: 6px;
-        }
-        .about-stat-text p {
-            font-size: 12px;
-            line-height: 1.6;
-            color: var(--muted);
-        }
-
-        .social-links {
-            display: flex;
-            gap: 16px;
-            margin-top: 20px;
-            flex-wrap: wrap;
-        }
-        .social-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            padding: 10px 20px;
-            border-radius: 40px;
-            font-size: 12px;
-            color: var(--white);
-            text-decoration: none;
-            transition: all 0.2s;
-        }
-        .social-btn:hover {
-            border-color: var(--accent);
-            color: var(--accent);
-            transform: translateY(-2px);
-        }
-
-        footer {
-            border-top: 1px solid var(--border);
-            padding: 36px 52px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            position: relative;
-            z-index: 1;
-            flex-wrap: wrap;
-            gap: 16px;
-        }
-        .footer-logo {
-            font-family: 'Syne', sans-serif; font-weight: 800; font-size: 16px;
-        }
+        .about-stat { display: flex; align-items: center; gap: 20px; padding: 20px 24px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; transition: transform 0.2s, border-color 0.2s; }
+        .about-stat:hover { transform: translateX(5px); border-color: var(--accent); }
+        .about-stat-icon { font-size: 32px; }
+        .about-stat-text h4 { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; color: var(--white); margin-bottom: 6px; }
+        .about-stat-text p { font-size: 12px; line-height: 1.6; color: var(--muted); }
+        .social-links { display: flex; gap: 16px; margin-top: 20px; flex-wrap: wrap; }
+        .social-btn { display: inline-flex; align-items: center; gap: 8px; background: var(--surface); border: 1px solid var(--border); padding: 10px 20px; border-radius: 40px; font-size: 12px; color: var(--white); text-decoration: none; transition: all 0.2s; }
+        .social-btn:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
+        footer { border-top: 1px solid var(--border); padding: 36px 52px; display: flex; align-items: center; justify-content: space-between; position: relative; z-index: 1; flex-wrap: wrap; gap: 16px; }
+        .footer-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 16px; }
         .footer-logo .alpha { color: var(--white); }
         .footer-logo .stat { color: var(--accent); }
         .footer-logo .lab { color: var(--accent3); }
-        .footer-center {
-            display: flex;
-            gap: 24px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-        .footer-center a {
-            font-size: 11px;
-            color: var(--muted2);
-            text-decoration: none;
-            transition: color 0.2s;
-        }
+        .footer-center { display: flex; gap: 24px; flex-wrap: wrap; justify-content: center; }
+        .footer-center a { font-size: 11px; color: var(--muted2); text-decoration: none; transition: color 0.2s; }
         .footer-center a:hover { color: var(--accent); }
-        footer .email-link {
-            font-size: 11px; color: var(--accent); text-decoration: none;
-        }
-        footer .email-link:hover { text-decoration: underline; }
         footer p { font-size: 10px; color: var(--muted); }
-
         .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.75s ease, transform 0.75s ease; }
         .reveal.visible { opacity: 1; transform: translateY(0); }
-
-        @media (max-width: 900px) {
-            .about-inner { grid-template-columns: 1fr; gap: 40px; }
-        }
         @media (max-width: 768px) {
             nav { padding: 0 20px; }
             .nav-links { display: none; }
             .container { padding: 0 20px; }
-            footer { padding: 28px 20px; flex-direction: column; text-align: center; }
-            .footer-center { order: 1; }
-            .footer-logo { order: 0; }
-            footer .email-link { order: 2; }
-            footer p { order: 3; }
-            .hero h1 { font-size: clamp(40px, 7vw, 70px); white-space: normal; letter-spacing: -1px; }
+            footer { flex-direction: column; text-align: center; }
+            .hero h1 { font-size: clamp(40px, 7vw, 70px); white-space: normal; }
             .card-grid { grid-template-columns: 1fr; }
-            .about-stat { padding: 15px 18px; }
-            .about-stat-icon { font-size: 28px; }
-            .social-links { justify-content: center; }
+            .about-inner { grid-template-columns: 1fr; gap: 40px; }
         }
     </style>
 </head>
@@ -508,40 +178,195 @@
 
 <div class="orb orb1"></div>
 <div class="orb orb2"></div>
-<div class="orb orb3"></div>
+div class="orb orb3"></div>
 
-<!-- Load sections -->
-<div id="nav-placeholder"></div>
-<div id="hero-placeholder"></div>
-<div id="dashboards-placeholder"></div>
-<div id="services-placeholder"></div>
-<div id="about-placeholder"></div>
-<div id="footer-placeholder"></div>
+<!-- ==================== NAVIGATION ==================== -->
+<nav>
+    <a href="#" class="nav-logo"><span class="alpha">Alpha</span><span class="stat">Stat</span><span class="lab">Lab</span></a>
+    <div class="nav-links">
+        <a href="#dashboards" class="nav-link">Dashboards</a>
+        <a href="#services" class="nav-link">Services</a>
+        <a href="#about" class="nav-link">About</a>
+    </div>
+    <a href="mailto:milyas3201@gmail.com" class="nav-email">✉ milyas3201@gmail.com</a>
+</nav>
+
+<!-- ==================== HERO SECTION ==================== -->
+<section class="hero" id="home">
+    <h1>
+        <span class="alpha">Alpha</span><span class="stat">Stat</span><span class="lab">Lab</span>
+    </h1>
+    <p class="hero-descriptor">
+        PhD-level statistical consulting &amp; interactive data science dashboards — turning complex climate and environmental data into clear, actionable insights.
+    </p>
+    <div class="hero-ctas">
+        <a href="#dashboards" class="btn-primary">Explore Dashboards</a>
+        <a href="#services" class="btn-ghost">Our Services</a>
+    </div>
+    <div class="scroll-hint">
+        <div class="scroll-line"></div>
+        scroll
+    </div>
+</section>
+
+<!-- ==================== DASHBOARDS SECTION ==================== -->
+<section id="dashboards">
+    <div class="container">
+        <div class="reveal">
+            <p class="section-tag">// interactive dashboards</p>
+            <h2 class="section-title">Climate Data Visualization Tools</h2>
+            <div class="section-divider"></div>
+            <p class="section-desc">
+                Explore climate, drought, and greenhouse gas emissions data through research-grade interactive dashboards.
+            </p>
+        </div>
+        <div class="card-grid reveal">
+            <!-- Drought Dashboard Card -->
+            <div class="dash-card featured" onclick="window.open('drought-dashboard/climate-dashboard.html','_blank')">
+                <div class="dash-card-visual">
+                    <span class="dash-card-icon">💧</span>
+                </div>
+                <div class="dash-card-body">
+                    <h3>Drought Indices Dashboard — SPI, SPEI &amp; SPTI</h3>
+                    <p>Interactive drought monitoring for 32 districts of Punjab, Pakistan (1981–2021). Analyse SPI, SPEI, and SPTI with zoom, pan, and drought category breakdowns.</p>
+                    <div class="dash-card-footer">
+                        <div class="dash-status live"><div class="dot"></div> Live Demo</div>
+                        <div class="dash-tags">
+                            <span class="tag">SPI</span><span class="tag">SPEI</span><span class="tag">SPTI</span><span class="tag">Drought</span><span class="tag">Punjab</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- GHG Dashboard Card -->
+            <div class="dash-card featured" onclick="window.open('ghg-dashboard/ghg-dashboard.html','_blank')">
+                <div class="dash-card-visual" style="background: linear-gradient(135deg, #1a472a, #2ecc71);">
+                    <span class="dash-card-icon">🌍</span>
+                </div>
+                <div class="dash-card-body">
+                    <h3>Global GHG Emissions Monitor — EDGAR Data 1990–2024</h3>
+                    <p>Track and compare global greenhouse gas emissions by country and sector using EDGAR data. Multi-country comparison and sector breakdown charts.</p>
+                    <div class="dash-card-footer">
+                        <div class="dash-status live"><div class="dot"></div> Live Demo</div>
+                        <div class="dash-tags">
+                            <span class="tag">GHG</span><span class="tag">CO₂</span><span class="tag">Climate</span><span class="tag">EDGAR</span><span class="tag">IPCC</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ==================== SERVICES SECTION ==================== -->
+<section id="services" class="services">
+    <div class="container">
+        <div class="reveal">
+            <p class="section-tag">// services</p>
+            <h2 class="section-title">Statistical Consulting &amp; Data Science Services</h2>
+            <div class="section-divider"></div>
+            <p class="section-desc">
+                Leverage PhD-level expertise for your data analysis, research methodology, and dashboard development — serving academic researchers, NGOs, and businesses worldwide.
+            </p>
+        </div>
+        <div class="services-grid reveal">
+            <div class="service-card">
+                <div class="service-icon">📊</div>
+                <h3>Statistical Data Analysis</h3>
+                <p>Expert statistical modelling, hypothesis testing, regression analysis, time series analysis (ARIMA, SARIMA), and advanced analytics for climate research, medical studies, and business intelligence.</p>
+                <a href="mailto:milyas3201@gmail.com?subject=Data%20Analysis%20Inquiry" class="service-btn">Inquire →</a>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">📈</div>
+                <h3>Interactive Dashboard Development</h3>
+                <p>Custom interactive dashboards for climate analytics, environmental monitoring, business intelligence, and academic research. Built with Streamlit, Plotly, Chart.js, and D3.js.</p>
+                <a href="mailto:milyas3201@gmail.com?subject=Dashboard%20Creation%20Inquiry" class="service-btn">Inquire →</a>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">🔬</div>
+                <h3>Academic Research Support</h3>
+                <p>PhD-level assistance for statistical methodology, data interpretation, academic writing, and publication-ready figures. Published in Springer journals.</p>
+                <a href="mailto:milyas3201@gmail.com?subject=Research%20Support%20Inquiry" class="service-btn">Inquire →</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ==================== ABOUT SECTION ==================== -->
+<section id="about">
+    <div class="container">
+        <div class="about-inner reveal">
+            <div class="about-left">
+                <h2>Built by a<br><em>statistician</em>,<br>for everyone.</h2>
+                <p>AlphaStatLab is a personal research and consulting platform developed by <strong>Muhammad Ilyas</strong> — a PhD scholar in Statistics at Quaid-i-Azam University, Islamabad, Pakistan.</p>
+                <p>Specialist areas include spatiotemporal drought monitoring, climate change analysis, machine learning and deep learning for environmental forecasting, and biostatistics.</p>
+                <p class="university">🎓 PhD Statistics · Quaid-i-Azam University, Islamabad, Pakistan</p>
+                <div class="social-links">
+                    <a href="mailto:milyas3201@gmail.com" class="social-btn">📧 Email</a>
+                    <a href="https://www.linkedin.com/in/muhammad-ilyas-statistics" target="_blank" class="social-btn">🔗 LinkedIn</a>
+                    <a href="https://www.researchgate.net/profile/Muhammad-Ilyas-144" target="_blank" class="social-btn">📚 ResearchGate</a>
+                </div>
+            </div>
+            <div class="about-right">
+                <div class="about-stat">
+                    <div class="about-stat-icon">🎓</div>
+                    <div class="about-stat-text">
+                        <h4>PhD Scholar — Climate Statistics &amp; Machine Learning</h4>
+                        <p>Research in spatiotemporal drought monitoring, machine learning, and deep learning for climate forecasting. Published in Springer journals.</p>
+                    </div>
+                </div>
+                <div class="about-stat">
+                    <div class="about-stat-icon">💼</div>
+                    <div class="about-stat-text">
+                        <h4>Research &amp; Professional Experience</h4>
+                        <p>Research Intern at Pakistan Meteorological Department. Part-time Biostatistician at HBS Medical &amp; Dental College. Freelance Data Analyst with 5+ years experience.</p>
+                    </div>
+                </div>
+                <div class="about-stat">
+                    <div class="about-stat-icon">🛠️</div>
+                    <div class="about-stat-text">
+                        <h4>Technical Stack &amp; Expertise</h4>
+                        <p>Python, R, JavaScript, SQL · Machine Learning, Deep Learning, Time Series Analysis · Dashboard Development (Streamlit, Plotly, Chart.js).</p>
+                    </div>
+                </div>
+                <div class="about-stat">
+                    <div class="about-stat-icon">📫</div>
+                    <div class="about-stat-text">
+                        <h4>Open for Global Collaboration</h4>
+                        <p>Research partnerships, statistical consulting, and dashboard development worldwide. Connect on LinkedIn or ResearchGate.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ==================== FOOTER ==================== -->
+<footer>
+    <div class="footer-logo">
+        <span class="alpha">Alpha</span><span class="stat">Stat</span><span class="lab">Lab</span>
+    </div>
+    <div class="footer-center">
+        <a href="https://www.linkedin.com/in/muhammad-ilyas-statistics" target="_blank">LinkedIn</a>
+        <a href="https://www.researchgate.net/profile/Muhammad-Ilyas-144" target="_blank">ResearchGate</a>
+        <a href="mailto:milyas3201@gmail.com">Email</a>
+    </div>
+    <p>© 2025 AlphaStatLab · Statistical Consulting &amp; Data Science · Islamabad, Pakistan</p>
+</footer>
 
 <!-- GoatCounter Analytics -->
-<script data-goatcounter="https://alphastatlab.goatcounter.com/count"
-        async src="//gc.zgo.at/count.js"></script>
+<script data-goatcounter="https://alphastatlab.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 
 <script>
-    // Load all sections dynamically
-    fetch('sections/nav.html').then(r => r.text()).then(data => {
-        document.getElementById('nav-placeholder').innerHTML = data;
-    });
-    fetch('sections/hero.html').then(r => r.text()).then(data => {
-        document.getElementById('hero-placeholder').innerHTML = data;
-    });
-    fetch('sections/dashboards.html').then(r => r.text()).then(data => {
-        document.getElementById('dashboards-placeholder').innerHTML = data;
-    });
-    fetch('sections/services.html').then(r => r.text()).then(data => {
-        document.getElementById('services-placeholder').innerHTML = data;
-    });
-    fetch('sections/about.html').then(r => r.text()).then(data => {
-        document.getElementById('about-placeholder').innerHTML = data;
-    });
-    fetch('sections/footer.html').then(r => r.text()).then(data => {
-        document.getElementById('footer-placeholder').innerHTML = data;
-    });
+    // Scroll reveal animation
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.1 });
+    reveals.forEach(reveal => observer.observe(reveal));
 </script>
 
 </body>
