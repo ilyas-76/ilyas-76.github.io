@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Patient Outcomes Dashboard | AlphaStatLab</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f0f4f8;
+  --surface: #ffffff;
+  --surface2: #f7fafc;
+  --border: #dde4ed;
+  --teal: #0b7285;
+  --teal-light: #e3f4f6;
+  --teal2: #1a9aad;
+  --navy: #0f2b4a;
+  --orange: #e8650a;
+  --orange-light: #fef3ec;
+  --green: #1d7a52;
+  --green-light: #e8f5ee;
+  --red: #c1292e;
+  --red-light: #fdeaea;
+  --text: #1a2535;
+  --muted: #6b7fa0;
+  --white: #fff;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;}
+
+.header{
+  background:var(--navy);
+  padding:28px 40px;
+  display:grid;grid-template-columns:1fr auto;align-items:center;
+}
+.header h1{font-family:'DM Serif Display',serif;font-size:2rem;color:#fff;line-height:1.2;}
+.header h1 em{font-style:italic;color:#7ecfe8;}
+.header p{color:rgba(255,255,255,0.55);font-size:11px;margin-top:6px;letter-spacing:0.05em;}
+.header-kpis{display:flex;gap:2px;}
+.hkpi{padding:12px 22px;background:rgba(255,255,255,0.06);text-align:center;border-left:1px solid rgba(255,255,255,0.08);}
+.hkpi-val{font-family:'DM Mono',monospace;font-size:1.6rem;color:#7ecfe8;line-height:1;}
+.hkpi-label{font-size:10px;color:rgba(255,255,255,0.45);margin-top:4px;text-transform:uppercase;letter-spacing:0.08em;}
+
+.container{max-width:1440px;margin:0 auto;padding:28px 40px;}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+.panel{background:var(--surface);border:1px solid var(--border);padding:22px;animation:fadeUp 0.6s ease both;}
+.panel-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
+.panel-title{font-family:'DM Serif Display',serif;font-size:1.1rem;color:var(--navy);}
+.panel-badge{font-size:10px;padding:3px 10px;border-radius:12px;font-family:'DM Mono',monospace;}
+.badge-teal{background:var(--teal-light);color:var(--teal);}
+.badge-orange{background:var(--orange-light);color:var(--orange);}
+.badge-green{background:var(--green-light);color:var(--green);}
+.badge-red{background:var(--red-light);color:var(--red);}
+
+/* Scorecards */
+.scorecard-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-bottom:22px;}
+.scorecard{background:var(--surface);border:1px solid var(--border);padding:18px;position:relative;overflow:hidden;animation:fadeUp 0.5s ease both;}
+.scorecard::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;}
+.scorecard:nth-child(1)::after{background:var(--teal);}
+.scorecard:nth-child(2)::after{background:var(--orange);}
+.scorecard:nth-child(3)::after{background:var(--green);}
+.scorecard:nth-child(4)::after{background:var(--red);}
+.scorecard:nth-child(5)::after{background:var(--navy);}
+.scorecard:nth-child(6)::after{background:#9b59b6;}
+.sc-label{font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);margin-bottom:10px;}
+.sc-value{font-family:'DM Serif Display',serif;font-size:2.1rem;color:var(--navy);line-height:1;}
+.sc-sub{font-size:10px;color:var(--muted);margin-top:6px;}
+.sc-trend{font-size:11px;font-weight:600;margin-top:4px;}
+.trend-up{color:var(--red);}
+.trend-down{color:var(--green);}
+
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;margin-bottom:18px;}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px;}
+.grid-32{display:grid;grid-template-columns:2fr 1fr;gap:18px;margin-bottom:18px;}
+.chart-wrap{position:relative;height:240px;}
+
+/* Hospital comparison table */
+.hosp-table{width:100%;border-collapse:collapse;}
+.hosp-table th{font-size:10px;text-transform:uppercase;letter-spacing:0.09em;color:var(--muted);padding:8px 12px;border-bottom:2px solid var(--border);text-align:left;background:var(--surface2);}
+.hosp-table td{padding:9px 12px;border-bottom:1px solid var(--border);font-size:11px;}
+.hosp-table tr:hover td{background:var(--teal-light);}
+.hosp-type{font-size:9px;color:var(--muted);display:block;}
+.metric-bar{display:inline-block;height:5px;border-radius:3px;vertical-align:middle;margin-left:6px;}
+.smr-good{color:var(--green);font-weight:600;}
+.smr-warn{color:var(--orange);font-weight:600;}
+.smr-bad{color:var(--red);font-weight:600;}
+
+/* HCAHPS radar would be canvas */
+/* HAI heatmap */
+.hai-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:2px;margin-top:8px;}
+.hai-cell{padding:10px 8px;text-align:center;font-size:10px;border-radius:3px;}
+.hai-hosp{font-size:10px;color:var(--muted);margin-bottom:4px;}
+.hai-val{font-family:'DM Mono',monospace;font-size:1rem;font-weight:500;}
+
+/* Payer mix */
+.payer-row{display:flex;height:28px;border-radius:3px;overflow:hidden;margin-bottom:10px;}
+.payer-seg{display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:#fff;transition:flex 0.8s;}
+.payer-label{font-size:10px;color:var(--muted);margin-bottom:6px;margin-top:12px;}
+
+.source-note{margin-top:24px;padding:14px 18px;background:var(--teal-light);border:1px solid rgba(11,114,133,0.2);font-size:10px;color:var(--teal);line-height:1.7;}
+.source-note strong{color:var(--navy);}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>Patient Outcomes &amp; <em>Hospital Performance</em></h1>
+    <p>AlphaStatLab · Hospital Benchmarking · Readmission Rates · HCAHPS · Healthcare-Associated Infections · 2023</p>
+  </div>
+  <div class="header-kpis">
+    <div class="hkpi"><div class="hkpi-val">6</div><div class="hkpi-label">Hospitals</div></div>
+    <div class="hkpi"><div class="hkpi-val">15</div><div class="hkpi-label">DRG Records</div></div>
+    <div class="hkpi"><div class="hkpi-val">65</div><div class="hkpi-label">Metrics / Record</div></div>
+    <div class="hkpi"><div class="hkpi-val">5</div><div class="hkpi-label">US Regions</div></div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- Scorecards -->
+  <div class="scorecard-grid">
+    <div class="scorecard" style="animation-delay:0.05s">
+      <div class="sc-label">Avg 30-Day Readmission</div>
+      <div class="sc-value">13.6%</div>
+      <div class="sc-sub">Across all hospitals & DRGs</div>
+      <div class="sc-trend trend-up">↑ Above national benchmark</div>
+    </div>
+    <div class="scorecard" style="animation-delay:0.1s">
+      <div class="sc-label">Avg Length of Stay</div>
+      <div class="sc-value">7.4 d</div>
+      <div class="sc-sub">Expected 6.9d · LOS Index 1.10</div>
+      <div class="sc-trend trend-up">↑ +7.2% over expected</div>
+    </div>
+    <div class="scorecard" style="animation-delay:0.15s">
+      <div class="sc-label">Pooled Mortality Rate</div>
+      <div class="sc-value">5.8%</div>
+      <div class="sc-sub">SMR range 0.00–1.14</div>
+      <div class="sc-trend trend-down">✓ Near expected levels</div>
+    </div>
+    <div class="scorecard" style="animation-delay:0.2s">
+      <div class="sc-label">Avg Patient Satisfaction</div>
+      <div class="sc-value">82.1</div>
+      <div class="sc-sub">HCAHPS composite (0–100)</div>
+      <div class="sc-trend trend-up">↔ Moderate variation</div>
+    </div>
+    <div class="scorecard" style="animation-delay:0.25s">
+      <div class="sc-label">Sepsis Bundle Compliance</div>
+      <div class="sc-value">91.4%</div>
+      <div class="sc-sub">Best: Univ. Academic 98.2%</div>
+      <div class="sc-trend trend-down">✓ Above 90% threshold</div>
+    </div>
+    <div class="scorecard" style="animation-delay:0.3s">
+      <div class="sc-label">Bed Occupancy</div>
+      <div class="sc-value">81.8%</div>
+      <div class="sc-sub">Range 77.4%–91.2%</div>
+      <div class="sc-trend trend-up">↑ High at academic centers</div>
+    </div>
+  </div>
+
+  <!-- Charts row 1 -->
+  <div class="grid-3">
+    <div class="panel" style="animation-delay:0.3s">
+      <div class="panel-header">
+        <div class="panel-title">30-Day Readmission by Department</div>
+        <span class="panel-badge badge-red">Monitored</span>
+      </div>
+      <div class="chart-wrap">
+        <canvas id="readmitChart"></canvas>
+      </div>
+    </div>
+    <div class="panel" style="animation-delay:0.35s">
+      <div class="panel-header">
+        <div class="panel-title">HCAHPS Domain Scores</div>
+        <span class="panel-badge badge-teal">5 Hospitals</span>
+      </div>
+      <div class="chart-wrap">
+        <canvas id="hcahpsChart"></canvas>
+      </div>
+    </div>
+    <div class="panel" style="animation-delay:0.4s">
+      <div class="panel-header">
+        <div class="panel-title">Avg Cost vs Revenue per DRG</div>
+        <span class="panel-badge badge-green">Financial</span>
+      </div>
+      <div class="chart-wrap">
+        <canvas id="costChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hospital table + Payer mix -->
+  <div class="grid-32">
+    <div class="panel" style="animation-delay:0.4s">
+      <div class="panel-header">
+        <div class="panel-title">Hospital Benchmarking Table</div>
+        <span class="panel-badge badge-teal">6 Facilities · 2023</span>
+      </div>
+      <table class="hosp-table">
+        <thead>
+          <tr>
+            <th>Hospital</th><th>Type/State</th><th>Beds</th>
+            <th>Readmit %</th><th>Avg LOS</th><th>SMR</th>
+            <th>Satisfaction</th><th>CLABSI/1K</th><th>Sepsis Compliance</th><th>Bed Occ %</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Metro General</strong><span class="hosp-type">Non-profit · NY</span></td>
+            <td>Teaching, Acute</td><td>824</td>
+            <td>11.7%<div class="metric-bar" style="width:35px;background:#e8650a;"></div></td>
+            <td>7.4d</td>
+            <td class="smr-warn">1.04–1.15</td>
+            <td>84.2</td><td style="color:var(--green)">0.23</td>
+            <td>91.3%</td><td>84.2%</td>
+          </tr>
+          <tr>
+            <td><strong>Riverside Community</strong><span class="hosp-type">Non-profit · OH</span></td>
+            <td>Critical Access</td><td>189</td>
+            <td>19.4%<div class="metric-bar" style="width:55px;background:#c1292e;"></div></td>
+            <td>8.1d</td>
+            <td class="smr-bad">1.09–1.10</td>
+            <td>77.8</td><td style="color:var(--orange)">0.45</td>
+            <td>88.3%</td><td>79.4%</td>
+          </tr>
+          <tr>
+            <td><strong>Pacific Coast Medical</strong><span class="hosp-type">For-profit · CA</span></td>
+            <td>Teaching, Acute</td><td>612</td>
+            <td>5.6%<div class="metric-bar" style="width:16px;background:#1d7a52;"></div></td>
+            <td>5.6d</td>
+            <td class="smr-good">0.00–1.10</td>
+            <td>89.3</td><td style="color:var(--green)">0.04</td>
+            <td>95.8%</td><td>88.4%</td>
+          </tr>
+          <tr>
+            <td><strong>Southern Regional</strong><span class="hosp-type">Non-profit · TX</span></td>
+            <td>Acute Care</td><td>489</td>
+            <td>20.2%<div class="metric-bar" style="width:60px;background:#c1292e;"></div></td>
+            <td>7.5d</td>
+            <td class="smr-warn">1.06–1.11</td>
+            <td>80.3</td><td style="color:var(--orange)">0.23</td>
+            <td>92.3%</td><td>82.4%</td>
+          </tr>
+          <tr>
+            <td><strong>University Academic</strong><span class="hosp-type">Non-profit · MA</span></td>
+            <td>Academic Medical</td><td>1,124</td>
+            <td>7.8%<div class="metric-bar" style="width:22px;background:#1d7a52;"></div></td>
+            <td>14.9d</td>
+            <td class="smr-warn">1.10–1.16</td>
+            <td>87.8</td><td style="color:var(--green)">0.15</td>
+            <td>97.8%</td><td>91.2%</td>
+          </tr>
+          <tr>
+            <td><strong>Desert Valley</strong><span class="hosp-type">For-profit · AZ</span></td>
+            <td>Acute Care</td><td>312</td>
+            <td>13.1%<div class="metric-bar" style="width:38px;background:#e8650a;"></div></td>
+            <td>6.1d</td>
+            <td class="smr-warn">1.07–1.13</td>
+            <td>74.8</td><td style="color:var(--orange)">0.13</td>
+            <td>86.8%</td><td>77.4%</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="panel" style="animation-delay:0.45s">
+      <div class="panel-header">
+        <div class="panel-title">Payer Mix by Hospital</div>
+        <span class="panel-badge badge-orange">Revenue</span>
+      </div>
+      <div class="payer-label">Metro General (NY)</div>
+      <div class="payer-row">
+        <div class="payer-seg" style="flex:56.2;background:#0b7285;">Medicare 56%</div>
+        <div class="payer-seg" style="flex:18.4;background:#d4870a;">Medicaid 18%</div>
+        <div class="payer-seg" style="flex:22.1;background:#1d7a52;">Comm. 22%</div>
+        <div class="payer-seg" style="flex:3.3;background:#8b7355;">Self 3%</div>
+      </div>
+      <div class="payer-label">Pacific Coast Medical (CA)</div>
+      <div class="payer-row">
+        <div class="payer-seg" style="flex:32;background:#0b7285;">Medicare 32%</div>
+        <div class="payer-seg" style="flex:16;background:#d4870a;">Medicaid 16%</div>
+        <div class="payer-seg" style="flex:45;background:#1d7a52;">Commercial 45%</div>
+        <div class="payer-seg" style="flex:7;background:#8b7355;">Self 7%</div>
+      </div>
+      <div class="payer-label">Southern Regional (TX)</div>
+      <div class="payer-row">
+        <div class="payer-seg" style="flex:50;background:#0b7285;">Medicare 50%</div>
+        <div class="payer-seg" style="flex:27;background:#d4870a;">Medicaid 27%</div>
+        <div class="payer-seg" style="flex:19;background:#1d7a52;">Comm. 19%</div>
+        <div class="payer-seg" style="flex:4;background:#8b7355;">Self 4%</div>
+      </div>
+      <div class="payer-label">University Academic (MA)</div>
+      <div class="payer-row">
+        <div class="payer-seg" style="flex:30;background:#0b7285;">Medicare 30%</div>
+        <div class="payer-seg" style="flex:13;background:#d4870a;">Medicaid 13%</div>
+        <div class="payer-seg" style="flex:51;background:#1d7a52;">Commercial 51%</div>
+        <div class="payer-seg" style="flex:6;background:#8b7355;">Self 6%</div>
+      </div>
+      <div style="margin-top:18px;">
+        <div class="panel-title" style="font-size:0.95rem;margin-bottom:12px;">HAI Rates per 1,000</div>
+        <div class="chart-wrap" style="height:160px">
+          <canvas id="haiChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="source-note">
+    <strong>⚠ Data Disclaimer:</strong> All hospital performance data, readmission rates, mortality statistics, HCAHPS scores, HAI rates, financial metrics, and patient satisfaction scores presented in this dashboard are <strong>entirely synthetic and randomly generated</strong> for portfolio demonstration by AlphaStatLab. No real hospital, patient, or healthcare organization is represented. This dashboard illustrates AlphaStatLab's capability in hospital benchmarking analytics and healthcare data visualization.<br><br>
+    <strong>Methods:</strong> SMR calculated as observed/expected mortality ratio from synthetic DRG-level data. HCAHPS domain scores are synthetic composites on a 0–100 scale. Payer mix derived from synthetic billing distribution. HAI rates per 1,000 patient-days from synthetic infection surveillance data. Chart.js v4.4.1 for all visualizations. Built for <strong>alphastatlab.org</strong>.
+  </div>
+</div>
+
+<script>
+// Readmission by department
+const readCtx = document.getElementById('readmitChart').getContext('2d');
+new Chart(readCtx,{
+  type:'bar',
+  data:{
+    labels:['CHF','Septicemia','Hip Fracture','Pneumonia','AMI','Diabetes','Drug OD','Stroke','Brain Tumor'],
+    datasets:[{
+      label:'30-Day Readmission %',
+      data:[21.2,17.5,12.2,13.3,11.7,20.9,9.0,12.2,7.7],
+      backgroundColor:['#c1292e','#c1292e','#e8650a','#e8650a','#0b7285','#c1292e','#1d7a52','#0b7285','#1d7a52'],
+      borderWidth:0,borderRadius:3
+    },{
+      label:'National Benchmark',
+      data:[15,15,12,12,12,15,8,12,8],
+      type:'line',borderColor:'#6b7fa0',borderWidth:1.5,borderDash:[4,4],pointRadius:0,fill:false
+    }]
+  },
+  options:{
+    indexAxis:'y',responsive:true,maintainAspectRatio:false,
+    scales:{
+      x:{ticks:{color:'#6b7fa0',font:{size:9,family:'DM Mono'},callback:v=>v+'%'},grid:{color:'rgba(221,228,237,0.8)'},max:25},
+      y:{ticks:{color:'#1a2535',font:{size:9,family:'DM Sans'}},grid:{display:false}}
+    },
+    plugins:{legend:{labels:{color:'#6b7fa0',font:{family:'DM Sans',size:10},boxWidth:10}},tooltip:{backgroundColor:'#0f2b4a',titleFont:{family:'DM Mono',size:10},bodyFont:{family:'DM Mono',size:10}}}
+  }
+});
+
+// HCAHPS Radar
+const hcahpsCtx = document.getElementById('hcahpsChart').getContext('2d');
+new Chart(hcahpsCtx,{
+  type:'radar',
+  data:{
+    labels:['Communication','Pain Mgmt','Responsiveness','Cleanliness','Discharge Info'],
+    datasets:[
+      {label:'Pacific Coast',data:[88.1,80.4,83.2,89.2,86.4],borderColor:'#0b7285',backgroundColor:'rgba(11,114,133,0.08)',pointBackgroundColor:'#0b7285',borderWidth:2},
+      {label:'Metro General',data:[87.4,79.2,82.1,88.3,86.4],borderColor:'#e8650a',backgroundColor:'rgba(232,101,10,0.06)',pointBackgroundColor:'#e8650a',borderWidth:1.5},
+      {label:'Riverside',data:[81.2,73.4,76.2,84.1,81.2],borderColor:'#6b7fa0',backgroundColor:'rgba(107,127,160,0.04)',pointBackgroundColor:'#6b7fa0',borderWidth:1,borderDash:[3,3]}
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    scales:{r:{ticks:{display:false,backdropColor:'transparent'},grid:{color:'rgba(221,228,237,0.8)'},pointLabels:{color:'#1a2535',font:{size:9,family:'DM Sans'}},min:65,max:95}},
+    plugins:{legend:{labels:{color:'#6b7fa0',font:{family:'DM Sans',size:9},boxWidth:10}}}
+  }
+});
+
+// Cost vs Revenue
+const costCtx = document.getElementById('costChart').getContext('2d');
+new Chart(costCtx,{
+  type:'bar',
+  data:{
+    labels:['AMI\n(Metro)','Sepsis\n(Riverside)','Lung Ca\n(Pacific)','CHF\n(Southern)','Liver Tx\n(Univ)','Neurosurg\n(Univ)'],
+    datasets:[
+      {label:'Avg Cost/Case ($K)',data:[68.9,100.1,156.8,82.3,1103.8,431.2],backgroundColor:'rgba(11,114,133,0.7)',borderRadius:2,borderWidth:0},
+      {label:'Avg Revenue/Case ($K)',data:[75.9,103.4,178.3,87.3,1260.2,501.4],backgroundColor:'rgba(29,122,82,0.6)',borderRadius:2,borderWidth:0}
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    scales:{
+      x:{ticks:{color:'#6b7fa0',font:{size:9,family:'DM Sans'},maxRotation:0},grid:{display:false}},
+      y:{ticks:{color:'#6b7fa0',font:{size:9,family:'DM Mono'},callback:v=>v>=1000?'$'+(v/1000).toFixed(0)+'M':'$'+v+'K'},grid:{color:'rgba(221,228,237,0.8)'}}
+    },
+    plugins:{legend:{labels:{color:'#6b7fa0',font:{family:'DM Sans',size:9},boxWidth:10}},tooltip:{backgroundColor:'#0f2b4a'}}
+  }
+});
+
+// HAI Chart
+const haiCtx = document.getElementById('haiChart').getContext('2d');
+new Chart(haiCtx,{
+  type:'bar',
+  data:{
+    labels:['Metro','Riverside','Pacific','Southern','Univ.','Desert'],
+    datasets:[
+      {label:'CLABSI',data:[0.23,0.34,0.04,0.28,0.18,0.13],backgroundColor:'rgba(193,41,46,0.7)',borderRadius:2},
+      {label:'CAUTI',data:[1.12,2.34,0.34,1.56,0.98,0.78],backgroundColor:'rgba(232,101,10,0.7)',borderRadius:2},
+      {label:'C-diff',data:[0.82,1.89,0.67,1.12,0.34,0.56],backgroundColor:'rgba(155,89,182,0.6)',borderRadius:2}
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    scales:{
+      x:{ticks:{color:'#6b7fa0',font:{size:9}},grid:{display:false}},
+      y:{ticks:{color:'#6b7fa0',font:{size:9,family:'DM Mono'}},grid:{color:'rgba(221,228,237,0.8)'}}
+    },
+    plugins:{legend:{labels:{color:'#6b7fa0',font:{family:'DM Sans',size:9},boxWidth:8}}}
+  }
+});
+</script>
+</body>
+</html>
