@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Energy Consumption & Demand Dashboard | AlphaStatLab</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#020c08;--bg2:#041210;--surface:rgba(0,255,136,0.03);
+  --border:rgba(0,255,136,0.12);--neon:#00ff88;--neon2:#00e87a;
+  --cyan:#00e5ff;--orange:#ff6d00;--yellow:#ffe100;--red:#ff2d55;
+  --text:#c8ffe8;--muted:#3a7a5a;--dim:#1a3d2a;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;font-size:14px;min-height:100vh;overflow-x:hidden;}
+
+/* Scanline effect overlay */
+body::after{
+  content:'';position:fixed;top:0;left:0;right:0;bottom:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,255,136,0.015) 2px,rgba(0,255,136,0.015) 4px);
+  pointer-events:none;z-index:999;
+}
+body::before{
+  content:'';position:fixed;top:0;left:0;right:0;bottom:0;
+  background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(0,255,136,0.04) 0%,transparent 70%);
+  pointer-events:none;z-index:0;
+}
+
+/* TOP BAR */
+.topbar{
+  background:var(--bg2);border-bottom:1px solid var(--border);
+  padding:0 32px;display:flex;align-items:center;gap:0;
+  position:relative;z-index:10;
+}
+.topbar::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--neon),var(--cyan),transparent);opacity:0.6;}
+.tb-brand{
+  padding:16px 24px 16px 0;border-right:1px solid var(--border);margin-right:24px;
+}
+.tb-brand h1{font-family:'Share Tech Mono',monospace;font-size:1.1rem;color:var(--neon);letter-spacing:0.08em;text-transform:uppercase;}
+.tb-brand p{font-size:10px;color:var(--muted);letter-spacing:0.12em;text-transform:uppercase;margin-top:2px;}
+.tb-stats{display:flex;flex:1;gap:0;}
+.tb-stat{
+  padding:12px 22px;border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+}
+.tb-stat:last-child{border-right:none;}
+.tb-stat-label{font-size:9px;color:var(--muted);letter-spacing:0.14em;text-transform:uppercase;}
+.tb-stat-val{font-family:'Share Tech Mono',monospace;font-size:1.2rem;line-height:1.3;}
+.tb-time{
+  padding:12px 0 12px 24px;margin-left:auto;
+  font-family:'Share Tech Mono',monospace;font-size:0.85rem;
+  color:var(--neon);letter-spacing:0.1em;
+}
+.blink{animation:blink 1s step-end infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+.wrap{max-width:1440px;margin:0 auto;padding:20px 32px;position:relative;z-index:1;}
+
+/* ALERT STRIP */
+.alert-strip{
+  background:rgba(255,109,0,0.08);border:1px solid rgba(255,109,0,0.3);
+  padding:8px 18px;margin-bottom:18px;
+  display:flex;align-items:center;gap:12px;
+  font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--orange);
+  animation:fadeIn 0.5s ease;
+}
+.alert-icon{font-size:14px;animation:pulse2 2s infinite;}
+@keyframes pulse2{0%,100%{opacity:1}50%{opacity:0.4}}
+
+/* PANELS */
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideIn{from{opacity:0;transform:translateX(-12px)}to{opacity:1;transform:none}}
+
+.panel{
+  background:var(--surface);border:1px solid var(--border);padding:20px;
+  animation:fadeIn 0.7s ease both;
+  position:relative;
+}
+.panel::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:var(--neon);opacity:0.4;}
+.panel-title{
+  font-family:'Share Tech Mono',monospace;font-size:0.8rem;
+  color:var(--neon);text-transform:uppercase;letter-spacing:0.1em;
+  margin-bottom:16px;display:flex;align-items:center;gap:10px;
+}
+.panel-title::after{content:'';flex:1;height:1px;background:var(--border);}
+.panel-title .meta{font-size:9px;color:var(--muted);}
+
+.grid-kpi{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:16px;}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px;}
+.grid-31{display:grid;grid-template-columns:3fr 1fr;gap:14px;margin-bottom:14px;}
+.grid-13{display:grid;grid-template-columns:1fr 3fr;gap:14px;margin-bottom:14px;}
+
+/* KPI tiles */
+.kpi-tile{
+  background:rgba(0,255,136,0.03);border:1px solid var(--border);
+  padding:16px 14px;position:relative;overflow:hidden;
+  animation:slideIn 0.6s ease both;
+  transition:border-color 0.2s,background 0.2s;
+}
+.kpi-tile:hover{border-color:rgba(0,255,136,0.35);background:rgba(0,255,136,0.06);}
+.kpi-tile::after{
+  content:'';position:absolute;top:0;right:0;
+  width:40px;height:40px;
+  background:radial-gradient(circle at 100% 0%,rgba(0,255,136,0.08),transparent 70%);
+}
+.kpi-lbl{font-size:9px;text-transform:uppercase;letter-spacing:0.14em;color:var(--muted);margin-bottom:8px;}
+.kpi-num{font-family:'Share Tech Mono',monospace;font-size:1.6rem;line-height:1;color:var(--neon);}
+.kpi-num.warn{color:var(--yellow);}
+.kpi-num.danger{color:var(--red);}
+.kpi-num.info{color:var(--cyan);}
+.kpi-sub{font-size:10px;color:var(--muted);margin-top:5px;}
+.kpi-chg{font-size:11px;font-weight:600;margin-top:5px;}
+.chg-up{color:var(--orange);}
+.chg-dn{color:var(--neon);}
+
+.chart-h{position:relative;height:240px;}
+.chart-h canvas{width:100%!important;}
+.chart-sm{height:180px;}
+
+/* Load profile segments */
+.load-segment-row{display:flex;height:12px;border-radius:2px;overflow:hidden;gap:1px;margin:8px 0;}
+.ls{transition:flex 0.8s;}
+
+/* Sector breakdown horizontal bars */
+.sector-row{display:flex;align-items:center;gap:10px;margin-bottom:9px;}
+.sector-name{font-size:11px;color:var(--text);width:110px;flex-shrink:0;}
+.sector-bar{flex:1;height:8px;background:var(--dim);border-radius:1px;overflow:hidden;}
+.sector-fill{height:100%;border-radius:1px;transition:width 1.2s cubic-bezier(0.4,0,0.2,1);}
+.sector-val{font-family:'Share Tech Mono',monospace;font-size:11px;width:70px;text-align:right;color:var(--text);}
+
+/* Demand vs temp scatter-like info */
+.peak-list{list-style:none;}
+.peak-item{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:7px 0;border-bottom:1px solid var(--dim);font-size:11px;
+}
+.peak-item:last-child{border-bottom:none;}
+.peak-name{color:var(--muted);}
+.peak-val{font-family:'Share Tech Mono',monospace;color:var(--yellow);}
+.peak-delta{font-size:10px;}
+
+/* Forecast band */
+.forecast-note{font-size:10px;color:var(--muted);margin-top:8px;font-family:'Share Tech Mono',monospace;padding:8px;border:1px solid var(--dim);}
+
+.source-note{
+  margin-top:20px;padding:14px 18px;
+  background:rgba(0,255,136,0.02);border:1px solid var(--border);
+  font-size:10px;color:var(--muted);line-height:1.8;
+  font-family:'Share Tech Mono',monospace;
+}
+.source-note strong{color:var(--neon);}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="tb-brand">
+    <h1>⚡ EnergyConsole</h1>
+    <p>AlphaStatLab · Load Analytics</p>
+  </div>
+  <div class="tb-stats">
+    <div class="tb-stat"><div class="tb-stat-label">Current Load</div><div class="tb-stat-val" style="color:var(--neon)">4,812 GW</div></div>
+    <div class="tb-stat"><div class="tb-stat-label">Peak Today</div><div class="tb-stat-val" style="color:var(--yellow)">5,234 GW</div></div>
+    <div class="tb-stat"><div class="tb-stat-label">Grid Freq</div><div class="tb-stat-val" style="color:var(--cyan)">60.02 Hz</div></div>
+    <div class="tb-stat"><div class="tb-stat-label">Daily Consumption</div><div class="tb-stat-val" style="color:var(--neon)">115.4 TWh</div></div>
+    <div class="tb-stat"><div class="tb-stat-label">Peak Demand Alert</div><div class="tb-stat-val" style="color:var(--orange)">MODERATE</div></div>
+    <div class="tb-stat"><div class="tb-stat-label">Demand Response</div><div class="tb-stat-val" style="color:var(--neon)">ACTIVE</div></div>
+  </div>
+  <div class="tb-time" id="clock">--:--:-- <span class="blink">|</span></div>
+</div>
+
+<div class="wrap">
+  <div class="alert-strip">
+    <span class="alert-icon">⚠</span>
+    SYNTHETIC DATA DASHBOARD — Portfolio Demonstration Only · All consumption figures, demand forecasts and load profiles are randomly generated · AlphaStatLab.org
+  </div>
+
+  <!-- KPI Tiles -->
+  <div class="grid-kpi">
+    <div class="kpi-tile" style="animation-delay:0.05s">
+      <div class="kpi-lbl">Annual Consumption</div>
+      <div class="kpi-num">25,814</div>
+      <div class="kpi-sub">TWh · Global (2023)</div>
+      <div class="kpi-chg chg-up">↑ +2.8% YoY</div>
+    </div>
+    <div class="kpi-tile" style="animation-delay:0.1s">
+      <div class="kpi-lbl">Per Capita Intensity</div>
+      <div class="kpi-num info">3,214</div>
+      <div class="kpi-sub">kWh / person</div>
+      <div class="kpi-chg chg-dn">↓ −1.2% efficiency gain</div>
+    </div>
+    <div class="kpi-tile" style="animation-delay:0.15s">
+      <div class="kpi-lbl">All-Time Peak Demand</div>
+      <div class="kpi-num warn">5,621 GW</div>
+      <div class="kpi-sub">Jul 28, 2023 · 15:00 UTC</div>
+      <div class="kpi-chg chg-up">↑ +3.4% vs 2022 peak</div>
+    </div>
+    <div class="kpi-tile" style="animation-delay:0.2s">
+      <div class="kpi-lbl">Load Factor</div>
+      <div class="kpi-num">68.4%</div>
+      <div class="kpi-sub">Annual average utilization</div>
+      <div class="kpi-chg chg-dn">↑ improved from 66.8%</div>
+    </div>
+    <div class="kpi-tile" style="animation-delay:0.25s">
+      <div class="kpi-lbl">Demand Response Events</div>
+      <div class="kpi-num danger">47</div>
+      <div class="kpi-sub">Events triggered in 2023</div>
+      <div class="kpi-chg chg-up">↑ +18 vs 2022</div>
+    </div>
+    <div class="kpi-tile" style="animation-delay:0.3s">
+      <div class="kpi-lbl">Energy Intensity</div>
+      <div class="kpi-num info">0.142</div>
+      <div class="kpi-sub">kWh per $ GDP</div>
+      <div class="kpi-chg chg-dn">↓ −3.1% efficiency</div>
+    </div>
+  </div>
+
+  <!-- 24H Load Profile + Sector Breakdown -->
+  <div class="grid-31">
+    <div class="panel" style="animation-delay:0.3s">
+      <div class="panel-title">24-Hour Load Profile — Typical Weekday vs Weekend vs Heatwave <span class="meta">GW · Synthetic</span></div>
+      <div class="chart-h">
+        <canvas id="loadChart"></canvas>
+      </div>
+    </div>
+    <div class="panel" style="animation-delay:0.35s">
+      <div class="panel-title">Sector Demand Share <span class="meta">2023 Annual</span></div>
+      <div style="margin-top:4px;">
+        <div class="sector-row">
+          <span class="sector-name">Industrial</span>
+          <div class="sector-bar"><div class="sector-fill" style="width:0%;background:var(--neon)" data-w="42.3"></div></div>
+          <span class="sector-val" style="color:var(--neon)">42.3%</span>
+        </div>
+        <div class="sector-row">
+          <span class="sector-name">Buildings / Comm.</span>
+          <div class="sector-bar"><div class="sector-fill" style="width:0%;background:var(--cyan)" data-w="28.1"></div></div>
+          <span class="sector-val" style="color:var(--cyan)">28.1%</span>
+        </div>
+        <div class="sector-row">
+          <span class="sector-name">Residential</span>
+          <div class="sector-bar"><div class="sector-fill" style="width:0%;background:var(--yellow)" data-w="22.4"></div></div>
+          <span class="sector-val" style="color:var(--yellow)">22.4%</span>
+        </div>
+        <div class="sector-row">
+          <span class="sector-name">Transport (EV)</span>
+          <div class="sector-bar"><div class="sector-fill" style="width:0%;background:var(--orange)" data-w="5.8"></div></div>
+          <span class="sector-val" style="color:var(--orange)">5.8%</span>
+        </div>
+        <div class="sector-row">
+          <span class="sector-name">Data Centers</span>
+          <div class="sector-bar"><div class="sector-fill" style="width:0%;background:var(--red)" data-w="1.4"></div></div>
+          <span class="sector-val" style="color:var(--red)">1.4%</span>
+        </div>
+      </div>
+      <div style="margin-top:16px;">
+        <div class="panel-title" style="font-size:0.75rem;margin-bottom:12px;">PEAK DEMAND EVENTS <span class="meta">Top 5 · 2023</span></div>
+        <ul class="peak-list">
+          <li class="peak-item"><span class="peak-name">Jul 28 · 15:00</span><span class="peak-val">5,621 GW</span><span class="peak-delta chg-up">Heatwave</span></li>
+          <li class="peak-item"><span class="peak-name">Aug 14 · 14:30</span><span class="peak-val">5,412 GW</span><span class="peak-delta chg-up">Heatwave</span></li>
+          <li class="peak-item"><span class="peak-name">Jan 17 · 08:00</span><span class="peak-val">5,289 GW</span><span class="peak-delta" style="color:var(--cyan)">Cold Snap</span></li>
+          <li class="peak-item"><span class="peak-name">Dec 21 · 18:00</span><span class="peak-val">5,134 GW</span><span class="peak-delta" style="color:var(--cyan)">Winter Peak</span></li>
+          <li class="peak-item"><span class="peak-name">Jul 07 · 15:30</span><span class="peak-val">5,089 GW</span><span class="peak-delta chg-up">Summer</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Monthly + Forecast + Regional -->
+  <div class="grid-3">
+    <div class="panel" style="animation-delay:0.4s">
+      <div class="panel-title">Monthly Consumption — 2023 <span class="meta">TWh</span></div>
+      <div class="chart-h chart-sm">
+        <canvas id="monthChart"></canvas>
+      </div>
+    </div>
+    <div class="panel" style="animation-delay:0.45s">
+      <div class="panel-title">Demand Forecast — 2024–2030 <span class="meta">TWh / Year</span></div>
+      <div class="chart-h chart-sm">
+        <canvas id="forecastChart"></canvas>
+      </div>
+      <div class="forecast-note">// BAU SCENARIO: +2.4%/yr growth · EFF SCENARIO: +1.1%/yr · AGGRESSIVE EE: −0.3%/yr</div>
+    </div>
+    <div class="panel" style="animation-delay:0.5s">
+      <div class="panel-title">Regional Consumption Share <span class="meta">2023 · TWh</span></div>
+      <div class="chart-h chart-sm">
+        <canvas id="regionChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Daily heatmap-style grid -->
+  <div class="panel" style="animation-delay:0.55s">
+    <div class="panel-title">Hourly Demand Intensity Heatmap — Jan–Dec 2023 (GW) <span class="meta">Synthetic · Avg by Hour × Month</span></div>
+    <div id="demand-heatmap" style="overflow-x:auto;">
+      <div style="display:grid;grid-template-columns:50px repeat(12,1fr);gap:2px;min-width:700px;">
+        <div style="font-size:9px;color:var(--muted);"></div>
+        <div style="font-size:9px;color:var(--muted);text-align:center;">Jan</div>
+        <div style="font-size:9px;color:var(--muted);text-align:center;">Feb</div>
+        <div style="font-size:9px;color:var(--muted);text-align:center;">Mar</div>
+        <div style="font-size:9px;color:var(--muted);text-align:center;">Apr</div>
+        <div style="font-size:9px;color:var(--muted);text-align:center;">May</div>
+        <div style="font-size:9px;color:var(--muted);text-align:center;">Jun</div>
+        <div style="font-size:9px;color:var(--muted);text-align:center;">Jul</div>
+        <div style="font-size:9px;color:var(--muted);text-align:center;">Aug</div>
+        <div style="font-size:9px;color:var(--muted);text-align:center;">Sep</div>
+        <div style="font-size:9px;color:var(--muted);text-align:center;">Oct</div>
+        <div style="font-size:9px;color:var(--muted);text-align:center;">Nov</div>
+        <div style="font-size:9px;color:var(--muted);text-align:center;">Dec</div>
+      </div>
+      <div id="hm-rows"></div>
+    </div>
+  </div>
+
+  <div class="source-note">
+    <strong>// SYNTHETIC DATA</strong> — All consumption values, load profiles, demand forecasts, sector shares, regional breakdowns, and peak demand events in this dashboard are entirely fabricated random data generated by AlphaStatLab for portfolio demonstration purposes. No real grid operator data, utility records, or energy statistics are represented.<br>
+    <strong>// METHODS:</strong> 24hr load profiles synthesized using empirical shape functions (morning ramp, midday plateau, evening peak) + random noise. Monthly consumption from seasonal sine curve + annual trend. Forecast scenarios from linear growth models (BAU/EFF/AEE). Heatmap from hour×month interaction model. Chart.js v4.4.1 · AlphaStatLab.org
+  </div>
+</div>
+
+<script>
+// Clock
+function updateClock(){
+  const now = new Date();
+  document.getElementById('clock').innerHTML =
+    now.toTimeString().substr(0,8) + ' <span class="blink">|</span>';
+}
+setInterval(updateClock,1000);updateClock();
+
+// Animate sector bars
+window.addEventListener('load',()=>{
+  setTimeout(()=>{
+    document.querySelectorAll('.sector-fill').forEach(el=>{
+      el.style.width = el.dataset.w + '%';
+    });
+  },500);
+});
+
+// 24H Load Profile
+const hours = Array.from({length:24},(_,i)=>i+':00');
+function loadShape(base, peakHour1, peak1, peakHour2, peak2, noise=80){
+  return hours.map((_,h)=>{
+    const v = base
+      + peak1 * Math.exp(-Math.pow(h-peakHour1,2)/8)
+      + peak2 * Math.exp(-Math.pow(h-peakHour2,2)/6)
+      + 200 * Math.exp(-Math.pow(h-4,2)/4) // small night min
+      + (Math.random()-0.5)*noise;
+    return Math.max(3200, v);
+  });
+}
+const loadCtx = document.getElementById('loadChart').getContext('2d');
+new Chart(loadCtx,{
+  type:'line',
+  data:{
+    labels:hours,
+    datasets:[
+      {label:'Weekday',data:loadShape(4200,9,400,19,600),borderColor:'#00ff88',backgroundColor:'rgba(0,255,136,0.06)',borderWidth:2,pointRadius:0,fill:true,tension:0.4},
+      {label:'Weekend',data:loadShape(3800,11,300,16,400),borderColor:'#00e5ff',borderWidth:1.5,pointRadius:0,fill:false,tension:0.4},
+      {label:'Heatwave',data:loadShape(4600,10,500,15,900),borderColor:'#ff6d00',backgroundColor:'rgba(255,109,0,0.04)',borderWidth:2,pointRadius:0,fill:true,tension:0.4,borderDash:[4,3]}
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    scales:{
+      x:{ticks:{color:'#3a7a5a',font:{size:9,family:'Share Tech Mono'}},grid:{color:'rgba(0,255,136,0.04)'}},
+      y:{ticks:{color:'#3a7a5a',font:{size:9,family:'Share Tech Mono'},callback:v=>v>=1000?(v/1000).toFixed(1)+'K GW':v},grid:{color:'rgba(0,255,136,0.05)'},min:3000}
+    },
+    plugins:{legend:{labels:{color:'#3a7a5a',font:{family:'Rajdhani',size:11},boxWidth:12}},tooltip:{backgroundColor:'#041210',borderColor:'rgba(0,255,136,0.2)',borderWidth:1,titleFont:{family:'Share Tech Mono',size:10},bodyFont:{family:'Share Tech Mono',size:10}}}
+  }
+});
+
+// Monthly
+const monthCtx = document.getElementById('monthChart').getContext('2d');
+const months = ['J','F','M','A','M','J','J','A','S','O','N','D'];
+const monthData = [2289,2089,2134,2012,2078,2234,2412,2389,2189,2134,2201,2253];
+new Chart(monthCtx,{
+  type:'bar',
+  data:{
+    labels:months,
+    datasets:[{
+      label:'TWh',data:monthData,
+      backgroundColor:monthData.map(v=>v>2350?'rgba(255,109,0,0.7)':v>2200?'rgba(255,225,0,0.6)':'rgba(0,255,136,0.6)'),
+      borderRadius:2,borderWidth:0
+    }]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    scales:{
+      x:{ticks:{color:'#3a7a5a',font:{size:9,family:'Share Tech Mono'}},grid:{display:false}},
+      y:{ticks:{color:'#3a7a5a',font:{size:9,family:'Share Tech Mono'},callback:v=>v+'T'},grid:{color:'rgba(0,255,136,0.04)'},min:1900}
+    },
+    plugins:{legend:{display:false},tooltip:{backgroundColor:'#041210',titleFont:{family:'Share Tech Mono',size:10},bodyFont:{family:'Share Tech Mono',size:10}}}
+  }
+});
+
+// Forecast
+const fcastCtx = document.getElementById('forecastChart').getContext('2d');
+const fYears = ['2023','2024','2025','2026','2027','2028','2029','2030'];
+new Chart(fcastCtx,{
+  type:'line',
+  data:{
+    labels:fYears,
+    datasets:[
+      {label:'BAU (+2.4%/yr)',data:[25814,26434,27049,27686,28346,29030,29738,30472],borderColor:'#ff6d00',borderWidth:2,pointRadius:3,pointBackgroundColor:'#ff6d00',fill:false,tension:0.3},
+      {label:'Efficiency (+1.1%/yr)',data:[25814,26098,26385,26677,26971,27270,27573,27880],borderColor:'#00ff88',borderWidth:2,pointRadius:3,pointBackgroundColor:'#00ff88',fill:false,tension:0.3},
+      {label:'Aggressive EE (-0.3%/yr)',data:[25814,25736,25659,25582,25506,25429,25353,25278],borderColor:'#00e5ff',borderWidth:1.5,borderDash:[3,3],pointRadius:2,fill:false,tension:0.3}
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    scales:{
+      x:{ticks:{color:'#3a7a5a',font:{size:9,family:'Share Tech Mono'}},grid:{color:'rgba(0,255,136,0.03)'}},
+      y:{ticks:{color:'#3a7a5a',font:{size:9,family:'Share Tech Mono'},callback:v=>(v/1000).toFixed(0)+'K'},grid:{color:'rgba(0,255,136,0.04)'}}
+    },
+    plugins:{legend:{labels:{color:'#3a7a5a',font:{family:'Rajdhani',size:10},boxWidth:10}},tooltip:{backgroundColor:'#041210',titleFont:{family:'Share Tech Mono',size:10}}}
+  }
+});
+
+// Region chart
+const regCtx = document.getElementById('regionChart').getContext('2d');
+new Chart(regCtx,{
+  type:'doughnut',
+  data:{
+    labels:['Asia Pacific','North America','Europe','Middle East','Africa','Latin America'],
+    datasets:[{
+      data:[10234,5812,3512,1423,892,1941],
+      backgroundColor:['rgba(0,255,136,0.75)','rgba(0,229,255,0.7)','rgba(255,225,0,0.65)','rgba(255,109,0,0.6)','rgba(255,45,85,0.5)','rgba(110,231,183,0.5)'],
+      borderColor:'#020c08',borderWidth:2
+    }]
+  },
+  options:{
+    cutout:'55%',responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{labels:{color:'#3a7a5a',font:{family:'Rajdhani',size:10},boxWidth:8}},tooltip:{backgroundColor:'#041210',titleFont:{family:'Share Tech Mono',size:10},bodyFont:{family:'Share Tech Mono',size:10}}}
+  }
+});
+
+// Demand heatmap
+window.addEventListener('DOMContentLoaded',()=>{
+  const hm = document.getElementById('hm-rows');
+  const baseHour = [3800,3600,3500,3450,3500,3700,4100,4600,4800,4750,4700,4800,4900,4800,4700,4600,4700,5100,5400,5200,4900,4600,4300,4000];
+  const monthMod = [1.08,1.06,1.0,0.96,0.97,1.04,1.12,1.11,1.02,0.99,1.03,1.09];
+  const grid = document.createElement('div');
+  grid.style.cssText = 'min-width:700px;';
+  for(let h=0;h<24;h+=2){
+    const row = document.createElement('div');
+    row.style.cssText = 'display:grid;grid-template-columns:50px repeat(12,1fr);gap:2px;margin-bottom:2px;';
+    const lbl = document.createElement('div');
+    lbl.style.cssText = 'font-size:9px;color:#3a7a5a;display:flex;align-items:center;font-family:Share Tech Mono,monospace;';
+    lbl.textContent = String(h).padStart(2,'0')+':00';
+    row.appendChild(lbl);
+    for(let m=0;m<12;m++){
+      const val = Math.round(baseHour[h]*monthMod[m] + (Math.random()-0.5)*120);
+      const norm = (val-3200)/(5600-3200);
+      const r=Math.round(0+norm*255), g=Math.round(255-norm*180), b=Math.round(136-norm*136);
+      const cell = document.createElement('div');
+      cell.style.cssText = `height:18px;background:rgba(${r},${g},${b},${0.15+norm*0.7});border-radius:1px;display:flex;align-items:center;justify-content:center;font-size:8px;color:rgba(255,255,255,${norm>0.5?0.8:0.3});cursor:default;`;
+      cell.title = `${String(h).padStart(2,'0')}:00 Month ${m+1}: ${val} GW`;
+      row.appendChild(cell);
+    }
+    grid.appendChild(row);
+  }
+  hm.appendChild(grid);
+});
+</script>
+</body>
+</html>
