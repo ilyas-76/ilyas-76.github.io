@@ -1,30 +1,273 @@
-<!-- GENOMICS & BIOMARKERS DASHBOARD - LIVE -->
-<div class="dash-card featured" onclick="window.open('../healthcare-dashboards/genomics-dashboard.html','_blank')">
-    <div class="dash-card-visual">
-        <span class="dash-card-icon">🧬</span>
-        <div class="mini-chart">
-            <div class="mini-bar" style="height:45%"></div>
-            <div class="mini-bar" style="height:70%"></div>
-            <div class="mini-bar" style="height:30%"></div>
-            <div class="mini-bar" style="height:85%"></div>
-            <div class="mini-bar" style="height:55%"></div>
-            <div class="mini-bar" style="height:65%"></div>
-            <div class="mini-bar" style="height:40%"></div>
-            <div class="mini-bar" style="height:75%"></div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Genomics & Biomarkers Dashboard | AlphaStatLab</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0d1b2a 0%, #1b2d45 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        
+        .header {
+            background: linear-gradient(135deg, #1a3a5c, #0d2a48);
+            border-radius: 24px;
+            padding: 28px 32px;
+            margin-bottom: 25px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            border-bottom: 3px solid #4ecdc4;
+        }
+        .header h1 { color: #fff; font-size: 28px; margin-bottom: 8px; }
+        .header h1 i { color: #4ecdc4; margin-right: 12px; }
+        .header p { color: #a0c4e8; font-size: 14px; }
+        
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        .stat-card {
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            padding: 22px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+            text-align: center;
+        }
+        .stat-card:hover { transform: translateY(-5px); }
+        .stat-card i { font-size: 40px; margin-bottom: 12px; }
+        .stat-card .label { color: #718096; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
+        .stat-card .value { font-size: 36px; font-weight: bold; color: #1a3a5c; margin-top: 8px; }
+        .stat-card .sub { font-size: 11px; color: #4a5568; margin-top: 5px; }
+        
+        .chart-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+        .chart-card {
+            background: rgba(255,255,255,0.95);
+            border-radius: 24px;
+            padding: 22px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+            transition: transform 0.2s;
+        }
+        .chart-card:hover { transform: translateY(-3px); }
+        .chart-card h3 {
+            color: #1a3a5c;
+            font-size: 18px;
+            margin-bottom: 18px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #e0e8f0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .chart-card h3 i { color: #4ecdc4; font-size: 22px; }
+        canvas { max-height: 280px; width: 100%; }
+        
+        .full-width { grid-column: span 2; }
+        
+        .variant-table {
+            background: rgba(255,255,255,0.95);
+            border-radius: 24px;
+            padding: 22px;
+            margin-top: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+            overflow-x: auto;
+        }
+        .variant-table h3 {
+            color: #1a3a5c;
+            font-size: 18px;
+            margin-bottom: 18px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #e0e8f0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        th { background: #f0f4f8; padding: 12px; text-align: left; font-weight: 600; color: #1a3a5c; border-bottom: 2px solid #e0e8f0; position: sticky; top: 0; }
+        td { padding: 10px 12px; border-bottom: 1px solid #e0e8f0; color: #2d3748; }
+        tr:hover td { background: #f8fafc; }
+        .variant-badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 10px; font-weight: bold; }
+        .badge-pathogenic { background: #fed7d7; color: #c53030; }
+        .badge-risk { background: #feebc8; color: #c05621; }
+        .badge-oncogene { background: #fed7d7; color: #c53030; }
+        .badge-tsg { background: #c6f6d5; color: #276749; }
+        
+        .disclaimer {
+            background: rgba(0,0,0,0.75);
+            border-radius: 16px;
+            padding: 20px 25px;
+            margin-top: 25px;
+            text-align: center;
+            backdrop-filter: blur(8px);
+        }
+        .disclaimer p { color: #f0f0f0; font-size: 12px; line-height: 1.6; }
+        .disclaimer i { color: #ffd700; margin-right: 8px; }
+        
+        @media (max-width: 900px) {
+            .stats-row { grid-template-columns: repeat(2, 1fr); }
+            .chart-grid { grid-template-columns: 1fr; }
+            .full-width { grid-column: span 1; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1><i class="fas fa-dna"></i> Genomics & Biomarkers Dashboard</h1>
+        <p>Variant analysis · Cancer drivers · Pharmacogenomics · Heritable disorders</p>
+    </div>
+
+    <div class="stats-row" id="statsRow"></div>
+
+    <div class="chart-grid">
+        <div class="chart-card">
+            <h3><i class="fas fa-chart-pie"></i> Variant Classification</h3>
+            <canvas id="classificationChart"></canvas>
+        </div>
+        <div class="chart-card">
+            <h3><i class="fas fa-chart-bar"></i> Top Genes by CADD Score</h3>
+            <canvas id="caddChart"></canvas>
+        </div>
+        <div class="chart-card">
+            <h3><i class="fas fa-chart-line"></i> Allele Frequencies by Ancestry</h3>
+            <canvas id="afChart"></canvas>
+        </div>
+        <div class="chart-card">
+            <h3><i class="fas fa-chart-pie"></i> Disease Categories</h3>
+            <canvas id="diseaseChart"></canvas>
+        </div>
+        <div class="chart-card full-width">
+            <h3><i class="fas fa-chart-bar"></i> Population Attributable Risk by Variant</h3>
+            <canvas id="parChart"></canvas>
         </div>
     </div>
-    <div class="dash-card-body">
-        <h3>🧬 Genomics & Biomarkers Dashboard</h3>
-        <p>Genetic variant analysis featuring cancer drivers (BRCA1/2, TP53, EGFR, KRAS, BRAF), pharmacogenomic markers (CYP2D6, DPYD, TPMT), and heritable disorders (CFTR, HBB, APOE). Includes CADD scores, allele frequencies, population attributable risk, and targeted therapies.</p>
-        <div class="dash-card-footer">
-            <div class="dash-status live"><div class="dot"></div> Live Demo</div>
-            <div class="dash-tags">
-                <span class="tag">Genomics</span>
-                <span class="tag">Biomarkers</span>
-                <span class="tag">Precision Medicine</span>
-                <span class="tag">Pharmacogenomics</span>
-                <span class="tag">Cancer Genetics</span>
-            </div>
-        </div>
+
+    <div class="variant-table">
+        <h3><i class="fas fa-table-list"></i> High-Impact Variants</h3>
+        <table id="variantTable">
+            <thead>
+                <tr><th>Gene</th><th>Variant</th><th>Disease</th><th>Consequence</th><th>CADD</th><th>gnomAD AF</th><th>Classification</th><th>Biomarker Type</th><th>Drug</th></tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+        </table>
+    </div>
+
+    <div class="disclaimer">
+        <p><i class="fas fa-database"></i> <strong>⚠️ Data Disclaimer:</strong> All genomic data presented in this dashboard is <strong>entirely randomly generated synthetic data</strong> created for demonstration purposes by AlphaStatLab. Variant IDs, allele frequencies, CADD scores, and clinical significance classifications are fictional and do not represent real genetic variants, patient data, or clinical findings. This dashboard illustrates AlphaStatLab's capabilities in genomics data visualization and biomarker analytics.</p>
     </div>
 </div>
+
+<script>
+    const variants = [
+        {gene:"BRCA1",variant:"p.Gln563Ter",disease:"Breast/Ovarian Cancer",consequence:"Stop gained",cadd:38.4,af:0.00012,classification:"Pathogenic",type:"Predictive/Prognostic",drug:"Olaparib",category:"Neoplastic",par:8.4},
+        {gene:"BRCA2",variant:"p.Lys2350Asn",disease:"Breast/Pancreatic Cancer",consequence:"Stop gained",cadd:36.2,af:0.000089,classification:"Pathogenic",type:"Predictive/Prognostic",drug:"Olaparib/Niraparib",category:"Neoplastic",par:6.2},
+        {gene:"TP53",variant:"p.Arg248Trp",disease:"Li-Fraumeni Syndrome",consequence:"Missense",cadd:42.1,af:0.0000034,classification:"Pathogenic",type:"Diagnostic/Prognostic",drug:"Multiple",category:"Neoplastic",par:12.1},
+        {gene:"EGFR",variant:"p.Leu858Arg",disease:"Non-Small Cell Lung Cancer",consequence:"Missense",cadd:38.9,af:0.0000012,classification:"Pathogenic",type:"Predictive",drug:"Erlotinib/Osimertinib",category:"Neoplastic",par:18.4},
+        {gene:"KRAS",variant:"p.Gly12Val",disease:"Colorectal/Pancreatic Cancer",consequence:"Missense",cadd:42.8,af:0.0000008,classification:"Pathogenic",type:"Predictive/Prognostic",drug:"Sotorasib",category:"Neoplastic",par:22.4},
+        {gene:"APOE",variant:"p.Cys112Arg",disease:"Alzheimer's Disease",consequence:"Missense",cadd:12.4,af:0.154,classification:"Risk Factor",type:"Risk Stratification",drug:"NA",category:"Neurological",par:18.4},
+        {gene:"FLT3",variant:"p.ITD",disease:"Acute Myeloid Leukemia",consequence:"ITD",cadd:36.4,af:0,classification:"Pathogenic",type:"Predictive/Prognostic",drug:"Midostaurin",category:"Neoplastic",par:24.2},
+        {gene:"CFTR",variant:"p.Phe508del",disease:"Cystic Fibrosis",consequence:"Frameshift",cadd:32.1,af:0.0214,classification:"Pathogenic",type:"Diagnostic/Predictive",drug:"Ivacaftor/Elexacaftor",category:"Respiratory",par:12.4},
+        {gene:"HBB",variant:"p.Glu7Val",disease:"Sickle Cell Disease",consequence:"Missense",cadd:28.4,af:0.034,classification:"Pathogenic",type:"Diagnostic",drug:"Voxelotor",category:"Hematological",par:18.4},
+        {gene:"SCN1A",variant:"p.Arg1648His",disease:"Dravet Syndrome",consequence:"Missense",cadd:38.2,af:0.0000012,classification:"Pathogenic",type:"Diagnostic/Predictive",drug:"Cannabidiol",category:"Neurological",par:8.4},
+        {gene:"MLH1",variant:"p.Arg265Ter",disease:"Lynch Syndrome",consequence:"Stop gained",cadd:36.8,af:0.000041,classification:"Pathogenic",type:"Predictive/Diagnostic",drug:"Pembrolizumab",category:"Neoplastic",par:6.4},
+        {gene:"PTEN",variant:"p.Arg130Ter",disease:"Cowden Syndrome",consequence:"Nonsense",cadd:40.2,af:0.0000089,classification:"Pathogenic",type:"Predictive/Diagnostic",drug:"Everolimus",category:"Neoplastic",par:4.2},
+        {gene:"CYP2D6",variant:"p.Splice",disease:"Codeine Toxicity",consequence:"Splice Region",cadd:18.4,af:0.182,classification:"Likely Pathogenic",type:"Predictive (PGx)",drug:"Codeine/Tamoxifen",category:"Pharmacogenomic",par:12.4},
+        {gene:"DPYD",variant:"p.IVS14+1G>A",disease:"5-FU Toxicity",consequence:"Splice Region",cadd:32.4,af:0.0089,classification:"Pathogenic",type:"Predictive (PGx)",drug:"5-Fluorouracil",category:"Pharmacogenomic",par:4.8},
+        {gene:"TPMT",variant:"p.Ala154Thr",disease:"Thiopurine Toxicity",consequence:"Missense",cadd:22.4,af:0.0424,classification:"Pathogenic",type:"Predictive (PGx)",drug:"Azathioprine",category:"Pharmacogenomic",par:8.4},
+        {gene:"TTN",variant:"p.Arg25548Cys",disease:"Dilated Cardiomyopathy",consequence:"Missense",cadd:28.4,af:0.0000234,classification:"Likely Pathogenic",type:"Diagnostic/Prognostic",drug:"NA",category:"Cardiovascular",par:4.2},
+        {gene:"LDLR",variant:"p.Cys329Tyr",disease:"Familial Hypercholesterolemia",consequence:"Missense",cadd:34.2,af:0.0000089,classification:"Pathogenic",type:"Diagnostic/Predictive",drug:"Statins/Evolocumab",category:"Cardiovascular",par:6.8},
+        {gene:"BRAF",variant:"p.Val600Glu",disease:"Melanoma",consequence:"Missense",cadd:48.2,af:0.0000004,classification:"Pathogenic",type:"Predictive/Prognostic",drug:"Vemurafenib",category:"Neoplastic",par:28.4},
+        {gene:"G6PD",variant:"p.Ile201Asn",disease:"G6PD Deficiency",consequence:"Missense",cadd:24.2,af:0.142,classification:"Pathogenic",type:"Diagnostic/PGx",drug:"Primaquine",category:"Hematological",par:18.4},
+        {gene:"SERPINA1",variant:"p.Glu342Lys",disease:"Alpha-1 Antitrypsin Deficiency",consequence:"Missense",cadd:28.4,af:0.0214,classification:"Pathogenic",type:"Diagnostic/Predictive",drug:"Alpha-1 Proteinase Inhibitor",category:"Respiratory",par:8.4}
+    ];
+
+    // Count classifications
+    const pathogenic = variants.filter(v => v.classification === "Pathogenic").length;
+    const likelyPath = variants.filter(v => v.classification === "Likely Pathogenic").length;
+    const riskFactor = variants.filter(v => v.classification === "Risk Factor").length;
+    
+    // Count disease categories
+    const categories = {};
+    variants.forEach(v => { categories[v.category] = (categories[v.category] || 0) + 1; });
+    
+    // Top 10 genes by CADD score
+    const topCadd = [...variants].sort((a,b) => b.cadd - a.cadd).slice(0, 10);
+    
+    // Prepare ancestry AF data for top 5 variants
+    const top5 = variants.slice(0, 5);
+    
+    document.getElementById('statsRow').innerHTML = `
+        <div class="stat-card"><i class="fas fa-dna" style="color:#4ecdc4"></i><div class="label">Total Variants</div><div class="value">${variants.length}</div><div class="sub">20 curated variants</div></div>
+        <div class="stat-card"><i class="fas fa-exclamation-triangle" style="color:#e74c3c"></i><div class="label">Pathogenic</div><div class="value">${pathogenic}</div><div class="sub">+ ${likelyPath} likely pathogenic</div></div>
+        <div class="stat-card"><i class="fas fa-chart-line" style="color:#f39c12"></i><div class="label">Mean CADD Score</div><div class="value">${(variants.reduce((s,v)=>s+v.cadd,0)/variants.length).toFixed(1)}</div><div class="sub">>30 = deleterious</div></div>
+        <div class="stat-card"><i class="fas fa-tablets" style="color:#2ecc71"></i><div class="label">Actionable Variants</div><div class="value">${variants.filter(v=>v.drug!=="NA").length}</div><div class="sub">with targeted therapy</div></div>
+    `;
+
+    // Classification Pie Chart
+    new Chart(document.getElementById('classificationChart'), {
+        type: 'doughnut',
+        data: { labels: ['Pathogenic', 'Likely Pathogenic', 'Risk Factor'], datasets: [{ data: [pathogenic, likelyPath, riskFactor], backgroundColor: ['#e74c3c', '#f39c12', '#3498db'], borderWidth: 0 }] },
+        options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+    });
+
+    // CADD Score Bar Chart
+    new Chart(document.getElementById('caddChart'), {
+        type: 'bar',
+        data: { labels: topCadd.map(v => v.gene), datasets: [{ label: 'CADD Score (phred)', data: topCadd.map(v => v.cadd), backgroundColor: '#4ecdc4', borderRadius: 6 }] },
+        options: { responsive: true, scales: { y: { title: { display: true, text: 'CADD Score' }, min: 0, max: 55 } }, plugins: { legend: { display: false } } }
+    });
+
+    // Allele Frequency Chart
+    new Chart(document.getElementById('afChart'), {
+        type: 'bar',
+        data: { labels: top5.map(v => v.gene), datasets: [{ label: 'gnomAD Global AF', data: top5.map(v => v.af * 100), backgroundColor: '#3498db', borderRadius: 6 }] },
+        options: { responsive: true, scales: { y: { title: { display: true, text: 'Allele Frequency (%)' } } }, plugins: { tooltip: { callbacks: { label: ctx => `${ctx.raw.toFixed(4)}%` } } } }
+    });
+
+    // Disease Category Pie Chart
+    new Chart(document.getElementById('diseaseChart'), {
+        type: 'pie',
+        data: { labels: Object.keys(categories), datasets: [{ data: Object.values(categories), backgroundColor: ['#e74c3c', '#3498db', '#2ecc71', '#f39c12', '#9b59b6', '#1abc9c'] }] },
+        options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+    });
+
+    // Population Attributable Risk Chart
+    const parData = variants.filter(v => v.par).slice(0, 10);
+    new Chart(document.getElementById('parChart'), {
+        type: 'bar',
+        data: { labels: parData.map(v => v.gene), datasets: [{ label: 'Population Attributable Risk (%)', data: parData.map(v => v.par), backgroundColor: '#e74c3c', borderRadius: 6 }] },
+        options: { responsive: true, scales: { y: { title: { display: true, text: 'PAR (%)' } } } }
+    });
+
+    // Variant Table
+    const tbody = document.getElementById('tableBody');
+    variants.forEach(v => {
+        const badgeClass = v.classification === "Pathogenic" ? "badge-pathogenic" : (v.classification === "Risk Factor" ? "badge-risk" : "badge-pathogenic");
+        tbody.innerHTML += `<tr>
+            <td><strong>${v.gene}</strong></td>
+            <td><code>${v.variant}</code></td>
+            <td>${v.disease}</td>
+            <td>${v.consequence}</td>
+            <td><strong>${v.cadd}</strong></td>
+            <td>${(v.af * 100).toFixed(4)}%</td>
+            <td><span class="variant-badge ${badgeClass}">${v.classification}</span></td>
+            <td>${v.type}</td>
+            <td>${v.drug !== "NA" ? v.drug : "—"}</td>
+        </tr>`;
+    });
+</script>
+</body>
+</html>
