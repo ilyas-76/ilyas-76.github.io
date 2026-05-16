@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manufacturing Analytics | AlphaStatLab</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%); min-height: 100vh; color: #f1f5f9; padding: 24px; }
+    .container { max-width: 1400px; margin: 0 auto; }
+    .header { background: rgba(15,23,42,0.8); backdrop-filter: blur(10px); border-radius: 24px; padding: 28px 32px; margin-bottom: 24px; border: 1px solid rgba(239,68,68,0.2); }
+    .header h1 { font-size: 32px; font-weight: 800; background: linear-gradient(135deg, #f87171, #ef4444); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .kpi-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; margin-bottom: 24px; }
+    .kpi-card { background: rgba(15,23,42,0.8); backdrop-filter: blur(10px); border-radius: 20px; padding: 20px; border: 1px solid rgba(239,68,68,0.15); transition: all 0.3s; }
+    .kpi-card:hover { transform: translateY(-3px); border-color: #ef4444; }
+    .kpi-value { font-size: 28px; font-weight: 800; margin: 8px 0; }
+    .grid-2, .grid-3 { display: grid; gap: 24px; margin-bottom: 24px; }
+    .grid-2 { grid-template-columns: repeat(2, 1fr); }
+    .grid-3 { grid-template-columns: repeat(3, 1fr); }
+    .card { background: rgba(15,23,42,0.8); backdrop-filter: blur(10px); border-radius: 20px; padding: 24px; border: 1px solid rgba(239,68,68,0.15); }
+    .card-title { font-size: 16px; font-weight: 600; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid rgba(239,68,68,0.2); padding-bottom: 12px; }
+    canvas { max-height: 250px; width: 100%; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td { padding: 12px; text-align: left; border-bottom: 1px solid rgba(239,68,68,0.1); }
+    .disclaimer { background: rgba(0,0,0,0.5); border-radius: 16px; padding: 16px; margin-top: 24px; text-align: center; font-size: 11px; color: #64748b; }
+    .oee-good { color: #22c55e; }
+    .oee-warning { color: #f59e0b; }
+    @media (max-width: 1000px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } .kpi-grid { grid-template-columns: repeat(2,1fr); } }
+</style>
+</head>
+<body>
+<div class="container">
+    <div class="header"><h1><i class="fas fa-industry"></i> Manufacturing Analytics Dashboard</h1><p>Production output · OEE · Quality metrics · Downtime analysis · Supply chain</p></div>
+    <div class="kpi-grid">
+        <div class="kpi-card"><div class="kpi-label">Production Output</div><div class="kpi-value">245K units</div><div class="trend-up"><i class="fas fa-arrow-up"></i> +12%</div></div>
+        <div class="kpi-card"><div class="kpi-label">OEE (Overall)</div><div class="kpi-value">82.4%</div><div class="trend-up"><i class="fas fa-arrow-up"></i> +3.2%</div></div>
+        <div class="kpi-card"><div class="kpi-label">Defect Rate</div><div class="kpi-value">2.8%</div><div class="trend-down"><i class="fas fa-arrow-down"></i> -0.6%</div></div>
+        <div class="kpi-card"><div class="kpi-label">Downtime</div><div class="kpi-value">142 hrs</div><div class="trend-down"><i class="fas fa-arrow-down"></i> -18 hrs</div></div>
+        <div class="kpi-card"><div class="kpi-label">Inventory Turnover</div><div class="kpi-value">6.2x</div><div class="trend-up"><i class="fas fa-arrow-up"></i> +0.8</div></div>
+    </div>
+    <div class="grid-2">
+        <div class="card"><div class="card-title"><i class="fas fa-chart-line"></i> Production Trend</div><canvas id="prodChart"></canvas></div>
+        <div class="card"><div class="card-title"><i class="fas fa-chart-pie"></i> Production by Product Line</div><canvas id="productLineChart"></canvas></div>
+    </div>
+    <div class="grid-3">
+        <div class="card"><div class="card-title"><i class="fas fa-chart-bar"></i> OEE by Production Line</div><canvas id="oeeChart"></canvas></div>
+        <div class="card"><div class="card-title"><i class="fas fa-chart-line"></i> Quality Metrics</div><canvas id="qualityChart"></canvas></div>
+        <div class="card"><div class="card-title"><i class="fas fa-chart-bar"></i> Downtime Reasons</div><canvas id="downtimeChart"></canvas></div>
+    </div>
+    <div class="card"><div class="card-title"><i class="fas fa-table"></i> Production Line Performance</div><table><thead><tr><th>Line</th><th>Output (units)</th><th>OEE %</th><th>Defect %</th><th>Downtime (hrs)</th><th>Efficiency</th></tr></thead><tbody id="lineTable"></tbody></table></div>
+    <div class="disclaimer"><i class="fas fa-database"></i> Synthetic data for demonstration purposes.</div>
+</div>
+<script>
+    new Chart(document.getElementById('prodChart'), { type: 'line', data: { labels: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'], datasets: [{ label: 'Units Produced (000s)', data: [18,19,21,22,23,24,26,27,28,29,31,32], borderColor: '#ef4444', fill: true }] }, options: { responsive: true } });
+    new Chart(document.getElementById('productLineChart'), { type: 'doughnut', data: { labels: ['Line A - Assembly','Line B - Packaging','Line C - Quality','Line D - Finishing'], datasets: [{ data: [42,28,18,12], backgroundColor: ['#ef4444','#f97316','#22c55e','#8b5cf6'] }] }, options: { responsive: true, cutout: '55%' } });
+    new Chart(document.getElementById('oeeChart'), { type: 'bar', data: { labels: ['Line A','Line B','Line C','Line D'], datasets: [{ label: 'OEE %', data: [88,82,78,92], backgroundColor: '#ef4444' }] }, options: { responsive: true } });
+    new Chart(document.getElementById('qualityChart'), { type: 'line', data: { labels: ['Jan','Feb','Mar','Apr','May','Jun'], datasets: [{ label: 'Defect Rate %', data: [3.2,3.0,2.9,2.8,2.7,2.6], borderColor: '#f59e0b', fill: true }, { label: 'First Pass Yield %', data: [94,95,95.5,96,96.5,97], borderColor: '#22c55e', fill: true }] }, options: { responsive: true } });
+    new Chart(document.getElementById('downtimeChart'), { type: 'bar', data: { labels: ['Machine Failure','Material Delay','Changeover','Maintenance','Operator'], datasets: [{ label: 'Downtime Hours', data: [48,32,28,22,12], backgroundColor: '#f97316' }] }, options: { responsive: true, indexAxis: 'y' } });
+    document.getElementById('lineTable').innerHTML = `<tr><td class="profit">Assembly Line A</td><td>42,500</td><td class="profit">88%</td><td class="profit">2.1%</td><td>32</td><td class="profit">High</td></tr><tr><td>Packaging Line B</td><td>28,200</td><td>82%</td><td>3.2%</td><td>48</td><td class="oee-warning">Medium</td></tr><tr><td>Quality Line C</td><td>18,400</td><td>78%</td><td class="profit">1.8%</td><td>28</td><td class="oee-warning">Medium</td></tr><tr><td class="profit">Finishing Line D</td><td>32,100</td><td class="profit">92%</td><td class="profit">1.5%</td><td>18</td><td class="profit">High</td></tr>`;
+</script>
+</body>
+</html>
