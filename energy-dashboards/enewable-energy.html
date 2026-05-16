@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Renewable Energy Dashboard | AlphaStatLab</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --sun: #f59e0b;
+  --sun2: #fbbf24;
+  --sky: #0ea5e9;
+  --sky2: #38bdf8;
+  --wind: #6ee7b7;
+  --hydro: #3b82f6;
+  --leaf: #22c55e;
+  --bg: #0c1428;
+  --bg2: #0f1e38;
+  --surface: rgba(255,255,255,0.04);
+  --border: rgba(255,255,255,0.08);
+  --text: #e2eaf5;
+  --muted: #6b82a8;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;font-size:13px;min-height:100vh;overflow-x:hidden;}
+
+/* Animated aurora background */
+body::before{
+  content:'';position:fixed;top:-50%;left:-50%;width:200%;height:200%;
+  background:
+    radial-gradient(ellipse 60% 40% at 20% 30%, rgba(245,158,11,0.07) 0%,transparent 60%),
+    radial-gradient(ellipse 50% 35% at 80% 20%, rgba(14,165,233,0.06) 0%,transparent 60%),
+    radial-gradient(ellipse 40% 50% at 50% 80%, rgba(34,197,94,0.05) 0%,transparent 60%);
+  animation:aurora 12s ease-in-out infinite alternate;
+  pointer-events:none;z-index:0;
+}
+@keyframes aurora{
+  0%{transform:rotate(0deg) scale(1);}
+  100%{transform:rotate(3deg) scale(1.05);}
+}
+
+/* HEADER */
+.header{
+  position:relative;z-index:2;
+  padding:0 40px;
+  background:linear-gradient(180deg,rgba(245,158,11,0.12) 0%,transparent 100%);
+  border-bottom:1px solid rgba(245,158,11,0.15);
+  display:flex;align-items:center;justify-content:space-between;
+  min-height:90px;
+}
+.header::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--sun),var(--sky),var(--wind),transparent);
+}
+.logo{display:flex;align-items:center;gap:16px;}
+.sun-icon{
+  width:48px;height:48px;position:relative;
+  display:flex;align-items:center;justify-content:center;
+}
+.sun-core{
+  width:24px;height:24px;border-radius:50%;
+  background:radial-gradient(circle,#fef3c7,#f59e0b);
+  box-shadow:0 0 20px rgba(245,158,11,0.6);
+  animation:sunpulse 3s ease-in-out infinite;
+}
+@keyframes sunpulse{0%,100%{box-shadow:0 0 20px rgba(245,158,11,0.6);}50%{box-shadow:0 0 40px rgba(245,158,11,0.9);}}
+.sun-ray{
+  position:absolute;width:2px;height:10px;background:rgba(245,158,11,0.7);border-radius:1px;
+  transform-origin:50% 200%;animation:spinray 20s linear infinite;
+}
+.h-title h1{font-family:'Playfair Display',serif;font-size:1.9rem;font-weight:700;letter-spacing:-0.01em;}
+.h-title h1 span{color:var(--sun);}
+.h-title p{color:var(--muted);font-size:11px;margin-top:3px;letter-spacing:0.05em;}
+.live-badge{display:flex;align-items:center;gap:8px;padding:6px 16px;border:1px solid rgba(34,197,94,0.4);background:rgba(34,197,94,0.08);border-radius:20px;font-size:11px;color:var(--leaf);}
+.live-dot{width:7px;height:7px;border-radius:50%;background:var(--leaf);animation:blink 1.5s infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0.2;}}
+.header-right{display:flex;align-items:center;gap:16px;}
+.brand-tag{font-size:11px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;}
+
+.wrap{max-width:1440px;margin:0 auto;padding:28px 40px;position:relative;z-index:1;}
+
+/* KPI CARDS — circle gauges */
+.kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin-bottom:24px;}
+.kpi-card{
+  background:var(--surface);border:1px solid var(--border);
+  padding:22px 18px;border-radius:2px;
+  display:flex;flex-direction:column;align-items:center;text-align:center;
+  position:relative;overflow:hidden;
+  animation:fadeUp 0.7s ease both;
+  transition:border-color 0.3s,box-shadow 0.3s;
+}
+.kpi-card:hover{border-color:rgba(245,158,11,0.3);box-shadow:0 0 30px rgba(245,158,11,0.05);}
+.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;}
+.kpi-card:nth-child(1)::before{background:linear-gradient(90deg,transparent,var(--sun),transparent);}
+.kpi-card:nth-child(2)::before{background:linear-gradient(90deg,transparent,var(--sky),transparent);}
+.kpi-card:nth-child(3)::before{background:linear-gradient(90deg,transparent,var(--hydro),transparent);}
+.kpi-card:nth-child(4)::before{background:linear-gradient(90deg,transparent,var(--wind),transparent);}
+.kpi-card:nth-child(5)::before{background:linear-gradient(90deg,transparent,var(--leaf),transparent);}
+
+.gauge-ring{width:80px;height:80px;position:relative;margin-bottom:12px;}
+.gauge-ring svg{transform:rotate(-90deg);}
+.gauge-track{fill:none;stroke:rgba(255,255,255,0.06);stroke-width:6;}
+.gauge-fill{fill:none;stroke-width:6;stroke-linecap:round;transition:stroke-dashoffset 2s cubic-bezier(0.4,0,0.2,1);}
+.gauge-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;}
+.gauge-val{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;line-height:1;}
+.gauge-unit{font-size:9px;color:var(--muted);}
+.kpi-label{font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);margin-bottom:4px;}
+.kpi-big{font-family:'Playfair Display',serif;font-size:1.5rem;line-height:1;margin-bottom:4px;}
+.kpi-sub{font-size:10px;color:var(--muted);}
+.kpi-delta{font-size:11px;font-weight:600;margin-top:6px;padding:2px 10px;border-radius:10px;}
+.delta-up{color:var(--leaf);background:rgba(34,197,94,0.1);}
+.delta-dn{color:#f87171;background:rgba(248,113,113,0.1);}
+
+/* CHARTS GRID */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;margin-bottom:18px;}
+.grid-21{display:grid;grid-template-columns:2fr 1fr;gap:18px;margin-bottom:18px;}
+.grid-12{display:grid;grid-template-columns:1fr 2fr;gap:18px;margin-bottom:18px;}
+
+.panel{
+  background:var(--surface);border:1px solid var(--border);
+  padding:24px;border-radius:2px;
+  animation:fadeUp 0.7s ease both;
+  transition:border-color 0.3s;
+}
+.panel:hover{border-color:rgba(255,255,255,0.14);}
+.panel-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+.panel-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;letter-spacing:-0.01em;}
+.panel-meta{font-size:10px;color:var(--muted);font-family:'Outfit',sans-serif;}
+.chart-h{position:relative;height:250px;}
+.chart-h canvas{width:100%!important;}
+
+/* Capacity factor bars */
+.cf-row{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
+.cf-source{font-size:11px;color:var(--text);width:70px;flex-shrink:0;}
+.cf-bar{flex:1;height:10px;background:rgba(255,255,255,0.05);border-radius:5px;overflow:hidden;}
+.cf-fill{height:100%;border-radius:5px;transition:width 1.5s cubic-bezier(0.4,0,0.2,1);}
+.cf-pct{font-size:11px;width:36px;text-align:right;font-family:'Outfit',monospace;}
+
+/* Penetration donut labels */
+.donut-legend{display:flex;flex-direction:column;gap:8px;justify-content:center;}
+.dl-row{display:flex;align-items:center;gap:10px;}
+.dl-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.dl-name{font-size:11px;color:var(--text);flex:1;}
+.dl-pct{font-size:11px;font-family:'Outfit',monospace;}
+
+/* Monthly gen heatmap */
+.heatmap{display:grid;grid-template-columns:repeat(12,1fr);gap:3px;margin-top:8px;}
+.hm-cell{height:32px;border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:rgba(255,255,255,0.9);cursor:default;transition:transform 0.15s,opacity 0.15s;}
+.hm-cell:hover{transform:scale(1.1);z-index:2;}
+.hm-month{font-size:9px;color:var(--muted);text-align:center;padding:3px 0;}
+
+/* Source card strip */
+.source-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px;}
+.src-card{background:var(--surface);border:1px solid var(--border);padding:16px;border-radius:2px;display:flex;align-items:center;gap:14px;animation:fadeUp 0.6s ease both;}
+.src-icon{font-size:1.8rem;}
+.src-name{font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);}
+.src-gw{font-family:'Playfair Display',serif;font-size:1.4rem;line-height:1;margin-top:2px;}
+.src-trend{font-size:10px;margin-top:4px;}
+
+.source-note{
+  margin-top:28px;padding:16px 22px;
+  background:rgba(245,158,11,0.04);border:1px solid rgba(245,158,11,0.15);
+  font-size:10px;color:var(--muted);line-height:1.8;
+}
+.source-note strong{color:var(--sun);}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:none;}}
+.d1{animation-delay:0.05s}.d2{animation-delay:0.1s}.d3{animation-delay:0.15s}.d4{animation-delay:0.2s}.d5{animation-delay:0.25s}.d6{animation-delay:0.3s}.d7{animation-delay:0.35s}.d8{animation-delay:0.4s}.d9{animation-delay:0.45s}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">
+    <div class="sun-icon">
+      <div class="sun-core"></div>
+      <div class="sun-ray" style="transform:rotate(0deg) translateX(-50%) translateY(-140%)"></div>
+      <div class="sun-ray" style="transform:rotate(45deg) translateX(-50%) translateY(-140%)"></div>
+      <div class="sun-ray" style="transform:rotate(90deg) translateX(-50%) translateY(-140%)"></div>
+      <div class="sun-ray" style="transform:rotate(135deg) translateX(-50%) translateY(-140%)"></div>
+      <div class="sun-ray" style="transform:rotate(180deg) translateX(-50%) translateY(-140%)"></div>
+      <div class="sun-ray" style="transform:rotate(225deg) translateX(-50%) translateY(-140%)"></div>
+      <div class="sun-ray" style="transform:rotate(270deg) translateX(-50%) translateY(-140%)"></div>
+      <div class="sun-ray" style="transform:rotate(315deg) translateX(-50%) translateY(-140%)"></div>
+    </div>
+    <div class="h-title">
+      <h1>Renewable <span>Energy</span> Dashboard</h1>
+      <p>AlphaStatLab · Solar · Wind · Hydro · Biomass · Generation Analytics 2023</p>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="live-badge"><div class="live-dot"></div>Live Simulation</div>
+    <div class="brand-tag">AlphaStatLab.org</div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- Source Strip -->
+  <div class="source-strip">
+    <div class="src-card d1">
+      <div class="src-icon">☀️</div>
+      <div>
+        <div class="src-name">Solar PV</div>
+        <div class="src-gw" style="color:var(--sun)">892 GW</div>
+        <div class="src-trend" style="color:var(--leaf)">↑ +18.4% YoY · CF 23.1%</div>
+      </div>
+    </div>
+    <div class="src-card d2">
+      <div class="src-icon">💨</div>
+      <div>
+        <div class="src-name">Wind (Onshore + Offshore)</div>
+        <div class="src-gw" style="color:var(--sky)">1,234 GW</div>
+        <div class="src-trend" style="color:var(--leaf)">↑ +12.8% YoY · CF 34.7%</div>
+      </div>
+    </div>
+    <div class="src-card d3">
+      <div class="src-icon">🌊</div>
+      <div>
+        <div class="src-name">Hydropower</div>
+        <div class="src-gw" style="color:var(--hydro)">1,392 GW</div>
+        <div class="src-trend" style="color:var(--muted)">→ +1.2% YoY · CF 41.2%</div>
+      </div>
+    </div>
+    <div class="src-card d4">
+      <div class="src-icon">🔥</div>
+      <div>
+        <div class="src-name">Biomass / Geothermal</div>
+        <div class="src-gw" style="color:var(--wind)">312 GW</div>
+        <div class="src-trend" style="color:var(--leaf)">↑ +4.1% YoY · CF 68.4%</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- KPI Row -->
+  <div class="kpi-row">
+    <div class="kpi-card d1">
+      <div class="gauge-ring">
+        <svg viewBox="0 0 80 80" width="80" height="80">
+          <circle class="gauge-track" cx="40" cy="40" r="32"/>
+          <circle class="gauge-fill" id="g1" cx="40" cy="40" r="32" stroke="#f59e0b" stroke-dasharray="201" stroke-dashoffset="201"/>
+        </svg>
+        <div class="gauge-center"><div class="gauge-val" style="color:var(--sun)">38%</div><div class="gauge-unit">share</div></div>
+      </div>
+      <div class="kpi-label">Renewable Penetration</div>
+      <div class="kpi-sub">Of total generation mix</div>
+      <div class="kpi-delta delta-up">↑ +6.2 pp YoY</div>
+    </div>
+    <div class="kpi-card d2">
+      <div class="kpi-label">Total RE Capacity</div>
+      <div class="kpi-big" style="color:var(--sky2)">3,830 GW</div>
+      <div class="kpi-sub">Installed globally</div>
+      <div class="kpi-delta delta-up">↑ +14.3% YoY</div>
+    </div>
+    <div class="kpi-card d3">
+      <div class="kpi-label">Annual Generation</div>
+      <div class="kpi-big" style="color:var(--wind)">9,814 TWh</div>
+      <div class="kpi-sub">Renewable sources only</div>
+      <div class="kpi-delta delta-up">↑ +11.8% vs 2022</div>
+    </div>
+    <div class="kpi-card d4">
+      <div class="gauge-ring">
+        <svg viewBox="0 0 80 80" width="80" height="80">
+          <circle class="gauge-track" cx="40" cy="40" r="32"/>
+          <circle class="gauge-fill" id="g2" cx="40" cy="40" r="32" stroke="#6ee7b7" stroke-dasharray="201" stroke-dashoffset="201"/>
+        </svg>
+        <div class="gauge-center"><div class="gauge-val" style="color:var(--wind)">23%</div><div class="gauge-unit">CF</div></div>
+      </div>
+      <div class="kpi-label">Solar Capacity Factor</div>
+      <div class="kpi-sub">Avg · Best site 31.4%</div>
+      <div class="kpi-delta delta-up">↑ +2.1 pp</div>
+    </div>
+    <div class="kpi-card d5">
+      <div class="kpi-label">Levelized Cost (Solar)</div>
+      <div class="kpi-big" style="color:var(--sun)">$28</div>
+      <div class="kpi-sub">Per MWh · LCOE</div>
+      <div class="kpi-delta delta-up">↓ −8.4% vs 2022</div>
+    </div>
+  </div>
+
+  <!-- Generation time-series + Donut -->
+  <div class="grid-21">
+    <div class="panel d6">
+      <div class="panel-head">
+        <div class="panel-title">Annual Generation by Source — 2018–2023 (TWh)</div>
+        <div class="panel-meta">Global Totals · Synthetic Data</div>
+      </div>
+      <div class="chart-h">
+        <canvas id="genChart"></canvas>
+      </div>
+    </div>
+    <div class="panel d6" style="display:flex;flex-direction:column;">
+      <div class="panel-head">
+        <div class="panel-title">2023 Generation Mix</div>
+        <div class="panel-meta">% of Total 25,814 TWh</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:20px;flex:1;">
+        <div style="position:relative;width:140px;height:140px;flex-shrink:0;">
+          <canvas id="donutChart" width="140" height="140"></canvas>
+        </div>
+        <div class="donut-legend">
+          <div class="dl-row"><div class="dl-dot" style="background:var(--sun)"></div><div class="dl-name">Solar PV</div><div class="dl-pct" style="color:var(--sun)">9.8%</div></div>
+          <div class="dl-row"><div class="dl-dot" style="background:var(--sky)"></div><div class="dl-name">Wind</div><div class="dl-pct" style="color:var(--sky)">12.6%</div></div>
+          <div class="dl-row"><div class="dl-dot" style="background:var(--hydro)"></div><div class="dl-name">Hydro</div><div class="dl-pct" style="color:var(--hydro)">14.9%</div></div>
+          <div class="dl-row"><div class="dl-dot" style="background:var(--wind)"></div><div class="dl-name">Other RE</div><div class="dl-pct" style="color:var(--wind)">3.4%</div></div>
+          <div class="dl-row"><div class="dl-dot" style="background:rgba(255,255,255,0.2)"></div><div class="dl-name">Fossil + Nuclear</div><div class="dl-pct" style="color:var(--muted)">59.3%</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Capacity factors + Monthly heatmap -->
+  <div class="grid-2">
+    <div class="panel d7">
+      <div class="panel-head">
+        <div class="panel-title">Capacity Factors by Technology & Region</div>
+        <div class="panel-meta">Annual Average · 2023</div>
+      </div>
+      <div style="margin-top:4px;">
+        <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:12px;">☀️ SOLAR PV</div>
+        <div class="cf-row"><span class="cf-source">Desert SW (US)</span><div class="cf-bar"><div class="cf-fill" style="width:0%;background:linear-gradient(90deg,#f59e0b,#fbbf24)" data-pct="31.4"></div></div><span class="cf-pct" style="color:var(--sun)">31.4%</span></div>
+        <div class="cf-row"><span class="cf-source">Germany</span><div class="cf-bar"><div class="cf-fill" style="width:0%;background:linear-gradient(90deg,#f59e0b,#fbbf24)" data-pct="11.2"></div></div><span class="cf-pct" style="color:var(--sun)">11.2%</span></div>
+        <div class="cf-row"><span class="cf-source">Saudi Arabia</span><div class="cf-bar"><div class="cf-fill" style="width:0%;background:linear-gradient(90deg,#f59e0b,#fbbf24)" data-pct="28.9"></div></div><span class="cf-pct" style="color:var(--sun)">28.9%</span></div>
+        <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin:14px 0 12px;">💨 WIND ONSHORE</div>
+        <div class="cf-row"><span class="cf-source">US Midwest</span><div class="cf-bar"><div class="cf-fill" style="width:0%;background:linear-gradient(90deg,#0ea5e9,#38bdf8)" data-pct="42.8"></div></div><span class="cf-pct" style="color:var(--sky)">42.8%</span></div>
+        <div class="cf-row"><span class="cf-source">Denmark</span><div class="cf-bar"><div class="cf-fill" style="width:0%;background:linear-gradient(90deg,#0ea5e9,#38bdf8)" data-pct="38.4"></div></div><span class="cf-pct" style="color:var(--sky)">38.4%</span></div>
+        <div class="cf-row"><span class="cf-source">India</span><div class="cf-bar"><div class="cf-fill" style="width:0%;background:linear-gradient(90deg,#0ea5e9,#38bdf8)" data-pct="24.1"></div></div><span class="cf-pct" style="color:var(--sky)">24.1%</span></div>
+        <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin:14px 0 12px;">🌊 WIND OFFSHORE</div>
+        <div class="cf-row"><span class="cf-source">North Sea</span><div class="cf-bar"><div class="cf-fill" style="width:0%;background:linear-gradient(90deg,#3b82f6,#60a5fa)" data-pct="52.1"></div></div><span class="cf-pct" style="color:var(--hydro)">52.1%</span></div>
+        <div class="cf-row"><span class="cf-source">Taiwan Strait</span><div class="cf-bar"><div class="cf-fill" style="width:0%;background:linear-gradient(90deg,#3b82f6,#60a5fa)" data-pct="48.3"></div></div><span class="cf-pct" style="color:var(--hydro)">48.3%</span></div>
+      </div>
+    </div>
+
+    <div class="panel d7">
+      <div class="panel-head">
+        <div class="panel-title">Monthly Solar Generation Intensity — 2023 (GWh)</div>
+        <div class="panel-meta">Northern Hemisphere · Major Markets</div>
+      </div>
+      <div style="overflow:hidden;">
+        <div style="display:grid;grid-template-columns:80px repeat(12,1fr);gap:3px;font-size:9px;color:var(--muted);margin-bottom:4px;">
+          <div></div>
+          <div class="hm-month">J</div><div class="hm-month">F</div><div class="hm-month">M</div><div class="hm-month">A</div><div class="hm-month">M</div><div class="hm-month">J</div><div class="hm-month">J</div><div class="hm-month">A</div><div class="hm-month">S</div><div class="hm-month">O</div><div class="hm-month">N</div><div class="hm-month">D</div>
+        </div>
+        <!-- Each row = a region, cells = month intensity -->
+        <script>
+          const heatData = {
+            'USA': [42,52,78,112,148,178,189,182,145,98,54,38],
+            'Germany': [8,14,38,72,98,118,124,112,78,42,14,7],
+            'China': [62,72,98,134,168,189,201,194,158,112,74,58],
+            'India': [118,128,142,134,108,89,82,94,124,138,124,112],
+            'Australia': [182,168,134,94,62,48,52,68,104,148,172,189],
+          };
+          const maxVal = 201;
+          document.addEventListener('DOMContentLoaded',function(){
+            const container = document.getElementById('heatmap-container');
+            Object.entries(heatData).forEach(([region, months]) => {
+              const rowDiv = document.createElement('div');
+              rowDiv.style.cssText = 'display:grid;grid-template-columns:80px repeat(12,1fr);gap:3px;margin-bottom:3px;';
+              const lbl = document.createElement('div');
+              lbl.style.cssText = 'font-size:10px;color:#6b82a8;display:flex;align-items:center;';
+              lbl.textContent = region;
+              rowDiv.appendChild(lbl);
+              months.forEach(val => {
+                const cell = document.createElement('div');
+                const intensity = val/maxVal;
+                const r = Math.round(245*intensity + 15*(1-intensity));
+                const g = Math.round(158*intensity + 25*(1-intensity));
+                const b = Math.round(11*intensity + 50*(1-intensity));
+                cell.style.cssText = `height:28px;border-radius:2px;background:rgba(${r},${g},${b},${0.2+intensity*0.75});display:flex;align-items:center;justify-content:center;font-size:9px;color:rgba(255,255,255,${intensity>0.4?0.9:0.4});cursor:default;`;
+                cell.textContent = val;
+                rowDiv.appendChild(cell);
+              });
+              container.appendChild(rowDiv);
+            });
+          });
+        </script>
+        <div id="heatmap-container"></div>
+        <div style="margin-top:12px;display:flex;align-items:center;gap:8px;font-size:10px;color:var(--muted);">
+          <span>Low</span>
+          <div style="height:8px;flex:1;background:linear-gradient(90deg,rgba(15,25,50,0.8),rgba(245,158,11,0.9));border-radius:4px;"></div>
+          <span>High GWh</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LCOE trend -->
+  <div class="panel d8">
+    <div class="panel-head">
+      <div class="panel-title">Levelized Cost of Energy (LCOE) Trends — $/MWh · 2010–2023</div>
+      <div class="panel-meta">Global Weighted Average · Synthetic Projections</div>
+    </div>
+    <div class="chart-h" style="height:220px;">
+      <canvas id="lcoeChart"></canvas>
+    </div>
+  </div>
+
+  <div class="source-note">
+    <strong>⚠ Synthetic Data Notice:</strong> All generation figures, capacity factors, LCOE values, regional data, and penetration percentages in this dashboard are <strong>randomly generated synthetic data</strong> created by AlphaStatLab for portfolio demonstration. They do not represent real energy statistics from any grid operator, government agency, or energy authority. For real renewable energy analytics solutions, visit <strong>alphastatlab.org</strong>.<br>
+    <strong>Methods:</strong> Generation time-series modeled with polynomial growth curves + Gaussian noise. LCOE decline modeled via learning-rate curves (18% learning rate for solar). Capacity factors drawn from published ranges with stochastic variation. Heatmap intensity normalized to 201 GWh ceiling. Chart.js v4.4.1.
+  </div>
+</div>
+
+<script>
+// Animate gauges on load
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.getElementById('g1').style.strokeDashoffset = 201 * (1 - 0.38);
+    document.getElementById('g2').style.strokeDashoffset = 201 * (1 - 0.231);
+  }, 400);
+
+  // Animate capacity factor bars
+  document.querySelectorAll('.cf-fill').forEach(bar => {
+    const pct = parseFloat(bar.dataset.pct) / 55 * 100;
+    setTimeout(() => { bar.style.width = pct + '%'; }, 600);
+  });
+});
+
+// Generation chart
+const years = ['2018','2019','2020','2021','2022','2023'];
+const genCtx = document.getElementById('genChart').getContext('2d');
+new Chart(genCtx, {
+  type: 'bar',
+  data: {
+    labels: years,
+    datasets: [
+      {label:'Solar PV', data:[1023,1289,1542,1891,2234,2541], backgroundColor:'rgba(245,158,11,0.75)', borderRadius:2},
+      {label:'Wind', data:[1412,1689,1923,2234,2812,3241], backgroundColor:'rgba(14,165,233,0.7)', borderRadius:2},
+      {label:'Hydro', data:[3789,3812,3712,3834,3891,3856], backgroundColor:'rgba(59,130,246,0.6)', borderRadius:2},
+      {label:'Other RE', data:[542,578,612,689,742,812], backgroundColor:'rgba(110,231,183,0.6)', borderRadius:2},
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    scales: {
+      x: {stacked:true, ticks:{color:'#6b82a8',font:{size:10,family:'Outfit'}}, grid:{color:'rgba(255,255,255,0.04)'}},
+      y: {stacked:true, ticks:{color:'#6b82a8',font:{size:10,family:'Outfit'},callback:v=>v>=1000?(v/1000).toFixed(0)+'K TWh':v}, grid:{color:'rgba(255,255,255,0.05)'}}
+    },
+    plugins:{
+      legend:{labels:{color:'#6b82a8',font:{family:'Outfit',size:10},boxWidth:10,boxHeight:10}},
+      tooltip:{backgroundColor:'#0f1e38',borderColor:'rgba(255,255,255,0.08)',borderWidth:1,titleFont:{family:'Outfit'},bodyFont:{family:'Outfit'}}
+    },
+    animation:{duration:1200,easing:'easeInOutQuart'}
+  }
+});
+
+// Donut
+const donutCtx = document.getElementById('donutChart').getContext('2d');
+new Chart(donutCtx, {
+  type:'doughnut',
+  data:{
+    datasets:[{
+      data:[9.8,12.6,14.9,3.4,59.3],
+      backgroundColor:['rgba(245,158,11,0.8)','rgba(14,165,233,0.8)','rgba(59,130,246,0.8)','rgba(110,231,183,0.8)','rgba(255,255,255,0.1)'],
+      borderColor:['#0c1428'],borderWidth:2,hoverOffset:6
+    }]
+  },
+  options:{
+    cutout:'68%',responsive:false,
+    plugins:{legend:{display:false},tooltip:{backgroundColor:'#0f1e38',titleFont:{family:'Outfit'},bodyFont:{family:'Outfit',size:10}}},
+    animation:{animateRotate:true,duration:1400,easing:'easeInOutCubic'}
+  }
+});
+
+// LCOE
+const lcoeCtx = document.getElementById('lcoeChart').getContext('2d');
+const lcoeYears = ['2010','2011','2012','2013','2014','2015','2016','2017','2018','2019','2020','2021','2022','2023'];
+new Chart(lcoeCtx, {
+  type:'line',
+  data:{
+    labels:lcoeYears,
+    datasets:[
+      {label:'Solar PV', data:[378,312,248,189,142,108,78,62,48,38,34,32,30,28], borderColor:'#f59e0b', backgroundColor:'rgba(245,158,11,0.08)', borderWidth:2.5, pointRadius:3, pointBackgroundColor:'#f59e0b', fill:true, tension:0.4},
+      {label:'Onshore Wind', data:[134,128,118,110,100,89,78,70,62,56,53,51,49,48], borderColor:'#0ea5e9', backgroundColor:'rgba(14,165,233,0.06)', borderWidth:2, pointRadius:3, pointBackgroundColor:'#0ea5e9', fill:true, tension:0.4},
+      {label:'Offshore Wind', data:[198,192,182,172,158,148,134,126,118,112,108,98,89,82], borderColor:'#3b82f6', borderWidth:1.5, pointRadius:2, pointBackgroundColor:'#3b82f6', fill:false, tension:0.4, borderDash:[4,3]},
+      {label:'Natural Gas (CCGT)', data:[74,72,68,65,63,62,62,63,62,61,60,58,72,68], borderColor:'rgba(255,255,255,0.25)', borderWidth:1.5, pointRadius:2, fill:false, tension:0.3, borderDash:[2,3]},
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    scales:{
+      x:{ticks:{color:'#6b82a8',font:{size:10,family:'Outfit'}},grid:{color:'rgba(255,255,255,0.04)'}},
+      y:{ticks:{color:'#6b82a8',font:{size:10,family:'Outfit'},callback:v=>'$'+v},grid:{color:'rgba(255,255,255,0.05)'},title:{display:true,text:'$/MWh',color:'#6b82a8',font:{size:10}}}
+    },
+    plugins:{legend:{labels:{color:'#6b82a8',font:{family:'Outfit',size:10},boxWidth:12}},tooltip:{backgroundColor:'#0f1e38',titleFont:{family:'Outfit'},bodyFont:{family:'Outfit',size:10}}},
+    animation:{duration:1600,easing:'easeInOutQuart'}
+  }
+});
+</script>
+</body>
+</html>
