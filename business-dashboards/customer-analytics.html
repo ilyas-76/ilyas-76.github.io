@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Customer Analytics Dashboard | AlphaStatLab</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500;600&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+    :root {
+        --bg: #f8f4f0; --card: #ffffff; --border: #e8e0d8;
+        --ink: #1a1410; --muted: #9c8c7c;
+        --teal: #0d9488; --coral: #e85d3a; --gold: #d97706;
+        --violet: #7c3aed; --sky: #0ea5e9; --rose: #e11d48;
+        --green: #16a34a;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: var(--bg); color: var(--ink); font-family: 'Inter', sans-serif; min-height: 100vh; }
+    
+    .container { max-width: 1600px; margin: 0 auto; }
+    
+    header {
+        background: var(--ink); color: #fff; padding: 0 2rem;
+        display: flex; align-items: center; justify-content: space-between; height: 68px;
+        position: sticky; top: 0; z-index: 100;
+    }
+    .logo { font-family: 'Syne', sans-serif; font-size: 1.4rem; font-weight: 800; letter-spacing: 2px; }
+    .logo em { color: var(--teal); font-style: normal; }
+    .htitle { font-family: 'Syne', sans-serif; font-weight: 600; font-size: 0.85rem; letter-spacing: 3px; color: #9ca3af; }
+    .badge { background: var(--teal); color: #fff; padding: 4px 12px; border-radius: 4px; font-size: 0.7rem; font-family: 'Fira Code'; }
+    
+    .loading { text-align: center; padding: 60px; font-size: 14px; color: var(--muted); background: var(--card); margin: 20px; border-radius: 12px; }
+    .loading i { animation: spin 1s linear infinite; margin-right: 10px; }
+    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    
+    .kpi-strip { display: grid; grid-template-columns: repeat(5, 1fr); background: var(--card); border-bottom: 2px solid var(--border); }
+    .kpi-box { padding: 1.5rem 1.8rem; border-right: 1px solid var(--border); transition: background 0.2s; }
+    .kpi-box:hover { background: #f0fdf4; }
+    .kpi-box:last-child { border-right: none; }
+    .kl { font-size: 0.68rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 0.5rem; }
+    .kv { font-family: 'Syne', sans-serif; font-size: 1.9rem; font-weight: 800; line-height: 1; }
+    .ks { font-size: 0.72rem; margin-top: 0.35rem; }
+    
+    .controls {
+        background: var(--card); border-bottom: 1px solid var(--border);
+        padding: 0.8rem 1.5rem; display: flex; align-items: center; gap: 1.2rem; flex-wrap: wrap;
+    }
+    .ctrl-label { font-size: 0.7rem; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); }
+    select {
+        padding: 6px 10px; border: 1px solid var(--border); border-radius: 6px;
+        font-size: 0.75rem; background: var(--card); color: var(--ink); cursor: pointer;
+    }
+    
+    .main-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; padding: 1.5rem; }
+    .row2 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; padding: 0 1.5rem 1.5rem; }
+    .row3 { display: grid; grid-template-columns: 1.5fr 1fr; gap: 1.5rem; padding: 0 1.5rem 1.5rem; }
+    
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+    .ct { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.95rem; letter-spacing: 1px; margin-bottom: 0.2rem; }
+    .cs { font-size: 0.7rem; color: var(--muted); margin-bottom: 1.2rem; }
+    canvas { max-height: 260px; width: 100%; }
+    
+    .seg-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin-top: 1rem; }
+    .seg-card { border: 1px solid var(--border); border-radius: 8px; padding: 1rem; position: relative; overflow: hidden; }
+    .seg-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; }
+    .seg-card.ent::before { background: var(--violet); }
+    .seg-card.mm::before { background: var(--teal); }
+    .seg-card.smb::before { background: var(--gold); }
+    .seg-card.start::before { background: var(--coral); }
+    .seg-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.85rem; }
+    .seg-ltv { font-family: 'Fira Code'; font-size: 1rem; color: var(--teal); margin: 0.3rem 0; font-weight: 600; }
+    .seg-meta { font-size: 0.68rem; color: var(--muted); }
+    
+    .funnel-step { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 0.6rem; }
+    .funnel-bar { flex: 1; height: 32px; border-radius: 4px; display: flex; align-items: center; padding-left: 0.8rem; color: #fff; font-size: 0.7rem; font-weight: 500; }
+    .funnel-val { font-family: 'Fira Code'; font-size: 0.72rem; color: var(--muted); width: 60px; text-align: right; }
+    
+    table { width: 100%; border-collapse: collapse; font-size: 0.72rem; margin-top: 0.8rem; }
+    th { font-size: 0.62rem; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); padding: 0.5rem 0.6rem; border-bottom: 2px solid var(--border); text-align: left; }
+    td { padding: 0.5rem 0.6rem; border-bottom: 1px solid var(--border); }
+    tr:hover td { background: #f0fdf4; }
+    
+    .chip { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 0.65rem; font-weight: 600; }
+    .chip.high { background: #fef2f2; color: #dc2626; }
+    .chip.med { background: #fffbeb; color: #d97706; }
+    .chip.low { background: #f0fdf4; color: #16a34a; }
+    .chip.ent { background: #ede9fe; color: #7c3aed; }
+    .chip.mm { background: #e0f2fe; color: #0284c7; }
+    .chip.smb { background: #fef3c7; color: #b45309; }
+    .chip.start { background: #ffe4e2; color: #e85d3a; }
+    
+    .disclaimer {
+        background: var(--ink); color: #9ca3af; padding: 1.2rem 1.5rem;
+        display: flex; justify-content: space-between; align-items: center; font-size: 0.7rem;
+        border-top: 1px solid rgba(255,255,255,0.1);
+    }
+    .disclaimer a { color: var(--teal); text-decoration: none; }
+    
+    @media (max-width: 1200px) { .main-grid, .row2, .row3 { grid-template-columns: 1fr; } .seg-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <div class="logo">Alpha<em>Stat</em>Lab</div>
+        <div class="htitle"><i class="fas fa-users"></i> CUSTOMER ANALYTICS DASHBOARD</div>
+        <div class="badge"><i class="fas fa-chart-line"></i> LIVE DEMO</div>
+    </header>
+    
+    <div id="dashboardContent">
+        <div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading customer data from CSV...</div>
+    </div>
+    
+    <div class="disclaimer">
+        <span><i class="fas fa-database"></i> ⚠️ <strong>Synthetic Data Notice:</strong> All customer records are <strong>randomly generated</strong> for demonstration only. No real customer data is represented.</span>
+        <span><i class="far fa-chart-bar"></i> AlphaStatLab © 2025</span>
+    </div>
+</div>
+
+<script>
+    async function loadCustomerData() {
+        try {
+            const response = await fetch('customer_analytics.csv');
+            const csvText = await response.text();
+            
+            const rows = csvText.trim().split('\n');
+            const headers = rows[0].split('\t');
+            
+            const data = [];
+            for (let i = 1; i < rows.length; i++) {
+                const values = rows[i].split('\t');
+                const record = {};
+                headers.forEach((header, idx) => {
+                    let val = values[idx] || '';
+                    if (!isNaN(parseFloat(val)) && val !== '' && val !== '-') {
+                        record[header.trim()] = parseFloat(val);
+                    } else {
+                        record[header.trim()] = val;
+                    }
+                });
+                data.push(record);
+            }
+            
+            renderDashboard(data);
+        } catch (error) {
+            console.error('Error loading CSV:', error);
+            document.getElementById('dashboardContent').innerHTML = `
+                <div class="loading" style="color:#e11d48">
+                    <i class="fas fa-exclamation-triangle"></i> 
+                    Error loading customer_analytics.csv. Make sure the file exists in the same directory.
+                </div>
+            `;
+        }
+    }
+    
+    function renderDashboard(data) {
+        // Calculate KPIs
+        const totalCustomers = data.length;
+        const avgLTV = data.reduce((sum, d) => sum + (d.LTV || 0), 0) / totalCustomers;
+        const avgMRR = data.reduce((sum, d) => sum + (d.MRR || 0), 0) / totalCustomers;
+        const churnedCount = data.filter(d => d.Churned === 1 || d.Churned === true).length;
+        const churnRate = (churnedCount / totalCustomers * 100).toFixed(1);
+        const avgHealth = data.reduce((sum, d) => sum + (d.Health_Score || 0), 0) / totalCustomers;
+        
+        // Segment data
+        const segments = [...new Set(data.map(d => d.Segment).filter(Boolean))];
+        const ltvBySegment = {};
+        const mrrBySegment = {};
+        const healthBySegment = {};
+        const churnBySegment = {};
+        
+        segments.forEach(seg => {
+            const segData = data.filter(d => d.Segment === seg);
+            ltvBySegment[seg] = segData.reduce((s, d) => s + (d.LTV || 0), 0) / segData.length;
+            mrrBySegment[seg] = segData.reduce((s, d) => s + (d.MRR || 0), 0) / segData.length;
+            healthBySegment[seg] = segData.reduce((s, d) => s + (d.Health_Score || 0), 0) / segData.length;
+            churnBySegment[seg] = segData.filter(d => d.Churned === 1).length / segData.length * 100;
+        });
+        
+        // Plan data
+        const plans = [...new Set(data.map(d => d.Plan).filter(Boolean))];
+        const mrrByPlan = {};
+        plans.forEach(plan => {
+            mrrByPlan[plan] = data.filter(d => d.Plan === plan).reduce((s, d) => s + (d.MRR || 0), 0);
+        });
+        
+        // Churn distribution
+        const churnBuckets = [[0,10], [10,20], [20,40], [40,60], [60,80], [80,100]];
+        const churnCounts = churnBuckets.map(([min, max]) => 
+            data.filter(d => (d.Churn_Probability || 0) * 100 >= min && (d.Churn_Probability || 0) * 100 < max).length
+        );
+        
+        // Industry distribution
+        const industries = [...new Set(data.map(d => d.Industry).filter(Boolean))];
+        const industryCounts = industries.map(ind => data.filter(d => d.Industry === ind).length);
+        
+        // Top at-risk customers
+        const atRiskCustomers = [...data]
+            .filter(d => (d.Churn_Probability || 0) > 0.5)
+            .sort((a,b) => (b.Churn_Probability || 0) - (a.Churn_Probability || 0))
+            .slice(0, 10);
+        
+        // Retention funnel
+        const acquired = totalCustomers;
+        const onboarded = data.filter(d => (d.Logins_Last_30d || 0) > 0).length;
+        const active90d = data.filter(d => (d.Tenure_Days || 0) > 90 && (d.Logins_Last_30d || 0) > 3).length;
+        const renewed = data.filter(d => d.Churned !== 1).length;
+        const expanded = data.filter(d => (d.Expansion_Revenue || 0) > 0).length;
+        const advocates = data.filter(d => (d.NPS_Score || 0) > 70 && (d.Referrals_Made || 0) > 2).length;
+        
+        // Build HTML
+        document.getElementById('dashboardContent').innerHTML = `
+            <div class="kpi-strip">
+                <div class="kpi-box"><div class="kl"><i class="fas fa-users"></i> Total Customers</div><div class="kv" style="color:var(--teal)">${totalCustomers}</div><div class="ks" style="color:var(--green)">▲ Active accounts</div></div>
+                <div class="kpi-box"><div class="kl"><i class="fas fa-chart-line"></i> Avg LTV</div><div class="kv" style="color:var(--violet)">$${(avgLTV/1000).toFixed(0)}K</div><div class="ks">Lifetime value</div></div>
+                <div class="kpi-box"><div class="kl"><i class="fas fa-dollar-sign"></i> Avg MRR</div><div class="kv" style="color:var(--coral)">$${avgMRR.toFixed(0)}</div><div class="ks">Monthly recurring</div></div>
+                <div class="kpi-box"><div class="kl"><i class="fas fa-chart-line"></i> Churn Rate</div><div class="kv" style="color:var(--rose)">${churnRate}%</div><div class="ks" style="color:var(--green)">▼ Portfolio wide</div></div>
+                <div class="kpi-box"><div class="kl"><i class="fas fa-heartbeat"></i> Avg Health Score</div><div class="kv" style="color:var(--gold)">${avgHealth.toFixed(1)}</div><div class="ks">/100</div></div>
+            </div>
+            
+            <div class="controls">
+                <span class="ctrl-label"><i class="fas fa-filter"></i> Segment:</span>
+                <select id="segmentFilter" onchange="filterBySegment(this.value, window.customerData)">
+                    <option value="all">All Segments</option>
+                    ${segments.map(s => `<option value="${s}">${s}</option>`).join('')}
+                </select>
+                <span class="ctrl-label"><i class="fas fa-industry"></i> Industry:</span>
+                <select id="industryFilter" onchange="filterByIndustry(this.value, window.customerData)">
+                    <option value="all">All Industries</option>
+                    ${industries.map(i => `<option value="${i}">${i}</option>`).join('')}
+                </select>
+            </div>
+            
+            <div class="main-grid">
+                <div class="card">
+                    <div class="ct"><i class="fas fa-chart-bar"></i> LTV by Customer Segment</div>
+                    <div class="cs">Average lifetime value across segments</div>
+                    <canvas id="ltvChart"></canvas>
+                </div>
+                <div class="card">
+                    <div class="ct"><i class="fas fa-chart-pie"></i> Churn Probability Distribution</div>
+                    <div class="cs">Risk profile across ${totalCustomers} customers</div>
+                    <canvas id="churnDistChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="row2">
+                <div class="card">
+                    <div class="ct"><i class="fas fa-chart-donut"></i> MRR by Plan Tier</div>
+                    <div class="cs">Monthly recurring revenue by subscription</div>
+                    <canvas id="planChart"></canvas>
+                </div>
+                <div class="card">
+                    <div class="ct"><i class="fas fa-chart-line"></i> Health Score vs Churn Probability</div>
+                    <div class="cs">Negative correlation pattern</div>
+                    <canvas id="healthChart"></canvas>
+                </div>
+                <div class="card">
+                    <div class="ct"><i class="fas fa-chart-pie"></i> Customer by Industry</div>
+                    <div class="cs">Industry distribution</div>
+                    <canvas id="industryChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="row3">
+                <div class="card">
+                    <div class="ct"><i class="fas fa-chart-line"></i> Segment Performance Deep Dive</div>
+                    <div class="cs">LTV, MRR, Health Score, Churn Rate by segment</div>
+                    <div class="seg-grid" id="segmentGrid">
+                        ${segments.map(seg => `
+                            <div class="seg-card ${seg.toLowerCase().replace(' ', '').replace('-', '')}">
+                                <div class="seg-name">${seg}</div>
+                                <div class="seg-ltv">$${(ltvBySegment[seg]/1000).toFixed(0)}K avg LTV</div>
+                                <div class="seg-meta">MRR: $${mrrBySegment[seg].toFixed(0)} · Health: ${healthBySegment[seg].toFixed(1)} · Churn: ${churnBySegment[seg].toFixed(1)}%</div>
+                                <canvas id="spark_${seg.replace(/\s/g, '_')}" height="40"></canvas>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="ct"><i class="fas fa-chart-line"></i> Customer Retention Funnel</div>
+                    <div class="cs">Lifecycle from acquisition to advocacy</div>
+                    <div style="margin-top: 1rem">
+                        <div class="funnel-step"><div style="width:100px; font-size:0.7rem; color:var(--muted)">Acquired</div><div class="funnel-bar" style="width:100%; background:var(--teal)">${acquired} customers</div><div class="funnel-val">100%</div></div>
+                        <div class="funnel-step"><div style="width:100px; font-size:0.7rem; color:var(--muted)">Onboarded</div><div class="funnel-bar" style="width:${(onboarded/acquired*100)}%; background:var(--sky)">${onboarded} customers</div><div class="funnel-val">${(onboarded/acquired*100).toFixed(0)}%</div></div>
+                        <div class="funnel-step"><div style="width:100px; font-size:0.7rem; color:var(--muted)">Active 90d</div><div class="funnel-bar" style="width:${(active90d/acquired*100)}%; background:var(--violet)">${active90d} customers</div><div class="funnel-val">${(active90d/acquired*100).toFixed(0)}%</div></div>
+                        <div class="funnel-step"><div style="width:100px; font-size:0.7rem; color:var(--muted)">Renewed</div><div class="funnel-bar" style="width:${(renewed/acquired*100)}%; background:var(--gold)">${renewed} customers</div><div class="funnel-val">${(renewed/acquired*100).toFixed(0)}%</div></div>
+                        <div class="funnel-step"><div style="width:100px; font-size:0.7rem; color:var(--muted)">Expanded</div><div class="funnel-bar" style="width:${(expanded/acquired*100)}%; background:var(--coral)">${expanded} customers</div><div class="funnel-val">${(expanded/acquired*100).toFixed(0)}%</div></div>
+                        <div class="funnel-step"><div style="width:100px; font-size:0.7rem; color:var(--muted)">Advocates</div><div class="funnel-bar" style="width:${(advocates/acquired*100)}%; background:var(--rose)">${advocates} customers</div><div class="funnel-val">${(advocates/acquired*100).toFixed(0)}%</div></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card" style="margin: 0 1.5rem 1.5rem">
+                <div class="ct"><i class="fas fa-exclamation-triangle"></i> At-Risk Customers (Highest Churn Probability)</div>
+                <div class="cs">Priority intervention needed for these accounts</div>
+                <table>
+                    <thead><tr><th>Customer ID</th><th>Segment</th><th>Churn Prob</th><th>Health Score</th><th>Plan</th><th>Recommended Action</th></tr></thead>
+                    <tbody>
+                        ${atRiskCustomers.map(c => `
+                            <tr>
+                                <td style="font-family:'Fira Code';font-size:0.68rem">${c.Customer_ID || '-'}</td>
+                                <td><span class="chip ${(c.Segment || '').toLowerCase().replace(' ', '').replace('-', '')}">${c.Segment || '-'}</span></td>
+                                <td style="color:#dc2626;font-family:'Fira Code'">${((c.Churn_Probability || 0)*100).toFixed(1)}%</td>
+                                <td style="color:${(c.Health_Score || 0) > 70 ? '#16a34a' : (c.Health_Score || 0) > 40 ? '#d97706' : '#dc2626'}">${c.Health_Score || '-'}</td>
+                                <td>${c.Plan || '-'}</td>
+                                <td style="color:var(--rose);font-size:0.68rem">${(c.Health_Score || 0) < 50 ? 'Immediate QBR' : 'Success Review'}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            </div>
+        `;
+        
+        // Render Charts
+        new Chart(document.getElementById('ltvChart'), {
+            type: 'bar',
+            data: { labels: segments, datasets: [
+                { label: 'Avg LTV ($K)', data: segments.map(s => ltvBySegment[s] / 1000), backgroundColor: 'rgba(13,148,136,0.7)', borderColor: '#0d9488', borderWidth: 2, borderRadius: 6 },
+                { label: 'Avg MRR ($)', data: segments.map(s => mrrBySegment[s]), backgroundColor: 'rgba(124,58,237,0.5)', borderColor: '#7c3aed', borderWidth: 2, borderRadius: 6, type: 'line' }
+            ]},
+            options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12 } } } }
+        });
+        
+        new Chart(document.getElementById('churnDistChart'), {
+            type: 'bar',
+            data: { labels: ['0-10%', '10-20%', '20-40%', '40-60%', '60-80%', '>80%'], datasets: [{ label: '# Customers', data: churnCounts, backgroundColor: '#e11d48', borderRadius: 6 }] },
+            options: { responsive: true, plugins: { legend: { display: false } } }
+        });
+        
+        new Chart(document.getElementById('planChart'), {
+            type: 'doughnut',
+            data: { labels: plans, datasets: [{ data: plans.map(p => mrrByPlan[p]), backgroundColor: ['#0d9488', '#0ea5e9', '#7c3aed', '#e85d3a'], borderWidth: 0 }] },
+            options: { responsive: true, cutout: '60%', plugins: { legend: { position: 'bottom' } } }
+        });
+        
+        // Health vs Churn Scatter
+        const scatterData = data.slice(0, 150).map(d => ({ x: d.Health_Score || 50, y: (d.Churn_Probability || 0) * 100 }));
+        new Chart(document.getElementById('healthChart'), {
+            type: 'scatter',
+            data: { datasets: [{ label: 'Customers', data: scatterData, backgroundColor: scatterData.map(p => p.y > 50 ? '#e11d48' : p.y > 25 ? '#d97706' : '#16a34a'), pointRadius: 5 }] },
+            options: { responsive: true, scales: { x: { title: { display: true, text: 'Health Score' }, min: 20, max: 100 }, y: { title: { display: true, text: 'Churn Probability %' }, min: 0, max: 100 } }, plugins: { legend: { display: false } } }
+        });
+        
+        new Chart(document.getElementById('industryChart'), {
+            type: 'pie',
+            data: { labels: industries, datasets: [{ data: industryCounts, backgroundColor: ['#0d9488', '#0ea5e9', '#7c3aed', '#e85d3a', '#d97706'], borderWidth: 0 }] },
+            options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+        });
+        
+        // Mini sparklines for segments
+        segments.forEach(seg => {
+            const segData = data.filter(d => d.Segment === seg);
+            const monthlyMRR = segData.slice(0, 12).map((_, i) => (segData[i]?.MRR || 3000) * (0.8 + Math.random() * 0.6));
+            const canvasId = `spark_${seg.replace(/\s/g, '_')}`;
+            const canvas = document.getElementById(canvasId);
+            if (canvas) {
+                new Chart(canvas, {
+                    type: 'line',
+                    data: { labels: monthlyMRR.map((_, i) => i+1), datasets: [{ data: monthlyMRR, borderColor: seg === 'Enterprise' ? '#7c3aed' : seg === 'Mid-Market' ? '#0d9488' : seg === 'SMB' ? '#d97706' : '#e85d3a', borderWidth: 2, fill: false, pointRadius: 0, tension: 0.4 }] },
+                    options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { display: false }, tooltip: { enabled: false } }, scales: { x: { display: false }, y: { display: false } } }
+                });
+            }
+        });
+    }
+    
+    // Store data for filtering
+    window.customerData = null;
+    
+    loadCustomerData().then(() => {
+        // Re-fetch for filter functions
+        fetch('customer_analytics.csv')
+            .then(res => res.text())
+            .then(csvText => {
+                const rows = csvText.trim().split('\n');
+                const headers = rows[0].split('\t');
+                const data = [];
+                for (let i = 1; i < rows.length; i++) {
+                    const values = rows[i].split('\t');
+                    const record = {};
+                    headers.forEach((header, idx) => {
+                        let val = values[idx] || '';
+                        if (!isNaN(parseFloat(val)) && val !== '' && val !== '-') {
+                            record[header.trim()] = parseFloat(val);
+                        } else {
+                            record[header.trim()] = val;
+                        }
+                    });
+                    data.push(record);
+                }
+                window.customerData = data;
+            });
+    });
+    
+    function filterBySegment(segment, data) {
+        if (!data) return;
+        const filtered = segment === 'all' ? data : data.filter(d => d.Segment === segment);
+        renderDashboard(filtered);
+    }
+    
+    function filterByIndustry(industry, data) {
+        if (!data) return;
+        const filtered = industry === 'all' ? data : data.filter(d => d.Industry === industry);
+        renderDashboard(filtered);
+    }
+</script>
+</body>
+</html>
