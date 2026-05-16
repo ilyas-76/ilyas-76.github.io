@@ -3,206 +3,102 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pharmaceutical Analytics Dashboard | AlphaStat Lab</title>
-    <!-- Chart.js CDN -->
+    <title>Pharmaceutical Analytics Dashboard | AlphaStatLab</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'Segoe UI', 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0f2b3d 0%, #1a4a6f 100%);
             min-height: 100vh;
             padding: 20px;
         }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        /* Header */
+        .container { max-width: 1400px; margin: 0 auto; }
+        
         .header {
-            background: white;
-            border-radius: 20px;
-            padding: 25px 30px;
+            background: linear-gradient(135deg, #ffffff, #f8f9fa);
+            border-radius: 24px;
+            padding: 28px 32px;
             margin-bottom: 25px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+            border: 1px solid rgba(255,255,255,0.3);
         }
-
-        .header h1 {
-            color: #2d3748;
-            font-size: 28px;
-            margin-bottom: 8px;
-        }
-
-        .header h1 i {
-            color: #667eea;
-            margin-right: 12px;
-        }
-
-        .header p {
-            color: #718096;
-            font-size: 14px;
-        }
-
+        .header h1 { color: #1a3a5c; font-size: 28px; margin-bottom: 8px; }
+        .header h1 i { color: #2ecc71; margin-right: 12px; }
+        .header p { color: #5a6e7c; font-size: 14px; }
+        
         .stats-row {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(4, 1fr);
             gap: 20px;
             margin-bottom: 25px;
         }
-
         .stat-card {
-            background: white;
+            background: rgba(255,255,255,0.95);
             border-radius: 20px;
-            padding: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            padding: 22px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
             transition: transform 0.2s;
+            text-align: center;
         }
-
-        .stat-card:hover {
-            transform: translateY(-3px);
-        }
-
-        .stat-card i {
-            font-size: 32px;
-            color: #667eea;
-            margin-bottom: 12px;
-        }
-
-        .stat-card .label {
-            color: #718096;
-            font-size: 13px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .stat-card .value {
-            font-size: 32px;
-            font-weight: bold;
-            color: #2d3748;
-            margin-top: 8px;
-        }
-
-        .stat-card .trend {
-            font-size: 12px;
-            margin-top: 8px;
-        }
-
-        .trend.up { color: #48bb78; }
-        .trend.down { color: #f56565; }
-
-        /* Chart grid */
+        .stat-card:hover { transform: translateY(-5px); }
+        .stat-card i { font-size: 40px; margin-bottom: 12px; }
+        .stat-card .label { color: #718096; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
+        .stat-card .value { font-size: 36px; font-weight: bold; color: #1a3a5c; margin-top: 8px; }
+        .stat-card .trend { font-size: 12px; margin-top: 8px; }
+        .trend.up { color: #2ecc71; }
+        .trend.down { color: #e74c3c; }
+        
         .chart-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            grid-template-columns: repeat(2, 1fr);
             gap: 25px;
             margin-bottom: 25px;
         }
-
         .chart-card {
-            background: white;
-            border-radius: 20px;
-            padding: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            background: rgba(255,255,255,0.95);
+            border-radius: 24px;
+            padding: 22px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+            transition: transform 0.2s;
         }
-
+        .chart-card:hover { transform: translateY(-3px); }
         .chart-card h3 {
-            color: #2d3748;
+            color: #1a3a5c;
             font-size: 18px;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #e2e8f0;
+            margin-bottom: 18px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #e0e8f0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
-
-        .chart-card h3 i {
-            color: #667eea;
-            margin-right: 8px;
+        .chart-card h3 i { color: #2ecc71; font-size: 22px; }
+        canvas { max-height: 280px; width: 100%; }
+        
+        .full-width { grid-column: span 2; }
+        
+        .disclaimer {
+            background: rgba(0,0,0,0.75);
+            border-radius: 16px;
+            padding: 20px 25px;
+            margin-top: 25px;
+            text-align: center;
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.2);
         }
-
-        canvas {
-            max-height: 300px;
-            width: 100%;
+        .disclaimer p {
+            color: #f0f0f0;
+            font-size: 12px;
+            line-height: 1.6;
         }
-
-        /* Table */
-        .data-table {
-            background: white;
-            border-radius: 20px;
-            padding: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            overflow-x: auto;
-        }
-
-        .data-table h3 {
-            color: #2d3748;
-            margin-bottom: 15px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13px;
-        }
-
-        th {
-            background: #f7fafc;
-            padding: 12px;
-            text-align: left;
-            font-weight: 600;
-            color: #4a5568;
-            border-bottom: 2px solid #e2e8f0;
-        }
-
-        td {
-            padding: 10px 12px;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        .warning-badge {
-            background: #fed7d7;
-            color: #c53030;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: bold;
-            display: inline-block;
-        }
-
-        .none-badge {
-            background: #c6f6d5;
-            color: #276749;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: bold;
-            display: inline-block;
-        }
-
-        .review-badge {
-            background: #feebc8;
-            color: #c05621;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: bold;
-            display: inline-block;
-        }
-
-        @media (max-width: 768px) {
-            .chart-grid {
-                grid-template-columns: 1fr;
-            }
-            .stats-row {
-                grid-template-columns: repeat(2, 1fr);
-            }
+        .disclaimer i { color: #ffd700; margin-right: 8px; }
+        
+        @media (max-width: 900px) {
+            .stats-row { grid-template-columns: repeat(2, 1fr); }
+            .chart-grid { grid-template-columns: 1fr; }
+            .full-width { grid-column: span 1; }
         }
     </style>
 </head>
@@ -210,16 +106,14 @@
 <div class="container">
     <div class="header">
         <h1><i class="fas fa-chart-line"></i> Pharmaceutical Analytics Dashboard</h1>
-        <p>Drug development metrics, market trends, and pharmacovigilance monitoring | Data-driven insights for smarter decisions</p>
+        <p>Drug market trends · Pharmacovigilance · Adverse Event Monitoring · Market Share Analysis</p>
     </div>
 
-    <div class="stats-row" id="statsRow">
-        <!-- populated by JS -->
-    </div>
+    <div class="stats-row" id="statsRow"></div>
 
     <div class="chart-grid">
         <div class="chart-card">
-            <h3><i class="fas fa-chart-line"></i> Prescriptions Over Time by Drug</h3>
+            <h3><i class="fas fa-chart-line"></i> Prescriptions Trend (2023)</h3>
             <canvas id="prescriptionsChart"></canvas>
         </div>
         <div class="chart-card">
@@ -227,156 +121,115 @@
             <canvas id="adverseEventsChart"></canvas>
         </div>
         <div class="chart-card">
-            <h3><i class="fas fa-chart-pie"></i> Market Share Distribution (Latest Month)</h3>
+            <h3><i class="fas fa-chart-pie"></i> Market Share (December 2023)</h3>
             <canvas id="marketShareChart"></canvas>
         </div>
         <div class="chart-card">
-            <h3><i class="fas fa-chart-bar"></i> Effectiveness Score by Drug</h3>
+            <h3><i class="fas fa-chart-bar"></i> Effectiveness Score</h3>
             <canvas id="effectivenessChart"></canvas>
+        </div>
+        <div class="chart-card full-width">
+            <h3><i class="fas fa-chart-line"></i> Serious Adverse Events Trend</h3>
+            <canvas id="seriousAeChart"></canvas>
         </div>
     </div>
 
-    <div class="data-table">
-        <h3><i class="fas fa-table"></i> Monthly Drug Performance Data</h3>
-        <table id="dataTable">
-            <thead>
-                <tr><th>Month</th><th>Drug</th><th>Prescriptions</th><th>Adverse Events</th><th>Serious AEs</th><th>Cost ($)</th><th>Market Share</th><th>Regulatory Action</th><th>Effectiveness</th></tr>
-            </thead>
-            <tbody id="tableBody"></tbody>
-        </table>
+    <div class="disclaimer">
+        <p><i class="fas fa-database"></i> <strong>⚠️ Data Disclaimer:</strong> All data presented in this dashboard is <strong>entirely randomly generated synthetic data</strong> created for demonstration and portfolio purposes by AlphaStatLab. Drug names, prescription volumes, adverse event counts, effectiveness scores, market shares, and regulatory actions are fictional and do not represent any real pharmaceutical products, clinical trials, or real-world data. This dashboard illustrates AlphaStatLab's capabilities in pharmaceutical analytics and data visualization.</p>
     </div>
 </div>
 
 <script>
-    // Full dataset (36 rows from our CSV)
     const pharmaData = [
-        {Month:"2023-01",Drug:"InsulinAspart",Rx:12500,AE:142,Serious:12,Cost:45.20,Share:12.8,Reg:"None",Eff:88},
-        {Month:"2023-01",Drug:"Simvastatin",Rx:34200,AE:89,Serious:4,Cost:12.75,Share:28.4,Reg:"None",Eff:92},
-        {Month:"2023-01",Drug:"Trastuzumab",Rx:5600,AE:67,Serious:15,Cost:1240.00,Share:9.2,Reg:"None",Eff:95},
-        {Month:"2023-02",Drug:"InsulinAspart",Rx:13100,AE:138,Serious:11,Cost:45.15,Share:13.1,Reg:"None",Eff:87},
-        {Month:"2023-02",Drug:"Simvastatin",Rx:35100,AE:91,Serious:5,Cost:12.70,Share:28.9,Reg:"None",Eff:91},
-        {Month:"2023-02",Drug:"Trastuzumab",Rx:5700,AE:70,Serious:18,Cost:1238.50,Share:9.1,Reg:"Warning",Eff:94},
-        {Month:"2023-03",Drug:"InsulinAspart",Rx:13800,AE:145,Serious:14,Cost:45.10,Share:13.4,Reg:"None",Eff:86},
-        {Month:"2023-03",Drug:"Simvastatin",Rx:35900,AE:102,Serious:6,Cost:12.68,Share:29.0,Reg:"Review",Eff:90},
-        {Month:"2023-03",Drug:"Trastuzumab",Rx:5850,AE:85,Serious:22,Cost:1235.00,Share:8.9,Reg:"Warning",Eff:93},
-        {Month:"2023-04",Drug:"InsulinAspart",Rx:14200,AE:152,Serious:16,Cost:45.00,Share:13.7,Reg:"None",Eff:85},
-        {Month:"2023-04",Drug:"Simvastatin",Rx:36700,AE:95,Serious:5,Cost:12.65,Share:29.2,Reg:"None",Eff:92},
-        {Month:"2023-04",Drug:"Trastuzumab",Rx:5920,AE:95,Serious:28,Cost:1232.00,Share:8.7,Reg:"Warning",Eff:92},
-        {Month:"2023-05",Drug:"InsulinAspart",Rx:14900,AE:160,Serious:19,Cost:44.90,Share:14.0,Reg:"None",Eff:84},
-        {Month:"2023-05",Drug:"Simvastatin",Rx:37400,AE:108,Serious:7,Cost:12.60,Share:29.5,Reg:"Review",Eff:90},
-        {Month:"2023-05",Drug:"Trastuzumab",Rx:6010,AE:102,Serious:34,Cost:1228.00,Share:8.5,Reg:"Warning",Eff:91},
-        {Month:"2023-06",Drug:"InsulinAspart",Rx:15500,AE:172,Serious:21,Cost:44.85,Share:14.3,Reg:"None",Eff:83},
-        {Month:"2023-06",Drug:"Simvastatin",Rx:38000,AE:112,Serious:8,Cost:12.55,Share:29.7,Reg:"None",Eff:89},
-        {Month:"2023-06",Drug:"Trastuzumab",Rx:6080,AE:118,Serious:41,Cost:1225.00,Share:8.4,Reg:"Warning",Eff:90},
-        {Month:"2023-07",Drug:"InsulinAspart",Rx:16100,AE:185,Serious:25,Cost:44.80,Share:14.6,Reg:"None",Eff:82},
-        {Month:"2023-07",Drug:"Simvastatin",Rx:38900,AE:120,Serious:9,Cost:12.50,Share:30.0,Reg:"None",Eff:91},
-        {Month:"2023-07",Drug:"Trastuzumab",Rx:6150,AE:135,Serious:47,Cost:1220.00,Share:8.3,Reg:"Warning",Eff:89},
-        {Month:"2023-08",Drug:"InsulinAspart",Rx:16800,AE:198,Serious:28,Cost:44.75,Share:14.9,Reg:"None",Eff:81},
-        {Month:"2023-08",Drug:"Simvastatin",Rx:39500,AE:131,Serious:11,Cost:12.48,Share:30.2,Reg:"Review",Eff:90},
-        {Month:"2023-08",Drug:"Trastuzumab",Rx:6200,AE:150,Serious:54,Cost:1215.00,Share:8.2,Reg:"Warning",Eff:88},
-        {Month:"2023-09",Drug:"InsulinAspart",Rx:17400,AE:212,Serious:32,Cost:44.70,Share:15.2,Reg:"None",Eff:80},
-        {Month:"2023-09",Drug:"Simvastatin",Rx:40200,AE:142,Serious:13,Cost:12.45,Share:30.5,Reg:"None",Eff:89},
-        {Month:"2023-09",Drug:"Trastuzumab",Rx:6280,AE:168,Serious:60,Cost:1210.00,Share:8.1,Reg:"Warning",Eff:87},
-        {Month:"2023-10",Drug:"InsulinAspart",Rx:17900,AE:225,Serious:36,Cost:44.65,Share:15.4,Reg:"None",Eff:79},
-        {Month:"2023-10",Drug:"Simvastatin",Rx:40800,AE:155,Serious:15,Cost:12.42,Share:30.8,Reg:"Review",Eff:88},
-        {Month:"2023-10",Drug:"Trastuzumab",Rx:6350,AE:185,Serious:68,Cost:1205.00,Share:8.0,Reg:"Warning",Eff:86},
-        {Month:"2023-11",Drug:"InsulinAspart",Rx:18500,AE:240,Serious:40,Cost:44.60,Share:15.7,Reg:"None",Eff:78},
-        {Month:"2023-11",Drug:"Simvastatin",Rx:41500,AE:168,Serious:18,Cost:12.40,Share:31.0,Reg:"None",Eff:87},
-        {Month:"2023-11",Drug:"Trastuzumab",Rx:6410,AE:202,Serious:75,Cost:1200.00,Share:7.9,Reg:"Warning",Eff:85},
-        {Month:"2023-12",Drug:"InsulinAspart",Rx:19000,AE:258,Serious:45,Cost:44.55,Share:16.0,Reg:"None",Eff:77},
-        {Month:"2023-12",Drug:"Simvastatin",Rx:42100,AE:182,Serious:20,Cost:12.38,Share:31.2,Reg:"Review",Eff:86},
-        {Month:"2023-12",Drug:"Trastuzumab",Rx:6480,AE:220,Serious:82,Cost:1195.00,Share:7.8,Reg:"Warning",Eff:84}
+        {Month:"Jan",Drug:"InsulinAspart",Rx:12500,AE:142,Serious:12,Share:12.8,Eff:88},
+        {Month:"Jan",Drug:"Simvastatin",Rx:34200,AE:89,Serious:4,Share:28.4,Eff:92},
+        {Month:"Jan",Drug:"Trastuzumab",Rx:5600,AE:67,Serious:15,Share:9.2,Eff:95},
+        {Month:"Feb",Drug:"InsulinAspart",Rx:13100,AE:138,Serious:11,Share:13.1,Eff:87},
+        {Month:"Feb",Drug:"Simvastatin",Rx:35100,AE:91,Serious:5,Share:28.9,Eff:91},
+        {Month:"Feb",Drug:"Trastuzumab",Rx:5700,AE:70,Serious:18,Share:9.1,Eff:94},
+        {Month:"Mar",Drug:"InsulinAspart",Rx:13800,AE:145,Serious:14,Share:13.4,Eff:86},
+        {Month:"Mar",Drug:"Simvastatin",Rx:35900,AE:102,Serious:6,Share:29.0,Eff:90},
+        {Month:"Mar",Drug:"Trastuzumab",Rx:5850,AE:85,Serious:22,Share:8.9,Eff:93},
+        {Month:"Apr",Drug:"InsulinAspart",Rx:14200,AE:152,Serious:16,Share:13.7,Eff:85},
+        {Month:"Apr",Drug:"Simvastatin",Rx:36700,AE:95,Serious:5,Share:29.2,Eff:92},
+        {Month:"Apr",Drug:"Trastuzumab",Rx:5920,AE:95,Serious:28,Share:8.7,Eff:92},
+        {Month:"May",Drug:"InsulinAspart",Rx:14900,AE:160,Serious:19,Share:14.0,Eff:84},
+        {Month:"May",Drug:"Simvastatin",Rx:37400,AE:108,Serious:7,Share:29.5,Eff:90},
+        {Month:"May",Drug:"Trastuzumab",Rx:6010,AE:102,Serious:34,Share:8.5,Eff:91},
+        {Month:"Jun",Drug:"InsulinAspart",Rx:15500,AE:172,Serious:21,Share:14.3,Eff:83},
+        {Month:"Jun",Drug:"Simvastatin",Rx:38000,AE:112,Serious:8,Share:29.7,Eff:89},
+        {Month:"Jun",Drug:"Trastuzumab",Rx:6080,AE:118,Serious:41,Share:8.4,Eff:90},
+        {Month:"Jul",Drug:"InsulinAspart",Rx:16100,AE:185,Serious:25,Share:14.6,Eff:82},
+        {Month:"Jul",Drug:"Simvastatin",Rx:38900,AE:120,Serious:9,Share:30.0,Eff:91},
+        {Month:"Jul",Drug:"Trastuzumab",Rx:6150,AE:135,Serious:47,Share:8.3,Eff:89},
+        {Month:"Aug",Drug:"InsulinAspart",Rx:16800,AE:198,Serious:28,Share:14.9,Eff:81},
+        {Month:"Aug",Drug:"Simvastatin",Rx:39500,AE:131,Serious:11,Share:30.2,Eff:90},
+        {Month:"Aug",Drug:"Trastuzumab",Rx:6200,AE:150,Serious:54,Share:8.2,Eff:88},
+        {Month:"Sep",Drug:"InsulinAspart",Rx:17400,AE:212,Serious:32,Share:15.2,Eff:80},
+        {Month:"Sep",Drug:"Simvastatin",Rx:40200,AE:142,Serious:13,Share:30.5,Eff:89},
+        {Month:"Sep",Drug:"Trastuzumab",Rx:6280,AE:168,Serious:60,Share:8.1,Eff:87},
+        {Month:"Oct",Drug:"InsulinAspart",Rx:17900,AE:225,Serious:36,Share:15.4,Eff:79},
+        {Month:"Oct",Drug:"Simvastatin",Rx:40800,AE:155,Serious:15,Share:30.8,Eff:88},
+        {Month:"Oct",Drug:"Trastuzumab",Rx:6350,AE:185,Serious:68,Share:8.0,Eff:86},
+        {Month:"Nov",Drug:"InsulinAspart",Rx:18500,AE:240,Serious:40,Share:15.7,Eff:78},
+        {Month:"Nov",Drug:"Simvastatin",Rx:41500,AE:168,Serious:18,Share:31.0,Eff:87},
+        {Month:"Nov",Drug:"Trastuzumab",Rx:6410,AE:202,Serious:75,Share:7.9,Eff:85},
+        {Month:"Dec",Drug:"InsulinAspart",Rx:19000,AE:258,Serious:45,Share:16.0,Eff:77},
+        {Month:"Dec",Drug:"Simvastatin",Rx:42100,AE:182,Serious:20,Share:31.2,Eff:86},
+        {Month:"Dec",Drug:"Trastuzumab",Rx:6480,AE:220,Serious:82,Share:7.8,Eff:84}
     ];
 
     const drugs = [...new Set(pharmaData.map(d => d.Drug))];
     const months = [...new Set(pharmaData.map(d => d.Month))];
 
-    // KPI calculations
-    const totalRx = pharmaData.reduce((sum, d) => sum + d.Rx, 0);
-    const totalAE = pharmaData.reduce((sum, d) => sum + d.AE, 0);
-    const avgEffectiveness = (pharmaData.reduce((sum, d) => sum + d.Eff, 0) / pharmaData.length).toFixed(1);
-    const uniqueWarnings = pharmaData.filter(d => d.Reg !== "None").length;
+    const totalRx = pharmaData.reduce((s, d) => s + d.Rx, 0);
+    const totalAE = pharmaData.reduce((s, d) => s + d.AE, 0);
+    const avgEff = (pharmaData.reduce((s, d) => s + d.Eff, 0) / pharmaData.length).toFixed(1);
+    const totalSerious = pharmaData.reduce((s, d) => s + d.Serious, 0);
 
     document.getElementById('statsRow').innerHTML = `
-        <div class="stat-card"><i class="fas fa-prescription-bottle"></i><div class="label">Total Prescriptions</div><div class="value">${(totalRx/1000).toFixed(0)}K</div><div class="trend up"><i class="fas fa-arrow-up"></i> +12% vs Q1</div></div>
-        <div class="stat-card"><i class="fas fa-exclamation-circle"></i><div class="label">Total Adverse Events</div><div class="value">${totalAE}</div><div class="trend down"><i class="fas fa-arrow-up"></i> +45% trend</div></div>
-        <div class="stat-card"><i class="fas fa-chart-line"></i><div class="label">Avg Effectiveness</div><div class="value">${avgEffectiveness}/100</div><div class="trend up"><i class="fas fa-chart-line"></i> Declining trend</div></div>
-        <div class="stat-card"><i class="fas fa-shield-alt"></i><div class="label">Regulatory Actions</div><div class="value">${uniqueWarnings}</div><div class="trend down"><i class="fas fa-flag"></i> Review needed</div></div>
+        <div class="stat-card"><i class="fas fa-prescription-bottle" style="color:#2ecc71"></i><div class="label">Total Prescriptions</div><div class="value">${Math.round(totalRx/1000)}K</div><div class="trend up"><i class="fas fa-arrow-up"></i> +52% growth</div></div>
+        <div class="stat-card"><i class="fas fa-exclamation-circle" style="color:#e74c3c"></i><div class="label">Adverse Events</div><div class="value">${totalAE}</div><div class="trend up"><i class="fas fa-arrow-up"></i> +82% YoY</div></div>
+        <div class="stat-card"><i class="fas fa-chart-line" style="color:#3498db"></i><div class="label">Avg Effectiveness</div><div class="value">${avgEff}/100</div><div class="trend down"><i class="fas fa-arrow-down"></i> Declining trend</div></div>
+        <div class="stat-card"><i class="fas fa-exclamation-triangle" style="color:#f39c12"></i><div class="label">Serious AEs</div><div class="value">${totalSerious}</div><div class="trend up"><i class="fas fa-arrow-up"></i> +447% increase</div></div>
     `;
 
-    // Prescriptions chart (line)
-    const ctx1 = document.getElementById('prescriptionsChart').getContext('2d');
-    new Chart(ctx1, {
+    // Prescriptions Chart
+    new Chart(document.getElementById('prescriptionsChart'), {
         type: 'line',
-        data: {
-            labels: months,
-            datasets: drugs.map((drug, idx) => ({
-                label: drug,
-                data: months.map(m => pharmaData.find(d => d.Drug === drug && d.Month === m)?.Rx || 0),
-                borderColor: ['#667eea', '#48bb78', '#ed8936'][idx],
-                backgroundColor: 'transparent',
-                tension: 0.3,
-                fill: false
-            }))
-        },
-        options: { responsive: true, maintainAspectRatio: true }
+        data: { labels: months, datasets: drugs.map((drug, i) => ({ label: drug, data: months.map(m => pharmaData.find(d => d.Drug === drug && d.Month === m)?.Rx || 0), borderColor: ['#2ecc71', '#3498db', '#e74c3c'][i], backgroundColor: 'transparent', tension: 0.3, fill: false, pointBackgroundColor: ['#2ecc71', '#3498db', '#e74c3c'][i], pointRadius: 3, pointHoverRadius: 6 })) },
+        options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { position: 'bottom' } } }
     });
 
-    // Adverse events line chart
-    const ctx2 = document.getElementById('adverseEventsChart').getContext('2d');
-    new Chart(ctx2, {
+    // Adverse Events Chart
+    new Chart(document.getElementById('adverseEventsChart'), {
         type: 'line',
-        data: {
-            labels: months,
-            datasets: drugs.map((drug, idx) => ({
-                label: drug,
-                data: months.map(m => pharmaData.find(d => d.Drug === drug && d.Month === m)?.AE || 0),
-                borderColor: ['#f56565', '#ed8936', '#9b59b6'][idx],
-                backgroundColor: 'transparent',
-                tension: 0.3,
-                fill: false
-            }))
-        },
-        options: { responsive: true, maintainAspectRatio: true }
+        data: { labels: months, datasets: drugs.map((drug, i) => ({ label: drug, data: months.map(m => pharmaData.find(d => d.Drug === drug && d.Month === m)?.AE || 0), borderColor: ['#e74c3c', '#f39c12', '#9b59b6'][i], backgroundColor: 'transparent', tension: 0.3, fill: false, pointRadius: 3 })) },
+        options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { position: 'bottom' } } }
     });
 
-    // Market share pie (latest month - Dec 2023)
-    const latestData = pharmaData.filter(d => d.Month === "2023-12");
-    const ctx3 = document.getElementById('marketShareChart').getContext('2d');
-    new Chart(ctx3, {
-        type: 'pie',
-        data: {
-            labels: latestData.map(d => d.Drug),
-            datasets: [{ data: latestData.map(d => d.Share), backgroundColor: ['#667eea', '#48bb78', '#ed8936'] }]
-        },
-        options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+    // Market Share Pie
+    const latestData = pharmaData.filter(d => d.Month === "Dec");
+    new Chart(document.getElementById('marketShareChart'), {
+        type: 'doughnut',
+        data: { labels: latestData.map(d => d.Drug), datasets: [{ data: latestData.map(d => d.Share), backgroundColor: ['#2ecc71', '#3498db', '#e74c3c'], borderWidth: 0, hoverOffset: 8 }] },
+        options: { responsive: true, plugins: { legend: { position: 'bottom' }, tooltip: { callbacks: { label: ctx => `${ctx.label}: ${ctx.raw}% market share` } } } }
     });
 
-    // Effectiveness bar (last 3 months avg per drug)
+    // Effectiveness Bar Chart
     const last3Months = months.slice(-3);
-    const effData = drugs.map(drug => ({
-        drug,
-        avgEff: last3Months.reduce((sum, m) => sum + (pharmaData.find(d => d.Drug === drug && d.Month === m)?.Eff || 0), 0) / 3
-    }));
-    const ctx4 = document.getElementById('effectivenessChart').getContext('2d');
-    new Chart(ctx4, {
+    const effData = drugs.map(drug => ({ drug, avgEff: last3Months.reduce((s, m) => s + (pharmaData.find(d => d.Drug === drug && d.Month === m)?.Eff || 0), 0) / 3 }));
+    new Chart(document.getElementById('effectivenessChart'), {
         type: 'bar',
-        data: {
-            labels: effData.map(d => d.drug),
-            datasets: [{ label: 'Avg Effectiveness (Last 3 Months)', data: effData.map(d => d.avgEff), backgroundColor: '#667eea' }]
-        },
-        options: { responsive: true, scales: { y: { max: 100 } } }
+        data: { labels: effData.map(d => d.drug), datasets: [{ label: 'Avg Effectiveness (Last 3 Months)', data: effData.map(d => d.avgEff), backgroundColor: ['#2ecc71', '#3498db', '#e74c3c'], borderRadius: 8 }] },
+        options: { responsive: true, scales: { y: { max: 100, title: { display: true, text: 'Effectiveness Score (0-100)' } } }, plugins: { legend: { position: 'top' } } }
     });
 
-    // Fill table
-    const tbody = document.getElementById('tableBody');
-    pharmaData.forEach(d => {
-        let badgeClass = d.Reg === "None" ? "none-badge" : (d.Reg === "Warning" ? "warning-badge" : "review-badge");
-        tbody.innerHTML += `<tr>
-            <td>${d.Month}</td><td>${d.Drug}</td><td>${d.Rx.toLocaleString()}</td><td>${d.AE}</td><td>${d.Serious}</td>
-            <td>$${d.Cost.toFixed(2)}</td><td>${d.Share}%</td>
-            <td><span class="${badgeClass}">${d.Reg}</span></td><td>${d.Eff}</td>
-        </tr>`;
+    // Serious Adverse Events Chart
+    new Chart(document.getElementById('seriousAeChart'), {
+        type: 'line',
+        data: { labels: months, datasets: drugs.map((drug, i) => ({ label: drug, data: months.map(m => pharmaData.find(d => d.Drug === drug && d.Month === m)?.Serious || 0), borderColor: ['#e74c3c', '#f39c12', '#9b59b6'][i], backgroundColor: 'rgba(231,76,60,0.05)', tension: 0.3, fill: true, pointRadius: 3 })) },
+        options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { position: 'bottom' } }, scales: { y: { title: { display: true, text: 'Number of Serious AEs' } } } }
     });
 </script>
 </body>
