@@ -4,8 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Energy Storage & Battery Analytics | AlphaStatLab</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 :root{
   --bg:#010d1a;--bg2:#021022;--surface:rgba(0,220,130,0.03);
@@ -17,11 +18,16 @@
 *{margin:0;padding:0;box-sizing:border-box;}
 body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;font-size:13px;min-height:100vh;overflow-x:hidden;}
 
-/* Terminal grid lines */
+/* Animated background */
 body::before{
   content:'';position:fixed;top:0;left:0;right:0;bottom:0;
   background-image:linear-gradient(rgba(0,220,130,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,220,130,0.025) 1px,transparent 1px);
   background-size:60px 60px;pointer-events:none;z-index:0;
+}
+body::after{
+  content:'';position:fixed;top:0;left:0;right:0;bottom:0;
+  background:radial-gradient(ellipse 80% 50% at 30% 20%, rgba(0,220,130,0.08) 0%, transparent 60%);
+  pointer-events:none;z-index:0;
 }
 
 /* Header */
@@ -30,17 +36,17 @@ body::before{
   padding:0 36px;display:flex;align-items:stretch;
   position:relative;z-index:5;
 }
-.header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--green),transparent);opacity:0.4;}
+.header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--green),var(--teal),var(--green2),transparent);opacity:0.6;}
 .h-brand{padding:20px 28px 20px 0;border-right:1px solid var(--border);display:flex;flex-direction:column;justify-content:center;margin-right:28px;}
-.h-brand h1{font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:800;color:var(--green2);letter-spacing:0.02em;}
+.h-brand h1{font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:800;background:linear-gradient(135deg,var(--green2),var(--teal));-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:0.02em;}
 .h-brand p{font-size:10px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-top:3px;}
-.h-tickers{display:flex;flex:1;gap:0;overflow:hidden;}
+.h-tickers{display:flex;flex:1;gap:0;overflow-x:auto;}
 .ticker{
   padding:12px 22px;border-right:1px solid var(--border2);
   display:flex;flex-direction:column;justify-content:center;min-width:130px;
-  transition:background 0.2s;cursor:default;
+  transition:all 0.3s ease;cursor:default;
 }
-.ticker:hover{background:rgba(0,220,130,0.04);}
+.ticker:hover{background:rgba(0,220,130,0.04);transform:translateY(-2px);}
 .ticker-label{font-size:9px;text-transform:uppercase;letter-spacing:0.12em;color:var(--muted);}
 .ticker-val{font-family:'Space Mono',monospace;font-size:1rem;line-height:1.4;margin-top:2px;}
 .tv-up{color:var(--green2);}
@@ -51,11 +57,14 @@ body::before{
 .h-time{padding:12px 0 12px 28px;font-family:'Space Mono',monospace;font-size:0.8rem;color:var(--green);opacity:0.6;display:flex;align-items:center;margin-left:auto;}
 
 .wrap{max-width:1440px;margin:0 auto;padding:22px 36px;position:relative;z-index:1;}
-@keyframes fadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(15px);}to{opacity:1;transform:none;}}
+@keyframes pulseGlow{0%,100%{box-shadow:0 0 5px rgba(0,220,130,0.2);}50%{box-shadow:0 0 20px rgba(0,220,130,0.4);}}
 
-.panel{background:var(--surface);border:1px solid var(--border);padding:20px;animation:fadeIn 0.6s ease both;position:relative;}
-.panel::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,var(--green),transparent);opacity:0.3;}
-.pt{font-family:'Syne',sans-serif;font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:var(--green);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.panel{background:var(--surface);border:1px solid var(--border);padding:20px;animation:fadeIn 0.6s ease both;position:relative;transition:all 0.3s ease;}
+.panel:hover{border-color:rgba(0,220,130,0.3);box-shadow:0 0 30px rgba(0,220,130,0.05);}
+.panel::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--green),var(--teal),transparent);opacity:0.4;}
+.pt{font-family:'Syne',sans-serif;font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:var(--green);margin-bottom:14px;display:flex;align-items:center;gap:10px;}
+.pt i{font-size:1rem;}
 .pt::after{content:'';flex:1;height:1px;background:var(--border);}
 .pm{font-size:9px;color:var(--muted);}
 
@@ -68,17 +77,18 @@ body::before{
 .kbox{
   background:rgba(0,220,130,0.03);border:1px solid var(--border);
   padding:16px 14px;animation:fadeIn 0.5s ease both;
-  position:relative;overflow:hidden;
+  position:relative;overflow:hidden;transition:all 0.3s ease;
 }
-.kbox::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;}
-.kbox:nth-child(1)::after{background:var(--green);}
-.kbox:nth-child(2)::after{background:var(--teal);}
-.kbox:nth-child(3)::after{background:var(--yellow);}
-.kbox:nth-child(4)::after{background:var(--purple);}
-.kbox:nth-child(5)::after{background:var(--red);}
-.kbox:nth-child(6)::after{background:var(--green2);}
-.kl{font-size:9px;text-transform:uppercase;letter-spacing:0.12em;color:var(--muted);margin-bottom:8px;}
-.kv{font-family:'Space Mono',monospace;font-size:1.5rem;line-height:1;color:var(--green2);}
+.kbox:hover{transform:translateY(-3px);border-color:rgba(0,220,130,0.4);}
+.kbox::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;}
+.kbox:nth-child(1)::after{background:linear-gradient(90deg,var(--green),var(--green2));}
+.kbox:nth-child(2)::after{background:linear-gradient(90deg,var(--teal),var(--cyan));}
+.kbox:nth-child(3)::after{background:linear-gradient(90deg,var(--yellow),var(--orange));}
+.kbox:nth-child(4)::after{background:linear-gradient(90deg,var(--purple),var(--violet));}
+.kbox:nth-child(5)::after{background:linear-gradient(90deg,var(--red),var(--coral));}
+.kbox:nth-child(6)::after{background:linear-gradient(90deg,var(--green2),var(--green));}
+.kl{font-size:9px;text-transform:uppercase;letter-spacing:0.12em;color:var(--muted);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.kv{font-family:'Space Mono',monospace;font-size:1.5rem;line-height:1;color:var(--green2);font-weight:700;}
 .kv.t{color:var(--teal);}
 .kv.y{color:var(--yellow);}
 .kv.p{color:var(--purple);}
@@ -89,58 +99,60 @@ body::before{
 .kdn{color:var(--red);}
 
 /* Battery visual */
-.batt-visual{display:flex;flex-direction:column;gap:8px;}
-.batt-row{display:flex;align-items:center;gap:10px;}
-.batt-name{font-size:10px;color:var(--muted);width:80px;flex-shrink:0;font-family:'Space Mono',monospace;font-size:9px;}
-.batt-outer{flex:1;height:12px;background:rgba(0,220,130,0.06);border:1px solid var(--border);border-radius:1px;overflow:hidden;position:relative;}
-.batt-fill{height:100%;transition:width 1.5s cubic-bezier(0.4,0,0.2,1);position:relative;}
+.batt-visual{display:flex;flex-direction:column;gap:10px;max-height:350px;overflow-y:auto;}
+.batt-row{display:flex;align-items:center;gap:10px;padding:4px 0;}
+.batt-name{font-size:10px;color:var(--text);width:85px;flex-shrink:0;font-family:'Space Mono',monospace;}
+.batt-outer{flex:1;height:14px;background:rgba(0,220,130,0.06);border:1px solid var(--border);border-radius:4px;overflow:hidden;position:relative;}
+.batt-fill{height:100%;transition:width 1.5s cubic-bezier(0.4,0,0.2,1);position:relative;border-radius:3px;}
 .batt-fill::after{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:repeating-linear-gradient(90deg,transparent,transparent 6px,rgba(0,0,0,0.15) 6px,rgba(0,0,0,0.15) 7px);}
-.batt-pct{font-family:'Space Mono',monospace;font-size:10px;width:44px;text-align:right;}
-.batt-state{font-size:9px;width:60px;text-align:right;}
+.batt-pct{font-family:'Space Mono',monospace;font-size:10px;width:44px;text-align:right;font-weight:600;}
+.batt-state{font-size:9px;width:70px;text-align:right;}
 
-/* Cycle chart sparkline labels */
-.cycle-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
-.cs-box{padding:12px;background:var(--dim);border:1px solid var(--border2);}
-.cs-label{font-size:9px;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);margin-bottom:4px;}
-.cs-val{font-family:'Space Mono',monospace;font-size:1.1rem;}
+/* SoH degradation */
+.soh-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;padding:4px 0;}
+.soh-site{font-size:10px;width:100px;color:var(--muted);font-family:'Space Mono',monospace;}
+.soh-bar{flex:1;height:8px;background:rgba(0,220,130,0.08);border-radius:4px;overflow:hidden;}
+.soh-fill{height:100%;border-radius:4px;transition:width 1.5s cubic-bezier(0.4,0,0.2,1);}
+.soh-val{font-family:'Space Mono',monospace;font-size:10px;width:44px;text-align:right;font-weight:600;}
+
+.chart-h{position:relative;height:240px;}
+.chart-sm{height:200px;}
 
 /* Arbitrage table */
 .arb-table{width:100%;border-collapse:collapse;}
-.arb-table th{font-size:9px;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);padding:6px 10px;border-bottom:1px solid var(--border);text-align:left;}
-.arb-table td{padding:7px 10px;border-bottom:1px solid var(--border2);font-size:11px;font-family:'Space Mono',monospace;}
-.arb-table tr:hover td{background:rgba(0,220,130,0.03);}
-.profit{color:var(--green2);}
-.loss{color:var(--red);}
-.neutral{color:var(--muted);}
+.arb-table th{font-size:9px;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);padding:8px 10px;border-bottom:1px solid var(--border);text-align:left;}
+.arb-table td{padding:8px 10px;border-bottom:1px solid var(--border2);font-size:11px;font-family:'Space Mono',monospace;}
+.arb-table tr:hover td{background:rgba(0,220,130,0.05);}
+.profit{color:var(--green2);font-weight:600;}
+.loss{color:var(--red);font-weight:600;}
+.neutral{color:var(--yellow);}
 
-/* SoH degradation */
-.soh-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
-.soh-site{font-size:10px;color:var(--text);width:110px;font-size:9px;color:var(--muted);font-family:'Space Mono',monospace;}
-.soh-bar{flex:1;height:6px;background:rgba(0,220,130,0.06);border-radius:1px;overflow:hidden;}
-.soh-fill{height:100%;border-radius:1px;transition:width 1.5s;}
-.soh-val{font-family:'Space Mono',monospace;font-size:10px;width:44px;text-align:right;}
-
-.chart-h{position:relative;height:220px;}
-
-.source-note{margin-top:20px;padding:14px 18px;background:rgba(0,220,130,0.02);border:1px solid var(--border);font-size:10px;color:var(--muted);line-height:1.8;font-family:'Space Mono',monospace;}
+.source-note{margin-top:20px;padding:14px 18px;background:rgba(0,220,130,0.02);border:1px solid var(--border);border-radius:8px;font-size:10px;color:var(--muted);line-height:1.8;font-family:'Space Mono',monospace;}
 .source-note strong{color:var(--green);}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:6px;height:6px;}
+::-webkit-scrollbar-track{background:var(--dim);}
+::-webkit-scrollbar-thumb{background:var(--green);border-radius:3px;}
+
+@media (max-width:1200px){.grid-4{grid-template-columns:repeat(2,1fr);}.grid-3,.grid-2,.grid-21{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
 
 <div class="header">
   <div class="h-brand">
-    <h1>🔋 BESS Analytics</h1>
-    <p>AlphaStatLab · Energy Storage</p>
+    <h1><i class="fas fa-battery-full"></i> BESS Analytics</h1>
+    <p>AlphaStatLab · Energy Storage Intelligence</p>
   </div>
   <div class="h-tickers">
-    <div class="ticker"><div class="ticker-label">Total BESS Capacity</div><div class="ticker-val tv-up">48.2 GWh</div><div class="ticker-delta" style="color:var(--green)">↑ +22.4% YoY</div></div>
-    <div class="ticker"><div class="ticker-label">Round-Trip Efficiency</div><div class="ticker-val tv-up">87.3%</div><div class="ticker-delta" style="color:var(--green)">↑ +0.8pp</div></div>
-    <div class="ticker"><div class="ticker-label">Avg SoC (Fleet)</div><div class="ticker-val tv-warn">62.4%</div><div class="ticker-delta" style="color:var(--yellow)">→ Moderate</div></div>
-    <div class="ticker"><div class="ticker-label">Avg Cycle Count</div><div class="ticker-val tv-neu">1,234</div><div class="ticker-delta" style="color:var(--teal)">of 4,000 rated</div></div>
-    <div class="ticker"><div class="ticker-label">Revenue (Arbitrage)</div><div class="ticker-val tv-up">$24.8M</div><div class="ticker-delta" style="color:var(--green)">↑ +31.2% YoY</div></div>
-    <div class="ticker"><div class="ticker-label">Avg Degradation</div><div class="ticker-val tv-dn">−4.2%</div><div class="ticker-delta" style="color:var(--red)">SoH vs nominal</div></div>
-    <div class="ticker"><div class="ticker-label">Active Sites</div><div class="ticker-val tv-up">24</div><div class="ticker-delta" style="color:var(--green)">Global fleet</div></div>
+    <div class="ticker"><div class="ticker-label">Total BESS Capacity</div><div class="ticker-val tv-up">48.2 GWh</div><div class="ticker-delta"><i class="fas fa-arrow-up"></i> +22.4% YoY</div></div>
+    <div class="ticker"><div class="ticker-label">Round-Trip Efficiency</div><div class="ticker-val tv-up">87.3%</div><div class="ticker-delta"><i class="fas fa-arrow-up"></i> +0.8pp</div></div>
+    <div class="ticker"><div class="ticker-label">Avg SoC (Fleet)</div><div class="ticker-val tv-warn">62.4%</div><div class="ticker-delta">Moderate</div></div>
+    <div class="ticker"><div class="ticker-label">Avg Cycle Count</div><div class="ticker-val tv-neu">1,234</div><div class="ticker-delta">of 4,000 rated</div></div>
+    <div class="ticker"><div class="ticker-label">Arbitrage Revenue</div><div class="ticker-val tv-up">$24.8M</div><div class="ticker-delta"><i class="fas fa-arrow-up"></i> +31.2%</div></div>
+    <div class="ticker"><div class="ticker-label">Avg Degradation</div><div class="ticker-val tv-dn">−4.2%</div><div class="ticker-delta"><i class="fas fa-arrow-down"></i> SoH decline</div></div>
+    <div class="ticker"><div class="ticker-label">Active Sites</div><div class="ticker-val tv-up">24</div><div class="ticker-delta">Global fleet</div></div>
   </div>
   <div class="h-time" id="clk">--:--:--</div>
 </div>
@@ -148,131 +160,70 @@ body::before{
 <div class="wrap">
 
   <!-- KPI boxes -->
-  <div class="grid-4" style="margin-bottom:14px;">
-    <div class="kbox" style="animation-delay:0.05s;grid-column:span 1">
-      <div class="kl">Installed Capacity</div>
-      <div class="kv">48.2 GWh</div>
-      <div class="ks">Global BESS fleet · 24 sites</div>
-      <div class="kd ku">↑ +8.6 GWh vs 2022</div>
-    </div>
-    <div class="kbox" style="animation-delay:0.1s">
-      <div class="kl">Peak Discharge Power</div>
-      <div class="kv t">18.4 GW</div>
-      <div class="ks">4-hr equivalent duration</div>
-      <div class="kd ku">↑ +24.3% YoY</div>
-    </div>
-    <div class="kbox" style="animation-delay:0.15s">
-      <div class="kl">Yearly Energy Throughput</div>
-      <div class="kv y">89.4 TWh</div>
-      <div class="ks">Charge + discharge cycles</div>
-      <div class="kd ku">↑ +18.2% vs 2022</div>
-    </div>
-    <div class="kbox" style="animation-delay:0.2s">
-      <div class="kl">Total Arbitrage Revenue</div>
-      <div class="kv" style="color:var(--green2)">$24.8M</div>
-      <div class="ks">Annualized · all projects</div>
-      <div class="kd ku">↑ +31.2% YoY</div>
-    </div>
-  </div>
-  <div class="grid-4" style="margin-bottom:18px;">
-    <div class="kbox" style="animation-delay:0.25s">
-      <div class="kl">Round-Trip Efficiency</div>
-      <div class="kv">87.3%</div>
-      <div class="ks">Fleet average · LiFePO4</div>
-      <div class="kd ku">↑ +0.8pp vs baseline</div>
-    </div>
-    <div class="kbox" style="animation-delay:0.3s">
-      <div class="kl">State of Health (avg)</div>
-      <div class="kv t">95.8%</div>
-      <div class="ks">Fleet avg · Best: 98.2%</div>
-      <div class="kd" style="color:var(--yellow)">→ Monitoring 2 sites</div>
-    </div>
-    <div class="kbox" style="animation-delay:0.35s">
-      <div class="kl">LCOS (Lifecycle)</div>
-      <div class="kv y">$0.089/kWh</div>
-      <div class="ks">Levelized storage cost</div>
-      <div class="kd ku">↓ −12.4% vs 2022</div>
-    </div>
-    <div class="kbox" style="animation-delay:0.4s">
-      <div class="kl">Demand Charge Savings</div>
-      <div class="kv p">$8.4M</div>
-      <div class="ks">Peak shaving · commercial</div>
-      <div class="kd ku">↑ +14.2% YoY</div>
-    </div>
+  <div class="grid-4">
+    <div class="kbox"><div class="kl"><i class="fas fa-database"></i> Installed Capacity</div><div class="kv">48.2 GWh</div><div class="ks">Global BESS fleet · 24 sites</div><div class="kd ku"><i class="fas fa-arrow-up"></i> +8.6 GWh vs 2022</div></div>
+    <div class="kbox"><div class="kl"><i class="fas fa-bolt"></i> Peak Discharge Power</div><div class="kv t">18.4 GW</div><div class="ks">4-hr equivalent duration</div><div class="kd ku"><i class="fas fa-arrow-up"></i> +24.3% YoY</div></div>
+    <div class="kbox"><div class="kl"><i class="fas fa-chart-line"></i> Yearly Energy Throughput</div><div class="kv y">89.4 TWh</div><div class="ks">Charge + discharge cycles</div><div class="kd ku"><i class="fas fa-arrow-up"></i> +18.2% vs 2022</div></div>
+    <div class="kbox"><div class="kl"><i class="fas fa-dollar-sign"></i> Total Arbitrage Revenue</div><div class="kv" style="color:var(--green2)">$24.8M</div><div class="ks">Annualized · all projects</div><div class="kd ku"><i class="fas fa-arrow-up"></i> +31.2% YoY</div></div>
+    <div class="kbox"><div class="kl"><i class="fas fa-chart-simple"></i> Round-Trip Efficiency</div><div class="kv">87.3%</div><div class="ks">Fleet average · LiFePO4</div><div class="kd ku"><i class="fas fa-arrow-up"></i> +0.8pp vs baseline</div></div>
+    <div class="kbox"><div class="kl"><i class="fas fa-heartbeat"></i> State of Health (avg)</div><div class="kv t">95.8%</div><div class="ks">Fleet avg · Best: 98.2%</div><div class="kd" style="color:var(--yellow)"><i class="fas fa-chart-line"></i> Monitoring 2 sites</div></div>
+    <div class="kbox"><div class="kl"><i class="fas fa-chart-line"></i> LCOS (Lifecycle)</div><div class="kv y">$0.089/kWh</div><div class="ks">Levelized storage cost</div><div class="kd ku"><i class="fas fa-arrow-down"></i> −12.4% vs 2022</div></div>
+    <div class="kbox"><div class="kl"><i class="fas fa-chart-line"></i> Demand Charge Savings</div><div class="kv p">$8.4M</div><div class="ks">Peak shaving · commercial</div><div class="kd ku"><i class="fas fa-arrow-up"></i> +14.2% YoY</div></div>
   </div>
 
   <!-- SoC profiles + Charge-Discharge Chart -->
   <div class="grid-21">
-    <div class="panel" style="animation-delay:0.35s">
-      <div class="pt">Charge/Discharge Cycle Profile — Site: Mojave-04 (Li-ion 120 MWh) <span class="pm">72 Hours</span></div>
-      <div class="chart-h">
-        <canvas id="cycleChart"></canvas>
-      </div>
+    <div class="panel">
+      <div class="pt"><i class="fas fa-chart-line"></i> Charge/Discharge Cycle Profile <span class="pm">Site: Mojave-04 (Li-ion 120 MWh) · 72 Hours</span></div>
+      <div class="chart-h"><canvas id="cycleChart"></canvas></div>
     </div>
-    <div class="panel" style="animation-delay:0.4s">
-      <div class="pt">Fleet SoC Status <span class="pm">Real-time</span></div>
-      <div class="batt-visual" id="batt-vis">
-        <!-- Filled by JS -->
-      </div>
+    <div class="panel">
+      <div class="pt"><i class="fas fa-battery-quarter"></i> Fleet SoC Status <span class="pm">Real-time · 8 Global Sites</span></div>
+      <div class="batt-visual" id="batt-vis"></div>
     </div>
   </div>
 
-  <!-- Arbitrage + SoH + Revenue by Technology -->
+  <!-- Arbitrage + SoH + Revenue -->
   <div class="grid-3">
-    <div class="panel" style="animation-delay:0.45s">
-      <div class="pt">Price Arbitrage Opportunities <span class="pm">$/MWh Spread</span></div>
-      <div class="chart-h" style="height:200px;">
-        <canvas id="arbChart"></canvas>
-      </div>
+    <div class="panel">
+      <div class="pt"><i class="fas fa-chart-bar"></i> Price Arbitrage Opportunities <span class="pm">Monthly Avg Spread ($/MWh)</span></div>
+      <div class="chart-h chart-sm"><canvas id="arbChart"></canvas></div>
     </div>
-    <div class="panel" style="animation-delay:0.5s">
-      <div class="pt">State of Health by Site <span class="pm">% of Nominal Capacity</span></div>
-      <div style="margin-top:4px" id="soh-container">
-        <!-- Filled by JS -->
-      </div>
+    <div class="panel">
+      <div class="pt"><i class="fas fa-heartbeat"></i> State of Health by Site <span class="pm">% of Nominal Capacity</span></div>
+      <div id="soh-container"></div>
     </div>
-    <div class="panel" style="animation-delay:0.55s">
-      <div class="pt">Revenue by Service Type <span class="pm">2023 Annual</span></div>
-      <div class="chart-h" style="height:200px;">
-        <canvas id="revChart"></canvas>
-      </div>
+    <div class="panel">
+      <div class="pt"><i class="fas fa-chart-pie"></i> Revenue by Service Type <span class="pm">2023 Annual · $M</span></div>
+      <div class="chart-h chart-sm"><canvas id="revChart"></canvas></div>
     </div>
   </div>
 
-  <!-- Cycle count & degradation trend + Arbitrage Table -->
+  <!-- Degradation + Arbitrage Table -->
   <div class="grid-2">
-    <div class="panel" style="animation-delay:0.55s">
-      <div class="pt">Capacity Degradation vs Cycle Count <span class="pm">4 Chemistry Types</span></div>
-      <div class="chart-h" style="height:220px;">
-        <canvas id="degradChart"></canvas>
-      </div>
+    <div class="panel">
+      <div class="pt"><i class="fas fa-chart-line"></i> Capacity Degradation vs Cycle Count <span class="pm">4 Chemistry Types</span></div>
+      <div class="chart-h"><canvas id="degradChart"></canvas></div>
     </div>
-    <div class="panel" style="animation-delay:0.6s">
-      <div class="pt">Top Arbitrage Events — 2023 <span class="pm">Buy Low / Sell High</span></div>
-      <table class="arb-table">
-        <thead>
-          <tr><th>Date</th><th>Market</th><th>Buy ($/MWh)</th><th>Sell ($/MWh)</th><th>Spread</th><th>Volume (MWh)</th><th>Profit ($K)</th></tr>
-        </thead>
-        <tbody>
-          <tr><td>Jul 28</td><td>CAISO</td><td>18.40</td><td>412.30</td><td class="profit">+$393.90</td><td>48.0</td><td class="profit">+$18.91K</td></tr>
-          <tr><td>Aug 14</td><td>ERCOT</td><td>22.10</td><td>389.40</td><td class="profit">+$367.30</td><td>120.0</td><td class="profit">+$44.08K</td></tr>
-          <tr><td>Jan 17</td><td>PJM</td><td>45.20</td><td>356.80</td><td class="profit">+$311.60</td><td>80.0</td><td class="profit">+$24.93K</td></tr>
-          <tr><td>Dec 23</td><td>NYISO</td><td>38.90</td><td>298.40</td><td class="profit">+$259.50</td><td>60.0</td><td class="profit">+$15.57K</td></tr>
-          <tr><td>Mar 12</td><td>MISO</td><td>24.10</td><td>189.30</td><td class="profit">+$165.20</td><td>90.0</td><td class="profit">+$14.87K</td></tr>
-          <tr><td>Apr 08</td><td>CAISO</td><td>82.40</td><td>94.20</td><td class="neutral">+$11.80</td><td>120.0</td><td class="neutral">+$1.42K</td></tr>
-          <tr><td>Jun 15</td><td>ERCOT</td><td>134.20</td><td>98.40</td><td class="loss">−$35.80</td><td>60.0</td><td class="loss">−$2.15K</td></tr>
-        </tbody>
-      </table>
+    <div class="panel">
+      <div class="pt"><i class="fas fa-exchange-alt"></i> Top Arbitrage Events — 2023 <span class="pm">Buy Low / Sell High</span></div>
+      <div style="overflow-x:auto">
+        <table class="arb-table">
+          <thead><tr><th>Date</th><th>Market</th><th>Buy ($)</th><th>Sell ($)</th><th>Spread</th><th>Volume</th><th>Profit</th></tr></thead>
+          <tbody id="arbTableBody"></tbody>
+        </table>
+      </div>
     </div>
   </div>
 
   <div class="source-note">
-    <strong>// SYNTHETIC DATA NOTICE:</strong> All battery storage metrics, SoC values, arbitrage revenues, cycle counts, degradation curves, SoH data, market prices, and site-level performance data in this dashboard are <strong>randomly generated synthetic data</strong> created by AlphaStatLab for portfolio demonstration only. No real BESS project, utility, or energy market is represented.<br>
-    <strong>// METHODS:</strong> Charge/discharge cycles modeled with daily price-dispatch optimization logic (synthetic). Degradation curves from empirical NMC/LFP/NCA battery aging models rescaled for demonstration. Arbitrage spreads generated from lognormal price spike distribution. LCOS calculated from synthetic capital and O&M assumptions. Chart.js v4.4.1 · Fonts: Syne + Space Mono · AlphaStatLab.org
+    <i class="fas fa-database"></i> <strong>// SYNTHETIC DATA NOTICE:</strong> All battery storage metrics, SoC values, arbitrage revenues, cycle counts, degradation curves, SoH data, market prices, and site-level performance data are <strong>randomly generated synthetic data</strong> for portfolio demonstration. No real BESS project or energy market is represented.<br>
+    <i class="fas fa-chart-line"></i> <strong>// METHODS:</strong> Charge/discharge cycles modeled with price-dispatch logic · Degradation curves from battery aging models · Arbitrage spreads from price spike distribution · Chart.js v4.4.1
   </div>
 </div>
 
 <script>
+// Clock
 document.getElementById('clk').textContent = new Date().toTimeString().substr(0,8);
 setInterval(()=>{document.getElementById('clk').textContent=new Date().toTimeString().substr(0,8);},1000);
 
@@ -291,8 +242,14 @@ const bv = document.getElementById('batt-vis');
 fleet.forEach(f=>{
   const row = document.createElement('div');
   row.className='batt-row';
-  row.innerHTML=`<span class="batt-name">${f.name}</span><div class="batt-outer"><div class="batt-fill" style="width:${f.soc}%;background:${f.color};opacity:0.8;"></div></div><span class="batt-pct" style="color:${f.color}">${f.soc}%</span><span class="batt-state" style="color:${f.color};font-size:9px;">${f.state}</span>`;
+  row.innerHTML=`<span class="batt-name">${f.name}</span><div class="batt-outer"><div class="batt-fill" style="width:0%;background:${f.color};opacity:0.85;"></div></div><span class="batt-pct" style="color:${f.color}">0%</span><span class="batt-state" style="color:${f.color}">${f.state}</span>`;
   bv.appendChild(row);
+  setTimeout(()=>{
+    const fill = row.querySelector('.batt-fill');
+    const pct = row.querySelector('.batt-pct');
+    fill.style.width = `${f.soc}%`;
+    pct.textContent = `${f.soc}%`;
+  }, 100);
 });
 
 // SoH container
@@ -310,121 +267,81 @@ const sohC = document.getElementById('soh-container');
 sohSites.forEach(s=>{
   const row = document.createElement('div');
   row.className='soh-row';
-  row.innerHTML=`<span class="soh-site">${s.name}</span><div class="soh-bar"><div class="soh-fill" style="width:${s.soh}%;background:${s.color};"></div></div><span class="soh-val" style="color:${s.color}">${s.soh}%</span>`;
+  row.innerHTML=`<span class="soh-site">${s.name}</span><div class="soh-bar"><div class="soh-fill" style="width:0%;background:${s.color};"></div></div><span class="soh-val" style="color:${s.color}">0%</span>`;
   sohC.appendChild(row);
+  setTimeout(()=>{
+    const fill = row.querySelector('.soh-fill');
+    const val = row.querySelector('.soh-val');
+    fill.style.width = `${s.soh}%`;
+    val.textContent = `${s.soh}%`;
+  }, 200);
 });
 
-// Charge/discharge cycle 72h
-const hours72 = Array.from({length:72},(_,i)=>i%24+':00');
+// Cycle Chart
 function socProfile(){
   const pts=[];let soc=45;
   const prices=[80,70,60,50,45,48,55,70,90,110,120,115,108,112,118,130,148,160,145,120,100,85,75,72];
   for(let h=0;h<72;h++){
     const price=prices[h%24];
-    if(price<80&&soc<90){soc+=6+Math.random()*4;}
-    else if(price>120&&soc>15){soc-=8+Math.random()*4;}
-    else{soc+=（Math.random()-0.5)*2;}
-    soc=Math.max(10,Math.min(95,soc));
-    pts.push(parseFloat(soc.toFixed(1)));
-  }
-  return pts;
-}
-// fix syntax error
-function socProfile2(){
-  const pts=[];let soc=45;
-  const prices=[80,70,60,50,45,48,55,70,90,110,120,115,108,112,118,130,148,160,145,120,100,85,75,72];
-  for(let h=0;h<72;h++){
-    const price=prices[h%24];
-    if(price<80&&soc<90){soc+=6+Math.random()*4;}
-    else if(price>120&&soc>15){soc-=8+Math.random()*4;}
-    else{soc+=(Math.random()-0.5)*2;}
+    if(price<80 && soc<90) soc+=6+Math.random()*4;
+    else if(price>120 && soc>15) soc-=8+Math.random()*4;
+    else soc+=(Math.random()-0.5)*2;
     soc=Math.max(10,Math.min(95,soc));
     pts.push(parseFloat(soc.toFixed(1)));
   }
   return pts;
 }
 const priceData72=Array.from({length:72},(_,h)=>{const p=[80,70,60,50,45,48,55,70,90,110,120,115,108,112,118,130,148,160,145,120,100,85,75,72];return p[h%24]+(Math.random()-0.5)*12;});
-
-const cycleCtx=document.getElementById('cycleChart').getContext('2d');
-new Chart(cycleCtx,{
+new Chart(document.getElementById('cycleChart'),{
   type:'line',
-  data:{
-    labels:Array.from({length:72},(_,i)=>`${Math.floor(i/24)+1}d ${i%24}h`),
-    datasets:[
-      {label:'SoC (%)',data:socProfile2(),borderColor:'#00dc82',backgroundColor:'rgba(0,220,130,0.08)',borderWidth:2,pointRadius:0,fill:true,tension:0.4,yAxisID:'y'},
-      {label:'Price ($/MWh)',data:priceData72,borderColor:'#f0c040',borderWidth:1.5,pointRadius:0,fill:false,tension:0.4,borderDash:[4,3],yAxisID:'y2'}
-    ]
-  },
-  options:{responsive:true,maintainAspectRatio:false,
-    scales:{
-      x:{ticks:{color:'#2a5a3a',font:{size:9,family:'Space Mono'},maxTicksLimit:12},grid:{color:'rgba(0,220,130,0.03)'}},
-      y:{position:'left',ticks:{color:'#00dc82',font:{size:9,family:'Space Mono'},callback:v=>v+'%'},grid:{color:'rgba(0,220,130,0.04)'},min:0,max:100,title:{display:true,text:'SoC %',color:'#00dc82',font:{size:9}}},
-      y2:{position:'right',ticks:{color:'#f0c040',font:{size:9,family:'Space Mono'},callback:v=>'$'+v},grid:{display:false},title:{display:true,text:'$/MWh',color:'#f0c040',font:{size:9}}}
-    },
-    plugins:{legend:{labels:{color:'#2a5a3a',font:{family:'Syne',size:10},boxWidth:10}},tooltip:{backgroundColor:'#010d1a',borderColor:'rgba(0,220,130,0.2)',borderWidth:1,titleFont:{family:'Space Mono',size:9},bodyFont:{family:'Space Mono',size:10}}}
-  }
+  data:{labels:Array.from({length:72},(_,i)=>`${Math.floor(i/24)+1}d ${i%24}h`),datasets:[
+    {label:'SoC (%)',data:socProfile(),borderColor:'#00dc82',backgroundColor:'rgba(0,220,130,0.1)',borderWidth:2.5,pointRadius:0,fill:true,tension:0.4,yAxisID:'y'},
+    {label:'Price ($/MWh)',data:priceData72,borderColor:'#f0c040',borderWidth:2,pointRadius:0,fill:false,tension:0.4,borderDash:[5,3],yAxisID:'y2'}
+  ]},
+  options:{responsive:true,maintainAspectRatio:false,scales:{x:{ticks:{color:'#2a5a3a',font:{size:8},maxTicksLimit:12},grid:{color:'rgba(0,220,130,0.03)'}},y:{position:'left',ticks:{color:'#00dc82',font:{size:9},callback:v=>v+'%'},grid:{color:'rgba(0,220,130,0.04)'},min:0,max:100},y2:{position:'right',ticks:{color:'#f0c040',font:{size:9},callback:v=>'$'+v},grid:{display:false}}},plugins:{legend:{labels:{color:'#2a5a3a',font:{size:10},boxWidth:10}},tooltip:{backgroundColor:'#010d1a',borderColor:'rgba(0,220,130,0.2)',borderWidth:1}},animation:{duration:1500}}
 });
 
-// Arbitrage spread chart
-const arbCtx=document.getElementById('arbChart').getContext('2d');
-const months=['J','F','M','A','M','J','J','A','S','O','N','D'];
-new Chart(arbCtx,{
+// Arbitrage Chart
+new Chart(document.getElementById('arbChart'),{
   type:'bar',
-  data:{
-    labels:months,
-    datasets:[
-      {label:'Avg Spread ($/MWh)',data:[78,62,84,56,91,112,198,178,134,89,72,68],backgroundColor:months.map((_,i)=>{const v=[78,62,84,56,91,112,198,178,134,89,72,68][i];return v>150?'rgba(0,245,148,0.8)':v>100?'rgba(0,220,130,0.7)':'rgba(0,180,216,0.5)';}),borderRadius:2,borderWidth:0}
-    ]
-  },
-  options:{responsive:true,maintainAspectRatio:false,
-    scales:{
-      x:{ticks:{color:'#2a5a3a',font:{size:9,family:'Space Mono'}},grid:{display:false}},
-      y:{ticks:{color:'#2a5a3a',font:{size:9,family:'Space Mono'},callback:v=>'$'+v},grid:{color:'rgba(0,220,130,0.04)'}}
-    },
-    plugins:{legend:{display:false},tooltip:{backgroundColor:'#010d1a',titleFont:{family:'Space Mono',size:9},bodyFont:{family:'Space Mono',size:10}}}
-  }
+  data:{labels:['J','F','M','A','M','J','J','A','S','O','N','D'],datasets:[{label:'Avg Spread ($/MWh)',data:[78,62,84,56,91,112,198,178,134,89,72,68],backgroundColor:['#00f59433','#00dc8233','#00f59433','#00dc8233','#00b4d833','#f0c04033','#f0506033','#f0c04033','#00b4d833','#00dc8233','#00f59433','#00dc8233'],borderColor:'#00dc82',borderWidth:1,borderRadius:6}]},
+  options:{responsive:true,maintainAspectRatio:false,scales:{y:{ticks:{callback:v=>'$'+v},grid:{color:'rgba(0,220,130,0.05)'}}},plugins:{legend:{display:false}},animation:{duration:1200}}
 });
 
-// Revenue by service
-const revCtx=document.getElementById('revChart').getContext('2d');
-new Chart(revCtx,{
+// Revenue Donut
+new Chart(document.getElementById('revChart'),{
   type:'doughnut',
-  data:{
-    labels:['Energy Arbitrage','Freq. Regulation','Capacity Market','Demand Charge Reduction','Ancillary Services'],
-    datasets:[{
-      data:[24.8,8.4,12.1,8.4,4.2],
-      backgroundColor:['rgba(0,245,148,0.8)','rgba(0,180,216,0.75)','rgba(176,96,240,0.7)','rgba(240,192,64,0.7)','rgba(240,80,96,0.6)'],
-      borderColor:'#010d1a',borderWidth:2,hoverOffset:6
-    }]
-  },
-  options:{cutout:'58%',responsive:true,maintainAspectRatio:false,
-    plugins:{legend:{position:'bottom',labels:{color:'#2a5a3a',font:{family:'Syne',size:9},boxWidth:8,padding:5}},tooltip:{backgroundColor:'#010d1a',titleFont:{family:'Space Mono',size:9},bodyFont:{family:'Space Mono',size:10},callbacks:{label:ctx=>`$${ctx.parsed}M (${(ctx.parsed/57.9*100).toFixed(1)}%)`}}}
-  }
+  data:{labels:['Energy Arbitrage','Freq. Regulation','Capacity Market','Demand Reduction','Ancillary Services'],datasets:[{data:[24.8,8.4,12.1,8.4,4.2],backgroundColor:['#00f594','#00b4d8','#b060f0','#f0c040','#f05060'],borderColor:'#010d1a',borderWidth:2}]},
+  options:{cutout:'60%',responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:'#2a5a3a',font:{size:9},boxWidth:10}},tooltip:{callbacks:{label:ctx=>`$${ctx.raw}M (${((ctx.raw/57.9)*100).toFixed(1)}%)`}}},animation:{duration:1200}}
 });
 
-// Degradation curves
-const degradCtx=document.getElementById('degradChart').getContext('2d');
+// Degradation Curves
 const cycles=Array.from({length:50},(_,i)=>i*80);
-function degradCurve(a,b){return cycles.map(c=>Math.max(70,100-a*Math.pow(c/1000,b)-(Math.random()*0.3)));}
-new Chart(degradCtx,{
+function degradCurve(a,b){return cycles.map(c=>Math.max(70,100-a*Math.pow(c/1000,b)-(Math.random()*0.2)));}
+new Chart(document.getElementById('degradChart'),{
   type:'line',
-  data:{
-    labels:cycles,
-    datasets:[
-      {label:'LiFePO4',data:degradCurve(8,1.1),borderColor:'#00f594',borderWidth:2,pointRadius:0,fill:false,tension:0.3},
-      {label:'NMC 811',data:degradCurve(14,1.2),borderColor:'#00b4d8',borderWidth:2,pointRadius:0,fill:false,tension:0.3},
-      {label:'NCA',data:degradCurve(18,1.3),borderColor:'#f0c040',borderWidth:1.5,pointRadius:0,fill:false,tension:0.3,borderDash:[4,3]},
-      {label:'Lead Acid',data:degradCurve(32,1.5),borderColor:'#f05060',borderWidth:1.5,pointRadius:0,fill:false,tension:0.3,borderDash:[3,3]}
-    ]
-  },
-  options:{responsive:true,maintainAspectRatio:false,
-    scales:{
-      x:{ticks:{color:'#2a5a3a',font:{size:9,family:'Space Mono'},callback:v=>v+'cy'},grid:{color:'rgba(0,220,130,0.03)'}},
-      y:{ticks:{color:'#2a5a3a',font:{size:9,family:'Space Mono'},callback:v=>v+'%'},grid:{color:'rgba(0,220,130,0.04)'},min:65,max:102,title:{display:true,text:'State of Health %',color:'#2a5a3a',font:{size:9}}}
-    },
-    plugins:{legend:{labels:{color:'#2a5a3a',font:{family:'Syne',size:10},boxWidth:10}},tooltip:{backgroundColor:'#010d1a',titleFont:{family:'Space Mono',size:9},bodyFont:{family:'Space Mono',size:10}}}
-  }
+  data:{labels:cycles,datasets:[
+    {label:'LiFePO4',data:degradCurve(8,1.1),borderColor:'#00f594',borderWidth:2.5,pointRadius:0,fill:false,tension:0.3},
+    {label:'NMC 811',data:degradCurve(14,1.2),borderColor:'#00b4d8',borderWidth:2,pointRadius:0,fill:false,tension:0.3},
+    {label:'NCA',data:degradCurve(18,1.3),borderColor:'#f0c040',borderWidth:2,pointRadius:0,fill:false,tension:0.3,borderDash:[5,3]},
+    {label:'Lead Acid',data:degradCurve(32,1.5),borderColor:'#f05060',borderWidth:1.5,pointRadius:0,fill:false,tension:0.3,borderDash:[3,3]}
+  ]},
+  options:{responsive:true,maintainAspectRatio:false,scales:{x:{ticks:{callback:v=>v+' cy'},grid:{color:'rgba(0,220,130,0.03)'}},y:{ticks:{callback:v=>v+'%'},min:65,max:102,grid:{color:'rgba(0,220,130,0.04)'}}},plugins:{legend:{labels:{color:'#2a5a3a',boxWidth:10}}},animation:{duration:1500}}
 });
+
+// Arbitrage Table
+const arbitrageData = [
+  {date:'Jul 28',market:'CAISO',buy:18.40,sell:412.30,spread:393.90,volume:48.0,profit:18.91,type:'profit'},
+  {date:'Aug 14',market:'ERCOT',buy:22.10,sell:389.40,spread:367.30,volume:120.0,profit:44.08,type:'profit'},
+  {date:'Jan 17',market:'PJM',buy:45.20,sell:356.80,spread:311.60,volume:80.0,profit:24.93,type:'profit'},
+  {date:'Dec 23',market:'NYISO',buy:38.90,sell:298.40,spread:259.50,volume:60.0,profit:15.57,type:'profit'},
+  {date:'Mar 12',market:'MISO',buy:24.10,sell:189.30,spread:165.20,volume:90.0,profit:14.87,type:'profit'},
+  {date:'Apr 08',market:'CAISO',buy:82.40,sell:94.20,spread:11.80,volume:120.0,profit:1.42,type:'neutral'},
+  {date:'Jun 15',market:'ERCOT',buy:134.20,sell:98.40,spread:-35.80,volume:60.0,profit:-2.15,type:'loss'},
+];
+document.getElementById('arbTableBody').innerHTML = arbitrageData.map(d => `
+  <tr><td>${d.date}</td><td>${d.market}</td><td>$${d.buy.toFixed(2)}</td><td>$${d.sell.toFixed(2)}</td><td class="${d.type}">${d.spread>0?'+':''}$${d.spread.toFixed(2)}</td><td>${d.volume} MWh</td><td class="${d.type}">${d.profit>0?'+':''}$${Math.abs(d.profit).toFixed(2)}K</td></tr>
+`).join('');
 </script>
 </body>
 </html>
