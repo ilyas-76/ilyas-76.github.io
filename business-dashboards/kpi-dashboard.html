@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KPI Dashboard | AlphaStatLab</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;600;700;900&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+    :root {
+        --bg: #ffffff; --panel: #f7f7f5; --card: #ffffff;
+        --border: #e4e4e0; --ink: #111110; --muted: #888880;
+        --green: #16a34a; --amber: #d97706; --red: #dc2626;
+        --blue: #2563eb; --purple: #7c3aed; --teal: #0d9488;
+        --shadow: 0 1px 8px rgba(0,0,0,0.06);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: var(--panel); color: var(--ink); font-family: 'Archivo', sans-serif; }
+    
+    .container { max-width: 1600px; margin: 0 auto; }
+    
+    .topbar {
+        background: var(--ink); color: #fff; height: 60px;
+        display: flex; align-items: center; padding: 0 2rem; justify-content: space-between;
+        border-bottom: 3px solid var(--blue);
+        position: sticky; top: 0; z-index: 100;
+    }
+    .logo { font-size: 1.1rem; font-weight: 900; letter-spacing: 2px; }
+    .logo i { color: #60a5fa; margin-right: 5px; }
+    .page-title { font-size: 0.78rem; font-weight: 500; letter-spacing: 3px; color: #9ca3af; }
+    .live-pill { display: flex; align-items: center; gap: 0.4rem; font-size: 0.7rem; font-family: 'Roboto Mono'; }
+    .live-dot { width: 8px; height: 8px; border-radius: 50%; background: #34d399; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+    
+    .loading { text-align: center; padding: 60px; font-size: 14px; color: var(--muted); background: var(--card); margin: 20px; border-radius: 12px; }
+    .loading i { animation: spin 1s linear infinite; margin-right: 10px; }
+    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    
+    .status-band {
+        display: grid; grid-template-columns: repeat(3, 1fr);
+        background: var(--card); border-bottom: 1px solid var(--border);
+    }
+    .status-cell { padding: 1.2rem 2rem; display: flex; align-items: center; gap: 1rem; border-right: 1px solid var(--border); transition: all 0.3s ease; cursor: default; }
+    .status-cell:hover { background: rgba(37,99,235,0.03); transform: translateY(-2px); }
+    .status-cell:last-child { border-right: none; }
+    .s-num { font-size: 2.2rem; font-weight: 900; line-height: 1; font-family: 'Roboto Mono'; animation: fadeInUp 0.5s ease; }
+    .s-label { font-size: 0.7rem; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); }
+    .s-bar { width: 100%; height: 6px; border-radius: 3px; background: var(--border); overflow: hidden; margin-top: 0.5rem; }
+    .s-fill { height: 100%; border-radius: 3px; transition: width 1s ease; }
+    
+    .ctrl-bar {
+        background: var(--card); border-bottom: 1px solid var(--border);
+        padding: 0.7rem 2rem; display: flex; align-items: center; gap: 1.2rem; flex-wrap: wrap;
+        box-shadow: var(--shadow);
+    }
+    .ctrl-label { font-size: 0.68rem; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); }
+    .btn-row { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+    .kbtn {
+        padding: 5px 14px; font-size: 0.73rem; font-family: 'Archivo'; font-weight: 500;
+        border: 1.5px solid var(--border); border-radius: 20px; background: var(--card);
+        color: var(--muted); cursor: pointer; transition: all 0.2s;
+    }
+    .kbtn:hover { border-color: var(--blue); color: var(--blue); transform: translateY(-1px); }
+    .kbtn.active { background: var(--blue); border-color: var(--blue); color: #fff; }
+    select {
+        padding: 5px 10px; border: 1.5px solid var(--border); border-radius: 20px;
+        font-size: 0.73rem; font-family: 'Archivo'; background: var(--card);
+        color: var(--ink); cursor: pointer; transition: all 0.2s;
+    }
+    select:hover { border-color: var(--blue); }
+    
+    .dept-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2rem; padding: 1.5rem; }
+    .dept-card {
+        background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+        padding: 1.2rem; box-shadow: var(--shadow); transition: all 0.3s ease;
+    }
+    .dept-card:hover { transform: translateY(-3px); box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+    .dept-name { font-size: 0.7rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 0.8rem; display: flex; align-items: center; gap: 0.5rem; }
+    .dept-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .dept-att { font-size: 1.6rem; font-weight: 900; line-height: 1; font-family: 'Roboto Mono'; }
+    .dept-meta { font-size: 0.68rem; color: var(--muted); margin-top: 0.2rem; }
+    
+    .chart-grid { display: grid; grid-template-columns: 1.5fr 1fr; gap: 1.2rem; padding: 0 1.5rem; margin-bottom: 1.2rem; }
+    .chart-grid2 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2rem; padding: 0 1.5rem; margin-bottom: 1.5rem; }
+    .card {
+        background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+        padding: 1.2rem; box-shadow: var(--shadow); transition: all 0.3s ease;
+    }
+    .card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+    .ct { font-size: 0.85rem; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 0.15rem; }
+    .ct i { margin-right: 6px; color: var(--blue); }
+    .cs { font-size: 0.68rem; color: var(--muted); margin-bottom: 1rem; }
+    canvas { max-height: 240px; width: 100%; }
+    
+    table { width: 100%; border-collapse: collapse; font-size: 0.73rem; }
+    th { font-size: 0.62rem; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); padding: 0.45rem 0.7rem; border-bottom: 2px solid var(--border); font-weight: 600; text-align: left; }
+    td { padding: 0.45rem 0.7rem; border-bottom: 1px solid var(--border); }
+    tr:hover td { background: #f0f9ff; }
+    
+    .status-chip { display: inline-block; padding: 2px 10px; border-radius: 20px; font-size: 0.63rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+    .status-on-track, .on-track { background: #dcfce7; color: #15803d; }
+    .status-at-risk, .at-risk { background: #fef9c3; color: #a16207; }
+    .status-off-track, .off-track { background: #fee2e2; color: #b91c1c; }
+    .trend-up { color: var(--green); }
+    .trend-st { color: var(--muted); }
+    .trend-down { color: var(--red); }
+    
+    .spark-row { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.8rem; }
+    .spark-item { flex: 1; min-width: 140px; border: 1px solid var(--border); border-radius: 8px; padding: 0.6rem; transition: all 0.2s; }
+    .spark-item:hover { border-color: var(--blue); }
+    .spark-label { font-size: 0.65rem; color: var(--muted); font-weight: 600; letter-spacing: 1px; text-transform: uppercase; }
+    .spark-val { font-size: 1.1rem; font-weight: 900; font-family: 'Roboto Mono'; margin: 0.2rem 0; }
+    
+    footer {
+        border-top: 2px solid var(--border); padding: 1rem 2rem;
+        display: flex; justify-content: space-between; font-size: 0.68rem;
+        color: var(--muted); margin-top: 1.5rem;
+    }
+    footer a { color: var(--blue); text-decoration: none; }
+    
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeInLeft { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+    
+    .dept-card, .card, .status-cell { animation: fadeInUp 0.5s ease forwards; }
+    .dept-card:nth-child(1) { animation-delay: 0.05s; }
+    .dept-card:nth-child(2) { animation-delay: 0.1s; }
+    .dept-card:nth-child(3) { animation-delay: 0.15s; }
+    .dept-card:nth-child(4) { animation-delay: 0.2s; }
+    .dept-card:nth-child(5) { animation-delay: 0.25s; }
+    .dept-card:nth-child(6) { animation-delay: 0.3s; }
+    
+    @media (max-width: 1200px) { .dept-grid { grid-template-columns: repeat(2, 1fr); } .chart-grid, .chart-grid2 { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="container">
+    <div class="topbar">
+        <div class="logo"><i class="fas fa-chart-line"></i> Alpha<span style="color:#60a5fa">Stat</span>Lab</div>
+        <div class="page-title"><i class="fas fa-bullseye"></i> KPI PERFORMANCE DASHBOARD</div>
+        <div class="live-pill"><div class="live-dot"></div> LIVE DEMO · SYNTHETIC DATA</div>
+    </div>
+    
+    <div id="dashboardContent">
+        <div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading KPI data from CSV...</div>
+    </div>
+    
+    <footer>
+        <span><i class="fas fa-database"></i> ⚠️ <strong>Synthetic Data:</strong> All KPI records are <strong>randomly generated</strong> demo data — not from real organizations.</span>
+        <span><i class="far fa-chart-bar"></i> AlphaStatLab © 2025</span>
+    </footer>
+</div>
+
+<script>
+    // Generate synthetic KPI data
+    function generateKPIData() {
+        const departments = ['Sales', 'HR', 'Product', 'Finance', 'Marketing', 'Operations', 'Customer Success', 'IT', 'Legal'];
+        const categories = ['Financial', 'Operational', 'People', 'Customer', 'Growth', 'Quality'];
+        const statuses = ['On Track', 'At Risk', 'Off Track'];
+        const priorities = ['Critical', 'High', 'Medium', 'Low'];
+        const data = [];
+        
+        for (let i = 1; i <= 600; i++) {
+            const dept = departments[Math.floor(Math.random() * departments.length)];
+            const category = categories[Math.floor(Math.random() * categories.length)];
+            const attainment = 65 + Math.random() * 35;
+            let status = 'On Track';
+            if (attainment < 80) status = 'Off Track';
+            else if (attainment < 90) status = 'At Risk';
+            
+            data.push({
+                Department: dept,
+                Category: category,
+                KPI_Name: `${category} ${dept} KPI ${Math.floor(Math.random() * 100)}`,
+                Target: 80 + Math.random() * 40,
+                Actual: 70 + Math.random() * 45,
+                Attainment_Pct: attainment,
+                YoY_Change_Pct: -15 + Math.random() * 35,
+                Status: status,
+                Priority: priorities[Math.floor(Math.random() * priorities.length)]
+            });
+        }
+        return data;
+    }
+    
+    const kpiData = generateKPIData();
+    
+    function renderDashboard(data) {
+        // Calculate aggregates
+        const totalKPIs = data.length;
+        const onTrack = data.filter(d => d.Status === 'On Track').length;
+        const atRisk = data.filter(d => d.Status === 'At Risk').length;
+        const offTrack = data.filter(d => d.Status === 'Off Track').length;
+        
+        // Department aggregates
+        const deptStats = {};
+        data.forEach(d => {
+            if (!deptStats[d.Department]) {
+                deptStats[d.Department] = { total: 0, sumAtt: 0, count: 0 };
+            }
+            deptStats[d.Department].sumAtt += d.Attainment_Pct;
+            deptStats[d.Department].count++;
+        });
+        
+        const deptNames = Object.keys(deptStats);
+        const deptAttainment = deptNames.map(d => deptStats[d].sumAtt / deptStats[d].count);
+        const deptColors = ['#2563eb', '#7c3aed', '#0d9488', '#d97706', '#e11d48', '#64748b', '#0ea5e9', '#f59e0b', '#8b5cf6'];
+        
+        // Status by category
+        const categories = [...new Set(data.map(d => d.Category))];
+        const statusByCat = {};
+        categories.forEach(cat => {
+            const catData = data.filter(d => d.Category === cat);
+            statusByCat[cat] = {
+                'On Track': catData.filter(d => d.Status === 'On Track').length,
+                'At Risk': catData.filter(d => d.Status === 'At Risk').length,
+                'Off Track': catData.filter(d => d.Status === 'Off Track').length
+            };
+        });
+        
+        // Top KPIs table
+        const topKPIs = data.sort((a,b) => b.Attainment_Pct - a.Attainment_Pct).slice(0, 12);
+        
+        document.getElementById('dashboardContent').innerHTML = `
+            <div class="status-band">
+                <div class="status-cell"><div><div class="s-label"><i class="fas fa-check-circle"></i> On Track KPIs</div><div class="s-num" style="color:var(--green)">${onTrack}</div><div class="s-label">${((onTrack/totalKPIs)*100).toFixed(1)}% of total</div><div class="s-bar"><div class="s-fill" id="fillOnTrack" style="width:0%; background:var(--green)"></div></div></div></div>
+                <div class="status-cell"><div><div class="s-label"><i class="fas fa-exclamation-triangle"></i> At Risk KPIs</div><div class="s-num" style="color:var(--amber)">${atRisk}</div><div class="s-label">${((atRisk/totalKPIs)*100).toFixed(1)}% of total</div><div class="s-bar"><div class="s-fill" id="fillAtRisk" style="width:0%; background:var(--amber)"></div></div></div></div>
+                <div class="status-cell"><div><div class="s-label"><i class="fas fa-times-circle"></i> Off Track KPIs</div><div class="s-num" style="color:var(--red)">${offTrack}</div><div class="s-label">${((offTrack/totalKPIs)*100).toFixed(1)}% of total</div><div class="s-bar"><div class="s-fill" id="fillOffTrack" style="width:0%; background:var(--red)"></div></div></div></div>
+            </div>
+            
+            <div class="ctrl-bar">
+                <span class="ctrl-label">View:</span>
+                <div class="btn-row">
+                    <button class="kbtn active" onclick="setView('overview', this)">Overview</button>
+                    <button class="kbtn" onclick="setView('dept', this)">By Department</button>
+                    <button class="kbtn" onclick="setView('financial', this)">Financial</button>
+                    <button class="kbtn" onclick="setView('operational', this)">Operational</button>
+                    <button class="kbtn" onclick="setView('people', this)">People</button>
+                </div>
+                <span class="ctrl-label" style="margin-left:auto">Priority:</span>
+                <select id="priorityFilter" onchange="filterPriority(this.value)">
+                    <option value="all">All Priorities</option>
+                    <option value="Critical">Critical</option>
+                    <option value="High">High</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Low">Low</option>
+                </select>
+                <span class="ctrl-label">Status:</span>
+                <select id="statusFilter" onchange="filterStatus(this.value)">
+                    <option value="all">All Status</option>
+                    <option value="On Track">On Track</option>
+                    <option value="At Risk">At Risk</option>
+                    <option value="Off Track">Off Track</option>
+                </select>
+            </div>
+            
+            <div class="dept-grid">
+                ${deptNames.slice(0, 6).map((dept, idx) => `
+                    <div class="dept-card">
+                        <div class="dept-name"><div class="dept-dot" style="background:${deptColors[idx]}"></div>${dept}</div>
+                        <div class="dept-att" style="color:${deptAttainment[idx] >= 90 ? 'var(--green)' : deptAttainment[idx] >= 80 ? 'var(--amber)' : 'var(--red)'}">${deptAttainment[idx].toFixed(1)}%</div>
+                        <div class="dept-meta">Avg attainment · ${deptStats[dept].count} KPIs</div>
+                        <canvas id="spark_${dept.replace(/\s/g, '_')}" height="50"></canvas>
+                    </div>
+                `).join('')}
+            </div>
+            
+            <div class="chart-grid">
+                <div class="card">
+                    <div class="ct"><i class="fas fa-chart-bar"></i> KPI Attainment by Department</div>
+                    <div class="cs">Target vs Actual vs Industry Benchmark</div>
+                    <canvas id="attainmentChart"></canvas>
+                </div>
+                <div class="card">
+                    <div class="ct"><i class="fas fa-chart-pie"></i> KPI Status Distribution</div>
+                    <div class="cs">On Track / At Risk / Off Track breakdown</div>
+                    <canvas id="statusChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="chart-grid2">
+                <div class="card">
+                    <div class="ct"><i class="fas fa-chart-line"></i> YoY Change by Department</div>
+                    <div class="cs">Year-over-year attainment change %</div>
+                    <canvas id="yoyChart"></canvas>
+                </div>
+                <div class="card">
+                    <div class="ct"><i class="fas fa-chart-line"></i> Monthly Attainment Trend</div>
+                    <div class="cs">Rolling 12 months avg attainment</div>
+                    <canvas id="trendChart"></canvas>
+                </div>
+                <div class="card">
+                    <div class="ct"><i class="fas fa-chart-bar"></i> Priority vs Status Matrix</div>
+                    <div class="cs">Cross-tab of priority by status</div>
+                    <canvas id="matrixChart"></canvas>
+                </div>
+            </div>
+            
+            <div style="padding: 0 1.5rem 1.5rem">
+                <div class="card">
+                    <div class="ct"><i class="fas fa-table-list"></i> Top Performing KPIs</div>
+                    <div class="cs">Highest attainment KPIs across all departments</div>
+                    <div style="overflow-x: auto">
+                        <table>
+                            <thead><tr><th>Department</th><th>Category</th><th>KPI Name</th><th>Target</th><th>Actual</th><th>Attainment</th><th>Status</th><th>Priority</th></tr></thead>
+                            <tbody id="kpiTable"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // Animate fill bars
+        setTimeout(() => {
+            const fillOn = document.getElementById('fillOnTrack');
+            const fillAt = document.getElementById('fillAtRisk');
+            const fillOff = document.getElementById('fillOffTrack');
+            if (fillOn) fillOn.style.width = `${(onTrack/totalKPIs)*100}%`;
+            if (fillAt) fillAt.style.width = `${(atRisk/totalKPIs)*100}%`;
+            if (fillOff) fillOff.style.width = `${(offTrack/totalKPIs)*100}%`;
+        }, 200);
+        
+        // Render Charts
+        new Chart(document.getElementById('attainmentChart'), {
+            type: 'bar',
+            data: { labels: deptNames.slice(0, 6), datasets: [
+                { label: 'Attainment %', data: deptAttainment.slice(0, 6), backgroundColor: deptColors.slice(0, 6).map(c => c + 'bb'), borderColor: deptColors.slice(0, 6), borderWidth: 2, borderRadius: 8 },
+                { label: 'Benchmark', data: deptAttainment.slice(0, 6).map(() => 85 + Math.random() * 10), backgroundColor: 'transparent', borderColor: '#94a3b8', borderWidth: 2, type: 'line', pointRadius: 4 }
+            ] },
+            options: { responsive: true, maintainAspectRatio: true, scales: { y: { min: 70, max: 110, ticks: { callback: v => v + '%' } } }, plugins: { legend: { position: 'bottom', labels: { boxWidth: 10 } } }, animation: { duration: 1000, easing: 'easeOutQuart' } }
+        });
+        
+        new Chart(document.getElementById('statusChart'), {
+            type: 'doughnut',
+            data: { labels: ['On Track', 'At Risk', 'Off Track'], datasets: [{ data: [onTrack, atRisk, offTrack], backgroundColor: ['#16a34a', '#d97706', '#dc2626'], borderWidth: 0, hoverOffset: 10 }] },
+            options: { responsive: true, cutout: '60%', plugins: { legend: { position: 'bottom', labels: { boxWidth: 10 } } }, animation: { duration: 1000, easing: 'easeOutQuart' } }
+        });
+        
+        // YoY Chart
+        const yoyData = deptAttainment.slice(0, 6).map(() => -5 + Math.random() * 25);
+        new Chart(document.getElementById('yoyChart'), {
+            type: 'bar',
+            data: { labels: deptNames.slice(0, 6), datasets: [{ label: 'YoY Change %', data: yoyData, backgroundColor: yoyData.map(v => v >= 0 ? '#16a34a' : '#dc2626'), borderRadius: 8 }] },
+            options: { responsive: true, scales: { y: { ticks: { callback: v => v + '%' } } }, plugins: { legend: { display: false } }, animation: { duration: 1000, easing: 'easeOutQuart' } }
+        });
+        
+        // Trend Chart
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        new Chart(document.getElementById('trendChart'), {
+            type: 'line',
+            data: { labels: months, datasets: [
+                { label: 'Avg Attainment', data: months.map(() => 82 + Math.random() * 15), borderColor: '#2563eb', backgroundColor: 'rgba(37,99,235,0.1)', fill: true, tension: 0.4, pointRadius: 4, pointBackgroundColor: '#2563eb' },
+                { label: 'Target', data: months.map(() => 100), borderColor: '#dc2626', borderDash: [5, 5], pointRadius: 0, fill: false }
+            ] },
+            options: { responsive: true, scales: { y: { min: 70, max: 110, ticks: { callback: v => v + '%' } } }, plugins: { legend: { position: 'bottom', labels: { boxWidth: 10 } } }, animation: { duration: 1000, easing: 'easeOutQuart' } }
+        });
+        
+        // Matrix Chart
+        new Chart(document.getElementById('matrixChart'), {
+            type: 'bar',
+            data: { labels: ['Critical', 'High', 'Medium', 'Low'], datasets: [
+                { label: 'On Track', data: [45, 82, 140, 68], backgroundColor: '#16a34a', borderRadius: 4 },
+                { label: 'At Risk', data: [32, 54, 60, 27], backgroundColor: '#d97706', borderRadius: 4 },
+                { label: 'Off Track', data: [23, 28, 35, 6], backgroundColor: '#dc2626', borderRadius: 4 }
+            ] },
+            options: { responsive: true, scales: { x: { stacked: true }, y: { stacked: true } }, plugins: { legend: { position: 'bottom', labels: { boxWidth: 10 } } }, animation: { duration: 1000, easing: 'easeOutQuart' } }
+        });
+        
+        // Sparklines for departments
+        deptNames.slice(0, 6).forEach((dept, idx) => {
+            const sparkData = [];
+            for (let i = 0; i < 12; i++) sparkData.push(deptAttainment[idx] - 5 + Math.random() * 10);
+            const canvasId = `spark_${dept.replace(/\s/g, '_')}`;
+            const canvas = document.getElementById(canvasId);
+            if (canvas) {
+                new Chart(canvas, {
+                    type: 'line',
+                    data: { labels: sparkData.map((_, i) => i + 1), datasets: [{ data: sparkData, borderColor: deptColors[idx], borderWidth: 2, fill: false, pointRadius: 0, tension: 0.3 }] },
+                    options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { display: false }, tooltip: { enabled: false } }, scales: { x: { display: false }, y: { display: false } }, animation: { duration: 500 } }
+                });
+            }
+        });
+        
+        // KPI Table
+        document.getElementById('kpiTable').innerHTML = topKPIs.map(k => `
+            <tr>
+                <td style="font-weight:600">${k.Department}</td>
+                <td style="color:var(--muted);font-size:0.68rem">${k.Category}</td>
+                <td>${k.KPI_Name}</td>
+                <td style="font-family:monospace">${k.Target.toFixed(0)}</td>
+                <td style="font-family:monospace">${k.Actual.toFixed(0)}</td>
+                <td style="font-family:monospace; font-weight:700; color:${k.Attainment_Pct >= 90 ? '#16a34a' : k.Attainment_Pct >= 80 ? '#d97706' : '#dc2626'}">${k.Attainment_Pct.toFixed(1)}%</td>
+                <td><span class="status-chip ${k.Status === 'On Track' ? 'on-track' : k.Status === 'At Risk' ? 'at-risk' : 'off-track'}">${k.Status}</span></td>
+                <td style="font-size:0.68rem">${k.Priority}</td>
+            </tr>
+        `).join('');
+    }
+    
+    let currentData = [...kpiData];
+    
+    function filterPriority(priority) {
+        if (priority === 'all') currentData = [...kpiData];
+        else currentData = kpiData.filter(d => d.Priority === priority);
+        renderDashboard(currentData);
+    }
+    
+    function filterStatus(status) {
+        if (status === 'all') currentData = [...kpiData];
+        else currentData = kpiData.filter(d => d.Status === status);
+        renderDashboard(currentData);
+    }
+    
+    function setView(view, btn) {
+        document.querySelectorAll('.kbtn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    }
+    
+    window.filterPriority = filterPriority;
+    window.filterStatus = filterStatus;
+    window.setView = setView;
+    
+    renderDashboard(kpiData);
+</script>
+</body>
+</html>
