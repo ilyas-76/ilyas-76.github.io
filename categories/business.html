@@ -91,7 +91,7 @@
         .dash-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; transition: transform 0.3s ease, border-color 0.3s ease; cursor: pointer; position: relative; }
         .dash-card:hover { transform: translateY(-6px); border-color: var(--accent); }
         .dash-card.featured { border-color: rgba(56,189,248,0.3); }
-        .dash-card.featured::before { content: 'FEATURED'; position: absolute; top: 12px; right: 12px; font-size: 9px; letter-spacing: 0.15em; padding: 3px 8px; background: var(--accent); color: var(--bg); }
+        .dash-card.featured::before { content: 'FEATURED'; position: absolute; top: 12px; right: 12px; font-size: 9px; letter-spacing: 0.15em; padding: 3px 8px; background: var(--accent); color: var(--bg); z-index: 10; }
         .dash-card-visual { height: 140px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; background: linear-gradient(135deg, rgba(5,150,105,0.15), rgba(56,189,248,0.08)); }
         .dash-card-icon { font-size: 52px; }
         .mini-chart { position: absolute; bottom: 12px; left: 12px; right: 12px; height: 32px; display: flex; align-items: flex-end; gap: 3px; }
@@ -103,6 +103,7 @@
         .dash-status { display: inline-flex; align-items: center; gap: 6px; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; }
         .dash-status .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent3); animation: pulse 2s infinite; }
         .dash-status.live { color: var(--accent3); }
+        .dash-status.soon { color: var(--muted); }
         @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.5)} }
         .dash-tags { display: flex; gap: 6px; flex-wrap: wrap; }
         .tag { font-size: 9px; padding: 3px 8px; letter-spacing: 0.07em; border: 1px solid rgba(99,179,237,0.15); color: var(--muted2); text-transform: uppercase; }
@@ -129,11 +130,188 @@
 <nav><a href="../index.html" class="nav-logo"><span class="alpha">Alpha</span><span class="stat">Stat</span><span class="lab">Lab</span></a><div class="nav-links"><a href="../index.html#categories" class="nav-link">Categories</a><a href="../index.html#services" class="nav-link">Services</a><a href="../index.html#about" class="nav-link">About</a></div><a href="mailto:milyas3201@gmail.com" class="nav-email">✉ milyas3201@gmail.com</a></nav>
 <section class="hero" id="home"><h1><span class="alpha">Business</span><span class="stat"> &amp; </span><span class="lab">Marketing</span></h1><p class="hero-descriptor">Interactive dashboards for sales analytics, customer behavior, KPI tracking, and business intelligence.</p><a href="../index.html#categories" class="back-link">← Back to Categories</a></section>
 <section id="dashboards"><div class="container"><div class="reveal"><p class="section-tag">// business dashboards</p><h2 class="section-title">Business & Marketing Dashboards</h2><div class="section-divider"></div><p class="section-desc">Interactive dashboards for business analytics, marketing intelligence, and KPI monitoring.</p></div><div class="card-grid reveal">
-<div class="dash-card featured" onclick="window.open('#','_blank')"><div class="dash-card-visual"><span class="dash-card-icon">📊</span><div class="mini-chart"><div class="mini-bar" style="height:45%"></div><div class="mini-bar" style="height:70%"></div><div class="mini-bar" style="height:30%"></div><div class="mini-bar" style="height:85%"></div><div class="mini-bar" style="height:55%"></div><div class="mini-bar" style="height:65%"></div><div class="mini-bar" style="height:40%"></div><div class="mini-bar" style="height:75%"></div></div></div><div class="dash-card-body"><h3>Sales Analytics Dashboard</h3><p>Revenue tracking, sales performance by region/product, pipeline analysis, and forecasting.</p><div class="dash-card-footer"><div class="dash-status soon"><div class="dot"></div> Coming Soon</div><div class="dash-tags"><span class="tag">Sales</span><span class="tag">Revenue</span><span class="tag">Forecast</span></div></div></div></div>
-<div class="dash-card featured" onclick="window.open('#','_blank')"><div class="dash-card-visual"><span class="dash-card-icon">👥</span><div class="mini-chart"><div class="mini-bar" style="height:60%"></div><div class="mini-bar" style="height:75%"></div><div class="mini-bar" style="height:50%"></div><div class="mini-bar" style="height:80%"></div><div class="mini-bar" style="height:45%"></div><div class="mini-bar" style="height:65%"></div><div class="mini-bar" style="height:55%"></div><div class="mini-bar" style="height:70%"></div></div></div><div class="dash-card-body"><h3>Customer Analytics Dashboard</h3><p>Customer segmentation, lifetime value, churn analysis, and retention metrics.</p><div class="dash-card-footer"><div class="dash-status soon"><div class="dot"></div> Coming Soon</div><div class="dash-tags"><span class="tag">Customers</span><span class="tag">Segmentation</span><span class="tag">Churn</span></div></div></div></div>
-<div class="dash-card" onclick="window.open('#','_blank')"><div class="dash-card-visual"><span class="dash-card-icon">📈</span><div class="mini-chart"><div class="mini-bar" style="height:50%"></div><div class="mini-bar" style="height:60%"></div><div class="mini-bar" style="height:70%"></div><div class="mini-bar" style="height:80%"></div><div class="mini-bar" style="height:65%"></div><div class="mini-bar" style="height:75%"></div><div class="mini-bar" style="height:85%"></div><div class="mini-bar" style="height:55%"></div></div></div><div class="dash-card-body"><h3>Marketing Performance Dashboard</h3><p>Campaign ROI, channel attribution, conversion funnels, and marketing spend efficiency.</p><div class="dash-card-footer"><div class="dash-status soon"><div class="dot"></div> Coming Soon</div><div class="dash-tags"><span class="tag">Marketing</span><span class="tag">ROI</span><span class="tag">Campaign</span></div></div></div></div>
-<div class="dash-card" onclick="window.open('#','_blank')"><div class="dash-card-visual"><span class="dash-card-icon">🎯</span><div class="mini-chart"><div class="mini-bar" style="height:30%"></div><div class="mini-bar" style="height:80%"></div><div class="mini-bar" style="height:45%"></div><div class="mini-bar" style="height:90%"></div><div class="mini-bar" style="height:35%"></div><div class="mini-bar" style="height:70%"></div><div class="mini-bar" style="height:60%"></div><div class="mini-bar" style="height:85%"></div></div></div><div class="dash-card-body"><h3>KPI Dashboard</h3><p>Key performance indicators across business functions: financial, operational, customer, and growth metrics.</p><div class="dash-card-footer"><div class="dash-status soon"><div class="dot"></div> Coming Soon</div><div class="dash-tags"><span class="tag">KPIs</span><span class="tag">Metrics</span><span class="tag">Performance</span></div></div></div></div>
-<div class="dash-card" onclick="window.open('#','_blank')"><div class="dash-card-visual"><span class="dash-card-icon">🔮</span><div class="mini-chart"><div class="mini-bar" style="height:55%"></div><div class="mini-bar" style="height:58%"></div><div class="mini-bar" style="height:62%"></div><div class="mini-bar" style="height:67%"></div><div class="mini-bar" style="height:72%"></div><div class="mini-bar" style="height:78%"></div><div class="mini-bar" style="height:84%"></div><div class="mini-bar" style="height:89%"></div></div></div><div class="dash-card-body"><h3>Predictive Analytics Dashboard</h3><p>Demand forecasting, inventory optimization, and business trend prediction using ML models.</p><div class="dash-card-footer"><div class="dash-status soon"><div class="dot"></div> Coming Soon</div><div class="dash-tags"><span class="tag">Predictive</span><span class="tag">Forecast</span><span class="tag">Demand</span></div></div></div></div>
+
+<!-- SALES ANALYTICS DASHBOARD - LIVE -->
+<div class="dash-card featured" onclick="window.open('../business-dashboards/sales-analytics.html','_blank')">
+    <div class="dash-card-visual">
+        <span class="dash-card-icon">📊</span>
+        <div class="mini-chart">
+            <div class="mini-bar" style="height:45%"></div>
+            <div class="mini-bar" style="height:70%"></div>
+            <div class="mini-bar" style="height:30%"></div>
+            <div class="mini-bar" style="height:85%"></div>
+            <div class="mini-bar" style="height:55%"></div>
+            <div class="mini-bar" style="height:65%"></div>
+            <div class="mini-bar" style="height:40%"></div>
+            <div class="mini-bar" style="height:75%"></div>
+        </div>
+    </div>
+    <div class="dash-card-body">
+        <h3>📊 Sales Analytics Dashboard</h3>
+        <p>Revenue tracking, sales performance by region/product, pipeline analysis, and forecasting. Includes monthly trends, gross margin analysis, channel performance, and KPI monitoring.</p>
+        <div class="dash-card-footer">
+            <div class="dash-status live"><div class="dot"></div> Live Demo</div>
+            <div class="dash-tags">
+                <span class="tag">Sales</span>
+                <span class="tag">Revenue</span>
+                <span class="tag">Forecast</span>
+                <span class="tag">Pipeline</span>
+                <span class="tag">KPI</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CUSTOMER ANALYTICS DASHBOARD - COMING SOON -->
+<div class="dash-card" onclick="window.open('#','_blank')">
+    <div class="dash-card-visual">
+        <span class="dash-card-icon">👥</span>
+        <div class="mini-chart">
+            <div class="mini-bar" style="height:60%"></div>
+            <div class="mini-bar" style="height:75%"></div>
+            <div class="mini-bar" style="height:50%"></div>
+            <div class="mini-bar" style="height:80%"></div>
+            <div class="mini-bar" style="height:45%"></div>
+            <div class="mini-bar" style="height:65%"></div>
+            <div class="mini-bar" style="height:55%"></div>
+            <div class="mini-bar" style="height:70%"></div>
+        </div>
+    </div>
+    <div class="dash-card-body">
+        <h3>👥 Customer Analytics Dashboard</h3>
+        <p>Customer segmentation, lifetime value, churn analysis, and retention metrics.</p>
+        <div class="dash-card-footer">
+            <div class="dash-status soon"><div class="dot"></div> Coming Soon</div>
+            <div class="dash-tags">
+                <span class="tag">Customers</span>
+                <span class="tag">Segmentation</span>
+                <span class="tag">Churn</span>
+                <span class="tag">LTV</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MARKETING PERFORMANCE DASHBOARD - COMING SOON -->
+<div class="dash-card" onclick="window.open('#','_blank')">
+    <div class="dash-card-visual">
+        <span class="dash-card-icon">📈</span>
+        <div class="mini-chart">
+            <div class="mini-bar" style="height:50%"></div>
+            <div class="mini-bar" style="height:60%"></div>
+            <div class="mini-bar" style="height:70%"></div>
+            <div class="mini-bar" style="height:80%"></div>
+            <div class="mini-bar" style="height:65%"></div>
+            <div class="mini-bar" style="height:75%"></div>
+            <div class="mini-bar" style="height:85%"></div>
+            <div class="mini-bar" style="height:55%"></div>
+        </div>
+    </div>
+    <div class="dash-card-body">
+        <h3>📈 Marketing Performance Dashboard</h3>
+        <p>Campaign ROI, channel attribution, conversion funnels, and marketing spend efficiency.</p>
+        <div class="dash-card-footer">
+            <div class="dash-status soon"><div class="dot"></div> Coming Soon</div>
+            <div class="dash-tags">
+                <span class="tag">Marketing</span>
+                <span class="tag">ROI</span>
+                <span class="tag">Campaign</span>
+                <span class="tag">Attribution</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- KPI DASHBOARD - COMING SOON -->
+<div class="dash-card" onclick="window.open('#','_blank')">
+    <div class="dash-card-visual">
+        <span class="dash-card-icon">🎯</span>
+        <div class="mini-chart">
+            <div class="mini-bar" style="height:30%"></div>
+            <div class="mini-bar" style="height:80%"></div>
+            <div class="mini-bar" style="height:45%"></div>
+            <div class="mini-bar" style="height:90%"></div>
+            <div class="mini-bar" style="height:35%"></div>
+            <div class="mini-bar" style="height:70%"></div>
+            <div class="mini-bar" style="height:60%"></div>
+            <div class="mini-bar" style="height:85%"></div>
+        </div>
+    </div>
+    <div class="dash-card-body">
+        <h3>🎯 KPI Dashboard</h3>
+        <p>Key performance indicators across business functions: financial, operational, customer, and growth metrics.</p>
+        <div class="dash-card-footer">
+            <div class="dash-status soon"><div class="dot"></div> Coming Soon</div>
+            <div class="dash-tags">
+                <span class="tag">KPIs</span>
+                <span class="tag">Metrics</span>
+                <span class="tag">Performance</span>
+                <span class="tag">Benchmark</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- PREDICTIVE ANALYTICS DASHBOARD - COMING SOON -->
+<div class="dash-card" onclick="window.open('#','_blank')">
+    <div class="dash-card-visual">
+        <span class="dash-card-icon">🔮</span>
+        <div class="mini-chart">
+            <div class="mini-bar" style="height:55%"></div>
+            <div class="mini-bar" style="height:58%"></div>
+            <div class="mini-bar" style="height:62%"></div>
+            <div class="mini-bar" style="height:67%"></div>
+            <div class="mini-bar" style="height:72%"></div>
+            <div class="mini-bar" style="height:78%"></div>
+            <div class="mini-bar" style="height:84%"></div>
+            <div class="mini-bar" style="height:89%"></div>
+        </div>
+    </div>
+    <div class="dash-card-body">
+        <h3>🔮 Predictive Analytics Dashboard</h3>
+        <p>Demand forecasting, inventory optimization, and business trend prediction using ML models.</p>
+        <div class="dash-card-footer">
+            <div class="dash-status soon"><div class="dot"></div> Coming Soon</div>
+            <div class="dash-tags">
+                <span class="tag">Predictive</span>
+                <span class="tag">Forecast</span>
+                <span class="tag">Demand</span>
+                <span class="tag">ML</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- FINANCIAL ANALYTICS DASHBOARD - COMING SOON -->
+<div class="dash-card" onclick="window.open('#','_blank')">
+    <div class="dash-card-visual">
+        <span class="dash-card-icon">💰</span>
+        <div class="mini-chart">
+            <div class="mini-bar" style="height:40%"></div>
+            <div class="mini-bar" style="height:65%"></div>
+            <div class="mini-bar" style="height:55%"></div>
+            <div class="mini-bar" style="height:75%"></div>
+            <div class="mini-bar" style="height:45%"></div>
+            <div class="mini-bar" style="height:70%"></div>
+            <div class="mini-bar" style="height:60%"></div>
+            <div class="mini-bar" style="height:80%"></div>
+        </div>
+    </div>
+    <div class="dash-card-body">
+        <h3>💰 Financial Analytics Dashboard</h3>
+        <p>Profit & loss analysis, cash flow tracking, expense breakdown, and financial ratios.</p>
+        <div class="dash-card-footer">
+            <div class="dash-status soon"><div class="dot"></div> Coming Soon</div>
+            <div class="dash-tags">
+                <span class="tag">Finance</span>
+                <span class="tag">P&L</span>
+                <span class="tag">Cash Flow</span>
+                <span class="tag">Ratios</span>
+            </div>
+        </div>
+    </div>
+</div>
+
 </div></div></section>
 <footer><div class="footer-logo"><span class="alpha">Alpha</span><span class="stat">Stat</span><span class="lab">Lab</span></div><div class="footer-center"><a href="https://www.linkedin.com/in/muhammad-ilyas-statistics" target="_blank">LinkedIn</a><a href="https://www.researchgate.net/profile/Muhammad-Ilyas-144" target="_blank">ResearchGate</a><a href="mailto:milyas3201@gmail.com">Email</a></div><p>© 2025 AlphaStatLab · Statistical Consulting &amp; Data Science · Islamabad, Pakistan</p></footer>
 <script data-goatcounter="https://alphastatlab.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
