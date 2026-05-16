@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Marketing Performance Dashboard | AlphaStatLab</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Playfair+Display:wght@700;900&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+    :root {
+        --bg: #0f0a1e; --card: #16102a; --card2: #1e1535; --border: #2a1f45;
+        --a1: #c084fc; --a2: #f472b6; --a3: #fb923c; --a4: #34d399; --a5: #60a5fa;
+        --text: #f1e8ff; --muted: #8b7aaa; --glow: 0 0 25px rgba(192,132,252,0.2);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: var(--bg); color: var(--text); font-family: 'Space Grotesk', sans-serif; min-height: 100vh; }
+    
+    .container { max-width: 1600px; margin: 0 auto; }
+    
+    header {
+        background: linear-gradient(90deg, #1a0f35, #0f0a1e, #1a0f35);
+        border-bottom: 1px solid var(--border); padding: 0 2rem;
+        display: flex; align-items: center; justify-content: space-between; height: 66px;
+        position: sticky; top: 0; z-index: 100;
+    }
+    .logo { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 900; }
+    .logo em { color: var(--a1); font-style: normal; }
+    .htitle { font-size: 0.8rem; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); }
+    .badge { background: linear-gradient(90deg, var(--a1), var(--a2)); color: #fff; padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; font-family: 'IBM Plex Mono'; }
+    
+    .loading { text-align: center; padding: 60px; font-size: 14px; color: var(--muted); background: var(--card); margin: 20px; border-radius: 12px; }
+    .loading i { animation: spin 1s linear infinite; margin-right: 10px; }
+    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    
+    .ticker {
+        background: var(--card2); border-bottom: 1px solid var(--border);
+        padding: 0.6rem 0; overflow: hidden; position: relative;
+    }
+    .ticker-inner { display: flex; gap: 3rem; animation: scroll 30s linear infinite; width: max-content; }
+    @keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+    .tick-item { display: flex; align-items: center; gap: 0.5rem; font-size: 0.72rem; font-family: 'IBM Plex Mono'; white-space: nowrap; }
+    .tick-up { color: var(--a4); }
+    .tick-down { color: var(--a2); }
+    .tick-label { color: var(--muted); }
+    
+    .kpi-row { display: grid; grid-template-columns: repeat(6, 1fr); border-bottom: 1px solid var(--border); background: var(--card); }
+    .kpi-box { padding: 1.2rem 1.5rem; border-right: 1px solid var(--border); transition: all 0.3s ease; cursor: default; }
+    .kpi-box:hover { background: rgba(192,132,252,0.06); transform: translateY(-2px); }
+    .kpi-box:last-child { border-right: none; }
+    .kl { font-size: 0.65rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 0.4rem; }
+    .kl i { margin-right: 4px; }
+    .kv { font-family: 'IBM Plex Mono'; font-size: 1.5rem; font-weight: 500; animation: fadeInUp 0.5s ease; }
+    .ks { font-size: 0.68rem; margin-top: 0.3rem; }
+    
+    .controls {
+        background: var(--card); border-bottom: 1px solid var(--border);
+        padding: 0.8rem 2rem; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+    }
+    .ctrl-label { font-size: 0.68rem; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); }
+    .tab-btns { display: flex; background: var(--card2); border-radius: 8px; padding: 3px; gap: 2px; }
+    .tab { padding: 5px 14px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; border: none; background: transparent; color: var(--muted); font-family: 'Space Grotesk'; transition: all 0.2s; }
+    .tab:hover { color: var(--text); }
+    .tab.active { background: var(--a1); color: #0f0a1e; font-weight: 600; }
+    select {
+        background: var(--card2); border: 1px solid var(--border); color: var(--text);
+        padding: 5px 10px; border-radius: 6px; font-size: 0.75rem; font-family: 'Space Grotesk';
+        cursor: pointer; transition: all 0.2s;
+    }
+    select:hover { border-color: var(--a1); }
+    select:focus { outline: none; border-color: var(--a1); }
+    
+    .g1 { display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 1.5rem; padding: 1.5rem; }
+    .g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; padding: 0 1.5rem 1.5rem; }
+    .g3 { display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; padding: 0 1.5rem 1.5rem; }
+    
+    .card {
+        background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+        padding: 1.5rem; transition: all 0.3s ease;
+    }
+    .card:hover { transform: translateY(-3px); box-shadow: var(--glow); }
+    .ct { font-family: 'Playfair Display', serif; font-size: 0.95rem; font-weight: 700; color: var(--text); margin-bottom: 0.2rem; }
+    .cs { font-size: 0.68rem; color: var(--muted); margin-bottom: 1.2rem; }
+    canvas { max-height: 250px; width: 100%; }
+    
+    table { width: 100%; border-collapse: collapse; font-size: 0.75rem; }
+    th { font-size: 0.63rem; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); padding: 0.5rem 0.7rem; border-bottom: 1px solid var(--border); text-align: left; }
+    td { padding: 0.55rem 0.7rem; border-bottom: 1px solid rgba(42,31,69,0.5); }
+    tr:hover td { background: rgba(192,132,252,0.04); }
+    
+    .bar-cell { display: flex; align-items: center; gap: 0.5rem; }
+    .mini-bar { flex: 1; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+    .mini-fill { height: 100%; border-radius: 3px; transition: width 0.5s ease; }
+    
+    .conv-funnel { padding: 0.5rem 0; }
+    .conv-step { margin-bottom: 0.8rem; animation: fadeInLeft 0.5s ease forwards; opacity: 0; }
+    @keyframes fadeInLeft { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .conv-label { display: flex; justify-content: space-between; font-size: 0.72rem; margin-bottom: 0.3rem; }
+    .conv-bar { height: 28px; border-radius: 8px; position: relative; display: flex; align-items: center; padding-left: 12px; font-size: 0.68rem; color: #000; font-weight: 600; transition: width 0.8s ease; }
+    
+    .roi-legend { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 1rem; }
+    .roi-item { display: flex; align-items: center; gap: 0.5rem; font-size: 0.7rem; }
+    .roi-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    
+    footer {
+        border-top: 1px solid var(--border); padding: 1.2rem 2rem;
+        display: flex; justify-content: space-between; align-items: center;
+        font-size: 0.7rem; color: var(--muted);
+    }
+    footer a { color: var(--a1); text-decoration: none; }
+    
+    @media (max-width: 1200px) { .g1, .g2, .g3 { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <div class="logo">Alpha<em>Stat</em>Lab</div>
+        <div class="htitle"><i class="fas fa-chart-line"></i> MARKETING PERFORMANCE DASHBOARD</div>
+        <div class="badge"><i class="fas fa-chart-line"></i> LIVE DEMO</div>
+    </header>
+    
+    <div id="dashboardContent">
+        <div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading marketing data from CSV...</div>
+    </div>
+    
+    <footer>
+        <span><i class="fas fa-database"></i> ⚠️ <strong>Synthetic Data Notice:</strong> All marketing metrics are <strong>randomly generated</strong> for demonstration purposes. Not representative of real campaigns.</span>
+        <span><i class="far fa-chart-bar"></i> AlphaStatLab © 2025</span>
+    </footer>
+</div>
+
+<script>
+    // Generate synthetic marketing data
+    function generateMarketingData() {
+        const channels = ['LinkedIn', 'Google Ads', 'Meta Ads', 'Email', 'YouTube', 'SEO', 'Trade Show', 'Webinar', 'Content', 'Podcast', 'Twitter/X', 'Influencer'];
+        const channelTypes = { 'LinkedIn': 'Paid', 'Google Ads': 'Paid', 'Meta Ads': 'Paid', 'Email': 'Owned', 'YouTube': 'Paid', 'SEO': 'Owned', 'Trade Show': 'Events', 'Webinar': 'Owned', 'Content': 'Owned', 'Podcast': 'Earned', 'Twitter/X': 'Paid', 'Influencer': 'Earned' };
+        const data = [];
+        
+        for (let i = 0; i < channels.length; i++) {
+            const ch = channels[i];
+            const type = channelTypes[ch];
+            const spend = 20 + Math.random() * 40;
+            const leads = 5000 + Math.random() * 12000;
+            const roi = 200 + Math.random() * 500;
+            const roas = 3 + Math.random() * 5;
+            const cpl = (spend * 1000000) / leads;
+            
+            data.push({
+                channel: ch,
+                type: type,
+                spend: spend,
+                leads: Math.round(leads),
+                roi: roi.toFixed(1),
+                roas: roas.toFixed(1),
+                cpl: Math.round(cpl),
+                color: ['#60a5fa', '#c084fc', '#f472b6', '#34d399', '#fb923c', '#e11d48', '#fbbf24', '#a78bfa', '#38bdf8', '#4ade80', '#f9a8d4', '#fde68a'][i]
+            });
+        }
+        return data;
+    }
+    
+    const marketingData = generateMarketingData();
+    
+    function renderDashboard(data) {
+        // Calculate KPIs
+        const totalSpend = data.reduce((sum, d) => sum + d.spend, 0);
+        const totalLeads = data.reduce((sum, d) => sum + d.leads, 0);
+        const avgROI = (data.reduce((sum, d) => sum + parseFloat(d.roi), 0) / data.length).toFixed(1);
+        const avgROAS = (data.reduce((sum, d) => sum + parseFloat(d.roas), 0) / data.length).toFixed(1);
+        const avgConv = 6.2;
+        const topChannel = data.reduce((max, d) => parseFloat(d.roi) > parseFloat(max.roi) ? d : max, data[0]);
+        
+        // Group by type for spend pie
+        const typeSpend = {};
+        data.forEach(d => { typeSpend[d.type] = (typeSpend[d.type] || 0) + d.spend; });
+        
+        // Funnel data
+        const impressions = 187000000;
+        const clicks = 10200000;
+        const leads = totalLeads;
+        const mqls = Math.round(leads * 0.38);
+        const sqls = Math.round(mqls * 0.32);
+        const deals = Math.round(sqls * 0.26);
+        
+        document.getElementById('dashboardContent').innerHTML = `
+            <div class="ticker">
+                <div class="ticker-inner" id="tickerInner"></div>
+            </div>
+            
+            <div class="kpi-row">
+                <div class="kpi-box"><div class="kl"><i class="fas fa-dollar-sign"></i> Total Spend</div><div class="kv" style="color:var(--a1)">$${totalSpend.toFixed(0)}M</div><div class="ks">Across ${data.length} channels</div></div>
+                <div class="kpi-box"><div class="kl"><i class="fas fa-users"></i> Total Leads</div><div class="kv" style="color:var(--a4)">${(totalLeads/1000).toFixed(0)}K</div><div class="ks" style="color:var(--a4)"><i class="fas fa-arrow-up"></i> Generated</div></div>
+                <div class="kpi-box"><div class="kl"><i class="fas fa-chart-line"></i> Avg ROI</div><div class="kv" style="color:var(--a3)">${avgROI}%</div><div class="ks" style="color:var(--a4)">Portfolio average</div></div>
+                <div class="kpi-box"><div class="kl"><i class="fas fa-chart-simple"></i> Avg ROAS</div><div class="kv" style="color:var(--a2)">${avgROAS}×</div><div class="ks">Return on ad spend</div></div>
+                <div class="kpi-box"><div class="kl"><i class="fas fa-percent"></i> Conv. Rate</div><div class="kv" style="color:var(--a5)">${avgConv}%</div><div class="ks" style="color:var(--a4)">Lead-to-deal</div></div>
+                <div class="kpi-box"><div class="kl"><i class="fas fa-trophy"></i> Top Channel</div><div class="kv" style="color:var(--a1);font-size:1.1rem">${topChannel.channel}</div><div class="ks" style="color:var(--a4)">${topChannel.roi}% ROI</div></div>
+            </div>
+            
+            <div class="controls">
+                <span class="ctrl-label">Metric:</span>
+                <div class="tab-btns">
+                    <button class="tab active" onclick="setMetric('roi', this)">ROI</button>
+                    <button class="tab" onclick="setMetric('spend', this)">Spend</button>
+                    <button class="tab" onclick="setMetric('leads', this)">Leads</button>
+                    <button class="tab" onclick="setMetric('roas', this)">ROAS</button>
+                </div>
+                <span class="ctrl-label" style="margin-left:1rem">Channel:</span>
+                <select id="channelFilter" onchange="filterChannel(this.value)">
+                    <option value="all">All Channels</option>
+                    ${data.map(d => `<option value="${d.channel}">${d.channel}</option>`).join('')}
+                </select>
+                <span class="ctrl-label">Type:</span>
+                <select id="typeFilter" onchange="filterType(this.value)">
+                    <option value="all">All Types</option>
+                    <option value="Paid">Paid</option>
+                    <option value="Owned">Owned</option>
+                    <option value="Earned">Earned</option>
+                    <option value="Events">Events</option>
+                </select>
+            </div>
+            
+            <div class="g1">
+                <div class="card">
+                    <div class="ct"><i class="fas fa-chart-bar"></i> ROI by Channel</div>
+                    <div class="cs">Average return on investment across channels</div>
+                    <canvas id="roiChart"></canvas>
+                </div>
+                <div class="card">
+                    <div class="ct"><i class="fas fa-chart-pie"></i> Spend Distribution</div>
+                    <div class="cs">Budget allocation by channel type</div>
+                    <canvas id="spendChart"></canvas>
+                </div>
+                <div class="card">
+                    <div class="ct"><i class="fas fa-chart-line"></i> Monthly Lead Volume</div>
+                    <div class="cs">Leads generated per month</div>
+                    <canvas id="leadTrendChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="g2">
+                <div class="card">
+                    <div class="ct"><i class="fas fa-funnel-dollar"></i> Conversion Funnel</div>
+                    <div class="cs">Impressions → Clicks → Leads → MQLs → SQLs → Deals</div>
+                    <div class="conv-funnel">
+                        <div class="conv-step" style="animation-delay: 0.1s"><div class="conv-label"><span style="color:var(--muted)">Impressions</span><span style="font-family:monospace">${(impressions/1e6).toFixed(0)}M</span></div><div class="conv-bar" id="funnelImp" style="width:0%; background:var(--a1)">100%</div></div>
+                        <div class="conv-step" style="animation-delay: 0.2s"><div class="conv-label"><span style="color:var(--muted)">Clicks</span><span style="font-family:monospace">${(clicks/1e6).toFixed(1)}M</span></div><div class="conv-bar" id="funnelClick" style="width:0%; background:var(--a5)">5.5% CTR</div></div>
+                        <div class="conv-step" style="animation-delay: 0.3s"><div class="conv-label"><span style="color:var(--muted)">Leads</span><span style="font-family:monospace">${(leads/1000).toFixed(0)}K</span></div><div class="conv-bar" id="funnelLead" style="width:0%; background:var(--a4)">1.4% CVR</div></div>
+                        <div class="conv-step" style="animation-delay: 0.4s"><div class="conv-label"><span style="color:var(--muted)">MQLs</span><span style="font-family:monospace">${(mqls/1000).toFixed(0)}K</span></div><div class="conv-bar" id="funnelMql" style="width:0%; background:var(--a3)">38% MQL rate</div></div>
+                        <div class="conv-step" style="animation-delay: 0.5s"><div class="conv-label"><span style="color:var(--muted)">SQLs</span><span style="font-family:monospace">${(sqls/1000).toFixed(0)}K</span></div><div class="conv-bar" id="funnelSql" style="width:0%; background:var(--a2)">32% SQL rate</div></div>
+                        <div class="conv-step" style="animation-delay: 0.6s"><div class="conv-label"><span style="color:var(--muted)">Deals</span><span style="font-family:monospace">${(deals/1000).toFixed(0)}K</span></div><div class="conv-bar" id="funnelDeal" style="width:0%; background:#e11d48">26% close rate</div></div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="ct"><i class="fas fa-chart-line"></i> Channel Mix Radar</div>
+                    <div class="cs">Multi-dimensional channel performance</div>
+                    <canvas id="radarChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="g3">
+                <div class="card">
+                    <div class="ct"><i class="fas fa-table-list"></i> Channel Performance Scorecard</div>
+                    <div class="cs">All channels — ROI, Spend, Leads, ROAS</div>
+                    <div style="overflow-x: auto">
+                        <table>
+                            <thead><tr><th>Channel</th><th>Type</th><th>Spend</th><th>Leads</th><th>ROI %</th><th>ROAS</th><th>CPL</th><th>ROI Bar</th></tr></thead>
+                            <tbody id="channelTable"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="ct"><i class="fas fa-chart-line"></i> Attribution Model Comparison</div>
+                    <div class="cs">Revenue credit by attribution model</div>
+                    <canvas id="attrChart"></canvas>
+                    <div style="margin-top:1rem;font-size:0.7rem;color:var(--muted);line-height:1.6">
+                        <i class="fas fa-lightbulb"></i> <strong style="color:var(--text)">Insight:</strong> Data-Driven attribution shows owned channels generate 38% more credited revenue than Last-Touch models suggest.
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // Animate funnel bars
+        setTimeout(() => {
+            document.getElementById('funnelImp') && (document.getElementById('funnelImp').style.width = '100%');
+            document.getElementById('funnelClick') && (document.getElementById('funnelClick').style.width = '72%');
+            document.getElementById('funnelLead') && (document.getElementById('funnelLead').style.width = '50%');
+            document.getElementById('funnelMql') && (document.getElementById('funnelMql').style.width = '33%');
+            document.getElementById('funnelSql') && (document.getElementById('funnelSql').style.width = '18%');
+            document.getElementById('funnelDeal') && (document.getElementById('funnelDeal').style.width = '8%');
+        }, 200);
+        
+        // Ticker
+        const tickerData = data.map(d => ({ l: d.channel, v: d.roi + '%', up: parseFloat(d.roi) > 400 }));
+        const tickerHtml = [...tickerData, ...tickerData].map(t => `
+            <div class="tick-item"><span class="tick-label">${t.l}</span><span class="${t.up ? 'tick-up' : 'tick-down'}">${t.up ? '▲' : '▼'} ${t.v}</span></div>
+        `).join('');
+        document.getElementById('tickerInner').innerHTML = tickerHtml;
+        
+        // Render Charts
+        const maxRoi = Math.max(...data.map(d => parseFloat(d.roi)));
+        
+        new Chart(document.getElementById('roiChart'), {
+            type: 'bar',
+            data: { labels: data.map(d => d.channel), datasets: [{ label: 'Avg ROI %', data: data.map(d => parseFloat(d.roi)), backgroundColor: data.map(d => d.color + '99'), borderColor: data.map(d => d.color), borderWidth: 2, borderRadius: 8 }] },
+            options: { indexAxis: 'y', responsive: true, maintainAspectRatio: true, plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ` ROI: ${ctx.raw}%` } } }, scales: { x: { ticks: { callback: v => v + '%' } } }, animation: { duration: 1000, easing: 'easeOutQuart' } }
+        });
+        
+        new Chart(document.getElementById('spendChart'), {
+            type: 'doughnut',
+            data: { labels: Object.keys(typeSpend), datasets: [{ data: Object.values(typeSpend), backgroundColor: ['#c084fc', '#34d399', '#f472b6', '#fb923c'], borderWidth: 0, hoverOffset: 10 }] },
+            options: { responsive: true, cutout: '55%', plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } } }, animation: { duration: 1000, easing: 'easeOutQuart' } }
+        });
+        
+        // Monthly lead trend
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        new Chart(document.getElementById('leadTrendChart'), {
+            type: 'line',
+            data: { labels: months, datasets: [
+                { label: '2022', data: months.map(() => 3000 + Math.random() * 4000), borderColor: '#c084fc', backgroundColor: 'rgba(192,132,252,0.08)', fill: true, tension: 0.4, pointRadius: 3 },
+                { label: '2023', data: months.map(() => 4000 + Math.random() * 5000), borderColor: '#34d399', backgroundColor: 'rgba(52,211,153,0.08)', fill: true, tension: 0.4, pointRadius: 3 },
+                { label: '2024', data: months.map(() => 5000 + Math.random() * 6000), borderColor: '#fb923c', backgroundColor: 'rgba(251,146,60,0.08)', fill: true, tension: 0.4, pointRadius: 3 }
+            ] },
+            options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { boxWidth: 10 } } }, animation: { duration: 1000, easing: 'easeOutQuart' } }
+        });
+        
+        // Radar Chart
+        new Chart(document.getElementById('radarChart'), {
+            type: 'radar',
+            data: { labels: ['ROI', 'Lead Volume', 'Conversion', 'Brand Reach', 'Cost Efficiency', 'Engagement'], datasets: [
+                { label: 'LinkedIn', data: [95, 72, 85, 60, 65, 78], borderColor: '#60a5fa', backgroundColor: 'rgba(96,165,250,0.15)', pointBackgroundColor: '#60a5fa', pointRadius: 4 },
+                { label: 'Email', data: [80, 92, 75, 50, 88, 70], borderColor: '#34d399', backgroundColor: 'rgba(52,211,153,0.15)', pointBackgroundColor: '#34d399', pointRadius: 4 },
+                { label: 'YouTube', data: [65, 88, 55, 95, 52, 85], borderColor: '#e11d48', backgroundColor: 'rgba(225,29,72,0.15)', pointBackgroundColor: '#e11d48', pointRadius: 4 }
+            ] },
+            options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { boxWidth: 10 } } }, scales: { r: { ticks: { display: false }, grid: { color: '#2a1f45' } } }, animation: { duration: 1000, easing: 'easeOutQuart' } }
+        });
+        
+        // Attribution Chart
+        new Chart(document.getElementById('attrChart'), {
+            type: 'bar',
+            data: { labels: ['First Touch', 'Last Touch', 'Linear', 'Time Decay', 'Data-Driven'], datasets: [
+                { label: 'LinkedIn', data: [18, 12, 16, 17, 22], backgroundColor: 'rgba(96,165,250,0.7)', borderRadius: 4 },
+                { label: 'Email', data: [14, 18, 16, 15, 19], backgroundColor: 'rgba(52,211,153,0.7)', borderRadius: 4 },
+                { label: 'Google Ads', data: [22, 28, 20, 22, 18], backgroundColor: 'rgba(251,191,36,0.7)', borderRadius: 4 },
+                { label: 'Other', data: [46, 42, 48, 46, 41], backgroundColor: 'rgba(42,31,69,0.8)', borderRadius: 4 }
+            ] },
+            options: { responsive: true, scales: { x: { stacked: true }, y: { stacked: true, ticks: { callback: v => v + '%' }, max: 100 } }, plugins: { legend: { position: 'bottom', labels: { boxWidth: 10 } } }, animation: { duration: 1000, easing: 'easeOutQuart' } }
+        });
+        
+        // Channel Table
+        const typeColors = { Paid: '#c084fc', Owned: '#34d399', Events: '#f472b6', Earned: '#fb923c' };
+        document.getElementById('channelTable').innerHTML = data.map(d => `
+            <tr>
+                <td style="font-weight:500">${d.channel}</td>
+                <td><span style="background:${typeColors[d.type]}22; color:${typeColors[d.type]}; padding:2px 8px; border-radius:20px; font-size:0.65rem">${d.type}</span></td>
+                <td style="font-family:monospace">$${d.spend.toFixed(0)}M</td>
+                <td style="font-family:monospace">${(d.leads/1000).toFixed(1)}K</td>
+                <td style="font-family:monospace; color:${parseFloat(d.roi) > 500 ? '#34d399' : parseFloat(d.roi) > 400 ? '#fbbf24' : '#fb923c'}">${d.roi}%</td>
+                <td style="font-family:monospace">${d.roas}×</td>
+                <td style="font-family:monospace; font-size:0.7rem">$${d.cpl.toLocaleString()}</td>
+                <td><div class="bar-cell"><div class="mini-bar"><div class="mini-fill" style="width:${(parseFloat(d.roi) / maxRoi * 100).toFixed(0)}%; background:${d.color}"></div></div></div></td>
+            </tr>
+        `).join('');
+    }
+    
+    let currentData = [...marketingData];
+    
+    function filterChannel(channel) {
+        if (channel === 'all') currentData = [...marketingData];
+        else currentData = marketingData.filter(d => d.channel === channel);
+        renderDashboard(currentData);
+    }
+    
+    function filterType(type) {
+        if (type === 'all') currentData = [...marketingData];
+        else currentData = marketingData.filter(d => d.type === type);
+        renderDashboard(currentData);
+    }
+    
+    function setMetric(metric, btn) {
+        document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        // Metric switching logic can be expanded
+    }
+    
+    window.filterChannel = filterChannel;
+    window.filterType = filterType;
+    window.setMetric = setMetric;
+    
+    renderDashboard(marketingData);
+</script>
+</body>
+</html>
