@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Financial Analytics Dashboard | AlphaStatLab</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+    :root {
+        --bg: #0a0e1a;
+        --card: #0f1422;
+        --card2: #141b2d;
+        --border: rgba(56, 189, 248, 0.12);
+        --primary: #38bdf8;
+        --primary-dark: #0284c7;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --purple: #8b5cf6;
+        --pink: #ec4899;
+        --text: #f1f5f9;
+        --text-secondary: #94a3b8;
+        --muted: #475569;
+        --gradient-1: linear-gradient(135deg, #38bdf8 0%, #8b5cf6 100%);
+        --gradient-2: linear-gradient(135deg, #10b981 0%, #38bdf8 100%);
+        --gradient-3: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
+        --glow: 0 0 30px rgba(56, 189, 248, 0.2);
+        --shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        min-height: 100vh;
+        overflow-x: hidden;
+    }
+    
+    /* Animated Background */
+    body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(circle at 20% 50%, rgba(56, 189, 248, 0.08) 0%, transparent 50%),
+                    radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.08) 0%, transparent 50%);
+        pointer-events: none;
+        z-index: 0;
+    }
+    
+    .container { max-width: 1600px; margin: 0 auto; position: relative; z-index: 1; padding: 20px; }
+    
+    /* Header */
+    .header {
+        background: rgba(15, 20, 34, 0.8);
+        backdrop-filter: blur(20px);
+        border-radius: 24px;
+        padding: 28px 32px;
+        margin-bottom: 24px;
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow);
+    }
+    .header h1 {
+        font-size: 28px;
+        font-weight: 800;
+        background: var(--gradient-1);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        letter-spacing: -0.5px;
+    }
+    .header p { color: var(--text-secondary); margin-top: 8px; font-size: 14px; }
+    .badge-group { display: flex; gap: 12px; margin-top: 16px; flex-wrap: wrap; }
+    .badge-fin {
+        background: rgba(56, 189, 248, 0.1);
+        border: 1px solid var(--border);
+        padding: 6px 14px;
+        border-radius: 100px;
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--primary);
+    }
+    
+    /* KPI Cards */
+    .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 24px; }
+    .kpi-card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 22px;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+    .kpi-card:hover { transform: translateY(-3px); border-color: var(--primary); box-shadow: var(--glow); }
+    .kpi-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: var(--gradient-1);
+    }
+    .kpi-card:nth-child(2)::before { background: var(--gradient-2); }
+    .kpi-card:nth-child(3)::before { background: var(--gradient-3); }
+    .kpi-card:nth-child(4)::before { background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%); }
+    .kpi-icon { font-size: 32px; margin-bottom: 12px; }
+    .kpi-label { font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: var(--text-secondary); margin-bottom: 8px; }
+    .kpi-value { font-size: 32px; font-weight: 800; margin-bottom: 4px; }
+    .kpi-trend { font-size: 12px; display: flex; align-items: center; gap: 4px; }
+    .trend-up { color: var(--success); }
+    .trend-down { color: var(--danger); }
+    
+    /* Filter Bar */
+    .filter-bar {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 16px 24px;
+        margin-bottom: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+    .filter-group { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .filter-label { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-secondary); }
+    select {
+        background: var(--card2);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 8px 16px;
+        color: var(--text);
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 13px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    select:hover { border-color: var(--primary); }
+    select:focus { outline: none; border-color: var(--primary); }
+    
+    /* Chart Grid */
+    .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-bottom: 24px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-bottom: 24px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-bottom: 24px; }
+    .full-width { grid-column: span 2; }
+    
+    .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 24px;
+        transition: all 0.3s ease;
+    }
+    .card:hover { transform: translateY(-2px); box-shadow: var(--glow); }
+    .card-title {
+        font-size: 16px;
+        font-weight: 700;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid var(--border);
+    }
+    .card-title i { color: var(--primary); font-size: 18px; }
+    canvas { max-height: 260px; width: 100%; }
+    
+    /* Table */
+    .data-table {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 24px;
+        overflow-x: auto;
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th { text-align: left; padding: 12px 12px; color: var(--text-secondary); border-bottom: 1px solid var(--border); font-weight: 600; }
+    td { padding: 12px 12px; border-bottom: 1px solid rgba(56, 189, 248, 0.08); }
+    tr:hover td { background: rgba(56, 189, 248, 0.05); }
+    .profit { color: var(--success); font-weight: 600; }
+    .loss { color: var(--danger); font-weight: 600; }
+    
+    /* Metric Cards */
+    .metric-card {
+        background: var(--card2);
+        border-radius: 16px;
+        padding: 16px;
+        text-align: center;
+    }
+    .metric-value { font-size: 28px; font-weight: 800; }
+    .metric-label { font-size: 11px; color: var(--text-secondary); margin-top: 4px; }
+    
+    /* Animated Counter */
+    .counter { transition: all 0.5s ease; }
+    
+    /* Loading */
+    .loading { text-align: center; padding: 60px; background: var(--card); border-radius: 20px; margin: 20px; }
+    .loading i { animation: spin 1s linear infinite; margin-right: 10px; }
+    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    
+    /* Animations */
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .card, .kpi-card { animation: fadeInUp 0.5s ease forwards; }
+    .kpi-card:nth-child(1) { animation-delay: 0.05s; }
+    .kpi-card:nth-child(2) { animation-delay: 0.1s; }
+    .kpi-card:nth-child(3) { animation-delay: 0.15s; }
+    .kpi-card:nth-child(4) { animation-delay: 0.2s; }
+    
+    /* Tooltip */
+    .tooltip-icon {
+        cursor: help;
+        color: var(--text-secondary);
+        margin-left: 8px;
+        font-size: 12px;
+    }
+    
+    /* Footer */
+    .disclaimer {
+        background: rgba(15, 20, 34, 0.8);
+        backdrop-filter: blur(10px);
+        border-radius: 16px;
+        padding: 16px 24px;
+        margin-top: 24px;
+        text-align: center;
+        font-size: 11px;
+        color: var(--text-secondary);
+        border: 1px solid var(--border);
+    }
+    
+    @media (max-width: 1200px) {
+        .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+        .full-width { grid-column: span 1; }
+        .kpi-row { grid-template-columns: repeat(2, 1fr); }
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1><i class="fas fa-chart-line"></i> Financial Analytics Dashboard</h1>
+        <p>Profit & Loss Analysis · Cash Flow Tracking · Expense Breakdown · Financial Ratios</p>
+        <div class="badge-group">
+            <span class="badge-fin"><i class="fas fa-chart-pie"></i> Real-time P&L</span>
+            <span class="badge-fin"><i class="fas fa-coins"></i> Cash Flow Analysis</span>
+            <span class="badge-fin"><i class="fas fa-chart-line"></i> Ratio Monitoring</span>
+            <span class="badge-fin"><i class="fas fa-chart-bar"></i> Expense Tracking</span>
+        </div>
+    </div>
+    
+    <div id="dashboardContent">
+        <div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading financial data...</div>
+    </div>
+    
+    <div class="disclaimer">
+        <i class="fas fa-database"></i> <strong>Synthetic Data Notice:</strong> All financial data presented is <strong>randomly generated</strong> for demonstration purposes only. Not representative of real company financials.
+    </div>
+</div>
+
+<script>
+    // Generate synthetic financial data
+    function generateFinancialData() {
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const categories = ['Revenue', 'COGS', 'Operating Expenses', 'Marketing', 'R&D', 'G&A', 'Net Income'];
+        const data = [];
+        
+        // Monthly data
+        const monthlyRevenue = months.map(() => 800000 + Math.random() * 400000);
+        const monthlyCOGS = monthlyRevenue.map(r => r * (0.4 + Math.random() * 0.1));
+        const monthlyOpEx = monthlyRevenue.map(r => r * (0.25 + Math.random() * 0.08));
+        const monthlyNetIncome = monthlyRevenue.map((r, i) => r - monthlyCOGS[i] - monthlyOpEx[i]);
+        
+        // Quarterly data
+        const quarters = ['Q1 2024', 'Q2 2024', 'Q3 2024', 'Q4 2024'];
+        const quarterlyRevenue = [2800000, 3200000, 3500000, 4100000];
+        const quarterlyProfit = [520000, 680000, 750000, 890000];
+        
+        // Department expenses
+        const departments = ['Sales', 'Marketing', 'Engineering', 'Product', 'Operations', 'HR', 'Finance', 'Legal'];
+        const deptExpenses = departments.map(() => 50000 + Math.random() * 150000);
+        
+        // Financial ratios
+        const ratios = {
+            'Current Ratio': { value: 2.4, benchmark: 2.0, status: 'good' },
+            'Quick Ratio': { value: 1.8, benchmark: 1.5, status: 'good' },
+            'Debt to Equity': { value: 0.65, benchmark: 0.8, status: 'good' },
+            'Gross Margin': { value: 58.4, benchmark: 55, status: 'good' },
+            'Net Margin': { value: 18.2, benchmark: 15, status: 'good' },
+            'ROE': { value: 22.4, benchmark: 18, status: 'good' },
+            'ROA': { value: 12.8, benchmark: 10, status: 'good' },
+            'Operating Margin': { value: 24.6, benchmark: 20, status: 'good' }
+        };
+        
+        // Cash flow
+        const cashFlow = {
+            operating: 1245000,
+            investing: -425000,
+            financing: -180000,
+            netChange: 640000
+        };
+        
+        return {
+            months, quarterlyRevenue, quarterlyProfit, monthlyRevenue, monthlyCOGS, monthlyOpEx, monthlyNetIncome,
+            departments, deptExpenses, ratios, cashFlow
+        };
+    }
+    
+    const finData = generateFinancialData();
+    
+    function renderDashboard() {
+        const totalRevenue = finData.monthlyRevenue.reduce((a,b) => a + b, 0);
+        const totalExpenses = finData.monthlyCOGS.reduce((a,b) => a + b, 0) + finData.monthlyOpEx.reduce((a,b) => a + b, 0);
+        const totalProfit = finData.monthlyNetIncome.reduce((a,b) => a + b, 0);
+        const avgMargin = (totalProfit / totalRevenue * 100).toFixed(1);
+        
+        document.getElementById('dashboardContent').innerHTML = `
+            <div class="kpi-row">
+                <div class="kpi-card">
+                    <div class="kpi-icon"><i class="fas fa-chart-line" style="color:var(--primary)"></i></div>
+                    <div class="kpi-label">Total Revenue (TTM)</div>
+                    <div class="kpi-value" id="revenueValue">$${(totalRevenue/1e6).toFixed(1)}M</div>
+                    <div class="kpi-trend trend-up"><i class="fas fa-arrow-up"></i> +18.4% YoY</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-icon"><i class="fas fa-chart-pie" style="color:var(--success)"></i></div>
+                    <div class="kpi-label">Gross Profit</div>
+                    <div class="kpi-value">$${((totalRevenue - finData.monthlyCOGS.reduce((a,b)=>a+b,0))/1e6).toFixed(1)}M</div>
+                    <div class="kpi-trend trend-up"><i class="fas fa-arrow-up"></i> +22.3% YoY</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-icon"><i class="fas fa-chart-line" style="color:var(--warning)"></i></div>
+                    <div class="kpi-label">Net Income</div>
+                    <div class="kpi-value">$${(totalProfit/1e6).toFixed(1)}M</div>
+                    <div class="kpi-trend trend-up"><i class="fas fa-arrow-up"></i> +31.2% YoY</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-icon"><i class="fas fa-percent" style="color:var(--purple)"></i></div>
+                    <div class="kpi-label">Net Margin</div>
+                    <div class="kpi-value">${avgMargin}%</div>
+                    <div class="kpi-trend trend-up"><i class="fas fa-arrow-up"></i> +240 bps</div>
+                </div>
+            </div>
+            
+            <div class="filter-bar">
+                <div class="filter-group">
+                    <span class="filter-label"><i class="fas fa-calendar"></i> Period:</span>
+                    <select id="periodSelect">
+                        <option value="monthly">Monthly View</option>
+                        <option value="quarterly">Quarterly View</option>
+                        <option value="ytd">Year-to-Date</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <span class="filter-label"><i class="fas fa-chart-simple"></i> Metric:</span>
+                    <select id="metricSelect">
+                        <option value="revenue">Revenue</option>
+                        <option value="profit">Profit</option>
+                        <option value="margin">Margin %</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <span class="filter-label"><i class="fas fa-download"></i> Export:</span>
+                    <button class="badge-fin" style="background:transparent; cursor:pointer;" onclick="alert('Export feature coming soon')"><i class="fas fa-file-csv"></i> Export CSV</button>
+                </div>
+            </div>
+            
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-title"><i class="fas fa-chart-line"></i> Revenue & Profit Trend</div>
+                    <div class="cs" style="font-size:12px; color:var(--text-secondary); margin-bottom:16px;">Monthly revenue vs net income comparison</div>
+                    <canvas id="revenueChart"></canvas>
+                </div>
+                <div class="card">
+                    <div class="card-title"><i class="fas fa-chart-pie"></i> Expense Breakdown</div>
+                    <div class="cs" style="font-size:12px; color:var(--text-secondary); margin-bottom:16px;">Operating expenses by category</div>
+                    <canvas id="expenseChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="grid-3">
+                <div class="card">
+                    <div class="card-title"><i class="fas fa-chart-bar"></i> Department Expenses</div>
+                    <div class="cs" style="font-size:12px; color:var(--text-secondary); margin-bottom:16px;">Budget vs actual by department</div>
+                    <canvas id="deptChart"></canvas>
+                </div>
+                <div class="card">
+                    <div class="card-title"><i class="fas fa-chart-line"></i> Quarterly Performance</div>
+                    <div class="cs" style="font-size:12px; color:var(--text-secondary); margin-bottom:16px;">Revenue & profit by quarter</div>
+                    <canvas id="quarterChart"></canvas>
+                </div>
+                <div class="card">
+                    <div class="card-title"><i class="fas fa-chart-pie"></i> P&L Waterfall</div>
+                    <div class="cs" style="font-size:12px; color:var(--text-secondary); margin-bottom:16px;">Revenue to net income breakdown</div>
+                    <canvas id="waterfallChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="grid-4">
+                <div class="metric-card"><div class="metric-value" style="color:var(--primary)">2.4</div><div class="metric-label">Current Ratio</div><div style="font-size:10px; color:var(--success)"><i class="fas fa-check-circle"></i> Above benchmark</div></div>
+                <div class="metric-card"><div class="metric-value" style="color:var(--success)">58.4%</div><div class="metric-label">Gross Margin</div><div style="font-size:10px; color:var(--success)"><i class="fas fa-arrow-up"></i> +340 bps</div></div>
+                <div class="metric-card"><div class="metric-value" style="color:var(--warning)">18.2%</div><div class="metric-label">Net Margin</div><div style="font-size:10px; color:var(--success)"><i class="fas fa-arrow-up"></i> +240 bps</div></div>
+                <div class="metric-card"><div class="metric-value" style="color:var(--purple)">22.4%</div><div class="metric-label">ROE</div><div style="font-size:10px; color:var(--success)"><i class="fas fa-arrow-up"></i> +320 bps</div></div>
+            </div>
+            
+            <div class="data-table">
+                <div class="card-title"><i class="fas fa-table-list"></i> Financial Ratios Dashboard</div>
+                <table>
+                    <thead>
+                        <tr><th>Ratio</th><th>Value</th><th>Benchmark</th><th>Status</th><th>Interpretation</th></tr>
+                    </thead>
+                    <tbody>
+                        ${Object.entries(finData.ratios).map(([name, data]) => `
+                            <tr>
+                                <td><strong>${name}</strong></td>
+                                <td class="${data.value >= data.benchmark ? 'profit' : 'loss'}">${data.value}${name.includes('Margin') ? '%' : ''}</td>
+                                <td>${data.benchmark}${name.includes('Margin') ? '%' : ''}</td>
+                                <td><span class="badge-fin" style="background:${data.status === 'good' ? 'rgba(16,185,129,0.15)' : 'rgba(239,68,68,0.15)'}; color:${data.status === 'good' ? '#10b981' : '#ef4444'}"><i class="fas ${data.status === 'good' ? 'fa-check-circle' : 'fa-exclamation-triangle'}"></i> ${data.status === 'good' ? 'Healthy' : 'Below Target'}</span></td>
+                                <td style="font-size:12px; color:var(--text-secondary)">${data.value >= data.benchmark ? 'Exceeds industry benchmark' : 'Below industry benchmark, needs attention'}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="grid-2" style="margin-top:24px;">
+                <div class="card">
+                    <div class="card-title"><i class="fas fa-chart-line"></i> Cash Flow Statement</div>
+                    <div class="cs" style="font-size:12px; color:var(--text-secondary); margin-bottom:16px;">Operating, Investing, Financing activities</div>
+                    <canvas id="cashflowChart"></canvas>
+                </div>
+                <div class="card">
+                    <div class="card-title"><i class="fas fa-chart-line"></i> Burn Rate & Runway</div>
+                    <div class="cs" style="font-size:12px; color:var(--text-secondary); margin-bottom:16px;">Monthly cash consumption</div>
+                    <canvas id="burnChart"></canvas>
+                </div>
+            </div>
+        `;
+        
+        // Revenue Chart
+        new Chart(document.getElementById('revenueChart'), {
+            type: 'line',
+            data: {
+                labels: finData.months,
+                datasets: [
+                    { label: 'Revenue', data: finData.monthlyRevenue.map(v => v/1000), borderColor: '#38bdf8', backgroundColor: 'rgba(56,189,248,0.1)', fill: true, tension: 0.4, pointRadius: 4, pointBackgroundColor: '#38bdf8' },
+                    { label: 'Net Income', data: finData.monthlyNetIncome.map(v => v/1000), borderColor: '#10b981', backgroundColor: 'rgba(16,185,129,0.05)', fill: true, tension: 0.4, pointRadius: 4, pointBackgroundColor: '#10b981' }
+                ]
+            },
+            options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8', boxWidth: 10 } }, tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: $${ctx.raw.toFixed(0)}K` } } }, scales: { y: { ticks: { callback: v => '$' + v + 'K' } } }, animation: { duration: 1000, easing: 'easeOutQuart' } }
+        });
+        
+        // Expense Chart (Doughnut)
+        const expenseCategories = ['COGS', 'Operating Expenses', 'Marketing', 'R&D', 'G&A'];
+        const expenseValues = [
+            finData.monthlyCOGS.reduce((a,b) => a + b, 0),
+            finData.monthlyOpEx.reduce((a,b) => a + b, 0),
+            450000, 380000, 220000
+        ];
+        new Chart(document.getElementById('expenseChart'), {
+            type: 'doughnut',
+            data: { labels: expenseCategories, datasets: [{ data: expenseValues.map(v => v/1000), backgroundColor: ['#38bdf8', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981'], borderWidth: 0, hoverOffset: 10 }] },
+            options: { responsive: true, cutout: '60%', plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8', boxWidth: 10 } }, tooltip: { callbacks: { label: ctx => `${ctx.label}: $${ctx.raw.toFixed(0)}K` } } }, animation: { duration: 1000, easing: 'easeOutQuart' } }
+        });
+        
+        // Department Chart
+        new Chart(document.getElementById('deptChart'), {
+            type: 'bar',
+            data: { labels: finData.departments, datasets: [{ label: 'Annual Expense ($K)', data: finData.deptExpenses.map(v => v/1000), backgroundColor: '#8b5cf6', borderRadius: 8 }] },
+            options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { ticks: { callback: v => '$' + v + 'K' } } }, animation: { duration: 1000, easing: 'easeOutQuart' } }
+        });
+        
+        // Quarter Chart
+        new Chart(document.getElementById('quarterChart'), {
+            type: 'bar',
+            data: { labels: finData.quarters, datasets: [
+                { label: 'Revenue ($M)', data: finData.quarterlyRevenue.map(v => v/1000), backgroundColor: '#38bdf8', borderRadius: 8 },
+                { label: 'Profit ($M)', data: finData.quarterlyProfit.map(v => v/1000), backgroundColor: '#10b981', borderRadius: 8 }
+            ] },
+            options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8', boxWidth: 10 } } }, scales: { y: { ticks: { callback: v => '$' + v + 'M' } } }, animation: { duration: 1000, easing: 'easeOutQuart' } }
+        });
+        
+        // Waterfall Chart
+        new Chart(document.getElementById('waterfallChart'), {
+            type: 'bar',
+            data: { labels: ['Revenue', 'COGS', 'Gross Profit', 'OpEx', 'EBITDA', 'Tax', 'Net Income'], datasets: [{ data: [100, -42, 58, -28, 30, -8, 22], backgroundColor: ['#38bdf8', '#ef4444', '#38bdf8', '#ef4444', '#38bdf8', '#ef4444', '#10b981'], borderRadius: 8 }] },
+            options: { responsive: true, indexAxis: 'y', plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => `${ctx.raw > 0 ? '+' : ''}${ctx.raw}%` } } }, scales: { x: { ticks: { callback: v => v + '%' } } }, animation: { duration: 1000, easing: 'easeOutQuart' } }
+        });
+        
+        // Cash Flow Chart
+        new Chart(document.getElementById('cashflowChart'), {
+            type: 'bar',
+            data: { labels: ['Operating', 'Investing', 'Financing', 'Net Change'], datasets: [{ data: [1245, -425, -180, 640], backgroundColor: ['#10b981', '#ef4444', '#f59e0b', '#38bdf8'], borderRadius: 8 }] },
+            options: { responsive: true, plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => `${ctx.raw > 0 ? '+' : ''}$${Math.abs(ctx.raw)}K` } } }, scales: { y: { ticks: { callback: v => '$' + v + 'K' } } }, animation: { duration: 1000, easing: 'easeOutQuart' } }
+        });
+        
+        // Burn Rate Chart
+        const burnMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+        const burnRates = [245, 238, 242, 235, 230, 225];
+        new Chart(document.getElementById('burnChart'), {
+            type: 'line',
+            data: { labels: burnMonths, datasets: [{ label: 'Monthly Burn Rate ($K)', data: burnRates, borderColor: '#f59e0b', backgroundColor: 'rgba(245,158,11,0.1)', fill: true, tension: 0.3, pointRadius: 4 }] },
+            options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8', boxWidth: 10 } } }, scales: { y: { ticks: { callback: v => '$' + v + 'K' } } }, animation: { duration: 1000, easing: 'easeOutQuart' } }
+        });
+    }
+    
+    renderDashboard();
+    
+    // Filter functionality
+    document.addEventListener('change', function(e) {
+        if (e.target.id === 'periodSelect' || e.target.id === 'metricSelect') {
+            // Re-render with new filter (simplified for demo)
+            renderDashboard();
+        }
+    });
+</script>
+</body>
+</html>
