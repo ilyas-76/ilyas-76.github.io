@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Airline Operations Intelligence — AlphaStatLab</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Exo+2:ital,wght@0,200;0,400;0,600;1,300&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --void:#03060D;--deep:#050D1A;--panel:#080F1E;--glass:rgba(0,180,255,0.04);
+  --border:rgba(0,180,255,0.12);--border2:rgba(0,180,255,0.25);
+  --sky:#00B4FF;--ice:#7EE8FF;--fire:#FF6B00;--ember:#FFB800;
+  --green:#00FF88;--red:#FF2D55;--purple:#BF5AF2;
+  --text:#E8F8FF;--muted:#4A7A9B;
+  --font-hud:'Orbitron',monospace;
+  --font-body:'Space Mono',monospace;
+  --font-soft:'Exo 2',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--void);color:var(--text);font-family:var(--font-body);min-height:100vh;overflow-x:hidden;cursor:crosshair;}
+
+/* Starfield */
+#starfield{position:fixed;inset:0;z-index:0;pointer-events:none;}
+body::after{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.03) 2px,rgba(0,0,0,0.03) 4px);}
+
+/* HUD Corners */
+.hud-corner{position:fixed;width:60px;height:60px;z-index:100;}
+.hud-corner::before,.hud-corner::after{content:'';position:absolute;background:var(--sky);}
+.hud-corner::before{width:2px;height:30px;}
+.hud-corner::after{width:30px;height:2px;}
+.hud-tl{top:12px;left:12px;}.hud-tl::before{top:0;left:0;}.hud-tl::after{top:0;left:0;}
+.hud-tr{top:12px;right:12px;}.hud-tr::before{top:0;right:0;}.hud-tr::after{top:0;right:0;}
+.hud-bl{bottom:12px;left:12px;}.hud-bl::before{bottom:0;left:0;}.hud-bl::after{bottom:0;left:0;}
+.hud-br{bottom:12px;right:12px;}.hud-br::before{bottom:0;right:0;}.hud-br::after{bottom:0;right:0;}
+
+/* Header */
+.header{
+  position:relative;z-index:10;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:20px 48px;
+  background:linear-gradient(180deg,rgba(0,180,255,0.08) 0%,transparent 100%);
+  border-bottom:1px solid var(--border2);
+}
+.logo-zone{display:flex;align-items:center;gap:16px;}
+.plane-icon{font-size:2rem;animation:fly 4s ease-in-out infinite;}
+@keyframes fly{0%,100%{transform:translateY(0) rotate(-5deg);}50%{transform:translateY(-6px) rotate(5deg);}}
+.logo-text h1{font-family:var(--font-hud);font-size:1.4rem;font-weight:900;letter-spacing:4px;
+  background:linear-gradient(90deg,var(--sky),var(--ice));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.logo-text p{font-family:var(--font-soft);font-size:0.6rem;color:var(--muted);letter-spacing:3px;}
+.header-right{display:flex;gap:20px;align-items:center;}
+.live-indicator{display:flex;align-items:center;gap:6px;font-family:var(--font-hud);font-size:0.55rem;letter-spacing:2px;color:var(--green);}
+.live-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:blink 1.2s infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0.2;}}
+.header-stat{text-align:center;}
+.hs-val{font-family:var(--font-hud);font-size:1rem;color:var(--sky);}
+.hs-label{font-family:var(--font-soft);font-size:0.55rem;color:var(--muted);letter-spacing:2px;}
+
+/* Ticker */
+.ticker{overflow:hidden;background:rgba(0,180,255,0.03);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:8px 0;position:relative;z-index:10;}
+.ticker-inner{display:flex;gap:48px;animation:tickScroll 35s linear infinite;white-space:nowrap;}
+@keyframes tickScroll{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+.tick{display:flex;align-items:center;gap:10px;font-family:var(--font-hud);font-size:0.6rem;}
+.tick-route{color:var(--sky);letter-spacing:2px;}
+.tick-stat{color:var(--muted);}
+.tick-val.on{color:var(--green);}
+.tick-val.del{color:var(--red);}
+
+/* Main */
+.main{position:relative;z-index:10;padding:24px 48px;}
+
+/* KPI Row */
+.kpi-row{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:20px;}
+.kpi-card{
+  background:var(--glass);border:1px solid var(--border);border-radius:6px;padding:16px 14px;
+  transition:all 0.4s;animation:fadeSlideUp 0.6s ease both;
+}
+.kpi-card:hover{border-color:var(--sky);box-shadow:0 0 20px rgba(0,180,255,0.15);transform:translateY(-3px);}
+.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--sky),transparent);opacity:0;transition:opacity 0.3s;}
+.kpi-card:hover::before{opacity:1;}
+.kpi-ring{width:40px;height:40px;border-radius:50%;border:2px solid var(--border2);display:flex;align-items:center;justify-content:center;margin-bottom:10px;font-size:1rem;}
+.kpi-label{font-family:var(--font-soft);font-size:0.55rem;letter-spacing:2px;color:var(--muted);margin-bottom:4px;}
+.kpi-val{font-family:var(--font-hud);font-size:1.3rem;font-weight:700;}
+.kpi-delta{font-family:var(--font-soft);font-size:0.6rem;margin-top:4px;}
+.delta-up{color:var(--green);}
+.delta-dn{color:var(--red);}
+@keyframes fadeSlideUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+
+/* Grid Layouts */
+.g2{display:grid;grid-template-columns:1.4fr 1fr;gap:16px;margin-bottom:16px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px;}
+.g2e{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+
+.panel{
+  background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:20px;
+  transition:border-color 0.3s;animation:fadeSlideUp 0.7s ease both;
+}
+.panel:hover{border-color:rgba(0,180,255,0.3);}
+.panel::after{content:'';position:absolute;top:0;right:0;width:60px;height:60px;
+  background:radial-gradient(circle at top right,rgba(0,180,255,0.06),transparent 70%);pointer-events:none;}
+.pt{font-family:var(--font-hud);font-size:0.7rem;font-weight:600;letter-spacing:3px;color:var(--sky);margin-bottom:2px;}
+.ps{font-family:var(--font-soft);font-size:0.58rem;color:var(--muted);letter-spacing:1.5px;margin-bottom:14px;}
+.cc canvas{max-height:260px;}
+.cc.tall canvas{max-height:310px;}
+.cc.sm canvas{max-height:180px;}
+
+/* Flight Board */
+.flt-board{display:grid;gap:6px;}
+.flt-row{
+  display:grid;grid-template-columns:80px 100px 1fr 80px 70px 80px;
+  align-items:center;gap:8px;padding:8px 12px;border-radius:4px;border:1px solid var(--border);
+  font-family:var(--font-hud);font-size:0.6rem;
+  transition:all 0.2s;animation:fadeSlideUp 0.5s ease both;
+}
+.flt-row:hover{background:rgba(0,180,255,0.05);border-color:var(--sky);}
+.flt-num{color:var(--ice);}
+.flt-bar-wrap{height:4px;background:rgba(0,180,255,0.1);border-radius:2px;}
+.flt-bar-fill{height:100%;border-radius:2px;transition:width 1.5s ease;}
+.status-badge{padding:2px 8px;border-radius:3px;font-size:0.55rem;text-align:center;}
+.sb-on{background:rgba(0,255,136,0.12);color:var(--green);border:1px solid rgba(0,255,136,0.2);}
+.sb-del{background:rgba(255,45,85,0.12);color:var(--red);border:1px solid rgba(255,45,85,0.2);}
+.sb-bd{background:rgba(255,184,0,0.12);color:var(--ember);border:1px solid rgba(255,184,0,0.2);}
+
+/* Route Map */
+.route-map{position:relative;width:100%;height:280px;background:rgba(0,12,30,0.8);border-radius:6px;}
+.route-map svg{width:100%;height:100%;}
+
+/* Table */
+.dtable{width:100%;border-collapse:collapse;font-size:0.65rem;}
+.dtable th{padding:7px 10px;color:var(--muted);font-family:var(--font-soft);font-size:0.55rem;letter-spacing:1.5px;border-bottom:1px solid var(--border);}
+.dtable td{padding:7px 10px;border-bottom:1px solid rgba(0,180,255,0.05);font-family:var(--font-body);}
+.dtable tr:hover td{background:rgba(0,180,255,0.03);}
+.pos{color:var(--green);}
+.neg{color:var(--red);}
+
+/* Footer */
+.footer{text-align:center;padding:24px;color:var(--muted);font-size:0.58rem;font-family:var(--font-body);border-top:1px solid var(--border);position:relative;z-index:10;line-height:2;}
+.footer a{color:var(--sky);}
+</style>
+</head>
+<body>
+<canvas id="starfield"></canvas>
+<div class="hud-corner hud-tl"></div><div class="hud-corner hud-tr"></div>
+<div class="hud-corner hud-bl"></div><div class="hud-corner hud-br"></div>
+
+<header class="header">
+  <div class="logo-zone">
+    <div class="plane-icon">✈</div>
+    <div class="logo-text">
+      <h1>SKYPULSE ANALYTICS</h1>
+      <p>AlphaStatLab · Airline Operations Intelligence · Fleet · Revenue · OTP</p>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="live-indicator"><div class="live-dot"></div>LIVE OPS · SIMULATED DATA</div>
+    <div class="header-stat"><div class="hs-val">247</div><div class="hs-label">Flights Today</div></div>
+    <div class="header-stat"><div class="hs-val">84.2%</div><div class="hs-label">On-Time Rate</div></div>
+    <div class="header-stat"><div class="hs-val">$4.7M</div><div class="hs-label">Today Revenue</div></div>
+  </div>
+</header>
+
+<div class="ticker"><div class="ticker-inner" id="ticker"></div></div>
+
+<div class="main">
+<div class="kpi-row" id="kpiRow"></div>
+
+<div class="g2">
+  <div class="panel"><div class="pt">REVENUE TREND</div><div class="ps">Monthly Ticket + Ancillary Revenue · 24 Months</div><div class="cc tall"><canvas id="revChart"></canvas></div></div>
+  <div class="panel"><div class="pt">LOAD FACTOR BY ROUTE CLASS</div><div class="ps">Avg Seat Utilization % · All Routes</div><div class="cc tall"><canvas id="loadChart"></canvas></div></div>
+</div>
+
+<div class="g2">
+  <div class="panel"><div class="pt">LIVE FLIGHT BOARD</div><div class="ps">Today's Departures · Status · Load · Progress</div><div class="flt-board" id="flightBoard"></div></div>
+  <div class="panel"><div class="pt">ON-TIME PERFORMANCE</div><div class="ps">Weekly OTP % by Route Category</div><div class="cc tall"><canvas id="otpChart"></canvas></div></div>
+</div>
+
+<div class="g2">
+  <div class="panel"><div class="pt">GLOBAL ROUTE NETWORK</div><div class="ps">Active Routes · Bubble = Passenger Volume</div><div class="route-map" id="routeMap"></div></div>
+  <div class="panel"><div class="pt">FLEET UTILIZATION</div><div class="ps">Aircraft Hours & Efficiency by Type</div><div class="cc tall"><canvas id="fleetChart"></canvas></div></div>
+</div>
+
+<div class="g3">
+  <div class="panel"><div class="pt">REVENUE BREAKDOWN</div><div class="ps">Ticket vs Ancillary vs Cargo</div><div class="cc sm"><canvas id="revBreakChart"></canvas></div></div>
+  <div class="panel"><div class="pt">DELAY CAUSES</div><div class="ps">Minutes Delay by Category</div><div class="cc sm"><canvas id="delayChart"></canvas></div></div>
+  <div class="panel"><div class="pt">YIELD ANALYSIS</div><div class="ps">Revenue per ASK · by Cabin Class</div><div class="cc sm"><canvas id="yieldChart"></canvas></div></div>
+</div>
+
+<div class="g2e">
+  <div class="panel"><div class="pt">PASSENGER SATISFACTION</div><div class="ps">NPS & CSAT by Service Dimension</div><div class="cc"><canvas id="satChart"></canvas></div></div>
+  <div class="panel"><div class="pt">COST PER ASK TREND</div><div class="ps">CASK vs RASK · 12 Months</div><div class="cc"><canvas id="caskChart"></canvas></div></div>
+</div>
+
+<div class="panel">
+  <div class="pt">TOP ROUTE PERFORMANCE</div><div class="ps">Revenue · Load · OTP · Yield · 20 Routes</div>
+  <div style="overflow-x:auto"><table class="dtable" id="routeTable"></table></div>
+</div>
+</div>
+
+<footer class="footer">
+  <strong style="color:var(--sky)">AlphaStatLab</strong> · Advanced Statistical & Data Science Solutions ·
+  <a href="https://alphastatlab.org">alphastatlab.org</a><br>
+  ⚠️ <strong>Data Notice:</strong> All airline data — routes, revenues, passenger counts, OTP rates, fleet metrics — are
+  <strong>randomly generated for demonstration purposes only</strong> and do not represent any real airline or flight operations.
+</footer>
+
+<script>
+// Embedded Data
+const DATA = {
+  months:['Jan 23','Feb 23','Mar 23','Apr 23','May 23','Jun 23','Jul 23','Aug 23','Sep 23','Oct 23','Nov 23','Dec 23','Jan 24','Feb 24','Mar 24','Apr 24','May 24','Jun 24','Jul 24','Aug 24','Sep 24','Oct 24','Nov 24','Dec 24'],
+  revenue:{ticket:[18.2,16.8,22.4,24.1,28.6,35.2,42.1,41.8,31.4,26.2,19.8,24.6,20.1,18.4,24.8,27.3,32.4,39.8,46.2,45.1,34.8,29.4,22.1,27.8],ancillary:[3.2,2.9,4.1,4.6,5.8,7.4,9.2,9.0,6.8,5.4,3.9,5.1,3.8,3.4,4.8,5.6,6.9,8.6,10.4,10.1,7.6,6.2,4.4,6.0],cargo:[1.8,1.6,2.2,2.0,2.4,2.8,3.1,3.0,2.6,2.2,1.9,2.4,2.1,1.9,2.4,2.3,2.7,3.2,3.6,3.4,2.9,2.5,2.1,2.7]},
+  loadFactor:{domestic:[81,79,85,87,91,94,96,95,88,84,78,83,83,81,86,89,92,95,97,96,90,86,80,85],intl_short:[74,72,78,80,86,91,93,92,83,79,72,77,76,74,80,83,88,93,95,94,85,81,74,79],intl_long:[68,66,72,74,80,85,88,87,77,73,66,71,70,68,74,76,82,87,90,89,79,75,68,73]},
+  otp:{weeks:['W1','W2','W3','W4','W5','W6','W7','W8','W9','W10','W11','W12'],domestic:[88,85,91,87,84,90,93,89,86,92,88,84],regional:[82,79,85,81,78,84,87,83,80,86,82,78],international:[79,76,82,78,75,81,84,80,77,83,79,75]},
+  fleet:[{type:'B737-800',count:42,util:11.2,load:87,age:8.4,cask:0.062},{type:'A320neo',count:38,util:11.8,load:89,age:4.1,cask:0.058},{type:'B787-9',count:18,util:13.4,load:84,age:6.2,cask:0.071},{type:'A350-900',count:12,util:14.1,load:82,age:3.8,cask:0.068},{type:'B777-300',count:8,util:13.8,load:80,age:11.2,cask:0.078},{type:'ATR-72',count:22,util:8.6,load:76,age:7.1,cask:0.089}],
+  delays:{causes:['Weather','ATC','Technical','Turnaround','Crew','Reactionary','Security'],minutes:[38,22,18,14,9,12,4]},
+  yield:{classes:['First','Business','Premium Eco','Economy'],rask:[0.182,0.124,0.089,0.061],cask:[0.092,0.072,0.065,0.058]},
+  satisfaction:{dims:['Check-in','Boarding','Cabin Crew','Food & Bev','Seat Comfort','Entertainment','Punctuality'],nps:[72,68,81,64,71,58,62],csat:[4.3,4.1,4.6,3.9,4.2,3.7,3.8]},
+  cask:{months:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],cask:[0.068,0.072,0.065,0.063,0.061,0.059,0.058,0.059,0.062,0.064,0.067,0.066],rask:[0.082,0.079,0.088,0.092,0.098,0.108,0.118,0.116,0.096,0.089,0.078,0.085]},
+  routes:[
+    {route:'JFK-LHR',region:'North Atlantic',dist:5570,pax:1840,load:88,rev:4.2,otp:79,yield:0.142,class:'Int\'l Long'},
+    {route:'LAX-NRT',region:'Transpacific',dist:5451,pax:1720,load:85,rev:3.9,otp:81,yield:0.138,class:'Int\'l Long'},
+    {route:'ORD-LHR',region:'North Atlantic',dist:3953,pax:1560,load:84,rev:3.4,otp:77,yield:0.131,class:'Int\'l Long'},
+    {route:'MIA-MAD',region:'Atlantic',dist:4450,pax:1480,load:82,rev:3.1,otp:76,yield:0.128,class:'Int\'l Long'},
+    {route:'SFO-CDG',region:'Transatlantic',dist:5573,pax:1640,load:83,rev:3.6,otp:78,yield:0.135,class:'Int\'l Long'},
+    {route:'JFK-LAX',region:'Domestic',dist:2475,pax:2240,load:94,rev:2.8,otp:86,yield:0.098,class:'Domestic'},
+    {route:'LAX-ORD',region:'Domestic',dist:1745,pax:2180,load:93,rev:2.4,otp:88,yield:0.092,class:'Domestic'},
+    {route:'ATL-DFW',region:'Domestic',dist:732,pax:2640,load:96,rev:1.8,otp:91,yield:0.086,class:'Domestic'},
+    {route:'SEA-SFO',region:'Domestic',dist:679,pax:2420,load:95,rev:1.6,otp:90,yield:0.082,class:'Domestic'},
+    {route:'BOS-MIA',region:'Domestic',dist:1258,pax:2160,load:92,rev:2.0,otp:87,yield:0.088,class:'Domestic'},
+    {route:'JFK-CDG',region:'North Atlantic',dist:3628,pax:1740,load:86,rev:3.8,otp:80,yield:0.139,class:'Int\'l Long'},
+    {route:'ORD-MEX',region:'Latin America',dist:1687,pax:1840,load:90,rev:2.2,otp:84,yield:0.108,class:'Int\'l Short'},
+    {route:'MIA-GRU',region:'South America',dist:4080,pax:1520,load:83,rev:3.0,otp:75,yield:0.124,class:'Int\'l Long'},
+    {route:'LAX-CUN',region:'Latin America',dist:1539,pax:1980,load:91,rev:2.0,otp:85,yield:0.104,class:'Int\'l Short'},
+    {route:'DFW-LHR',region:'North Atlantic',dist:4731,pax:1420,load:80,rev:3.2,otp:76,yield:0.133,class:'Int\'l Long'},
+    {route:'ATL-LGW',region:'North Atlantic',dist:4197,pax:1380,load:81,rev:3.0,otp:77,yield:0.130,class:'Int\'l Long'},
+    {route:'SFO-NRT',region:'Transpacific',dist:5130,pax:1640,load:84,rev:3.7,otp:80,yield:0.136,class:'Int\'l Long'},
+    {route:'JFK-DXB',region:'Middle East',dist:6828,pax:1240,load:78,rev:3.4,otp:74,yield:0.148,class:'Int\'l Long'},
+    {route:'ORD-YYZ',region:'Canada',dist:436,pax:2640,load:92,rev:1.4,otp:89,yield:0.072,class:'Int\'l Short'},
+    {route:'BOS-ORD',region:'Domestic',dist:851,pax:2520,load:93,rev:1.9,otp:90,yield:0.084,class:'Domestic'}
+  ],
+  todayFlights:[
+    {num:'SK 101',route:'JFK → LHR',progress:72,status:'on',load:88,dept:'08:15',arr:'20:30'},
+    {num:'SK 204',route:'LAX → NRT',progress:45,status:'on',load:85,dept:'11:00',arr:'15:20+1'},
+    {num:'SK 318',route:'ORD → CDG',progress:88,status:'del',load:91,dept:'09:30',arr:'23:10'},
+    {num:'SK 422',route:'ATL → DFW',progress:95,status:'on',load:96,dept:'14:20',arr:'16:05'},
+    {num:'SK 507',route:'MIA → MAD',progress:31,status:'on',load:82,dept:'15:45',arr:'07:20+1'},
+    {num:'SK 614',route:'SEA → SFO',progress:68,status:'bd',load:89,dept:'16:10',arr:'18:30'},
+    {num:'SK 728',route:'BOS → MIA',progress:55,status:'on',load:92,dept:'17:00',arr:'20:15'},
+    {num:'SK 835',route:'DFW → LAX',progress:20,status:'del',load:87,dept:'18:30',arr:'20:45'}
+  ],
+  tickerData:[
+    {r:'JFK-LHR',stat:'on',pax:1840,otp:79},{r:'LAX-NRT',stat:'on',pax:1720,otp:81},
+    {r:'ATL-DFW',stat:'on',pax:2640,otp:91},{r:'ORD-CDG',stat:'del',pax:1560,otp:77},
+    {r:'MIA-MAD',stat:'on',pax:1480,otp:76},{r:'SEA-SFO',stat:'on',pax:2420,otp:90},
+    {r:'SFO-NRT',stat:'on',pax:1640,otp:80},{r:'JFK-LAX',stat:'on',pax:2240,otp:86}
+  ]
+};
+
+Chart.defaults.color='#4A7A9B'; Chart.defaults.borderColor='rgba(0,180,255,0.1)'; Chart.defaults.font.family="'Space Mono',monospace";
+
+function co(ctx,top,bot){const g=ctx.createLinearGradient(0,0,0,280);g.addColorStop(0,top);g.addColorStop(1,bot);return g;}
+const OPTS_BASE={responsive:true,maintainAspectRatio:false,interaction:{intersect:false,mode:'index'},plugins:{legend:{labels:{color:'#4A7A9B',boxWidth:12,font:{size:9}}},tooltip:{backgroundColor:'#080F1E',borderColor:'rgba(0,180,255,0.3)',borderWidth:1,titleColor:'#00B4FF',bodyColor:'#E8F8FF'}},scales:{x:{grid:{color:'rgba(0,180,255,0.06)'},ticks:{color:'#4A7A9B'}},y:{grid:{color:'rgba(0,180,255,0.06)'},ticks:{color:'#4A7A9B'}}}};
+
+// Starfield
+(function(){const c=document.getElementById('starfield'),ctx=c.getContext('2d');c.width=window.innerWidth;c.height=window.innerHeight;
+const stars=Array.from({length:180},()=>({x:Math.random()*c.width,y:Math.random()*c.height,r:Math.random()*1.4,sp:Math.random()*0.3+0.05,op:Math.random()}));
+function draw(){ctx.clearRect(0,0,c.width,c.height);stars.forEach(s=>{ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+ctx.fillStyle=`rgba(126,232,255,${s.op})`;ctx.fill();s.x-=s.sp;s.op=0.3+Math.sin(Date.now()/1200+s.y)*0.5;if(s.x<0)s.x=c.width;});requestAnimationFrame(draw);}draw();})();
+
+// Ticker
+(function(){const el=document.getElementById('ticker');let h='';for(let pass=0;pass<2;pass++)DATA.tickerData.forEach(d=>{const cl=d.stat==='on'?'on':'del';h+=`<span class="tick"><span class="tick-route">${d.r}</span><span class="tick-stat">PAX:${d.pax.toLocaleString()}</span><span class="tick-val ${cl}">OTP:${d.otp}%</span></span>`;});el.innerHTML=h;})();
+
+// KPI Row
+(function(){const kpis=[{icon:'✈',label:'AIRCRAFT IN FLEET',val:'140',delta:'+8 YoY',up:true},{icon:'👥',label:'PAX TODAY',val:'28,420',delta:'+12.4%',up:true},{icon:'📊',label:'AVG LOAD FACTOR',val:'87.4%',delta:'+3.1pp',up:true},{icon:'⏱',label:'OTP RATE',val:'84.2%',delta:'-1.8pp',up:false},{icon:'💰',label:'REVENUE / ASK',val:'$0.092',delta:'+6.8%',up:true},{icon:'⛽',label:'FUEL COST / L',val:'$0.81',delta:'+14.2%',up:false}];
+document.getElementById('kpiRow').innerHTML=kpis.map((k,i)=>`<div class="kpi-card" style="animation-delay:${i*0.07}s"><div class="kpi-ring">${k.icon}</div><div class="kpi-label">${k.label}</div><div class="kpi-val" style="color:${k.up?'var(--sky)':'var(--fire)'}">${k.val}</div><div class="kpi-delta ${k.up?'delta-up':'delta-dn'}">${k.delta}</div></div>`).join('');})();
+
+// Revenue Chart
+new Chart(document.getElementById('revChart'),{type:'bar',data:{labels:DATA.months,datasets:[{label:'Ticket Revenue $M',data:DATA.revenue.ticket,backgroundColor:'rgba(0,180,255,0.7)',borderColor:'#00B4FF',borderRadius:3,stack:'r'},{label:'Ancillary $M',data:DATA.revenue.ancillary,backgroundColor:'rgba(255,184,0,0.7)',borderColor:'#FFB800',borderRadius:3,stack:'r'},{label:'Cargo $M',data:DATA.revenue.cargo,backgroundColor:'rgba(0,255,136,0.5)',borderColor:'#00FF88',borderRadius:3,stack:'r'},{label:'RASK',data:DATA.cask.rask.concat(DATA.cask.rask.map(v=>v*1.08)),type:'line',borderColor:'#BF5AF2',borderWidth:2,pointRadius:0,tension:0.4,yAxisID:'y2',fill:false}]},options:{...OPTS_BASE,scales:{x:{ticks:{maxTicksLimit:10}},y:{title:{display:true,text:'USD Millions',color:'#4A7A9B'}},y2:{position:'right',grid:{display:false},ticks:{color:'#BF5AF2'},title:{display:true,text:'RASK $',color:'#BF5AF2'}}}}});
+
+// Load Factor Chart
+new Chart(document.getElementById('loadChart'),{type:'line',data:{labels:DATA.months,datasets:[{label:'Domestic',data:DATA.loadFactor.domestic,borderColor:'#00B4FF',borderWidth:2,pointRadius:0,tension:0.4,fill:true,backgroundColor:co(document.getElementById('loadChart').getContext('2d'),'rgba(0,180,255,0.2)','rgba(0,180,255,0)')},{label:'Int\'l Short',data:DATA.loadFactor.intl_short,borderColor:'#FFB800',borderWidth:2,pointRadius:0,tension:0.4,fill:false},{label:'Int\'l Long',data:DATA.loadFactor.intl_long,borderColor:'#00FF88',borderWidth:2,pointRadius:0,tension:0.4,fill:false},{label:'Target 85%',data:Array(24).fill(85),borderColor:'rgba(255,45,85,0.5)',borderWidth:1,pointRadius:0,borderDash:[6,4]}]},options:{...OPTS_BASE,scales:{y:{callback:v=>v+'%',min:60,max:100,title:{display:true,text:'Load Factor %',color:'#4A7A9B'}}}}});
+
+// Flight Board
+(function(){const board=document.getElementById('flightBoard');board.innerHTML=DATA.todayFlights.map((f,i)=>{const stCls=f.status==='on'?'sb-on':f.status==='del'?'sb-del':'sb-bd';const stTxt=f.status==='on'?'ON TIME':f.status==='del'?'DELAYED':'BOARDING';const barColor=f.status==='on'?'#00B4FF':f.status==='del'?'#FF2D55':'#FFB800';return`<div class="flt-row" style="animation-delay:${i*0.06}s"><span class="flt-num">${f.num}</span><span class="flt-route">${f.route}</span><div class="flt-bar-wrap"><div class="flt-bar-fill" style="width:${f.progress}%;background:${barColor};"></div></div><span class="${stCls} status-badge">${stTxt}</span><span class="flt-load">${f.load}%</span><span style="color:var(--muted);font-size:0.55rem">${f.dept} → ${f.arr}</span></div>`;}).join('');})();
+
+// OTP Chart
+new Chart(document.getElementById('otpChart'),{type:'line',data:{labels:DATA.otp.weeks,datasets:[{label:'Domestic OTP',data:DATA.otp.domestic,borderColor:'#00FF88',borderWidth:2,pointRadius:4,pointBackgroundColor:'#00FF88',tension:0.4,fill:true,backgroundColor:co(document.getElementById('otpChart').getContext('2d'),'rgba(0,255,136,0.15)','rgba(0,255,136,0)')},{label:'Regional OTP',data:DATA.otp.regional,borderColor:'#FFB800',borderWidth:2,pointRadius:4,pointBackgroundColor:'#FFB800',tension:0.4,fill:false},{label:'International OTP',data:DATA.otp.international,borderColor:'#FF6B00',borderWidth:2,pointRadius:4,pointBackgroundColor:'#FF6B00',tension:0.4,fill:false},{label:'Target 85%',data:Array(12).fill(85),borderColor:'rgba(255,45,85,0.4)',borderDash:[5,5],borderWidth:1,pointRadius:0}]},options:{...OPTS_BASE,scales:{y:{callback:v=>v+'%',min:65,max:100}}}});
+
+// Route Map SVG
+(function(){const wrap=document.getElementById('routeMap');const hubs=[{name:'JFK',x:200,y:130},{name:'LAX',x:100,y:150},{name:'ORD',x:180,y:125},{name:'ATL',x:195,y:148},{name:'MIA',x:205,y:165},{name:'LHR',x:380,y:110},{name:'CDG',x:385,y:112},{name:'MAD',x:370,y:130},{name:'NRT',x:600,y:135},{name:'DXB',x:490,y:155},{name:'GRU',x:230,y:240},{name:'MEX',x:155,y:170},{name:'CUN',x:170,y:168},{name:'YYZ',x:195,y:120},{name:'SEA',x:95,y:118},{name:'BOS',x:210,y:125},{name:'DFW',x:165,y:155},{name:'SFO',x:90,y:145}];const routes=[{f:'JFK',t:'LHR',vol:1840},{f:'LAX',t:'NRT',vol:1720},{f:'ORD',t:'CDG',vol:1560},{f:'MIA',t:'MAD',vol:1480},{f:'JFK',t:'DXB',vol:1240},{f:'MIA',t:'GRU',vol:1520},{f:'JFK',t:'LAX',vol:2240},{f:'ATL',t:'DFW',vol:2640},{f:'ORD',t:'YYZ',vol:2640},{f:'LAX',t:'ORD',vol:2180},{f:'SEA',t:'SFO',vol:2420},{f:'BOS',t:'MIA',vol:2160}];const hubMap={};hubs.forEach(h=>hubMap[h.name]=h);const W=680,H=280;let svgPaths='';routes.forEach(r=>{const f=hubMap[r.f],t=hubMap[r.t];if(!f||!t)return;const mx=(f.x+t.x)/2,my=Math.min(f.y,t.y)-40;const alpha=Math.min(0.8,r.vol/3000);const col=r.vol>2000?'#00FF88':r.vol>1600?'#00B4FF':'#FFB800';svgPaths+=`<path d="M${f.x},${f.y} Q${mx},${my} ${t.x},${t.y}" fill="none" stroke="${col}" stroke-width="${r.vol/800}" opacity="${alpha}" stroke-dasharray="4,3"><animate attributeName="stroke-dashoffset" from="0" to="-20" dur="${1.5+Math.random()}s" repeatCount="indefinite"/></path>`;});let svgDots='';hubs.forEach(h=>{svgDots+=`<g><circle cx="${h.x}" cy="${h.y}" r="5" fill="#00B4FF" opacity="0.9"/><circle cx="${h.x}" cy="${h.y}" r="10" fill="none" stroke="#00B4FF" stroke-width="1" opacity="0.3"><animate attributeName="r" from="5" to="14" dur="2s" repeatCount="indefinite"/><animate attributeName="opacity" from="0.5" to="0" dur="2s" repeatCount="indefinite"/></circle><text x="${h.x+7}" y="${h.y-7}" fill="#7EE8FF" font-size="7" font-family="'Space Mono'">${h.name}</text></g>`;});wrap.innerHTML=`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet"><rect width="${W}" height="${H}" fill="rgba(0,12,30,0.8)"/><path d="M80,100 Q120,80 180,90 Q220,95 240,120 Q250,140 230,160 Q210,175 190,165 Q160,155 140,170 Q110,180 95,165 Q75,140 80,100Z" fill="rgba(0,180,255,0.06)" stroke="rgba(0,180,255,0.15)" stroke-width="0.8"/><path d="M350,90 Q400,80 440,95 Q460,108 450,130 Q440,150 410,155 Q380,158 360,140 Q340,120 350,90Z" fill="rgba(0,180,255,0.06)" stroke="rgba(0,180,255,0.15)" stroke-width="0.8"/><path d="M450,85 Q520,70 590,90 Q640,105 650,130 Q640,160 600,165 Q560,168 530,155 Q490,145 460,150 Q440,140 440,120 Q445,100 450,85Z" fill="rgba(0,180,255,0.06)" stroke="rgba(0,180,255,0.15)" stroke-width="0.8"/><path d="M420,120 Q445,115 460,130 Q458,155 440,162 Q422,160 415,145 Q414,130 420,120Z" fill="rgba(0,180,255,0.05)" stroke="rgba(0,180,255,0.1)" stroke-width="0.6"/><path d="M200,200 Q225,185 250,200 Q255,230 235,250 Q210,258 195,240 Q185,220 200,200Z" fill="rgba(0,180,255,0.05)" stroke="rgba(0,180,255,0.1)" stroke-width="0.6"/>${[80,120,160,200,240].map(y=>`<line x1="0" y1="${y}" x2="${W}" y2="${y}" stroke="rgba(0,180,255,0.05)" stroke-width="0.5"/>`).join('')}${[100,200,300,400,500,600].map(x=>`<line x1="${x}" y1="0" x2="${x}" y2="${H}" stroke="rgba(0,180,255,0.05)" stroke-width="0.5"/>`).join('')}${svgPaths}${svgDots}<text x="10" y="${H-8}" fill="rgba(0,180,255,0.3)" font-size="7" font-family="'Space Mono'">ALPHASTATLAB · ROUTE NETWORK VISUALIZATION</text></svg>`;})();
+
+// Fleet Chart
+new Chart(document.getElementById('fleetChart'),{type:'bar',data:{labels:DATA.fleet.map(f=>f.type),datasets:[{label:'Daily Util Hours',data:DATA.fleet.map(f=>f.util),backgroundColor:'rgba(0,180,255,0.7)',borderColor:'#00B4FF',borderRadius:4,yAxisID:'y'},{label:'Load Factor %',data:DATA.fleet.map(f=>f.load),backgroundColor:'rgba(255,184,0,0.6)',borderColor:'#FFB800',borderRadius:4,yAxisID:'y2'}]},options:{...OPTS_BASE,scales:{x:{grid:{display:false}},y:{title:{display:true,text:'Block Hours/Day',color:'#4A7A9B'}},y2:{position:'right',grid:{display:false},ticks:{callback:v=>v+'%'},title:{display:true,text:'Load Factor %',color:'#FFB800'}}}}});
+
+// Revenue Breakdown
+new Chart(document.getElementById('revBreakChart'),{type:'doughnut',data:{labels:['Ticket','Ancillary','Cargo'],datasets:[{data:[78,15,7],backgroundColor:['rgba(0,180,255,0.8)','rgba(255,184,0,0.8)','rgba(0,255,136,0.7)'],borderColor:['#00B4FF','#FFB800','#00FF88'],borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,cutout:'65%',plugins:{legend:{position:'bottom',labels:{color:'#4A7A9B',boxWidth:10,font:{size:9}}}}}});
+
+// Delay Chart
+new Chart(document.getElementById('delayChart'),{type:'bar',data:{labels:DATA.delays.causes,datasets:[{label:'Avg Delay (min)',data:DATA.delays.minutes,backgroundColor:['#FF2D55','#FF6B00','#FFB800','#BF5AF2','#00B4FF','#00FF88','#4A7A9B'],borderColor:['#FF2D55','#FF6B00','#FFB800','#BF5AF2','#00B4FF','#00FF88','#4A7A9B'],borderWidth:1,borderRadius:3}]},options:{...OPTS_BASE,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{grid:{color:'rgba(0,180,255,0.06)'}},y:{grid:{display:false}}}}});
+
+// Yield Chart
+new Chart(document.getElementById('yieldChart'),{type:'bar',data:{labels:DATA.yield.classes,datasets:[{label:'RASK $',data:DATA.yield.rask,backgroundColor:'rgba(0,180,255,0.7)',borderColor:'#00B4FF',borderRadius:4},{label:'CASK $',data:DATA.yield.cask,backgroundColor:'rgba(255,45,85,0.6)',borderColor:'#FF2D55',borderRadius:4}]},options:{...OPTS_BASE,plugins:{legend:{labels:{color:'#4A7A9B',boxWidth:10}}},scales:{x:{grid:{display:false}},y:{ticks:{callback:v=>'$'+v}}}}});
+
+// Satisfaction Radar
+new Chart(document.getElementById('satChart'),{type:'radar',data:{labels:DATA.satisfaction.dims,datasets:[{label:'NPS (norm)',data:DATA.satisfaction.nps.map(v=>v/20),borderColor:'#00B4FF',backgroundColor:'rgba(0,180,255,0.15)',borderWidth:2,pointRadius:4,pointBackgroundColor:'#00B4FF'},{label:'CSAT /5',data:DATA.satisfaction.csat,borderColor:'#00FF88',backgroundColor:'rgba(0,255,136,0.1)',borderWidth:2,pointRadius:4,pointBackgroundColor:'#00FF88'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:'#4A7A9B',boxWidth:10}}},scales:{r:{grid:{color:'rgba(0,180,255,0.1)'},ticks:{display:false},pointLabels:{color:'#7EE8FF',font:{size:9}}}}});
+
+// CASK/RASK Chart
+new Chart(document.getElementById('caskChart'),{type:'line',data:{labels:DATA.cask.months,datasets:[{label:'RASK $',data:DATA.cask.rask,borderColor:'#00FF88',borderWidth:2.5,pointRadius:4,pointBackgroundColor:'#00FF88',tension:0.4,fill:true,backgroundColor:co(document.getElementById('caskChart').getContext('2d'),'rgba(0,255,136,0.15)','rgba(0,255,136,0)')},{label:'CASK $',data:DATA.cask.cask,borderColor:'#FF2D55',borderWidth:2.5,pointRadius:4,pointBackgroundColor:'#FF2D55',tension:0.4,fill:false}]},options:{...OPTS_BASE,scales:{y:{ticks:{callback:v=>'$'+v.toFixed(3)}}}}});
+
+// Route Table
+(function(){const t=document.getElementById('routeTable');t.innerHTML=`<thead><tr>${['Route','Region','Class','Dist km','PAX/Day','Load%','Rev $M','OTP%','Yield $/ASK'].map(h=>`<th>${h}</th>`).join('')}</thead>`;let body='<tbody>';DATA.routes.forEach(r=>{const lCl=r.load>=90?'pos':r.load>=80?'':'neg';const oCl=r.otp>=85?'pos':r.otp>=78?'':'neg';body+=`<tr><td style="color:var(--ice);font-weight:700">${r.route}</td><td style="color:var(--muted)">${r.region}</td><td style="color:${r.class.includes('Domestic')?'#00B4FF':r.class.includes('Short')?'#00FF88':'#FFB800'}">${r.class}</td><td>${r.dist.toLocaleString()}</td><td>${r.pax.toLocaleString()}</td><td class="${lCl}">${r.load}%</td><td>$${r.rev}M</td><td class="${oCl}">${r.otp}%</td><td style="color:var(--ember)">$${r.yield.toFixed(3)}</td>`;});body+='</tbody>';t.innerHTML+=body;})();
+</script>
+</body>
+</html>
