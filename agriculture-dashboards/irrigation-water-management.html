@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Irrigation & Water Management Dashboard | AlphaStatLab</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800&family=Gloock:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root{
+  --water:#0288d1;--water2:#0097a7;--water3:#26c6da;--water-pale:#e0f7fa;
+  --drought:#bf360c;--drought2:#e64a19;--drought-pale:#fbe9e7;
+  --rain:#1565c0;--rain2:#42a5f5;
+  --sand:#c8a96e;--clay:#a07848;
+  --save:#00897b;--save2:#26a69a;--save-pale:#e0f2f1;
+  --bg:#f0faff;--surface:#fff;--surface2:#f5fdff;
+  --border:#cce8f4;--text:#0a2030;--muted:#4a7080;
+  --dark:#023048;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Nunito Sans',sans-serif;font-size:13px;min-height:100vh;}
+
+/* Animated water wave top strip */
+.wave-strip{height:5px;background:linear-gradient(90deg,var(--dark),var(--water),var(--water3),var(--rain2),var(--water));background-size:300% 100%;animation:waterflow 4s linear infinite;}
+@keyframes waterflow{0%{background-position:0% 50%;}100%{background-position:300% 50%;}}
+
+.header{
+  background:linear-gradient(135deg,var(--dark) 0%,#024d6e 60%,#036680 100%);
+  padding:0 36px;display:flex;align-items:stretch;
+  position:relative;overflow:hidden;
+}
+.header::after{
+  content:'💧';position:absolute;right:180px;top:50%;transform:translateY(-50%);
+  font-size:8rem;opacity:0.04;pointer-events:none;
+}
+.h-left{padding:22px 28px 22px 0;border-right:1px solid rgba(255,255,255,0.1);margin-right:24px;flex-shrink:0;}
+.h-title{font-family:'Gloock',serif;font-size:1.9rem;color:#fff;line-height:1.1;}
+.h-title em{color:var(--water3);font-style:italic;}
+.h-sub{font-size:10px;color:rgba(255,255,255,0.45);letter-spacing:0.12em;text-transform:uppercase;margin-top:5px;}
+.h-metrics{display:flex;flex:1;gap:0;}
+.hm{flex:1;padding:16px 16px;border-right:1px solid rgba(255,255,255,0.07);display:flex;flex-direction:column;justify-content:center;}
+.hm:last-child{border-right:none;}
+.hm-label{font-size:9px;text-transform:uppercase;letter-spacing:0.13em;color:rgba(255,255,255,0.35);margin-bottom:4px;}
+.hm-val{font-family:'Gloock',serif;font-size:1.4rem;color:#fff;line-height:1;}
+.hm-val.blue{color:var(--water3);}
+.hm-val.red{color:#ff8a65;}
+.hm-val.green{color:#80cbc4;}
+.hm-sub{font-size:10px;color:rgba(255,255,255,0.35);margin-top:3px;}
+.h-brand{padding:22px 0 22px 20px;border-left:1px solid rgba(255,255,255,0.08);display:flex;flex-direction:column;justify-content:center;align-items:flex-end;flex-shrink:0;}
+
+.wrap{max-width:1440px;margin:0 auto;padding:26px 36px;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:none;}}
+@keyframes fillBar{from{width:0;}to{}}
+
+.panel{background:var(--surface);border:1px solid var(--border);padding:20px;animation:fadeUp 0.6s ease both;position:relative;overflow:hidden;}
+.panel::before{content:'';position:absolute;top:0;left:0;width:100%;height:2px;background:linear-gradient(90deg,var(--water),var(--water2),transparent);}
+.pt{font-family:'Gloock',serif;font-size:1rem;color:var(--dark);margin-bottom:4px;}
+.pm{font-size:9px;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);margin-bottom:14px;}
+
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px;}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+.grid-21{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:16px;}
+.grid-13{display:grid;grid-template-columns:1fr 3fr;gap:16px;margin-bottom:16px;}
+
+/* Water KPI cards with water fill animation */
+.water-kpi{
+  background:var(--surface);border:1px solid var(--border);
+  padding:18px;position:relative;overflow:hidden;
+  animation:fadeUp 0.5s ease both;text-align:center;
+}
+.water-kpi::before{
+  content:'';position:absolute;bottom:0;left:0;right:0;
+  background:linear-gradient(180deg,transparent 0%,rgba(2,136,209,0.08) 100%);
+  animation:waterRise 2s ease both;
+}
+@keyframes waterRise{from{height:0;}to{height:100%;}}
+.wkpi-icon{font-size:1.8rem;margin-bottom:6px;}
+.wkpi-label{font-size:9px;text-transform:uppercase;letter-spacing:0.12em;color:var(--muted);margin-bottom:6px;}
+.wkpi-val{font-family:'Gloock',serif;font-size:1.9rem;color:var(--dark);line-height:1;}
+.wkpi-unit{font-size:11px;color:var(--muted);}
+.wkpi-sub{font-size:10px;color:var(--muted);margin-top:4px;}
+.wkpi-badge{display:inline-block;padding:2px 10px;font-size:10px;font-weight:700;border-radius:10px;margin-top:5px;}
+.wb-good{background:var(--save-pale);color:var(--save);}
+.wb-warn{background:#fff3e0;color:#e65100;}
+.wb-bad{background:var(--drought-pale);color:var(--drought);}
+
+/* Drought index gauge */
+.drought-gauge{display:flex;flex-direction:column;gap:10px;}
+.dg-row{display:flex;align-items:center;gap:10px;}
+.dg-region{font-size:10px;color:var(--text);width:90px;flex-shrink:0;}
+.dg-bar{flex:1;height:12px;background:rgba(0,0,0,0.05);border-radius:6px;overflow:hidden;}
+.dg-fill{height:100%;border-radius:6px;transition:width 1.5s cubic-bezier(0.4,0,0.2,1);}
+.dg-val{font-size:10px;width:50px;text-align:right;font-weight:700;}
+.dg-level{font-size:9px;width:60px;text-align:right;}
+
+/* Irrigation schedule matrix */
+.sched-grid{display:grid;grid-template-columns:90px repeat(7,1fr);gap:2px;font-size:10px;}
+.sg-header{font-size:9px;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);text-align:center;padding:4px 0;}
+.sg-field{font-size:10px;color:var(--text);padding:6px 4px;display:flex;align-items:center;}
+.sg-cell{padding:6px 2px;text-align:center;border-radius:2px;font-size:9px;font-weight:700;cursor:default;transition:opacity 0.15s;}
+.sg-cell:hover{opacity:0.8;}
+.sc-drip{background:rgba(2,136,209,0.55);color:#fff;}
+.sc-sprink{background:rgba(38,198,218,0.5);color:var(--dark);}
+.sc-flood{background:rgba(21,101,192,0.45);color:#fff;}
+.sc-none{background:rgba(0,0,0,0.04);color:var(--muted);}
+.sc-sensor{background:rgba(0,137,123,0.45);color:#fff;}
+
+/* ET vs Rainfall */
+.chart-h{position:relative;height:220px;}
+
+/* Water balance */
+.balance-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.bal-label{font-size:10px;color:var(--muted);width:120px;flex-shrink:0;}
+.bal-bar{flex:1;height:10px;border-radius:5px;overflow:hidden;background:rgba(0,0,0,0.05);display:flex;}
+.bal-in{height:100%;border-radius:5px 0 0 5px;background:var(--rain2);}
+.bal-out{height:100%;border-radius:0 5px 5px 0;background:var(--drought2);opacity:0.7;}
+.bal-val{font-size:10px;width:80px;text-align:right;font-weight:600;}
+
+/* Efficiency comparison */
+.eff-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px;}
+.eff-card{padding:14px 12px;background:var(--surface2);border:1px solid var(--border);text-align:center;}
+.eff-name{font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);margin-bottom:6px;}
+.eff-pct{font-family:'Gloock',serif;font-size:2rem;line-height:1;color:var(--dark);}
+.eff-type{font-size:10px;color:var(--muted);margin-top:3px;}
+
+.source-note{margin-top:22px;padding:14px 18px;background:var(--water-pale);border:1px solid rgba(2,136,209,0.2);border-left:3px solid var(--water);font-size:10px;color:var(--muted);line-height:1.8;}
+.source-note strong{color:var(--water);}
+</style>
+</head>
+<body>
+
+<div class="wave-strip"></div>
+<div class="header">
+  <div class="h-left">
+    <div class="h-title">Irrigation &amp; Water<br><em>Management</em></div>
+    <div class="h-sub">AlphaStatLab · Agricultural Water Analytics · 2023</div>
+  </div>
+  <div class="h-metrics">
+    <div class="hm"><div class="hm-label">Total Water Applied</div><div class="hm-val blue">4,812 GL</div><div class="hm-sub">Gigalitres · Season total</div></div>
+    <div class="hm"><div class="hm-label">Irrigation Efficiency</div><div class="hm-val green">74.2%</div><div class="hm-sub">↑ +4.1pp vs 2022</div></div>
+    <div class="hm"><div class="hm-label">Water Saved</div><div class="hm-val green">812 GL</div><div class="hm-sub">vs. flood baseline</div></div>
+    <div class="hm"><div class="hm-label">Drought Stress Areas</div><div class="hm-val red">18.4%</div><div class="hm-sub">Of total cropped area</div></div>
+    <div class="hm"><div class="hm-label">Fields Active Today</div><div class="hm-val blue">1,248</div><div class="hm-sub">Of 2,040 monitored</div></div>
+  </div>
+  <div class="h-brand" style="display:flex;flex-direction:column;justify-content:center;align-items:flex-end;padding:22px 0 22px 24px;">
+    <div style="font-family:'Gloock',serif;font-size:0.9rem;color:var(--water3);">AlphaStatLab.org</div>
+    <div style="font-size:9px;color:rgba(255,255,255,0.3);margin-top:3px;letter-spacing:0.1em;text-transform:uppercase;">Water Intelligence</div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- Water KPI Cards -->
+  <div class="grid-4" style="margin-bottom:18px;">
+    <div class="water-kpi" style="animation-delay:0.05s">
+      <div class="wkpi-icon">💧</div>
+      <div class="wkpi-label">Drip Irrigation Coverage</div>
+      <div class="wkpi-val">48.2<span class="wkpi-unit">%</span></div>
+      <div class="wkpi-sub">Of irrigated area</div>
+      <div class="wkpi-badge wb-good">↑ +8.4pp vs 2020</div>
+    </div>
+    <div class="water-kpi" style="animation-delay:0.1s">
+      <div class="wkpi-icon">🌧️</div>
+      <div class="wkpi-label">Rainfall (Season)</div>
+      <div class="wkpi-val">412<span class="wkpi-unit"> mm</span></div>
+      <div class="wkpi-sub">vs. 30yr avg: 498 mm</div>
+      <div class="wkpi-badge wb-warn">17% Below Normal</div>
+    </div>
+    <div class="water-kpi" style="animation-delay:0.15s">
+      <div class="wkpi-icon">☀️</div>
+      <div class="wkpi-label">Evapotranspiration (ETo)</div>
+      <div class="wkpi-val">6.8<span class="wkpi-unit"> mm/day</span></div>
+      <div class="wkpi-sub">Peak summer average</div>
+      <div class="wkpi-badge wb-warn">High demand period</div>
+    </div>
+    <div class="water-kpi" style="animation-delay:0.2s">
+      <div class="wkpi-icon">🌵</div>
+      <div class="wkpi-label">Drought Alert Zones</div>
+      <div class="wkpi-val">3<span class="wkpi-unit"> zones</span></div>
+      <div class="wkpi-sub">D2 Severe or higher</div>
+      <div class="wkpi-badge wb-bad">Intervention Required</div>
+    </div>
+  </div>
+
+  <!-- ET vs Rainfall + Drought Index -->
+  <div class="grid-21">
+    <div class="panel" style="animation-delay:0.25s">
+      <div class="pt">Evapotranspiration vs Rainfall — Monthly Water Balance 2023</div>
+      <div class="pm">mm/month · Reference ET (FAO-56) vs Precipitation</div>
+      <div class="chart-h">
+        <canvas id="etChart"></canvas>
+      </div>
+    </div>
+    <div class="panel" style="animation-delay:0.3s">
+      <div class="pt">Drought Severity Index</div>
+      <div class="pm">PDSI Score by Region</div>
+      <div class="drought-gauge">
+        <div class="dg-row">
+          <span class="dg-region">Southwest</span>
+          <div class="dg-bar"><div class="dg-fill" style="width:84%;background:linear-gradient(90deg,#bf360c,#e64a19);"></div></div>
+          <span class="dg-val" style="color:#bf360c;">D3</span>
+          <span class="dg-level" style="font-size:9px;color:#bf360c;">Extreme</span>
+        </div>
+        <div class="dg-row">
+          <span class="dg-region">Great Plains</span>
+          <div class="dg-bar"><div class="dg-fill" style="width:65%;background:linear-gradient(90deg,#e64a19,#ff7043);"></div></div>
+          <span class="dg-val" style="color:#e64a19;">D2</span>
+          <span class="dg-level" style="font-size:9px;color:#e64a19;">Severe</span>
+        </div>
+        <div class="dg-row">
+          <span class="dg-region">Midwest</span>
+          <div class="dg-bar"><div class="dg-fill" style="width:42%;background:linear-gradient(90deg,#f4511e,#ffcc80);"></div></div>
+          <span class="dg-val" style="color:#e65100;">D1</span>
+          <span class="dg-level" style="font-size:9px;color:#e65100;">Moderate</span>
+        </div>
+        <div class="dg-row">
+          <span class="dg-region">Northeast</span>
+          <div class="dg-bar"><div class="dg-fill" style="width:18%;background:linear-gradient(90deg,#ffcc02,#ffd740);"></div></div>
+          <span class="dg-val" style="color:#c8a000;">D0</span>
+          <span class="dg-level" style="font-size:9px;color:#c8a000;">Abnorm. Dry</span>
+        </div>
+        <div class="dg-row">
+          <span class="dg-region">Pacific NW</span>
+          <div class="dg-bar"><div class="dg-fill" style="width:8%;background:var(--save2);"></div></div>
+          <span class="dg-val" style="color:var(--save);">None</span>
+          <span class="dg-level" style="font-size:9px;color:var(--save);">Normal</span>
+        </div>
+        <div class="dg-row">
+          <span class="dg-region">Southeast</span>
+          <div class="dg-bar"><div class="dg-fill" style="width:28%;background:linear-gradient(90deg,#f9a825,#ffd740);"></div></div>
+          <span class="dg-val" style="color:#f57f17;">D0</span>
+          <span class="dg-level" style="font-size:9px;color:#f57f17;">Abnorm. Dry</span>
+        </div>
+      </div>
+      <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border);">
+        <div class="pm" style="margin-bottom:8px;">Drought Scale Reference</div>
+        <div style="display:flex;height:8px;border-radius:4px;overflow:hidden;">
+          <div style="flex:1;background:#26a69a;" title="No Drought"></div>
+          <div style="flex:1;background:#ffd740;" title="D0 — Abnormally Dry"></div>
+          <div style="flex:1;background:#ffa726;" title="D1 — Moderate"></div>
+          <div style="flex:1;background:#f4511e;" title="D2 — Severe"></div>
+          <div style="flex:1;background:#bf360c;" title="D3 — Extreme"></div>
+          <div style="flex:1;background:#7f0000;" title="D4 — Exceptional"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:8px;color:var(--muted);margin-top:3px;">
+          <span>Normal</span><span>D0</span><span>D1</span><span>D2</span><span>D3</span><span>D4</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Irrigation efficiency comparison -->
+  <div style="margin-bottom:16px;">
+    <div style="font-family:'Gloock',serif;font-size:1rem;color:var(--dark);margin-bottom:12px;animation:fadeUp 0.5s ease both 0.35s both;">Water Application Efficiency by Irrigation Method</div>
+    <div class="eff-cards">
+      <div class="eff-card" style="border-top:3px solid var(--water);animation:fadeUp 0.5s ease 0.35s both;">
+        <div class="eff-name">Surface / Flood</div>
+        <div class="eff-pct" style="color:#0288d1;">45%</div>
+        <div class="eff-type">Field application efficiency</div>
+        <div style="font-size:10px;color:var(--drought2);margin-top:4px;">⚠ Baseline — High loss</div>
+      </div>
+      <div class="eff-card" style="border-top:3px solid var(--rain2);animation:fadeUp 0.5s ease 0.4s both;">
+        <div class="eff-name">Sprinkler</div>
+        <div class="eff-pct" style="color:#42a5f5;">72%</div>
+        <div class="eff-type">Field application efficiency</div>
+        <div style="font-size:10px;color:var(--save);margin-top:4px;">↑ +27pp vs flood</div>
+      </div>
+      <div class="eff-card" style="border-top:3px solid var(--save);animation:fadeUp 0.5s ease 0.45s both;">
+        <div class="eff-name">Drip / Micro</div>
+        <div class="eff-pct" style="color:#00897b;">90%</div>
+        <div class="eff-type">Field application efficiency</div>
+        <div style="font-size:10px;color:var(--save);margin-top:4px;">✓ Best practice</div>
+      </div>
+      <div class="eff-card" style="border-top:3px solid #00bcd4;animation:fadeUp 0.5s ease 0.5s both;">
+        <div class="eff-name">Sensor-Driven</div>
+        <div class="eff-pct" style="color:#0097a7;">95%</div>
+        <div class="eff-type">With soil moisture automation</div>
+        <div style="font-size:10px;color:var(--save);margin-top:4px;">✓ Optimal — IoT enabled</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Irrigation Schedule + Water savings chart -->
+  <div class="grid-2">
+    <div class="panel" style="animation-delay:0.5s">
+      <div class="pt">Weekly Irrigation Schedule — Active Fields</div>
+      <div class="pm">Method key: Drip · Sprinkler · Flood · Sensor-auto · Rest</div>
+      <div class="sched-grid">
+        <div class="sg-header"></div>
+        <div class="sg-header">Mon</div><div class="sg-header">Tue</div><div class="sg-header">Wed</div>
+        <div class="sg-header">Thu</div><div class="sg-header">Fri</div><div class="sg-header">Sat</div><div class="sg-header">Sun</div>
+        <div class="sg-field">🌾 Wheat-A</div>
+        <div class="sg-cell sc-drip">Drip</div><div class="sg-cell sc-none">—</div><div class="sg-cell sc-drip">Drip</div>
+        <div class="sg-cell sc-none">—</div><div class="sg-cell sc-drip">Drip</div><div class="sg-cell sc-none">—</div><div class="sg-cell sc-none">—</div>
+        <div class="sg-field">🌽 Maize-B</div>
+        <div class="sg-cell sc-sprink">Sprink</div><div class="sg-cell sc-sprink">Sprink</div><div class="sg-cell sc-none">—</div>
+        <div class="sg-cell sc-sprink">Sprink</div><div class="sg-cell sc-none">—</div><div class="sg-cell sc-sprink">Sprink</div><div class="sg-cell sc-none">—</div>
+        <div class="sg-field">🫘 Soy-C</div>
+        <div class="sg-cell sc-sensor">Auto</div><div class="sg-cell sc-sensor">Auto</div><div class="sg-cell sc-sensor">Auto</div>
+        <div class="sg-cell sc-sensor">Auto</div><div class="sg-cell sc-sensor">Auto</div><div class="sg-cell sc-sensor">Auto</div><div class="sg-cell sc-sensor">Auto</div>
+        <div class="sg-field">🍅 Tomato-D</div>
+        <div class="sg-cell sc-drip">Drip</div><div class="sg-cell sc-drip">Drip</div><div class="sg-cell sc-drip">Drip</div>
+        <div class="sg-cell sc-drip">Drip</div><div class="sg-cell sc-drip">Drip</div><div class="sg-cell sc-drip">Drip</div><div class="sg-cell sc-drip">Drip</div>
+        <div class="sg-field">🌿 Cotton-E</div>
+        <div class="sg-cell sc-flood">Flood</div><div class="sg-cell sc-none">—</div><div class="sg-cell sc-none">—</div>
+        <div class="sg-cell sc-flood">Flood</div><div class="sg-cell sc-none">—</div><div class="sg-cell sc-none">—</div><div class="sg-cell sc-none">—</div>
+        <div class="sg-field">🍇 Vineyard-F</div>
+        <div class="sg-cell sc-drip">Drip</div><div class="sg-cell sc-none">—</div><div class="sg-cell sc-drip">Drip</div>
+        <div class="sg-cell sc-none">—</div><div class="sg-cell sc-drip">Drip</div><div class="sg-cell sc-none">—</div><div class="sg-cell sc-drip">Drip</div>
+      </div>
+    </div>
+    <div class="panel" style="animation-delay:0.55s">
+      <div class="pt">Water Consumption & Savings — 2023 Monthly</div>
+      <div class="pm">Gigalitres · Applied vs. baseline flood irrigation</div>
+      <div class="chart-h">
+        <canvas id="waterChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Crop water requirement -->
+  <div class="panel" style="animation-delay:0.6s;margin-bottom:0;">
+    <div class="pt">Crop Water Requirements vs. Actual Application — 2023 Season</div>
+    <div class="pm" style="margin-bottom:14px;">mm/season · 6 major crops · Deficit = shortfall risk · Surplus = wastage</div>
+    <div class="chart-h" style="height:200px;">
+      <canvas id="cropWaterChart"></canvas>
+    </div>
+  </div>
+
+  <div class="source-note">
+    <strong>⚠ Synthetic Data Notice:</strong> All irrigation volumes, rainfall figures, evapotranspiration values, drought indices, field schedules, water savings, and crop water requirements in this dashboard are <strong>entirely randomly generated synthetic data</strong> by AlphaStatLab for portfolio demonstration. No real field, watershed, or government water authority data is represented. For real irrigation analytics, visit <strong>alphastatlab.org</strong>.<br>
+    <strong>Methods:</strong> ET₀ estimated from Penman-Monteith equation with synthetic climate inputs. PDSI drought indices generated from normal distribution around historical extremes. Monthly water balance from seasonal precipitation model. Crop water requirements from FAO-56 crop coefficient × ET₀ with noise. Chart.js v4.4.1 · Fonts: Gloock + Nunito Sans.
+  </div>
+</div>
+
+<script>
+const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+// ET vs Rainfall
+const etCtx = document.getElementById('etChart').getContext('2d');
+const etData = [52,61,98,128,168,198,212,204,162,118,72,48];
+const rainData = [42,38,68,82,94,48,28,32,62,88,58,42];
+new Chart(etCtx,{
+  type:'bar',
+  data:{
+    labels:months,
+    datasets:[
+      {label:'Evapotranspiration ET₀ (mm)',data:etData,backgroundColor:'rgba(2,136,209,0.7)',borderRadius:3,borderWidth:0,order:2},
+      {label:'Rainfall (mm)',data:rainData,type:'line',borderColor:'#1565c0',backgroundColor:'rgba(21,101,192,0.1)',borderWidth:2.5,pointRadius:4,pointBackgroundColor:'#1565c0',fill:true,tension:0.4,order:1}
+    ]
+  },
+  options:{responsive:true,maintainAspectRatio:false,
+    scales:{
+      x:{ticks:{color:'#4a7080',font:{size:10,family:'Nunito Sans'}},grid:{display:false}},
+      y:{ticks:{color:'#4a7080',font:{size:10,family:'Nunito Sans'},callback:v=>v+'mm'},grid:{color:'rgba(204,232,244,0.7)'}}
+    },
+    plugins:{legend:{labels:{color:'#4a7080',font:{family:'Nunito Sans',size:10},boxWidth:10}},tooltip:{backgroundColor:'#023048',titleFont:{family:'Nunito Sans'},bodyFont:{family:'Nunito Sans',size:10}}}
+  }
+});
+
+// Water consumption vs savings
+const waterCtx = document.getElementById('waterChart').getContext('2d');
+const applied = [180,162,284,398,512,584,621,598,468,342,212,160];
+const baseline = [320,295,460,620,780,870,940,912,710,520,340,268];
+new Chart(waterCtx,{
+  type:'bar',
+  data:{
+    labels:months,
+    datasets:[
+      {label:'Actual Applied (GL)',data:applied,backgroundColor:'rgba(2,136,209,0.75)',borderRadius:3,borderWidth:0},
+      {label:'Flood Baseline (GL)',data:baseline,backgroundColor:'rgba(21,101,192,0.2)',borderWidth:1,borderColor:'rgba(21,101,192,0.4)',borderRadius:3},
+    ]
+  },
+  options:{responsive:true,maintainAspectRatio:false,
+    scales:{
+      x:{ticks:{color:'#4a7080',font:{size:10,family:'Nunito Sans'}},grid:{display:false}},
+      y:{ticks:{color:'#4a7080',font:{size:10,family:'Nunito Sans'},callback:v=>v+'GL'},grid:{color:'rgba(204,232,244,0.7)'}}
+    },
+    plugins:{legend:{labels:{color:'#4a7080',font:{family:'Nunito Sans',size:10},boxWidth:10}},tooltip:{backgroundColor:'#023048',titleFont:{family:'Nunito Sans'},bodyFont:{family:'Nunito Sans',size:10}}}
+  }
+});
+
+// Crop water requirements
+const cwCtx = document.getElementById('cropWaterChart').getContext('2d');
+new Chart(cwCtx,{
+  type:'bar',
+  data:{
+    labels:['🌾 Wheat','🌽 Maize','🍚 Rice','🫘 Soybeans','🍅 Tomato','🌿 Cotton'],
+    datasets:[
+      {label:'Crop Water Requirement (mm)',data:[450,580,1200,560,420,800],backgroundColor:'rgba(2,136,209,0.65)',borderRadius:3},
+      {label:'Actual Applied (mm)',data:[412,624,1180,498,448,712],backgroundColor:'rgba(0,137,123,0.55)',borderRadius:3}
+    ]
+  },
+  options:{responsive:true,maintainAspectRatio:false,
+    scales:{
+      x:{ticks:{color:'#4a7080',font:{size:10,family:'Nunito Sans'}},grid:{display:false}},
+      y:{ticks:{color:'#4a7080',font:{size:10,family:'Nunito Sans'},callback:v=>v+'mm'},grid:{color:'rgba(204,232,244,0.7)'}}
+    },
+    plugins:{legend:{labels:{color:'#4a7080',font:{family:'Nunito Sans',size:10},boxWidth:10}},tooltip:{backgroundColor:'#023048',titleFont:{family:'Nunito Sans'},bodyFont:{family:'Nunito Sans',size:10}}}
+  }
+});
+</script>
+</body>
+</html>
