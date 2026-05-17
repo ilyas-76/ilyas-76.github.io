@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Soil Health Monitor | AlphaStatLab</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --terra:#b5522a;--terra2:#d4764a;--terra-pale:#fdf0ea;
+  --clay:#8b4513;--clay2:#a0522d;
+  --moss:#4a7c59;--moss2:#6aab7e;--moss-pale:#edf5f0;
+  --sand:#c8b585;--sand2:#e8d9b8;--sand-pale:#faf6ec;
+  --nitrogen:#3a7ebf;--phosphorus:#c8860a;--potassium:#7b3fa0;
+  --water:#0093c4;--organic:#5c8a3c;
+  --bg:#f4efe6;--surface:#fff;--surface2:#faf7f2;
+  --border:#e2d9c8;--text:#2a1f14;--muted:#7a6548;
+  --dark:#1e140a;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Josefin Sans',sans-serif;font-size:13px;min-height:100vh;}
+
+/* Soil layer gradient background accent */
+.soil-layers{height:6px;background:linear-gradient(90deg,#8b4513,#b5522a,#c8b585,#4a7c59,#3a7ebf,#7b3fa0);}
+
+.header{
+  background:var(--dark);padding:0 36px;
+  display:flex;align-items:stretch;border-bottom:3px solid var(--terra);
+  position:relative;overflow:hidden;
+}
+.header::before{
+  content:'';position:absolute;top:0;bottom:0;right:0;width:300px;
+  background:radial-gradient(ellipse at right,rgba(181,82,42,0.15),transparent 70%);
+}
+.h-logo{padding:22px 28px 22px 0;border-right:1px solid rgba(255,255,255,0.1);margin-right:28px;flex-shrink:0;}
+.h-logo h1{font-family:'Lora',serif;font-size:1.7rem;font-weight:600;color:#fff;line-height:1.2;}
+.h-logo h1 em{color:var(--terra2);font-style:italic;}
+.h-logo p{font-size:10px;color:rgba(255,255,255,0.4);letter-spacing:0.12em;text-transform:uppercase;margin-top:4px;}
+.h-indicators{display:flex;flex:1;gap:0;}
+.hi{flex:1;padding:18px 16px;border-right:1px solid rgba(255,255,255,0.06);display:flex;flex-direction:column;justify-content:center;}
+.hi:last-child{border-right:none;}
+.hi-label{font-size:9px;text-transform:uppercase;letter-spacing:0.14em;color:rgba(255,255,255,0.35);margin-bottom:4px;}
+.hi-val{font-family:'Lora',serif;font-size:1.4rem;color:#fff;line-height:1;}
+.hi-sub{font-size:10px;margin-top:3px;}
+.c-terra{color:var(--terra2);}
+.c-moss{color:#6aab7e;}
+.c-sand{color:var(--sand);}
+.c-nitro{color:#7bb8f0;}
+.c-water{color:#5cc8f0;}
+.h-brand{padding:22px 0 22px 24px;display:flex;flex-direction:column;justify-content:center;align-items:flex-end;flex-shrink:0;}
+.h-brand-name{font-family:'Lora',serif;font-size:0.9rem;color:var(--terra2);letter-spacing:0.06em;}
+.h-brand-sub{font-size:9px;color:rgba(255,255,255,0.3);margin-top:3px;letter-spacing:0.1em;text-transform:uppercase;}
+
+.wrap{max-width:1440px;margin:0 auto;padding:26px 36px;position:relative;}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:none;}}
+@keyframes dialSpin{from{stroke-dashoffset:251;}to{}}
+
+.panel{background:var(--surface);border:1px solid var(--border);padding:20px;animation:fadeUp 0.6s ease both;position:relative;}
+.panel::after{content:'';position:absolute;top:0;left:0;width:100%;height:2px;background:linear-gradient(90deg,var(--terra),transparent);}
+.pt{font-family:'Lora',serif;font-size:1rem;color:var(--dark);margin-bottom:14px;}
+.pm{font-family:'Josefin Sans';font-size:9px;text-transform:uppercase;letter-spacing:0.12em;color:var(--muted);}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px;}
+.grid-4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:14px;margin-bottom:16px;}
+.grid-21{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:16px;}
+.grid-12{display:grid;grid-template-columns:1fr 2fr;gap:16px;margin-bottom:16px;}
+
+/* pH dial gauges */
+.dial-row{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:16px;}
+.dial-card{
+  flex:1;min-width:120px;
+  background:var(--surface2);border:1px solid var(--border);
+  padding:14px 10px;text-align:center;
+  animation:fadeUp 0.5s ease both;
+  transition:border-color 0.25s,box-shadow 0.25s;
+}
+.dial-card:hover{border-color:var(--terra2);box-shadow:0 4px 16px rgba(181,82,42,0.08);}
+.dial-svg{position:relative;display:inline-block;}
+.dial-label{font-size:9px;text-transform:uppercase;letter-spacing:0.12em;color:var(--muted);margin-top:8px;}
+.dial-field{font-family:'Lora',serif;font-size:1rem;color:var(--dark);margin-top:2px;}
+.dial-status{font-size:9px;padding:2px 8px;border-radius:10px;display:inline-block;margin-top:4px;}
+.ds-optimal{background:var(--moss-pale);color:var(--moss);}
+.ds-acidic{background:#fff3e0;color:#e65100;}
+.ds-alkaline{background:#e3f2fd;color:var(--nitrogen);}
+
+/* Soil profile depth visualization */
+.soil-profile{display:flex;flex-direction:column;gap:3px;}
+.sp-layer{
+  display:flex;align-items:center;gap:12px;padding:10px 12px;
+  border-radius:2px;transition:opacity 0.2s;cursor:default;
+}
+.sp-layer:hover{opacity:0.85;}
+.sp-depth{font-size:10px;color:var(--muted);width:70px;flex-shrink:0;font-family:'Josefin Sans',sans-serif;font-size:9px;text-transform:uppercase;letter-spacing:0.08em;}
+.sp-name{font-size:11px;font-weight:600;width:80px;}
+.sp-bar{flex:1;height:14px;border-radius:2px;position:relative;overflow:hidden;}
+.sp-om{height:100%;transition:width 1.2s ease;}
+.sp-vals{font-size:10px;color:var(--muted);text-align:right;min-width:120px;}
+
+/* Nutrient traffic light */
+.nutrient-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.nut-card{
+  padding:14px 12px;border:1px solid var(--border);
+  text-align:center;position:relative;overflow:hidden;
+}
+.nut-icon{font-size:1.2rem;margin-bottom:4px;}
+.nut-name{font-size:9px;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);}
+.nut-val{font-family:'Lora',serif;font-size:1.5rem;color:var(--dark);margin:4px 0;line-height:1;}
+.nut-unit{font-size:10px;color:var(--muted);}
+.nut-bar{height:4px;border-radius:2px;margin-top:8px;}
+.nut-status{font-size:9px;margin-top:5px;font-weight:600;}
+.ns-low{color:var(--terra);}
+.ns-opt{color:var(--moss);}
+.ns-high{color:var(--nitrogen);}
+
+/* Moisture timeline */
+.chart-h{position:relative;height:220px;}
+
+/* Field map placeholder */
+.field-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:3px;}
+.field-cell{
+  aspect-ratio:1;border-radius:2px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  font-size:8px;font-weight:700;color:rgba(255,255,255,0.9);
+  transition:transform 0.15s,filter 0.15s;
+}
+.field-cell:hover{transform:scale(1.1);z-index:2;filter:brightness(1.15);}
+
+.source-note{margin-top:22px;padding:14px 18px;background:var(--terra-pale);border:1px solid rgba(181,82,42,0.2);border-left:3px solid var(--terra);font-size:10px;color:var(--muted);line-height:1.8;}
+.source-note strong{color:var(--terra);}
+</style>
+</head>
+<body>
+
+<div class="soil-layers"></div>
+<div class="header">
+  <div class="h-logo">
+    <h1>Soil Health <em>Monitor</em></h1>
+    <p>AlphaStatLab · Field Intelligence · Season 2023</p>
+  </div>
+  <div class="h-indicators">
+    <div class="hi"><div class="hi-label">Fields Monitored</div><div class="hi-val">248</div><div class="hi-sub c-terra">Across 6 regions</div></div>
+    <div class="hi"><div class="hi-label">Avg Soil pH</div><div class="hi-val">6.42</div><div class="hi-sub c-moss">Slightly Acidic — Optimal</div></div>
+    <div class="hi"><div class="hi-label">Avg Moisture</div><div class="hi-val">34.8%</div><div class="hi-sub c-water">VWC — Adequate</div></div>
+    <div class="hi"><div class="hi-label">Organic Matter</div><div class="hi-val">3.21%</div><div class="hi-sub c-moss">↑ +0.12% vs 2022</div></div>
+    <div class="hi"><div class="hi-label">N Deficiency Alerts</div><div class="hi-val">14</div><div class="hi-sub c-terra">Fields requiring intervention</div></div>
+    <div class="hi"><div class="hi-label">Soil Health Index</div><div class="hi-val">72/100</div><div class="hi-sub c-sand">Good — Above regional avg</div></div>
+  </div>
+  <div class="h-brand">
+    <div class="h-brand-name">AlphaStatLab.org</div>
+    <div class="h-brand-sub">Soil Analytics</div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- pH Dials -->
+  <div style="margin-bottom:16px;animation:fadeUp 0.5s ease both;">
+    <div style="font-family:'Lora',serif;font-size:1rem;color:var(--dark);margin-bottom:12px;">Soil pH by Field Zone — Optimal Range: 6.0–7.0</div>
+    <div class="dial-row">
+      <div class="dial-card" style="animation-delay:0.05s">
+        <svg width="80" height="80" viewBox="0 0 80 80">
+          <circle cx="40" cy="40" r="32" fill="none" stroke="rgba(0,0,0,0.06)" stroke-width="7"/>
+          <circle cx="40" cy="40" r="32" fill="none" stroke="#4a7c59" stroke-width="7" stroke-linecap="round" stroke-dasharray="251" stroke-dashoffset="72" transform="rotate(-90 40 40)" style="transition:stroke-dashoffset 1.5s ease;"/>
+          <text x="40" y="37" text-anchor="middle" font-family="Lora,serif" font-size="14" font-weight="600" fill="#2a1f14">6.42</text>
+          <text x="40" y="50" text-anchor="middle" font-family="Josefin Sans,sans-serif" font-size="8" fill="#7a6548">pH</text>
+        </svg>
+        <div class="dial-label">Zone A-North</div>
+        <div class="dial-field">Wheat Field</div>
+        <div class="dial-status ds-optimal">Optimal</div>
+      </div>
+      <div class="dial-card" style="animation-delay:0.1s">
+        <svg width="80" height="80" viewBox="0 0 80 80">
+          <circle cx="40" cy="40" r="32" fill="none" stroke="rgba(0,0,0,0.06)" stroke-width="7"/>
+          <circle cx="40" cy="40" r="32" fill="none" stroke="#e65100" stroke-width="7" stroke-linecap="round" stroke-dasharray="251" stroke-dashoffset="115" transform="rotate(-90 40 40)" style="transition:stroke-dashoffset 1.5s ease;"/>
+          <text x="40" y="37" text-anchor="middle" font-family="Lora,serif" font-size="14" font-weight="600" fill="#2a1f14">5.48</text>
+          <text x="40" y="50" text-anchor="middle" font-family="Josefin Sans,sans-serif" font-size="8" fill="#7a6548">pH</text>
+        </svg>
+        <div class="dial-label">Zone B-East</div>
+        <div class="dial-field">Maize Field</div>
+        <div class="dial-status ds-acidic">Acidic — Lime Needed</div>
+      </div>
+      <div class="dial-card" style="animation-delay:0.15s">
+        <svg width="80" height="80" viewBox="0 0 80 80">
+          <circle cx="40" cy="40" r="32" fill="none" stroke="rgba(0,0,0,0.06)" stroke-width="7"/>
+          <circle cx="40" cy="40" r="32" fill="none" stroke="#4a7c59" stroke-width="7" stroke-linecap="round" stroke-dasharray="251" stroke-dashoffset="68" transform="rotate(-90 40 40)"/>
+          <text x="40" y="37" text-anchor="middle" font-family="Lora,serif" font-size="14" font-weight="600" fill="#2a1f14">6.58</text>
+          <text x="40" y="50" text-anchor="middle" font-family="Josefin Sans,sans-serif" font-size="8" fill="#7a6548">pH</text>
+        </svg>
+        <div class="dial-label">Zone C-West</div>
+        <div class="dial-field">Soybean Field</div>
+        <div class="dial-status ds-optimal">Optimal</div>
+      </div>
+      <div class="dial-card" style="animation-delay:0.2s">
+        <svg width="80" height="80" viewBox="0 0 80 80">
+          <circle cx="40" cy="40" r="32" fill="none" stroke="rgba(0,0,0,0.06)" stroke-width="7"/>
+          <circle cx="40" cy="40" r="32" fill="none" stroke="#3a7ebf" stroke-width="7" stroke-linecap="round" stroke-dasharray="251" stroke-dashoffset="35" transform="rotate(-90 40 40)"/>
+          <text x="40" y="37" text-anchor="middle" font-family="Lora,serif" font-size="14" font-weight="600" fill="#2a1f14">7.34</text>
+          <text x="40" y="50" text-anchor="middle" font-family="Josefin Sans,sans-serif" font-size="8" fill="#7a6548">pH</text>
+        </svg>
+        <div class="dial-label">Zone D-South</div>
+        <div class="dial-field">Cotton Field</div>
+        <div class="dial-status ds-alkaline">Slightly Alkaline</div>
+      </div>
+      <div class="dial-card" style="animation-delay:0.25s">
+        <svg width="80" height="80" viewBox="0 0 80 80">
+          <circle cx="40" cy="40" r="32" fill="none" stroke="rgba(0,0,0,0.06)" stroke-width="7"/>
+          <circle cx="40" cy="40" r="32" fill="none" stroke="#4a7c59" stroke-width="7" stroke-linecap="round" stroke-dasharray="251" stroke-dashoffset="62" transform="rotate(-90 40 40)"/>
+          <text x="40" y="37" text-anchor="middle" font-family="Lora,serif" font-size="14" font-weight="600" fill="#2a1f14">6.71</text>
+          <text x="40" y="50" text-anchor="middle" font-family="Josefin Sans,sans-serif" font-size="8" fill="#7a6548">pH</text>
+        </svg>
+        <div class="dial-label">Zone E-Central</div>
+        <div class="dial-field">Rice Paddy</div>
+        <div class="dial-status ds-optimal">Optimal</div>
+      </div>
+      <div class="dial-card" style="animation-delay:0.3s">
+        <svg width="80" height="80" viewBox="0 0 80 80">
+          <circle cx="40" cy="40" r="32" fill="none" stroke="rgba(0,0,0,0.06)" stroke-width="7"/>
+          <circle cx="40" cy="40" r="32" fill="none" stroke="#e65100" stroke-width="7" stroke-linecap="round" stroke-dasharray="251" stroke-dashoffset="135" transform="rotate(-90 40 40)"/>
+          <text x="40" y="37" text-anchor="middle" font-family="Lora,serif" font-size="14" font-weight="600" fill="#2a1f14">5.12</text>
+          <text x="40" y="50" text-anchor="middle" font-family="Josefin Sans,sans-serif" font-size="8" fill="#7a6548">pH</text>
+        </svg>
+        <div class="dial-label">Zone F-Highland</div>
+        <div class="dial-field">Tea Plantation</div>
+        <div class="dial-status ds-acidic">Very Acidic</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Soil Profile + Nutrients -->
+  <div class="grid-21">
+    <div class="panel" style="animation-delay:0.3s">
+      <div class="pt">Soil Profile Depth Analysis — Zone A-North (Wheat Field)</div>
+      <div class="pm" style="margin-bottom:14px;">Organic matter, moisture & bulk density by horizon</div>
+      <div class="soil-profile">
+        <div class="sp-layer" style="background:rgba(181,82,42,0.12);">
+          <div class="sp-depth">0–10 cm</div>
+          <div class="sp-name" style="color:#8b4513;">O Horizon</div>
+          <div class="sp-bar"><div class="sp-om" style="width:78%;background:linear-gradient(90deg,#4a7c59,#6aab7e);height:100%;border-radius:2px;"></div></div>
+          <div class="sp-vals">OM: 7.8% · VWC: 38% · BD: 1.12</div>
+        </div>
+        <div class="sp-layer" style="background:rgba(181,82,42,0.08);">
+          <div class="sp-depth">10–25 cm</div>
+          <div class="sp-name" style="color:#b5522a;">A Horizon</div>
+          <div class="sp-bar"><div class="sp-om" style="width:52%;background:linear-gradient(90deg,#b5522a,#d4764a);height:100%;border-radius:2px;"></div></div>
+          <div class="sp-vals">OM: 5.2% · VWC: 34% · BD: 1.28</div>
+        </div>
+        <div class="sp-layer" style="background:rgba(200,181,133,0.15);">
+          <div class="sp-depth">25–60 cm</div>
+          <div class="sp-name" style="color:#8b7355;">E Horizon</div>
+          <div class="sp-bar"><div class="sp-om" style="width:31%;background:linear-gradient(90deg,#c8b585,#e8d9b8);height:100%;border-radius:2px;"></div></div>
+          <div class="sp-vals">OM: 3.1% · VWC: 28% · BD: 1.42</div>
+        </div>
+        <div class="sp-layer" style="background:rgba(139,69,19,0.08);">
+          <div class="sp-depth">60–100 cm</div>
+          <div class="sp-name" style="color:#7b3fa0;">B Horizon</div>
+          <div class="sp-bar"><div class="sp-om" style="width:18%;background:linear-gradient(90deg,#7b3fa0,#a070c0);height:100%;border-radius:2px;"></div></div>
+          <div class="sp-vals">OM: 1.8% · VWC: 22% · BD: 1.56</div>
+        </div>
+        <div class="sp-layer" style="background:rgba(100,80,60,0.06);">
+          <div class="sp-depth">100–150 cm</div>
+          <div class="sp-name" style="color:#5a4030;">C Horizon</div>
+          <div class="sp-bar"><div class="sp-om" style="width:8%;background:linear-gradient(90deg,#7a6040,#a08060);height:100%;border-radius:2px;"></div></div>
+          <div class="sp-vals">OM: 0.8% · VWC: 18% · BD: 1.72</div>
+        </div>
+      </div>
+      <!-- Moisture time series -->
+      <div style="margin-top:18px;padding-top:14px;border-top:1px solid var(--border);">
+        <div class="pm" style="margin-bottom:10px;">Soil Moisture (VWC%) — 12-Month Trend · Zone A-North</div>
+        <div class="chart-h" style="height:160px;">
+          <canvas id="moistureChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" style="animation-delay:0.35s">
+      <div class="pt">Macronutrient Status</div>
+      <div class="pm" style="margin-bottom:14px;">mg/kg (ppm) · Field average · All zones</div>
+      <div class="nutrient-grid">
+        <div class="nut-card" style="border-top:3px solid var(--nitrogen);">
+          <div class="nut-icon">🔵</div>
+          <div class="nut-name">Nitrogen (N)</div>
+          <div class="nut-val">84<span class="nut-unit"> mg/kg</span></div>
+          <div class="nut-bar" style="background:linear-gradient(90deg,var(--nitrogen),#7bb8f0);width:84%"></div>
+          <div class="nut-status ns-opt">Optimal (80–120)</div>
+        </div>
+        <div class="nut-card" style="border-top:3px solid var(--phosphorus);">
+          <div class="nut-icon">🟡</div>
+          <div class="nut-name">Phosphorus (P)</div>
+          <div class="nut-val">28<span class="nut-unit"> mg/kg</span></div>
+          <div class="nut-bar" style="background:linear-gradient(90deg,var(--phosphorus),#e5c060);width:45%"></div>
+          <div class="nut-status ns-low">Low (Target: 40–80)</div>
+        </div>
+        <div class="nut-card" style="border-top:3px solid var(--potassium);">
+          <div class="nut-icon">🟣</div>
+          <div class="nut-name">Potassium (K)</div>
+          <div class="nut-val">165<span class="nut-unit"> mg/kg</span></div>
+          <div class="nut-bar" style="background:linear-gradient(90deg,var(--potassium),#b090d0);width:72%"></div>
+          <div class="nut-status ns-opt">Optimal (120–200)</div>
+        </div>
+        <div class="nut-card" style="border-top:3px solid #cd5c5c;">
+          <div class="nut-icon">🔴</div>
+          <div class="nut-name">Calcium (Ca)</div>
+          <div class="nut-val">1,842<span class="nut-unit"> mg/kg</span></div>
+          <div class="nut-bar" style="background:linear-gradient(90deg,#cd5c5c,#e89090);width:91%"></div>
+          <div class="nut-status ns-high">High (Target: 1200–1800)</div>
+        </div>
+        <div class="nut-card" style="border-top:3px solid var(--organic);">
+          <div class="nut-icon">🟢</div>
+          <div class="nut-name">Magnesium (Mg)</div>
+          <div class="nut-val">182<span class="nut-unit"> mg/kg</span></div>
+          <div class="nut-bar" style="background:linear-gradient(90deg,var(--organic),#8aba6a);width:78%"></div>
+          <div class="nut-status ns-opt">Optimal (150–250)</div>
+        </div>
+        <div class="nut-card" style="border-top:3px solid #ffa040;">
+          <div class="nut-icon">🟠</div>
+          <div class="nut-name">Sulfur (S)</div>
+          <div class="nut-val">12<span class="nut-unit"> mg/kg</span></div>
+          <div class="nut-bar" style="background:linear-gradient(90deg,#ffa040,#ffcc80);width:24%"></div>
+          <div class="nut-status ns-low">Deficient (Target: 20–50)</div>
+        </div>
+      </div>
+      <!-- Micronutrient quick view -->
+      <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border);">
+        <div class="pm" style="margin-bottom:10px;">Micronutrient Quick Status</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:11px;">
+          <div style="display:flex;justify-content:space-between;padding:6px 8px;background:var(--moss-pale);"><span>Iron (Fe)</span><strong style="color:var(--moss)">Adequate</strong></div>
+          <div style="display:flex;justify-content:space-between;padding:6px 8px;background:#fff3e0;"><span>Zinc (Zn)</span><strong style="color:#e65100">Low</strong></div>
+          <div style="display:flex;justify-content:space-between;padding:6px 8px;background:var(--moss-pale);"><span>Manganese (Mn)</span><strong style="color:var(--moss)">Adequate</strong></div>
+          <div style="display:flex;justify-content:space-between;padding:6px 8px;background:#fff3e0;"><span>Boron (B)</span><strong style="color:#e65100">Low</strong></div>
+          <div style="display:flex;justify-content:space-between;padding:6px 8px;background:#e3f2fd;"><span>Copper (Cu)</span><strong style="color:var(--nitrogen)">High</strong></div>
+          <div style="display:flex;justify-content:space-between;padding:6px 8px;background:var(--moss-pale);"><span>Molybdenum (Mo)</span><strong style="color:var(--moss)">Adequate</strong></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Nutrient radar + Field grid + OM trend -->
+  <div class="grid-3">
+    <div class="panel" style="animation-delay:0.4s">
+      <div class="pt">Nutrient Balance Radar</div>
+      <div class="pm" style="margin-bottom:14px;">% of optimal range · All 6 zones</div>
+      <div style="height:220px;position:relative;">
+        <canvas id="nutrientRadar"></canvas>
+      </div>
+    </div>
+    <div class="panel" style="animation-delay:0.45s">
+      <div class="pt">Field-Level pH Heatmap</div>
+      <div class="pm" style="margin-bottom:14px;">8×6 grid · 48 sampling points</div>
+      <div class="field-grid" id="fieldGrid"></div>
+      <div style="margin-top:12px;display:flex;align-items:center;gap:8px;font-size:10px;color:var(--muted);">
+        <span>Acidic (4.5)</span>
+        <div style="height:8px;flex:1;background:linear-gradient(90deg,#e65100,#f5c842,#4a7c59,#3a7ebf);border-radius:4px;"></div>
+        <span>Alkaline (8.5)</span>
+      </div>
+    </div>
+    <div class="panel" style="animation-delay:0.5s">
+      <div class="pt">Organic Matter % — 5-Year Trend</div>
+      <div class="pm" style="margin-bottom:14px;">By soil horizon · Topsoil 0–30cm</div>
+      <div style="height:220px;position:relative;">
+        <canvas id="omChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="source-note">
+    <strong>⚠ Synthetic Data Notice:</strong> All soil pH readings, nutrient concentrations, moisture levels, organic matter percentages, soil horizon data, and field-level measurements in this dashboard are <strong>entirely randomly generated synthetic data</strong> for AlphaStatLab portfolio demonstration. No real field, farm, or soil laboratory data is represented. For real soil health analytics, visit <strong>alphastatlab.org</strong>.<br>
+    <strong>Methods:</strong> pH gauges drawn with SVG arc paths normalized to 4.0–9.0 scale. Nutrient levels generated from normal distributions around typical agronomic targets. Moisture trend modeled with seasonal sine curve + precipitation events. Organic matter trend from linear decline/improvement model with noise. Field pH grid from spatially correlated random field (Gaussian kernel). Chart.js v4.4.1 · Fonts: Lora + Josefin Sans.
+  </div>
+</div>
+
+<script>
+// Soil moisture chart
+const moistureCtx = document.getElementById('moistureChart').getContext('2d');
+const months12 = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const moistureData = [38,42,48,44,39,32,24,21,28,35,40,42];
+const fieldCap = Array(12).fill(45), wiltPt = Array(12).fill(18);
+new Chart(moistureCtx, {
+  type:'line',
+  data:{
+    labels:months12,
+    datasets:[
+      {label:'Soil VWC %',data:moistureData,borderColor:'#0093c4',backgroundColor:'rgba(0,147,196,0.1)',borderWidth:2.5,pointRadius:4,pointBackgroundColor:'#0093c4',fill:true,tension:0.4},
+      {label:'Field Capacity',data:fieldCap,borderColor:'rgba(74,124,89,0.5)',borderWidth:1.5,borderDash:[5,3],pointRadius:0,fill:false},
+      {label:'Wilting Point',data:wiltPt,borderColor:'rgba(181,82,42,0.5)',borderWidth:1.5,borderDash:[3,3],pointRadius:0,fill:false}
+    ]
+  },
+  options:{responsive:true,maintainAspectRatio:false,
+    scales:{
+      x:{ticks:{color:'#7a6548',font:{size:9,family:'Josefin Sans'}},grid:{color:'rgba(226,217,200,0.6)'}},
+      y:{ticks:{color:'#7a6548',font:{size:9,family:'Josefin Sans'},callback:v=>v+'%'},grid:{color:'rgba(226,217,200,0.6)'},min:0,max:55}
+    },
+    plugins:{legend:{labels:{color:'#7a6548',font:{family:'Josefin Sans',size:9},boxWidth:10}},tooltip:{backgroundColor:'#1e140a',titleFont:{family:'Josefin Sans'},bodyFont:{family:'Josefin Sans',size:10}}}
+  }
+});
+
+// Nutrient radar
+const nutCtx = document.getElementById('nutrientRadar').getContext('2d');
+new Chart(nutCtx,{
+  type:'radar',
+  data:{
+    labels:['N','P','K','Ca','Mg','S','Fe','Zn'],
+    datasets:[
+      {label:'Zone A-North',data:[84,35,82,102,78,24,88,38],borderColor:'#b5522a',backgroundColor:'rgba(181,82,42,0.1)',pointBackgroundColor:'#b5522a',borderWidth:2,pointRadius:3},
+      {label:'Zone C-West',data:[92,68,78,88,85,42,72,62],borderColor:'#4a7c59',backgroundColor:'rgba(74,124,89,0.08)',pointBackgroundColor:'#4a7c59',borderWidth:2,pointRadius:3},
+      {label:'Zone B-East',data:[58,28,65,91,64,18,81,28],borderColor:'#3a7ebf',backgroundColor:'rgba(58,126,191,0.06)',pointBackgroundColor:'#3a7ebf',borderWidth:1.5,pointRadius:3,borderDash:[4,3]}
+    ]
+  },
+  options:{responsive:true,maintainAspectRatio:false,
+    scales:{r:{ticks:{display:false,backdropColor:'transparent'},grid:{color:'rgba(226,217,200,0.7)'},pointLabels:{color:'#7a6548',font:{size:10,family:'Josefin Sans',weight:'600'}},min:0,max:100}},
+    plugins:{legend:{labels:{color:'#7a6548',font:{family:'Josefin Sans',size:9},boxWidth:8}},tooltip:{backgroundColor:'#1e140a'}}
+  }
+});
+
+// Field pH grid
+const grid = document.getElementById('fieldGrid');
+const phValues = [];
+for(let i=0;i<48;i++){
+  const ph = 4.8 + Math.random()*3.6;
+  phValues.push(ph);
+  const norm = (ph-4.8)/3.6;
+  let color;
+  if(norm<0.25) color=`rgba(230,81,0,${0.5+norm*1.2})`;
+  else if(norm<0.5) color=`rgba(200,134,10,${0.5+norm*0.8})`;
+  else if(norm<0.75) color=`rgba(74,124,89,${0.5+norm*0.6})`;
+  else color=`rgba(58,126,191,${0.4+norm*0.5})`;
+  const cell = document.createElement('div');
+  cell.className='field-cell';
+  cell.style.background=color;
+  cell.title=`pH: ${ph.toFixed(2)}`;
+  cell.textContent=ph.toFixed(1);
+  grid.appendChild(cell);
+}
+
+// Organic matter trend
+const omCtx = document.getElementById('omChart').getContext('2d');
+const years5 = ['2019','2020','2021','2022','2023'];
+new Chart(omCtx,{
+  type:'bar',
+  data:{
+    labels:years5,
+    datasets:[
+      {label:'Topsoil (0–10cm)',data:[2.81,2.94,3.08,3.14,3.21],backgroundColor:'rgba(74,124,89,0.7)',borderRadius:3,borderWidth:0},
+      {label:'Subsoil (10–30cm)',data:[1.92,1.98,2.04,2.09,2.14],backgroundColor:'rgba(181,82,42,0.6)',borderRadius:3,borderWidth:0},
+    ]
+  },
+  options:{responsive:true,maintainAspectRatio:false,
+    scales:{
+      x:{ticks:{color:'#7a6548',font:{size:10,family:'Josefin Sans'}},grid:{display:false}},
+      y:{ticks:{color:'#7a6548',font:{size:10,family:'Josefin Sans'},callback:v=>v+'%'},grid:{color:'rgba(226,217,200,0.6)'},title:{display:true,text:'Organic Matter %',color:'#7a6548',font:{size:9}}}
+    },
+    plugins:{legend:{labels:{color:'#7a6548',font:{family:'Josefin Sans',size:10},boxWidth:10}},tooltip:{backgroundColor:'#1e140a',titleFont:{family:'Josefin Sans'},bodyFont:{family:'Josefin Sans',size:10}}}
+  }
+});
+</script>
+</body>
+</html>
