@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Travel Business Intelligence | AlphaStatLab</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Lato:wght@300;400;700&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+        font-family: 'Lato', sans-serif;
+        background: linear-gradient(135deg, #f5ede6 0%, #ede0d4 100%);
+        min-height: 100vh;
+        color: #1a1209;
+        overflow-x: hidden;
+    }
+    .container { max-width: 1600px; margin: 0 auto; padding: 24px; position: relative; z-index: 1; }
+    
+    .header {
+        background: linear-gradient(135deg, #0d3b5e, #1b6ca8);
+        border-radius: 24px;
+        padding: 28px 32px;
+        margin-bottom: 24px;
+        color: white;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+    .header h1 { font-size: 32px; font-weight: 800; font-family: 'Playfair Display', serif; }
+    .header h1 i { color: #ffd700; margin-right: 10px; }
+    .header p { opacity: 0.8; margin-top: 8px; }
+    
+    .kpi-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; margin-bottom: 24px; }
+    .kpi-card {
+        background: white;
+        border-radius: 20px;
+        padding: 20px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        transition: all 0.3s;
+        text-align: center;
+    }
+    .kpi-card:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.12); }
+    .kpi-value { font-size: 28px; font-weight: 800; font-family: 'Playfair Display', serif; }
+    .trend-up { color: #2d6a4f; }
+    .trend-down { color: #c0392b; }
+    
+    .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-bottom: 24px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-bottom: 24px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-bottom: 24px; }
+    
+    .card {
+        background: white;
+        border-radius: 20px;
+        padding: 24px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        transition: all 0.3s;
+    }
+    .card:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
+    .card-title {
+        font-size: 16px;
+        font-weight: 700;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        border-bottom: 2px solid #f0e6d8;
+        padding-bottom: 12px;
+        font-family: 'Playfair Display', serif;
+    }
+    .card-title i { color: #c17a45; }
+    canvas { max-height: 260px; width: 100%; }
+    
+    .dest-card {
+        background: linear-gradient(135deg, #c17a45, #d4a96a);
+        border-radius: 16px;
+        padding: 20px;
+        color: white;
+        text-align: center;
+        transition: all 0.3s;
+    }
+    .dest-card:hover { transform: translateY(-3px); }
+    
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td { padding: 12px; text-align: left; border-bottom: 1px solid #f0e6d8; }
+    th { color: #7a6a52; font-weight: 600; }
+    tr:hover td { background: #faf5ee; }
+    .badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 600;
+    }
+    .badge-luxury { background: #c17a4520; color: #c17a45; }
+    .badge-adventure { background: #2d6a4f20; color: #2d6a4f; }
+    .badge-business { background: #1b6ca820; color: #1b6ca8; }
+    
+    .disclaimer {
+        background: rgba(0,0,0,0.05);
+        border-radius: 16px;
+        padding: 16px 24px;
+        margin-top: 24px;
+        text-align: center;
+        font-size: 11px;
+        color: #7a6a52;
+    }
+    
+    @media (max-width: 1200px) { .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; } .kpi-grid { grid-template-columns: repeat(2,1fr); } }
+</style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1><i class="fas fa-globe-americas"></i> Travel Business Intelligence</h1>
+        <p>Destination performance · Booking trends · Traveler insights · Revenue analytics · NPS tracking</p>
+    </div>
+    
+    <div class="kpi-grid">
+        <div class="kpi-card"><div class="kpi-value" style="color:#c17a45">$2.84M</div><div>MTD Revenue</div><div class="trend-up"><i class="fas fa-arrow-up"></i> +18.4%</div></div>
+        <div class="kpi-card"><div class="kpi-value" style="color:#1b6ca8">8,420</div><div>Bookings MTD</div><div class="trend-up"><i class="fas fa-arrow-up"></i> +12.2%</div></div>
+        <div class="kpi-card"><div class="kpi-value" style="color:#2d6a4f">4.7★</div><div>Avg Rating</div><div class="trend-up"><i class="fas fa-arrow-up"></i> +0.3</div></div>
+        <div class="kpi-card"><div class="kpi-value" style="color:#c17a45">68.4%</div><div>Repeat Rate</div><div class="trend-up"><i class="fas fa-arrow-up"></i> +4.2%</div></div>
+        <div class="kpi-card"><div class="kpi-value" style="color:#1b6ca8">$4,860</div><div>Avg Package Value</div><div class="trend-up"><i class="fas fa-arrow-up"></i> +11.2%</div></div>
+    </div>
+    
+    <div class="grid-2">
+        <div class="card"><div class="card-title"><i class="fas fa-chart-line"></i> Revenue by Travel Category ($M)</div><canvas id="revenueChart"></canvas></div>
+        <div class="card"><div class="card-title"><i class="fas fa-chart-pie"></i> Traveler Segment Mix</div><canvas id="segmentChart"></canvas></div>
+    </div>
+    
+    <div class="grid-3">
+        <div class="card"><div class="card-title"><i class="fas fa-chart-line"></i> Seasonal Booking Trends</div><canvas id="seasonalChart"></canvas></div>
+        <div class="card"><div class="card-title"><i class="fas fa-chart-bar"></i> Destination Revenue Bubble</div><canvas id="bubbleChart"></canvas></div>
+        <div class="card"><div class="card-title"><i class="fas fa-chart-bar"></i> Booking Channel Performance</div><canvas id="channelChart"></canvas></div>
+    </div>
+    
+    <div class="grid-2">
+        <div class="card"><div class="card-title"><i class="fas fa-chart-bar"></i> Package Performance (Margin %)</div><canvas id="packageChart"></canvas></div>
+        <div class="card"><div class="card-title"><i class="fas fa-chart-line"></i> NPS by Destination Category</div><canvas id="npsChart"></canvas></div>
+    </div>
+    
+    <div class="grid-3">
+        <div class="card"><div class="card-title"><i class="fas fa-chart-bar"></i> Age Distribution</div><canvas id="ageChart"></canvas></div>
+        <div class="card"><div class="card-title"><i class="fas fa-chart-bar"></i> Booking Lead Time (Days)</div><canvas id="leadChart"></canvas></div>
+        <div class="card"><div class="card-title"><i class="fas fa-chart-pie"></i> Traveler Profile</div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                <div style="background:#faf5ee; padding:12px; border-radius:12px; text-align:center"><div style="font-size:24px">👤</div><div>Avg Age</div><div style="font-size:20px; font-weight:700">38</div></div>
+                <div style="background:#faf5ee; padding:12px; border-radius:12px; text-align:center"><div style="font-size:24px">✈️</div><div>Trips/Year</div><div style="font-size:20px; font-weight:700">2.8</div></div>
+                <div style="background:#faf5ee; padding:12px; border-radius:12px; text-align:center"><div style="font-size:24px">⏰</div><div>Duration</div><div style="font-size:20px; font-weight:700">9.4 days</div></div>
+                <div style="background:#faf5ee; padding:12px; border-radius:12px; text-align:center"><div style="font-size:24px">📱</div><div>Mobile Booking</div><div style="font-size:20px; font-weight:700">64%</div></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card">
+        <div class="card-title"><i class="fas fa-table"></i> Destination Performance Scorecard</div>
+        <div style="overflow-x: auto">
+            <table id="destTable">
+                <thead><tr><th>Destination</th><th>Region</th><th>Category</th><th>Bookings</th><th>Avg Value</th><th>Revenue</th><th>NPS</th><th>Rating</th><th>Margin</th></tr></thead>
+                <tbody id="destBody"></tbody>
+            </table>
+        </div>
+    </div>
+    
+    <div class="disclaimer">
+        <i class="fas fa-database"></i> <strong>Synthetic Data Notice:</strong> All travel data is randomly generated for demonstration purposes only.
+    </div>
+</div>
+
+<script>
+    // Revenue Data
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const luxuryRev = [0.48, 0.42, 0.58, 0.72, 0.88, 1.12, 1.42, 1.38, 1.08, 0.84, 0.62, 0.78];
+    const adventureRev = [0.22, 0.20, 0.28, 0.32, 0.42, 0.54, 0.72, 0.70, 0.52, 0.40, 0.28, 0.34];
+    const businessRev = [0.38, 0.40, 0.46, 0.48, 0.50, 0.44, 0.38, 0.36, 0.50, 0.52, 0.54, 0.42];
+    const budgetRev = [0.14, 0.13, 0.18, 0.20, 0.24, 0.28, 0.34, 0.33, 0.26, 0.21, 0.16, 0.19];
+    
+    // Revenue Chart
+    new Chart(document.getElementById('revenueChart'), {
+        type: 'bar',
+        data: { labels: months, datasets: [
+            { label: 'Luxury', data: luxuryRev, backgroundColor: '#c17a45', borderRadius: 6 },
+            { label: 'Adventure', data: adventureRev, backgroundColor: '#2d6a4f', borderRadius: 6 },
+            { label: 'Business', data: businessRev, backgroundColor: '#1b6ca8', borderRadius: 6 },
+            { label: 'Budget', data: budgetRev, backgroundColor: '#7a6a52', borderRadius: 6 }
+        ] },
+        options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { position: 'bottom' } }, scales: { y: { ticks: { callback: v => '$' + v + 'M' } } }, animation: { duration: 1000 } }
+    });
+    
+    // Segment Chart
+    new Chart(document.getElementById('segmentChart'), {
+        type: 'doughnut',
+        data: { labels: ['Luxury (28%)', 'Adventure (18%)', 'Business (22%)', 'Budget (14%)', 'Family (12%)', 'Honeymoon (6%)'], datasets: [{ data: [28, 18, 22, 14, 12, 6], backgroundColor: ['#c17a45', '#2d6a4f', '#1b6ca8', '#7a6a52', '#52b788', '#d4a96a'], borderWidth: 0 }] },
+        options: { responsive: true, maintainAspectRatio: true, cutout: '55%', plugins: { legend: { position: 'bottom' } }, animation: { duration: 1000 } }
+    });
+    
+    // Seasonal Chart
+    new Chart(document.getElementById('seasonalChart'), {
+        type: 'line',
+        data: { labels: months, datasets: [
+            { label: '2024', data: [740, 660, 940, 1120, 1320, 1700, 2280, 2180, 1520, 1180, 880, 1060], borderColor: '#c17a45', borderWidth: 2.5, fill: false, tension: 0.3, pointRadius: 4 },
+            { label: '2023', data: [680, 600, 860, 1020, 1200, 1540, 2040, 1960, 1380, 1080, 800, 960], borderColor: '#1b6ca8', borderWidth: 2, fill: false, tension: 0.3, pointRadius: 3 },
+            { label: '2022', data: [620, 540, 780, 920, 1080, 1380, 1820, 1760, 1240, 980, 720, 860], borderColor: '#7a6a52', borderWidth: 1.5, borderDash: [5, 5], fill: false, tension: 0.3, pointRadius: 3 }
+        ] },
+        options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { position: 'bottom' } }, scales: { y: { ticks: { callback: v => v + ' bookings' } } }, animation: { duration: 1000 } }
+    });
+    
+    // Bubble Chart
+    new Chart(document.getElementById('bubbleChart'), {
+        type: 'bubble',
+        data: { datasets: [
+            { label: 'Bali', data: [{ x: 1840, y: 4.2, r: 20 }], backgroundColor: '#c17a45' },
+            { label: 'Maldives', data: [{ x: 920, y: 8.6, r: 25 }], backgroundColor: '#2d6a4f' },
+            { label: 'Paris', data: [{ x: 1480, y: 3.8, r: 18 }], backgroundColor: '#1b6ca8' },
+            { label: 'New York', data: [{ x: 2100, y: 2.8, r: 15 }], backgroundColor: '#7a6a52' },
+            { label: 'Dubai', data: [{ x: 840, y: 6.4, r: 22 }], backgroundColor: '#d4a96a' },
+            { label: 'Tokyo', data: [{ x: 1240, y: 4.6, r: 19 }], backgroundColor: '#52b788' }
+        ] },
+        options: { responsive: true, maintainAspectRatio: true, plugins: { tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.raw.x} bookings, $${ctx.raw.y}K avg` } } }, scales: { x: { title: { display: true, text: 'Bookings' } }, y: { title: { display: true, text: 'Avg Value ($K)' } } }, animation: { duration: 1000 } }
+    });
+    
+    // Channel Chart
+    new Chart(document.getElementById('channelChart'), {
+        type: 'bar',
+        data: { labels: ['Direct', 'OTA', 'Corporate', 'Social', 'Agents', 'Referrals', 'Email'], datasets: [{ label: 'Revenue Share %', data: [34, 28, 18, 8, 6, 4, 2], backgroundColor: '#c17a45', borderRadius: 8 }] },
+        options: { responsive: true, maintainAspectRatio: true, indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { ticks: { callback: v => v + '%' } } }, animation: { duration: 1000 } }
+    });
+    
+    // Package Chart
+    new Chart(document.getElementById('packageChart'), {
+        type: 'bar',
+        data: { labels: ['All-Inclusive', 'Adventure', 'City Breaker', 'Honeymoon', 'Family', 'Business'], datasets: [{ label: 'Margin %', data: [44, 36, 24, 48, 28, 22], backgroundColor: '#2d6a4f', borderRadius: 8 }] },
+        options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { display: false } }, scales: { y: { ticks: { callback: v => v + '%' } } }, animation: { duration: 1000 } }
+    });
+    
+    // NPS Chart
+    new Chart(document.getElementById('npsChart'), {
+        type: 'radar',
+        data: { labels: ['Beach', 'City Break', 'Adventure', 'Cultural', 'Business', 'Eco'], datasets: [{ label: 'NPS Score', data: [79, 66, 84, 76, 64, 82], borderColor: '#c17a45', backgroundColor: 'rgba(193,122,69,0.1)', pointBackgroundColor: '#c17a45', pointRadius: 4 }] },
+        options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { position: 'bottom' } }, scales: { r: { min: 50, max: 100, ticks: { stepSize: 10 } } }, animation: { duration: 1000 } }
+    });
+    
+    // Age Chart
+    new Chart(document.getElementById('ageChart'), {
+        type: 'bar',
+        data: { labels: ['18-24', '25-34', '35-44', '45-54', '55-64', '65+'], datasets: [{ label: 'Distribution %', data: [8, 26, 28, 22, 12, 4], backgroundColor: '#1b6ca8', borderRadius: 8 }] },
+        options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { display: false } }, scales: { y: { ticks: { callback: v => v + '%' } } }, animation: { duration: 1000 } }
+    });
+    
+    // Lead Time Chart
+    new Chart(document.getElementById('leadChart'), {
+        type: 'bar',
+        data: { labels: ['Luxury', 'Adventure', 'Business', 'Budget', 'Family', 'Honeymoon'], datasets: [{ label: 'Days in Advance', data: [92, 88, 38, 44, 72, 108], backgroundColor: '#d4a96a', borderRadius: 8 }] },
+        options: { responsive: true, maintainAspectRatio: true, indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { ticks: { callback: v => v + ' days' } } }, animation: { duration: 1000 } }
+    });
+    
+    // Destination Table
+    const destinations = [
+        { dest: 'Bali, Indonesia', region: 'Asia', cat: 'Adventure', bookings: 1840, avgVal: 4200, revenue: 7.73, nps: 72, rating: 4.8, margin: 34 },
+        { dest: 'Maldives', region: 'Asia', cat: 'Luxury', bookings: 920, avgVal: 8600, revenue: 7.91, nps: 81, rating: 4.9, margin: 42 },
+        { dest: 'Paris, France', region: 'Europe', cat: 'City Break', bookings: 1480, avgVal: 3800, revenue: 5.62, nps: 68, rating: 4.6, margin: 28 },
+        { dest: 'New York, USA', region: 'Americas', cat: 'City Break', bookings: 2100, avgVal: 2800, revenue: 5.88, nps: 64, rating: 4.4, margin: 22 },
+        { dest: 'Dubai, UAE', region: 'Middle East', cat: 'Luxury', bookings: 840, avgVal: 6400, revenue: 5.38, nps: 76, rating: 4.8, margin: 40 },
+        { dest: 'Tokyo, Japan', region: 'Asia', cat: 'Cultural', bookings: 1240, avgVal: 4600, revenue: 5.70, nps: 80, rating: 4.8, margin: 30 },
+        { dest: 'Santorini, Greece', region: 'Europe', cat: 'Luxury', bookings: 1120, avgVal: 5100, revenue: 5.71, nps: 74, rating: 4.7, margin: 36 },
+        { dest: 'Kenya Safari', region: 'Africa', cat: 'Adventure', bookings: 680, avgVal: 7200, revenue: 4.90, nps: 86, rating: 4.9, margin: 38 },
+        { dest: 'Amalfi Coast, Italy', region: 'Europe', cat: 'Luxury', bookings: 680, avgVal: 5800, revenue: 3.94, nps: 78, rating: 4.8, margin: 38 },
+        { dest: 'Singapore', region: 'Asia', cat: 'Business', bookings: 1020, avgVal: 4100, revenue: 4.18, nps: 72, rating: 4.7, margin: 28 }
+    ];
+    
+    const catClass = { 'Luxury': 'badge-luxury', 'Adventure': 'badge-adventure', 'City Break': 'badge-business', 'Business': 'badge-business', 'Cultural': 'badge-adventure' };
+    document.getElementById('destBody').innerHTML = destinations.map(d => `
+        <tr>
+            <td style="font-weight:600">${d.dest}</td>
+            <td>${d.region}</td>
+            <td><span class="badge ${catClass[d.cat] || 'badge-business'}">${d.cat}</span></td>
+            <td>${d.bookings.toLocaleString()}</td>
+            <td>$${d.avgVal.toLocaleString()}</td>
+            <td style="color:#2d6a4f">$${d.revenue}M</td>
+            <td style="color:${d.nps >= 80 ? '#2d6a4f' : d.nps >= 70 ? '#c17a45' : '#7a6a52'}">${d.nps}</td>
+            <td>⭐ ${d.rating}</td>
+            <td style="color:${d.margin >= 40 ? '#2d6a4f' : '#c17a45'}">${d.margin}%</td>
+        </tr>
+    `).join('');
+</script>
+</body>
+</html>
