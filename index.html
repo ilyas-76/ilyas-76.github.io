@@ -348,7 +348,7 @@
         .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.75s ease, transform 0.75s ease; }
         .reveal.visible { opacity: 1; transform: translateY(0); }
         
-        /* ========== MOBILE RESPONSIVE STYLES - ADDED ONLY ========== */
+        /* ========== MOBILE RESPONSIVE STYLES ========== */
         
         /* Tablet & Medium Screens (768px - 1024px) */
         @media (max-width: 1024px) {
@@ -362,21 +362,19 @@
             nav { 
                 padding: 0 16px; 
                 height: 60px;
-                padding: 0 16px;
             }
             .nav-links { 
-                display: none; /* Hide desktop nav links on mobile */
+                display: none;
             }
             .nav-email { 
-                display: none; /* Hide desktop email button on mobile - NO SPACE LEFT */
+                display: none;
             }
             
-            /* Mobile menu button - now visible, takes email's place */
+            /* Mobile menu button */
             .mobile-menu-btn {
                 display: flex;
                 align-items: center;
                 justify-content: flex-end;
-                width: auto;
             }
             
             /* Hero Section */
@@ -417,7 +415,7 @@
                 margin-bottom: 32px;
             }
             
-            /* Category Grid - 1 Column on Mobile */
+            /* Category Grid - 1 Column */
             .category-grid { 
                 grid-template-columns: 1fr; 
                 gap: 16px;
@@ -481,7 +479,7 @@
                 justify-content: center;
             }
             
-            /* Hide decorative backgrounds on mobile for performance */
+            /* Hide decorative backgrounds on mobile */
             .hero-ring, .orb {
                 display: none;
             }
@@ -532,19 +530,19 @@
 <nav>
     <a href="#" class="nav-logo"><span class="alpha">Alpha</span><span class="stat">Stat</span><span class="lab">Lab</span></a>
     <div class="nav-links">
-        <a href="#categories" class="nav-link">Categories</a>
+        <a href="#Interactive Dashboards" class="nav-link">Interactive Dashboards</a>
         <a href="#services" class="nav-link">Services</a>
         <a href="#about" class="nav-link">About</a>
     </div>
     <a href="mailto:alphastatlab.org@gmail.com" class="nav-email">✉ alphastatlab.org@gmail.com</a>
     
-    <!-- Mobile Menu Button - ADDED -->
+    <!-- Mobile Menu Button -->
     <div class="mobile-menu-btn" onclick="toggleMobileMenu()">
         <i class="fas fa-bars"></i>
     </div>
 </nav>
 
-<!-- Mobile Navigation Dropdown - ADDED -->
+<!-- Mobile Navigation Dropdown -->
 <div class="mobile-nav" id="mobileNav">
     <a href="#Interactive Dashboards" class="mobile-nav-link" onclick="closeMobileMenu()">Interactive Dashboards</a>
     <a href="#services" class="mobile-nav-link" onclick="closeMobileMenu()">Services</a>
@@ -565,7 +563,7 @@
         Advanced statistical &amp; Data Science solutions with interactive dashboards for turning environmental, healthcare, and business data into actionable insights.
     </p>
     <div class="hero-ctas">
-        <a href="#Interactive dashboards" class="btn-primary">Explore Dashboard Categories</a>
+        <a href="#Interactive Dashboards" class="btn-primary">Explore Dashboard Categories</a>
         <a href="#services" class="btn-ghost">Our Services</a>
     </div>
     <div class="scroll-hint">
@@ -575,7 +573,7 @@
 </section>
 
 <!-- ==================== CATEGORY HUB SECTION ==================== -->
-<section id="Interactive dashboards">
+<section id="Interactive Dashboards">
     <div class="container">
         <div class="reveal">
             <p class="section-tag">// dashboard categories</p>
@@ -724,7 +722,7 @@
     <p>© 2025 AlphaStatLab · Statistical Consulting &amp; Data Science · Islamabad, Pakistan</p>
 </footer>
 
-<!-- Font Awesome for mobile menu icon - ADDED -->
+<!-- Font Awesome for mobile menu icon -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <script data-goatcounter="https://alphastatlab.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
