@@ -358,22 +358,25 @@
         
         /* Mobile Phones (up to 768px) */
         @media (max-width: 768px) {
-            /* Navigation */
+            /* Navigation - Fixed spacing */
             nav { 
                 padding: 0 16px; 
-                height: auto; 
-                padding: 12px 16px;
+                height: 60px;
+                padding: 0 16px;
             }
             .nav-links { 
                 display: none; /* Hide desktop nav links on mobile */
             }
             .nav-email { 
-                display: none; /* Hide desktop email button on mobile */
+                display: none; /* Hide desktop email button on mobile - NO SPACE LEFT */
             }
             
-            /* Mobile menu button - now visible */
+            /* Mobile menu button - now visible, takes email's place */
             .mobile-menu-btn {
-                display: block;
+                display: flex;
+                align-items: center;
+                justify-content: flex-end;
+                width: auto;
             }
             
             /* Hero Section */
@@ -562,7 +565,7 @@
         Advanced statistical &amp; Data Science solutions with interactive dashboards for turning environmental, healthcare, and business data into actionable insights.
     </p>
     <div class="hero-ctas">
-        <a href="#categories" class="btn-primary">Explore Dashboard Categories</a>
+        <a href="#Interactive dashboards" class="btn-primary">Explore Dashboard Categories</a>
         <a href="#services" class="btn-ghost">Our Services</a>
     </div>
     <div class="scroll-hint">
@@ -572,7 +575,7 @@
 </section>
 
 <!-- ==================== CATEGORY HUB SECTION ==================== -->
-<section id="categories">
+<section id="Interactive dashboards">
     <div class="container">
         <div class="reveal">
             <p class="section-tag">// dashboard categories</p>
