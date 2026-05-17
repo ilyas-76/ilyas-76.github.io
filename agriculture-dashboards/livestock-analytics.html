@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Livestock Analytics Dashboard | AlphaStatLab</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --amber:#d4820a;--amber2:#f09a20;--amber-pale:#fef5e4;
+  --leather:#8b4a1e;--leather2:#a05c30;
+  --hay:#d4b86a;--hay2:#e8d090;--hay-pale:#fdf8ec;
+  --green:#2d6a2a;--green2:#4e9e4c;--green-pale:#eaf5ea;
+  --red:#8b1a1a;--red2:#c0392b;
+  --cattle:#5c3a1a;--sheep:#7a6a58;--poultry:#c8860a;--swine:#b06080;
+  --bg:#faf6ef;--surface:#fff;--surface2:#fdf9f3;
+  --border:#e8dcc8;--text:#1e120a;--muted:#7a6048;
+  --dark:#160c04;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Source Sans 3',sans-serif;font-size:13px;min-height:100vh;}
+
+/* Leather-stitched border effect */
+body::before{
+  content:'';position:fixed;top:0;left:0;right:0;height:6px;
+  background:repeating-linear-gradient(90deg,var(--leather) 0px,var(--leather) 8px,var(--amber) 8px,var(--amber) 16px);
+  z-index:100;
+}
+
+.header{
+  background:var(--dark);
+  padding:28px 40px;display:flex;align-items:center;gap:0;
+  border-bottom:1px solid var(--leather);
+  position:relative;overflow:hidden;margin-top:6px;
+}
+.header::after{
+  content:'🐄';position:absolute;right:220px;font-size:7rem;opacity:0.04;pointer-events:none;top:50%;transform:translateY(-50%);
+}
+.h-badge{
+  width:64px;height:64px;border-radius:50%;
+  background:radial-gradient(circle,var(--amber2),var(--amber));
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.8rem;margin-right:20px;flex-shrink:0;
+  box-shadow:0 0 30px rgba(212,130,10,0.3);
+}
+.h-text{margin-right:auto;}
+.h-text h1{font-family:'Abril Fatface',serif;font-size:2rem;color:var(--amber2);letter-spacing:0.02em;}
+.h-text p{font-size:11px;color:rgba(255,255,255,0.4);letter-spacing:0.08em;text-transform:uppercase;margin-top:4px;}
+.h-stats{display:flex;gap:0;border-left:1px solid rgba(255,255,255,0.1);margin-left:24px;padding-left:0;}
+.hs{padding:12px 22px;border-right:1px solid rgba(255,255,255,0.08);display:flex;flex-direction:column;justify-content:center;}
+.hs:last-child{border-right:none;}
+.hs-label{font-size:9px;text-transform:uppercase;letter-spacing:0.13em;color:rgba(255,255,255,0.3);margin-bottom:4px;}
+.hs-val{font-family:'Source Serif 4',serif;font-size:1.4rem;color:#fff;line-height:1;}
+.hs-val.amber{color:var(--amber2);}
+.hs-val.green{color:#7ec87a;}
+.hs-val.red{color:#e88080;}
+.hs-sub{font-size:10px;color:rgba(255,255,255,0.3);margin-top:2px;}
+
+.wrap{max-width:1440px;margin:0 auto;padding:26px 40px;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:none;}}
+
+.panel{background:var(--surface);border:1px solid var(--border);padding:20px;animation:fadeUp 0.6s ease both;position:relative;}
+.panel::before{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--amber),transparent);}
+.pt{font-family:'Source Serif 4',serif;font-size:1.05rem;color:var(--dark);margin-bottom:4px;}
+.pm{font-size:9px;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);margin-bottom:14px;}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px;}
+.grid-4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:14px;margin-bottom:16px;}
+.grid-21{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:16px;}
+.grid-32{display:grid;grid-template-columns:3fr 2fr;gap:16px;margin-bottom:16px;}
+.chart-h{position:relative;height:220px;}
+
+/* Species cards */
+.species-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px;}
+.sp-card{
+  background:var(--surface);border:1px solid var(--border);
+  padding:18px;position:relative;overflow:hidden;
+  animation:fadeUp 0.5s ease both;
+  border-top:4px solid transparent;
+  transition:box-shadow 0.25s;
+}
+.sp-card:hover{box-shadow:0 4px 20px rgba(212,130,10,0.1);}
+.sp-card:nth-child(1){border-top-color:var(--cattle);}
+.sp-card:nth-child(2){border-top-color:var(--sheep);}
+.sp-card:nth-child(3){border-top-color:var(--poultry);}
+.sp-card:nth-child(4){border-top-color:var(--swine);}
+.spc-icon{font-size:2rem;margin-bottom:8px;}
+.spc-name{font-family:'Source Serif 4',serif;font-size:1.1rem;color:var(--dark);margin-bottom:4px;}
+.spc-count{font-family:'Abril Fatface',serif;font-size:2rem;line-height:1;}
+.spc-sub{font-size:10px;color:var(--muted);margin-top:3px;}
+.spc-metrics{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:12px;font-size:10px;}
+.spc-metric{padding:5px 6px;background:var(--surface2);border:1px solid var(--border);}
+.sm-label{color:var(--muted);font-size:9px;}
+.sm-val{font-weight:700;margin-top:1px;}
+
+/* Health alert bars */
+.health-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.hb-label{font-size:11px;color:var(--text);width:130px;flex-shrink:0;}
+.hb-bar{flex:1;height:8px;background:rgba(0,0,0,0.05);border-radius:4px;overflow:hidden;}
+.hb-fill{height:100%;border-radius:4px;transition:width 1.2s ease;}
+.hb-pct{font-size:10px;width:42px;text-align:right;font-weight:600;}
+
+/* Weight gain trajectory */
+.wgt-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.wgt-animal{font-size:10px;color:var(--muted);width:80px;}
+.wgt-bar{flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden;}
+.wgt-fill{height:100%;border-radius:3px;transition:width 1.4s ease;}
+.wgt-val{font-size:10px;font-weight:600;width:60px;text-align:right;}
+
+/* Mortality & birth table */
+.vital-table{width:100%;border-collapse:collapse;}
+.vital-table th{font-size:9px;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);padding:7px 10px;border-bottom:2px solid var(--border);text-align:left;font-family:'Source Sans 3';}
+.vital-table td{padding:7px 10px;border-bottom:1px solid var(--border);font-size:11px;}
+.vital-table tr:hover td{background:var(--amber-pale);}
+.vital-table tr:last-child td{border-bottom:none;}
+.rate-good{color:var(--green);font-weight:600;}
+.rate-warn{color:var(--amber);font-weight:600;}
+.rate-bad{color:var(--red2);font-weight:600;}
+
+/* Feed efficiency viz */
+.feed-card{padding:14px;background:var(--surface2);border:1px solid var(--border);text-align:center;}
+.fc-animal{font-size:1.2rem;margin-bottom:4px;}
+.fc-label{font-size:9px;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);margin-bottom:5px;}
+.fc-fcr{font-family:'Abril Fatface',serif;font-size:2rem;color:var(--dark);line-height:1;}
+.fc-desc{font-size:10px;color:var(--muted);margin-top:2px;}
+.fc-trend{font-size:10px;font-weight:600;margin-top:5px;}
+
+.source-note{margin-top:22px;padding:14px 18px;background:var(--amber-pale);border:1px solid rgba(212,130,10,0.2);border-left:3px solid var(--amber);font-size:10px;color:var(--muted);line-height:1.8;}
+.source-note strong{color:var(--amber);}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="h-badge">🐄</div>
+  <div class="h-text">
+    <h1>Livestock Analytics</h1>
+    <p>AlphaStatLab · Herd Management · Animal Health · Productivity · 2023</p>
+  </div>
+  <div class="h-stats">
+    <div class="hs"><div class="hs-label">Total Herd Size</div><div class="hs-val amber">124,812</div><div class="hs-sub">All species · 4 farms</div></div>
+    <div class="hs"><div class="hs-label">Overall Health Score</div><div class="hs-val green">84.2/100</div><div class="hs-sub">↑ +3.1 pts vs 2022</div></div>
+    <div class="hs"><div class="hs-label">Active Health Alerts</div><div class="hs-val red">23</div><div class="hs-sub">Requiring attention</div></div>
+    <div class="hs"><div class="hs-label">Avg Daily Gain</div><div class="hs-val amber">1.24 kg/day</div><div class="hs-sub">Cattle · Target 1.3</div></div>
+    <div class="hs"><div class="hs-label">Mortality Rate</div><div class="hs-val green">1.8%</div><div class="hs-sub">↓ −0.4pp vs 2022</div></div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- Species Cards -->
+  <div class="species-cards">
+    <div class="sp-card" style="animation-delay:0.05s">
+      <div class="spc-icon">🐄</div>
+      <div class="spc-name">Cattle</div>
+      <div class="spc-count" style="color:var(--cattle)">48,234</div>
+      <div class="spc-sub">Head · Beef + Dairy combined</div>
+      <div class="spc-metrics">
+        <div class="spc-metric"><div class="sm-label">ADG</div><div class="sm-val" style="color:var(--amber)">1.24 kg</div></div>
+        <div class="spc-metric"><div class="sm-label">Health</div><div class="sm-val" style="color:var(--green)">87%</div></div>
+        <div class="spc-metric"><div class="sm-label">Mortality</div><div class="sm-val" style="color:var(--green2)">1.2%</div></div>
+        <div class="spc-metric"><div class="sm-label">Feed Conv.</div><div class="sm-val">6.8:1</div></div>
+      </div>
+    </div>
+    <div class="sp-card" style="animation-delay:0.1s">
+      <div class="spc-icon">🐑</div>
+      <div class="spc-name">Sheep & Goats</div>
+      <div class="spc-count" style="color:var(--sheep)">31,489</div>
+      <div class="spc-sub">Head · Wool + Meat breeds</div>
+      <div class="spc-metrics">
+        <div class="spc-metric"><div class="sm-label">ADG</div><div class="sm-val" style="color:var(--amber)">0.32 kg</div></div>
+        <div class="spc-metric"><div class="sm-label">Health</div><div class="sm-val" style="color:var(--green)">82%</div></div>
+        <div class="spc-metric"><div class="sm-label">Mortality</div><div class="sm-val" style="color:var(--amber)">3.1%</div></div>
+        <div class="spc-metric"><div class="sm-label">Wool (kg)</div><div class="sm-val">4.2/yr</div></div>
+      </div>
+    </div>
+    <div class="sp-card" style="animation-delay:0.15s">
+      <div class="spc-icon">🐔</div>
+      <div class="spc-name">Poultry</div>
+      <div class="spc-count" style="color:var(--poultry)">38,124</div>
+      <div class="spc-sub">Birds · Broiler + Layer flocks</div>
+      <div class="spc-metrics">
+        <div class="spc-metric"><div class="sm-label">ADG</div><div class="sm-val" style="color:var(--green)">0.08 kg</div></div>
+        <div class="spc-metric"><div class="sm-label">Lay Rate</div><div class="sm-val" style="color:var(--green)">89%</div></div>
+        <div class="spc-metric"><div class="sm-label">Mortality</div><div class="sm-val" style="color:var(--green2)">0.8%</div></div>
+        <div class="spc-metric"><div class="sm-label">Feed Conv.</div><div class="sm-val">1.8:1</div></div>
+      </div>
+    </div>
+    <div class="sp-card" style="animation-delay:0.2s">
+      <div class="spc-icon">🐷</div>
+      <div class="spc-name">Swine</div>
+      <div class="spc-count" style="color:var(--swine)">6,965</div>
+      <div class="spc-sub">Head · Farrow-to-finish</div>
+      <div class="spc-metrics">
+        <div class="spc-metric"><div class="sm-label">ADG</div><div class="sm-val" style="color:var(--green)">0.78 kg</div></div>
+        <div class="spc-metric"><div class="sm-label">Health</div><div class="sm-val" style="color:var(--amber)">79%</div></div>
+        <div class="spc-metric"><div class="sm-label">Mortality</div><div class="sm-val" style="color:var(--amber)">2.4%</div></div>
+        <div class="spc-metric"><div class="sm-label">Feed Conv.</div><div class="sm-val">2.6:1</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Weight gain + Health alerts -->
+  <div class="grid-21">
+    <div class="panel" style="animation-delay:0.3s">
+      <div class="pt">Monthly Weight Gain Tracking — Cattle Cohorts (kg/month)</div>
+      <div class="pm">Beef breeds · 12-month period · Cohort averages</div>
+      <div class="chart-h">
+        <canvas id="weightChart"></canvas>
+      </div>
+    </div>
+    <div class="panel" style="animation-delay:0.35s">
+      <div class="pt">Active Health Condition Alerts</div>
+      <div class="pm">% of herd affected · All species</div>
+      <div style="margin-top:4px;">
+        <div class="health-bar-row">
+          <span class="hb-label">Respiratory Infection</span>
+          <div class="hb-bar"><div class="hb-fill" style="width:8.4%;background:#c0392b;"></div></div>
+          <span class="hb-pct" style="color:#c0392b;">8.4%</span>
+        </div>
+        <div class="health-bar-row">
+          <span class="hb-label">Foot & Mouth Risk</span>
+          <div class="hb-bar"><div class="hb-fill" style="width:2.1%;background:#e67e22;"></div></div>
+          <span class="hb-pct" style="color:#e67e22;">2.1%</span>
+        </div>
+        <div class="health-bar-row">
+          <span class="hb-label">Mastitis (dairy)</span>
+          <div class="hb-bar"><div class="hb-fill" style="width:12.8%;background:#d4820a;"></div></div>
+          <span class="hb-pct" style="color:#d4820a;">12.8%</span>
+        </div>
+        <div class="health-bar-row">
+          <span class="hb-label">Lameness</span>
+          <div class="hb-bar"><div class="hb-fill" style="width:5.2%;background:#d4820a;"></div></div>
+          <span class="hb-pct" style="color:#d4820a;">5.2%</span>
+        </div>
+        <div class="health-bar-row">
+          <span class="hb-label">Parasitic Load</span>
+          <div class="hb-bar"><div class="hb-fill" style="width:18.4%;background:#8b4a1e;"></div></div>
+          <span class="hb-pct" style="color:#8b4a1e;">18.4%</span>
+        </div>
+        <div class="health-bar-row">
+          <span class="hb-label">Nutritional Deficiency</span>
+          <div class="hb-bar"><div class="hb-fill" style="width:6.8%;background:#d4820a;"></div></div>
+          <span class="hb-pct" style="color:#d4820a;">6.8%</span>
+        </div>
+        <div class="health-bar-row">
+          <span class="hb-label">Reproductive Issues</span>
+          <div class="hb-bar"><div class="hb-fill" style="width:4.1%;background:#2d6a2a;"></div></div>
+          <span class="hb-pct" style="color:#2d6a2a;">4.1%</span>
+        </div>
+        <div class="health-bar-row">
+          <span class="hb-label">Healthy (no issues)</span>
+          <div class="hb-bar"><div class="hb-fill" style="width:82%;background:linear-gradient(90deg,#2d6a2a,#4e9e4c);"></div></div>
+          <span class="hb-pct" style="color:#2d6a2a;">82%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Feed efficiency + Birth/Mortality table + Reproduction -->
+  <div class="grid-3">
+    <div class="panel" style="animation-delay:0.4s">
+      <div class="pt">Feed Conversion Ratio (FCR)</div>
+      <div class="pm">kg feed per kg live weight gain</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
+        <div class="feed-card">
+          <div class="fc-animal">🐄</div>
+          <div class="fc-label">Beef Cattle</div>
+          <div class="fc-fcr" style="color:var(--cattle);">6.8</div>
+          <div class="fc-desc">kg feed / kg gain</div>
+          <div class="fc-trend" style="color:var(--green);">↓ −0.3 improved</div>
+        </div>
+        <div class="feed-card">
+          <div class="fc-animal">🐄</div>
+          <div class="fc-label">Dairy Cattle</div>
+          <div class="fc-fcr" style="color:var(--cattle);">1.4</div>
+          <div class="fc-desc">kg feed / L milk</div>
+          <div class="fc-trend" style="color:var(--green);">↓ −0.1 improved</div>
+        </div>
+        <div class="feed-card">
+          <div class="fc-animal">🐑</div>
+          <div class="fc-label">Sheep</div>
+          <div class="fc-fcr" style="color:var(--sheep);">5.2</div>
+          <div class="fc-desc">kg feed / kg gain</div>
+          <div class="fc-trend" style="color:var(--muted);">→ Stable</div>
+        </div>
+        <div class="feed-card">
+          <div class="fc-animal">🐔</div>
+          <div class="fc-label">Broiler</div>
+          <div class="fc-fcr" style="color:var(--poultry);">1.8</div>
+          <div class="fc-desc">kg feed / kg gain</div>
+          <div class="fc-trend" style="color:var(--green);">↓ Best in class</div>
+        </div>
+        <div class="feed-card">
+          <div class="fc-animal">🐷</div>
+          <div class="fc-label">Swine</div>
+          <div class="fc-fcr" style="color:var(--swine);">2.6</div>
+          <div class="fc-desc">kg feed / kg gain</div>
+          <div class="fc-trend" style="color:var(--amber);">↑ +0.2 worsened</div>
+        </div>
+        <div class="feed-card">
+          <div class="fc-animal">🐐</div>
+          <div class="fc-label">Goats</div>
+          <div class="fc-fcr" style="color:var(--sheep);">5.8</div>
+          <div class="fc-desc">kg feed / kg gain</div>
+          <div class="fc-trend" style="color:var(--muted);">→ Stable</div>
+        </div>
+      </div>
+    </div>
+    <div class="panel" style="animation-delay:0.45s">
+      <div class="pt">Herd Demographics — Age Pyramid</div>
+      <div class="pm">Cattle herd · % by age class</div>
+      <div style="height:220px;position:relative;">
+        <canvas id="pyramidChart"></canvas>
+      </div>
+    </div>
+    <div class="panel" style="animation-delay:0.5s">
+      <div class="pt">Milk Production Trend</div>
+      <div class="pm">Dairy cattle · Litres/cow/day · 12 months</div>
+      <div style="height:220px;position:relative;">
+        <canvas id="milkChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Vital rates table -->
+  <div class="panel" style="animation-delay:0.55s;margin-bottom:0;">
+    <div class="pt">Birth, Mortality & Productivity Rates — All Species 2023</div>
+    <div class="pm" style="margin-bottom:14px;">Annual statistics · Per 100 head</div>
+    <table class="vital-table">
+      <thead>
+        <tr><th>Species</th><th>Herd Size</th><th>Birth Rate %</th><th>Mortality % (Adult)</th><th>Mortality % (Juvenile)</th><th>Avg Litter/Litter Size</th><th>Culling Rate %</th><th>Vaccination Coverage %</th><th>Status</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>🐄 Beef Cattle</strong></td><td>32,418</td><td class="rate-good">89.4%</td><td class="rate-good">1.2%</td><td class="rate-warn">4.8%</td><td>1.0 calves</td><td>12.4%</td><td class="rate-good">96.2%</td><td>✅ Good</td></tr>
+        <tr><td><strong>🐄 Dairy Cattle</strong></td><td>15,816</td><td class="rate-good">91.2%</td><td class="rate-good">1.8%</td><td class="rate-warn">5.2%</td><td>1.0 calves</td><td>28.4%</td><td class="rate-good">98.1%</td><td>✅ Good</td></tr>
+        <tr><td><strong>🐑 Sheep</strong></td><td>24,312</td><td class="rate-good">112%</td><td class="rate-warn">3.1%</td><td class="rate-bad">9.8%</td><td>1.4 lambs</td><td>18.2%</td><td class="rate-warn">84.3%</td><td>⚠ Monitor</td></tr>
+        <tr><td><strong>🐐 Goats</strong></td><td>7,177</td><td class="rate-good">118%</td><td class="rate-warn">2.8%</td><td class="rate-warn">7.4%</td><td>1.6 kids</td><td>22.1%</td><td class="rate-warn">79.4%</td><td>⚠ Monitor</td></tr>
+        <tr><td><strong>🐔 Layers</strong></td><td>22,318</td><td class="rate-good">N/A</td><td class="rate-good">0.6%</td><td>N/A</td><td>289 eggs/yr</td><td>12.8%</td><td class="rate-good">99.2%</td><td>✅ Excellent</td></tr>
+        <tr><td><strong>🐔 Broilers</strong></td><td>15,806</td><td>N/A</td><td class="rate-good">0.8%</td><td>N/A</td><td>42d cycle</td><td>100%</td><td class="rate-good">100%</td><td>✅ Good</td></tr>
+        <tr><td><strong>🐷 Swine</strong></td><td>6,965</td><td class="rate-good">94.8%</td><td class="rate-warn">2.4%</td><td class="rate-bad">11.2%</td><td>11.4 piglets</td><td>18.9%</td><td class="rate-warn">88.4%</td><td>⚠ Review</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="source-note">
+    <strong>⚠ Synthetic Data Notice:</strong> All livestock counts, health metrics, FCR values, birth/mortality rates, weight gain figures, milk production data, vaccination coverages, and herd demographics in this dashboard are <strong>entirely randomly generated synthetic data</strong> by AlphaStatLab for portfolio demonstration. No real farm, herd, or veterinary record is represented. For real livestock analytics, visit <strong>alphastatlab.org</strong>.<br>
+    <strong>Methods:</strong> Weight gain modeled with sigmoid growth curve + seasonal variation. Milk production from lactation curve (Wood's model) with random noise. Herd age pyramid from stable population model with synthetic birth/death rates. FCR values drawn from literature ranges with stochastic variation. Chart.js v4.4.1 · Fonts: Abril Fatface + Source Serif 4 + Source Sans 3.
+  </div>
+</div>
+
+<script>
+const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+// Weight chart
+const wCtx = document.getElementById('weightChart').getContext('2d');
+function wgtLine(base,peak,mo){return months.map((_,i)=>+(base+peak*Math.exp(-Math.pow(i-mo,2)/8)+(Math.random()-0.5)*2).toFixed(1));}
+new Chart(wCtx,{
+  type:'line',
+  data:{
+    labels:months,
+    datasets:[
+      {label:'Angus (Beef)',data:wgtLine(28,14,5),borderColor:'#5c3a1a',backgroundColor:'rgba(92,58,26,0.08)',borderWidth:2.5,pointRadius:3,fill:true,tension:0.4},
+      {label:'Hereford (Beef)',data:wgtLine(26,12,5),borderColor:'#d4820a',borderWidth:2,pointRadius:3,fill:false,tension:0.4},
+      {label:'Holstein (Dairy)',data:wgtLine(22,10,4),borderColor:'#7a6a58',borderWidth:1.5,borderDash:[4,3],pointRadius:2,fill:false,tension:0.4},
+      {label:'Target ADG (1.3kg)',data:Array(12).fill(39),borderColor:'rgba(45,106,42,0.4)',borderWidth:1,borderDash:[3,3],pointRadius:0,fill:false}
+    ]
+  },
+  options:{responsive:true,maintainAspectRatio:false,
+    scales:{
+      x:{ticks:{color:'#7a6048',font:{size:10,family:'Source Sans 3'}},grid:{color:'rgba(232,220,200,0.6)'}},
+      y:{ticks:{color:'#7a6048',font:{size:10,family:'Source Sans 3'},callback:v=>v+'kg/mo'},grid:{color:'rgba(232,220,200,0.6)'},title:{display:true,text:'Weight Gain (kg/month)',color:'#7a6048',font:{size:9}}}
+    },
+    plugins:{legend:{labels:{color:'#7a6048',font:{family:'Source Sans 3',size:10},boxWidth:10}},tooltip:{backgroundColor:'#160c04',titleFont:{family:'Source Serif 4'},bodyFont:{family:'Source Sans 3',size:10}}}
+  }
+});
+
+// Age pyramid (horizontal bar)
+const pyrCtx = document.getElementById('pyramidChart').getContext('2d');
+const ageGroups = ['Calves (0–6mo)','Weaners (6–12mo)','Yearlings (1–2yr)','Young Adult (2–3yr)','Prime (3–6yr)','Mature (6–10yr)','Cull (10yr+)'];
+new Chart(pyrCtx,{
+  type:'bar',
+  data:{
+    labels:ageGroups,
+    datasets:[
+      {label:'Females',data:[18.4,12.1,14.2,16.8,21.4,12.8,4.3],backgroundColor:'rgba(212,130,10,0.65)',borderRadius:3},
+      {label:'Males',data:[-4.1,-5.8,-6.2,-7.4,-9.8,-5.2,-1.8],backgroundColor:'rgba(92,58,26,0.6)',borderRadius:3}
+    ]
+  },
+  options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
+    scales:{
+      x:{ticks:{color:'#7a6048',font:{size:9,family:'Source Sans 3'},callback:v=>Math.abs(v)+'%'},grid:{color:'rgba(232,220,200,0.6)'},min:-12,max:25},
+      y:{ticks:{color:'#7a6048',font:{size:9,family:'Source Sans 3'}},grid:{display:false}}
+    },
+    plugins:{legend:{labels:{color:'#7a6048',font:{family:'Source Sans 3',size:10},boxWidth:10}},tooltip:{backgroundColor:'#160c04',callbacks:{label:ctx=>`${ctx.dataset.label}: ${Math.abs(ctx.parsed.x).toFixed(1)}%`}}}
+  }
+});
+
+// Milk production
+const milkCtx = document.getElementById('milkChart').getContext('2d');
+// Wood's lactation model: Y = a * t^b * e^(-ct)
+const a=28, b=0.24, c=0.0036;
+const milkData = months.map((_,i)=>{const t=(i+1)*30;return +(a*Math.pow(t,b)*Math.exp(-c*t)+(Math.random()-0.5)*0.8).toFixed(1);});
+new Chart(milkCtx,{
+  type:'line',
+  data:{
+    labels:months,
+    datasets:[
+      {label:'Avg Milk Yield (L/cow/day)',data:milkData,borderColor:'#d4820a',backgroundColor:'rgba(212,130,10,0.1)',borderWidth:2.5,pointRadius:4,pointBackgroundColor:'#d4820a',fill:true,tension:0.4},
+      {label:'Target (28 L/day)',data:Array(12).fill(28),borderColor:'rgba(45,106,42,0.4)',borderWidth:1.5,borderDash:[4,3],pointRadius:0}
+    ]
+  },
+  options:{responsive:true,maintainAspectRatio:false,
+    scales:{
+      x:{ticks:{color:'#7a6048',font:{size:10,family:'Source Sans 3'}},grid:{color:'rgba(232,220,200,0.6)'}},
+      y:{ticks:{color:'#7a6048',font:{size:10,family:'Source Sans 3'},callback:v=>v+'L'},grid:{color:'rgba(232,220,200,0.6)'},min:15,max:35}
+    },
+    plugins:{legend:{labels:{color:'#7a6048',font:{family:'Source Sans 3',size:10},boxWidth:10}},tooltip:{backgroundColor:'#160c04',titleFont:{family:'Source Serif 4'},bodyFont:{family:'Source Sans 3',size:10}}}
+  }
+});
+</script>
+</body>
+</html>
