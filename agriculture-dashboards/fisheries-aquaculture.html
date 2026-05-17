@@ -1,30 +1,387 @@
-<!-- FISHERIES & AQUACULTURE DASHBOARD - LIVE -->
-<div class="dash-card" onclick="window.open('../agriculture-dashboards/fisheries-aquaculture.html','_blank')">
-    <div class="dash-card-visual">
-        <span class="dash-card-icon">🐟</span>
-        <div class="mini-chart">
-            <div class="mini-bar" style="height:45%"></div>
-            <div class="mini-bar" style="height:70%"></div>
-            <div class="mini-bar" style="height:55%"></div>
-            <div class="mini-bar" style="height:85%"></div>
-            <div class="mini-bar" style="height:50%"></div>
-            <div class="mini-bar" style="height:75%"></div>
-            <div class="mini-bar" style="height:60%"></div>
-            <div class="mini-bar" style="height:80%"></div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fisheries & Aquaculture Dashboard | AlphaStatLab</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Poppins', sans-serif;
+        background: linear-gradient(135deg, #021a2b 0%, #043a5f 50%, #021a2b 100%);
+        min-height: 100vh;
+        color: #e2e8f0;
+        overflow-x: hidden;
+    }
+
+    /* Ocean wave background */
+    body::before {
+        content: '';
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 150px;
+        background: repeating-linear-gradient(transparent, transparent 48px, rgba(0,150,200,0.08) 48px, rgba(0,150,200,0.08) 52px);
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    .container {
+        max-width: 1600px;
+        margin: 0 auto;
+        padding: 24px;
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Header */
+    .header {
+        background: rgba(2, 26, 43, 0.85);
+        backdrop-filter: blur(20px);
+        border-radius: 28px;
+        padding: 28px 32px;
+        margin-bottom: 24px;
+        border: 1px solid rgba(0, 200, 255, 0.3);
+        box-shadow: 0 20px 40px -15px rgba(0,0,0,0.4);
+    }
+    .header h1 {
+        font-size: 32px;
+        font-weight: 800;
+        background: linear-gradient(135deg, #00e5ff, #0077be);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    .header p { color: #9ca3af; margin-top: 8px; font-size: 14px; }
+    .badge-fish {
+        display: inline-block;
+        background: rgba(0, 200, 255, 0.15);
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 11px;
+        margin-top: 12px;
+        margin-right: 10px;
+    }
+
+    /* KPI Cards */
+    .kpi-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; margin-bottom: 24px; }
+    .kpi-card {
+        background: rgba(2, 26, 43, 0.85);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 22px;
+        border: 1px solid rgba(0, 200, 255, 0.15);
+        transition: all 0.3s ease;
+    }
+    .kpi-card:hover { transform: translateY(-3px); border-color: rgba(0, 200, 255, 0.4); }
+    .kpi-icon { font-size: 32px; margin-bottom: 12px; }
+    .kpi-label { font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: #9ca3af; margin-bottom: 8px; }
+    .kpi-value { font-size: 28px; font-weight: 800; }
+    .trend-up { color: #22c55e; }
+    .trend-down { color: #ef4444; }
+
+    /* Chart Grids */
+    .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-bottom: 24px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-bottom: 24px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-bottom: 24px; }
+    .grid-32 { display: grid; grid-template-columns: 3fr 2fr; gap: 24px; margin-bottom: 24px; }
+
+    .card {
+        background: rgba(2, 26, 43, 0.85);
+        backdrop-filter: blur(10px);
+        border-radius: 24px;
+        padding: 24px;
+        border: 1px solid rgba(0, 200, 255, 0.15);
+        transition: all 0.3s ease;
+    }
+    .card:hover { transform: translateY(-2px); border-color: rgba(0, 200, 255, 0.3); }
+    .card-title {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid rgba(0, 200, 255, 0.2);
+    }
+    .card-title i { color: #00e5ff; font-size: 18px; }
+    canvas { max-height: 260px; width: 100%; }
+
+    /* Species Table */
+    .species-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+    }
+    .species-table th {
+        text-align: left;
+        padding: 12px;
+        color: #9ca3af;
+        border-bottom: 1px solid rgba(0, 200, 255, 0.2);
+        font-weight: 500;
+    }
+    .species-table td {
+        padding: 12px;
+        border-bottom: 1px solid rgba(0, 200, 255, 0.1);
+    }
+    .species-table tr:hover td { background: rgba(0, 200, 255, 0.05); }
+    .sustainable { color: #22c55e; }
+    .overfished { color: #ef4444; }
+    .moderate { color: #f59e0b; }
+
+    /* Fleet Stats */
+    .fleet-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        margin-top: 8px;
+    }
+    .fleet-stat {
+        background: rgba(0,0,0,0.3);
+        border-radius: 12px;
+        padding: 12px;
+        text-align: center;
+    }
+    .fleet-value { font-size: 24px; font-weight: 700; color: #00e5ff; }
+    .fleet-label { font-size: 10px; color: #9ca3af; text-transform: uppercase; }
+
+    .disclaimer {
+        background: rgba(0,0,0,0.5);
+        border-radius: 16px;
+        padding: 16px 24px;
+        margin-top: 24px;
+        text-align: center;
+        font-size: 11px;
+        color: #9ca3af;
+    }
+
+    @media (max-width: 1200px) {
+        .grid-2, .grid-3, .grid-4, .grid-32 { grid-template-columns: 1fr; }
+        .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1><i class="fas fa-fish"></i> Fisheries & Aquaculture Dashboard</h1>
+        <p>Global fish production · Aquaculture vs wild catch · Species performance · Sustainability tracking · Export markets</p>
+        <div>
+            <span class="badge-fish"><i class="fas fa-water"></i> Wild Capture</span>
+            <span class="badge-fish"><i class="fas fa-seedling"></i> Sustainable Aquaculture</span>
+            <span class="badge-fish"><i class="fas fa-chart-line"></i> Global Trade Monitor</span>
         </div>
     </div>
-    <div class="dash-card-body">
-        <h3>🐟 Fisheries & Aquaculture Dashboard</h3>
-        <p>Global fish production (184.2M MT), wild capture vs aquaculture (52.1% aquaculture share), top species (Tilapia 6.8M MT, Salmon 2.9M MT, Shrimp 5.2M MT), market prices ($/kg), export markets (China $18.5B, Norway $12.4B), sustainability scores (Salmon 82, Oysters 92), fishing fleet (4,820 vessels), and regional production share (Asia 62%).</p>
-        <div class="dash-card-footer">
-            <div class="dash-status live"><div class="dot"></div> Live Demo</div>
-            <div class="dash-tags">
-                <span class="tag">Fisheries</span>
-                <span class="tag">Aquaculture</span>
-                <span class="tag">Seafood</span>
-                <span class="tag">Sustainability</span>
-                <span class="tag">Exports</span>
-            </div>
-        </div>
+
+    <div id="dashboardContent"></div>
+
+    <div class="disclaimer">
+        <i class="fas fa-database"></i> <strong>Data Disclaimer:</strong> All fisheries data, production volumes, and trade statistics are <strong>synthetically generated</strong> for demonstration purposes. Not representative of real industry data.
     </div>
 </div>
+
+<script>
+    // Production data
+    const years = ['2019', '2020', '2021', '2022', '2023', '2024'];
+    const wildCapture = [92, 88, 91, 89, 90, 88];
+    const aquaculture = [82, 85, 88, 91, 94, 96];
+    
+    // Species data
+    const species = [
+        { name: '🐟 Tilapia', type: 'Aquaculture', production: 6.8, value: 12.5, growth: 8.2, sustainability: 'Sustainable' },
+        { name: '🐟 Salmon', type: 'Aquaculture', production: 2.9, value: 18.2, growth: 6.4, sustainability: 'Sustainable' },
+        { name: '🦐 Shrimp', type: 'Aquaculture', production: 5.2, value: 28.5, growth: 4.8, sustainability: 'Moderate' },
+        { name: '🐟 Tuna', type: 'Wild', production: 4.8, value: 14.2, growth: -1.2, sustainability: 'Overfished' },
+        { name: '🐟 Cod', type: 'Wild', production: 2.4, value: 8.5, growth: -2.4, sustainability: 'Overfished' },
+        { name: '🦪 Oysters', type: 'Aquaculture', production: 1.8, value: 4.2, growth: 5.6, sustainability: 'Sustainable' }
+    ];
+    
+    // Export markets
+    const exportMarkets = ['China', 'Norway', 'Vietnam', 'Thailand', 'Chile', 'USA', 'India'];
+    const exportValues = [18.5, 12.4, 8.2, 7.8, 6.5, 5.2, 4.8];
+    
+    // Fleet stats
+    const fleetData = {
+        vessels: 4820,
+        largeScale: 2150,
+        smallScale: 2670,
+        activePorts: 184,
+        employment: 2.4,
+        annualCatch: 88.4
+    };
+    
+    // Price trends by species
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const salmonPrices = [8.2, 8.4, 8.6, 8.9, 9.2, 9.5, 9.8, 10.2, 10.5, 10.8, 11.0, 11.2];
+    const shrimpPrices = [12.5, 12.8, 13.0, 13.2, 13.5, 13.8, 14.0, 14.2, 14.0, 13.8, 13.5, 13.2];
+    const tunaPrices = [4.2, 4.3, 4.1, 4.0, 3.9, 3.8, 3.7, 3.6, 3.5, 3.6, 3.7, 3.8];
+    
+    // Sustainability scores
+    const speciesSustainability = [
+        { name: 'Salmon', score: 82, status: 'Good' },
+        { name: 'Tilapia', score: 78, status: 'Good' },
+        { name: 'Shrimp', score: 65, status: 'Moderate' },
+        { name: 'Tuna', score: 45, status: 'Poor' },
+        { name: 'Cod', score: 38, status: 'Poor' },
+        { name: 'Oysters', score: 92, status: 'Excellent' }
+    ];
+    
+    // Regional data
+    const regions = ['Asia', 'Europe', 'North America', 'South America', 'Africa', 'Oceania'];
+    const regionalShares = [62, 15, 10, 7, 4, 2];
+    
+    // Render Dashboard
+    document.getElementById('dashboardContent').innerHTML = `
+        <div class="kpi-grid">
+            <div class="kpi-card"><div class="kpi-icon">🐟</div><div class="kpi-label">Total Fish Production</div><div class="kpi-value" style="color:#00e5ff">184.2M MT</div><div class="kpi-trend trend-up"><i class="fas fa-arrow-up"></i> +3.2% YoY</div></div>
+            <div class="kpi-card"><div class="kpi-icon">🌊</div><div class="kpi-label">Aquaculture Share</div><div class="kpi-value" style="color:#22c55e">52.1%</div><div class="kpi-trend trend-up"><i class="fas fa-arrow-up"></i> +2.4% YoY</div></div>
+            <div class="kpi-card"><div class="kpi-icon">💰</div><div class="kpi-label">Export Value</div><div class="kpi-value" style="color:#f59e0b">$164.8B</div><div class="kpi-trend trend-up"><i class="fas fa-arrow-up"></i> +5.8% YoY</div></div>
+            <div class="kpi-card"><div class="kpi-icon">🌍</div><div class="kpi-label">Fishing Vessels</div><div class="kpi-value" style="color:#8b5cf6">4,820</div><div class="kpi-trend">Active fleet</div></div>
+            <div class="kpi-card"><div class="kpi-icon">📈</div><div class="kpi-label">Sustainability Index</div><div class="kpi-value" style="color:#22c55e">67.4</div><div class="kpi-trend trend-up"><i class="fas fa-arrow-up"></i> +2.1 pts</div></div>
+        </div>
+
+        <div class="grid-2">
+            <div class="card">
+                <div class="card-title"><i class="fas fa-chart-line"></i> Wild Capture vs Aquaculture Production (M MT)</div>
+                <canvas id="productionChart"></canvas>
+            </div>
+            <div class="card">
+                <div class="card-title"><i class="fas fa-chart-pie"></i> Top Species by Production Volume</div>
+                <canvas id="speciesChart"></canvas>
+            </div>
+        </div>
+
+        <div class="grid-32">
+            <div class="card">
+                <div class="card-title"><i class="fas fa-chart-bar"></i> Species Production & Growth Rate</div>
+                <canvas id="speciesGrowthChart"></canvas>
+            </div>
+            <div class="card">
+                <div class="card-title"><i class="fas fa-chart-line"></i> Sustainability Score by Species</div>
+                <canvas id="sustainabilityChart"></canvas>
+            </div>
+        </div>
+
+        <div class="grid-2">
+            <div class="card">
+                <div class="card-title"><i class="fas fa-chart-line"></i> Market Price Trends by Species ($/kg)</div>
+                <canvas id="priceChart"></canvas>
+            </div>
+            <div class="card">
+                <div class="card-title"><i class="fas fa-chart-pie"></i> Top Export Markets (Value $B)</div>
+                <canvas id="exportChart"></canvas>
+            </div>
+        </div>
+
+        <div class="grid-2">
+            <div class="card">
+                <div class="card-title"><i class="fas fa-ship"></i> Fishing Fleet & Infrastructure</div>
+                <div class="fleet-grid">
+                    <div class="fleet-stat"><div class="fleet-value">${fleetData.vessels.toLocaleString()}</div><div class="fleet-label">Total Vessels</div></div>
+                    <div class="fleet-stat"><div class="fleet-value">${fleetData.largeScale.toLocaleString()}</div><div class="fleet-label">Large Scale (>100ft)</div></div>
+                    <div class="fleet-stat"><div class="fleet-value">${fleetData.smallScale.toLocaleString()}</div><div class="fleet-label">Small Scale</div></div>
+                    <div class="fleet-stat"><div class="fleet-value">${fleetData.activePorts}</div><div class="fleet-label">Active Ports</div></div>
+                    <div class="fleet-stat"><div class="fleet-value">${fleetData.employment}M</div><div class="fleet-label">Employment</div></div>
+                    <div class="fleet-stat"><div class="fleet-value">${fleetData.annualCatch}M MT</div><div class="fleet-label">Annual Catch</div></div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-title"><i class="fas fa-chart-bar"></i> Regional Production Share</div>
+                <canvas id="regionalChart"></canvas>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title"><i class="fas fa-table-list"></i> Species Performance Scorecard</div>
+            <table class="species-table">
+                <thead>
+                    <tr><th>Species</th><th>Type</th><th>Production (M MT)</th><th>Market Value ($B)</th><th>YoY Growth</th><th>Sustainability</th></tr>
+                </thead>
+                <tbody id="speciesTable"></tbody>
+            </table>
+        </div>
+    `;
+    
+    // Production Chart
+    new Chart(document.getElementById('productionChart'), {
+        type: 'line',
+        data: { labels: years, datasets: [
+            { label: 'Wild Capture', data: wildCapture, borderColor: '#00e5ff', backgroundColor: 'rgba(0,229,255,0.1)', fill: true, tension: 0.3, pointRadius: 4 },
+            { label: 'Aquaculture', data: aquaculture, borderColor: '#22c55e', backgroundColor: 'rgba(34,197,94,0.1)', fill: true, tension: 0.3, pointRadius: 4 }
+        ] },
+        options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { position: 'bottom', labels: { color: '#e2e8f0' } } }, animation: { duration: 1000 } }
+    });
+    
+    // Species Donut
+    new Chart(document.getElementById('speciesChart'), {
+        type: 'doughnut',
+        data: { labels: species.map(s => s.name), datasets: [{ data: species.map(s => s.production), backgroundColor: ['#00e5ff', '#22c55e', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'], borderWidth: 0 }] },
+        options: { responsive: true, cutout: '55%', plugins: { legend: { position: 'bottom', labels: { color: '#e2e8f0' } } }, animation: { duration: 1000 } }
+    });
+    
+    // Species Growth Chart
+    new Chart(document.getElementById('speciesGrowthChart'), {
+        type: 'bar',
+        data: { labels: species.map(s => s.name), datasets: [
+            { label: 'Production (M MT)', data: species.map(s => s.production), backgroundColor: '#00e5ff', borderRadius: 8 },
+            { label: 'Growth Rate %', data: species.map(s => s.growth), backgroundColor: '#22c55e', borderRadius: 8 }
+        ] },
+        options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { position: 'bottom', labels: { color: '#e2e8f0' } } }, animation: { duration: 1000 } }
+    });
+    
+    // Sustainability Chart
+    new Chart(document.getElementById('sustainabilityChart'), {
+        type: 'bar',
+        data: { labels: speciesSustainability.map(s => s.name), datasets: [{ label: 'Sustainability Score (0-100)', data: speciesSustainability.map(s => s.score), backgroundColor: speciesSustainability.map(s => s.score >= 80 ? '#22c55e' : s.score >= 60 ? '#f59e0b' : '#ef4444'), borderRadius: 8 }] },
+        options: { responsive: true, maintainAspectRatio: true, indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { max: 100, ticks: { callback: v => v + ' pts' } } }, animation: { duration: 1000 } }
+    });
+    
+    // Price Chart
+    new Chart(document.getElementById('priceChart'), {
+        type: 'line',
+        data: { labels: months, datasets: [
+            { label: 'Salmon ($/kg)', data: salmonPrices, borderColor: '#00e5ff', tension: 0.3, pointRadius: 2 },
+            { label: 'Shrimp ($/kg)', data: shrimpPrices, borderColor: '#f59e0b', tension: 0.3, pointRadius: 2 },
+            { label: 'Tuna ($/kg)', data: tunaPrices, borderColor: '#ef4444', tension: 0.3, pointRadius: 2 }
+        ] },
+        options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { position: 'bottom', labels: { color: '#e2e8f0' } } }, animation: { duration: 1000 } }
+    });
+    
+    // Export Chart
+    new Chart(document.getElementById('exportChart'), {
+        type: 'pie',
+        data: { labels: exportMarkets, datasets: [{ data: exportValues, backgroundColor: ['#00e5ff', '#22c55e', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#06b6d4'], borderWidth: 0 }] },
+        options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { color: '#e2e8f0' } } }, animation: { duration: 1000 } }
+    });
+    
+    // Regional Chart
+    new Chart(document.getElementById('regionalChart'), {
+        type: 'bar',
+        data: { labels: regions, datasets: [{ label: 'Production Share %', data: regionalShares, backgroundColor: '#00e5ff', borderRadius: 8 }] },
+        options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { display: false } }, scales: { y: { ticks: { callback: v => v + '%' } } }, animation: { duration: 1000 } }
+    });
+    
+    // Species Table
+    const statusClass = { 'Sustainable': 'sustainable', 'Moderate': 'moderate', 'Overfished': 'overfished' };
+    document.getElementById('speciesTable').innerHTML = species.map(s => `
+        <tr>
+            <td style="font-weight:600">${s.name}</td>
+            <td><span style="color:${s.type === 'Aquaculture' ? '#22c55e' : '#00e5ff'}">${s.type}</span></td>
+            <td>${s.production} M MT</td>
+            <td>$${s.value} B</td>
+            <td class="${s.growth >= 0 ? 'sustainable' : 'overfished'}">${s.growth >= 0 ? '+' : ''}${s.growth}%</td>
+            <td class="${statusClass[s.sustainability]}">${s.sustainability}</td>
+        </tr>
+    `).join('');
+</script>
+</body>
+</html>
