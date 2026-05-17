@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crop Yield Forecast Dashboard | AlphaStatLab</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Barlow+Condensed:wght@300;400;500;600;700&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --gold:#c8860a;--gold2:#e5a020;--gold-pale:#fdf3de;
+  --soil:#2d1f0e;--soil2:#3d2c18;--soil3:#5c4025;
+  --wheat:#f5e4b0;--wheat2:#ede0a0;
+  --green:#2e7d32;--green2:#4caf50;--green-pale:#e8f5e9;
+  --red:#b71c1c;--red2:#ef5350;
+  --sky:#1565c0;--sky2:#42a5f5;
+  --bg:#faf6ee;--surface:#ffffff;--surface2:#fdf9f2;
+  --border:#e8dfc8;--text:#1a120a;--muted:#7a6040;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font-size:13px;min-height:100vh;}
+
+/* Grain texture overlay */
+body::before{
+  content:'';position:fixed;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events:none;z-index:0;opacity:0.4;
+}
+
+/* HEADER — editorial masthead */
+.masthead{
+  background:var(--soil);
+  padding:0;position:relative;z-index:5;
+  overflow:hidden;
+}
+.masthead::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--gold),var(--gold2),var(--green2),var(--gold2),var(--gold));
+}
+/* wheat field SVG pattern strip */
+.wheat-strip{
+  background:linear-gradient(180deg,#c8860a 0%,#e5a020 60%,#f5e4b0 100%);
+  height:4px;
+}
+.masthead-inner{
+  display:flex;align-items:stretch;max-width:1440px;margin:0 auto;
+  padding:0 40px;
+}
+.mast-left{
+  padding:24px 32px 24px 0;
+  border-right:1px solid rgba(255,255,255,0.12);
+  margin-right:32px;flex-shrink:0;
+}
+.mast-eyebrow{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:10px;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;
+  color:var(--gold2);margin-bottom:6px;
+}
+.mast-title{
+  font-family:'Libre Baskerville',serif;
+  font-size:2rem;font-weight:700;color:#fff;
+  line-height:1.1;
+}
+.mast-title em{color:var(--gold2);font-style:italic;}
+.mast-sub{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:11px;color:rgba(255,255,255,0.5);
+  letter-spacing:0.06em;margin-top:5px;text-transform:uppercase;
+}
+.mast-stats{display:flex;flex:1;gap:0;}
+.mast-stat{
+  flex:1;padding:24px 20px;
+  border-right:1px solid rgba(255,255,255,0.08);
+  display:flex;flex-direction:column;justify-content:center;
+}
+.mast-stat:last-child{border-right:none;}
+.ms-label{font-family:'Barlow Condensed',sans-serif;font-size:9px;text-transform:uppercase;letter-spacing:0.14em;color:rgba(255,255,255,0.4);margin-bottom:5px;}
+.ms-val{font-family:'Libre Baskerville',serif;font-size:1.6rem;color:#fff;line-height:1;}
+.ms-val.gold{color:var(--gold2);}
+.ms-val.green{color:#81c784;}
+.ms-val.red{color:#ef9a9a;}
+.ms-sub{font-family:'Barlow Condensed',sans-serif;font-size:10px;color:rgba(255,255,255,0.35);margin-top:3px;}
+.mast-brand{
+  padding:24px 0 24px 32px;
+  border-left:1px solid rgba(255,255,255,0.1);
+  display:flex;flex-direction:column;justify-content:center;align-items:flex-end;flex-shrink:0;
+}
+.brand-name{font-family:'Libre Baskerville',serif;font-size:0.95rem;color:var(--gold2);letter-spacing:0.08em;}
+.brand-season{font-family:'Barlow Condensed',sans-serif;font-size:10px;color:rgba(255,255,255,0.35);margin-top:3px;letter-spacing:0.1em;text-transform:uppercase;}
+
+/* Seasonal badge */
+.season-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:4px 12px;background:rgba(200,134,10,0.15);
+  border:1px solid rgba(200,134,10,0.4);
+  font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:600;
+  letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);
+}
+
+.wrap{max-width:1440px;margin:0 auto;padding:28px 40px;position:relative;z-index:1;}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:none;}}
+@keyframes scaleIn{from{opacity:0;transform:scale(0.95);}to{opacity:1;transform:none;}}
+
+/* Section dividers */
+.section-label{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:10px;font-weight:700;text-transform:uppercase;
+  letter-spacing:0.2em;color:var(--gold);
+  display:flex;align-items:center;gap:12px;
+  margin-bottom:14px;
+}
+.section-label::before,.section-label::after{content:'';flex:1;height:1px;background:var(--border);}
+.section-label::before{max-width:40px;}
+
+/* Yield KPI cards */
+.yield-cards{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:22px;}
+.ycard{
+  background:var(--surface);border:1px solid var(--border);
+  padding:18px;position:relative;overflow:hidden;
+  animation:fadeUp 0.6s ease both;
+  transition:box-shadow 0.25s,border-color 0.25s;
+}
+.ycard:hover{box-shadow:0 4px 20px rgba(200,134,10,0.08);border-color:rgba(200,134,10,0.3);}
+.ycard::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.ycard:nth-child(1)::before{background:linear-gradient(90deg,var(--gold),var(--gold2));}
+.ycard:nth-child(2)::before{background:linear-gradient(90deg,var(--green),var(--green2));}
+.ycard:nth-child(3)::before{background:linear-gradient(90deg,var(--sky),var(--sky2));}
+.ycard:nth-child(4)::before{background:linear-gradient(90deg,var(--red),var(--red2));}
+.ycard:nth-child(5)::before{background:linear-gradient(90deg,var(--soil3),var(--gold));}
+.yc-crop{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.15em;color:var(--muted);margin-bottom:4px;}
+.yc-icon{font-size:1.4rem;margin-bottom:8px;}
+.yc-yield{font-family:'Libre Baskerville',serif;font-size:2rem;font-weight:700;line-height:1;color:var(--text);}
+.yc-unit{font-size:11px;color:var(--muted);margin-left:3px;}
+.yc-sub{font-size:10px;color:var(--muted);margin-top:4px;}
+.yc-vs{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;margin-top:6px;padding:2px 8px;display:inline-block;}
+.vs-up{background:var(--green-pale);color:var(--green);}
+.vs-dn{background:#ffebee;color:var(--red);}
+.vs-neu{background:var(--gold-pale);color:var(--gold);}
+
+/* Main grid layouts */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;margin-bottom:18px;}
+.grid-21{display:grid;grid-template-columns:2fr 1fr;gap:18px;margin-bottom:18px;}
+.grid-12{display:grid;grid-template-columns:1fr 2fr;gap:18px;margin-bottom:18px;}
+.grid-32{display:grid;grid-template-columns:3fr 2fr;gap:18px;margin-bottom:18px;}
+
+.panel{
+  background:var(--surface);border:1px solid var(--border);
+  padding:22px;animation:fadeUp 0.7s ease both;
+}
+.panel-head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;}
+.panel-title{font-family:'Libre Baskerville',serif;font-size:1.05rem;color:var(--soil);line-height:1.3;}
+.panel-meta{font-family:'Barlow Condensed',sans-serif;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-top:3px;}
+.panel-tag{font-family:'Barlow Condensed',sans-serif;font-size:9px;text-transform:uppercase;letter-spacing:0.12em;padding:3px 10px;border-radius:2px;}
+.tag-gold{background:var(--gold-pale);color:var(--gold);border:1px solid rgba(200,134,10,0.25);}
+.tag-green{background:var(--green-pale);color:var(--green);border:1px solid rgba(46,125,50,0.25);}
+.tag-red{background:#ffebee;color:var(--red);border:1px solid rgba(183,28,28,0.2);}
+.tag-sky{background:#e3f2fd;color:var(--sky);border:1px solid rgba(21,101,192,0.2);}
+
+.chart-h{position:relative;height:240px;}
+.chart-sm{height:190px;}
+
+/* Regional yield table */
+.region-table{width:100%;border-collapse:collapse;}
+.region-table th{font-family:'Barlow Condensed',sans-serif;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);padding:7px 10px;border-bottom:2px solid var(--border);text-align:left;}
+.region-table td{padding:8px 10px;border-bottom:1px solid var(--border);font-size:11px;}
+.region-table tr:hover td{background:var(--gold-pale);}
+.region-table tr:last-child td{border-bottom:none;}
+.yield-bar{display:inline-block;height:4px;border-radius:2px;vertical-align:middle;margin-left:6px;}
+.trend-up{color:var(--green);font-weight:600;}
+.trend-dn{color:var(--red);font-weight:600;}
+
+/* Forecast confidence band */
+.forecast-legend{display:flex;gap:16px;margin-top:10px;flex-wrap:wrap;}
+.fl-item{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--muted);}
+.fl-dot{width:10px;height:10px;border-radius:50%;}
+.fl-line{width:18px;height:2px;border-radius:1px;}
+
+/* Calendar strip for harvest timing */
+.harvest-cal{display:grid;grid-template-columns:90px repeat(12,1fr);gap:2px;font-family:'Barlow Condensed',sans-serif;}
+.hc-label{font-size:9px;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);padding:4px 2px;}
+.hc-month{font-size:9px;color:var(--muted);text-align:center;padding:4px 2px;}
+.hc-crop{font-size:10px;color:var(--soil);padding:5px 2px;display:flex;align-items:center;}
+.hc-cell{height:20px;border-radius:2px;transition:opacity 0.2s;}
+.hc-cell:hover{opacity:0.7;}
+.phase-plant{background:rgba(46,125,50,0.5);}
+.phase-grow{background:rgba(200,134,10,0.5);}
+.phase-harvest{background:rgba(183,28,28,0.55);}
+.phase-none{background:rgba(0,0,0,0.04);}
+
+.source-note{
+  margin-top:24px;padding:16px 20px;
+  background:var(--gold-pale);border:1px solid rgba(200,134,10,0.25);
+  border-left:3px solid var(--gold);
+  font-size:10px;color:var(--muted);line-height:1.8;
+}
+.source-note strong{color:var(--gold);}
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <div class="wheat-strip"></div>
+  <div class="masthead-inner">
+    <div class="mast-left">
+      <div class="mast-eyebrow">🌾 AlphaStatLab · Agricultural Intelligence</div>
+      <div class="mast-title">Crop Yield <em>Forecast</em></div>
+      <div class="mast-sub">2023–2024 Season · Global Production Analytics</div>
+    </div>
+    <div class="mast-stats">
+      <div class="mast-stat"><div class="ms-label">Global Cereal Production</div><div class="ms-val gold">2,841 MT</div><div class="ms-sub">Million tonnes · 2023</div></div>
+      <div class="mast-stat"><div class="ms-label">Wheat Global Yield</div><div class="ms-val green">3.52 t/ha</div><div class="ms-sub">↑ +2.8% vs 5yr avg</div></div>
+      <div class="mast-stat"><div class="ms-label">Maize Global Yield</div><div class="ms-val gold">5.81 t/ha</div><div class="ms-sub">↑ +4.1% vs 5yr avg</div></div>
+      <div class="mast-stat"><div class="ms-label">Production at Risk</div><div class="ms-val red">14.2%</div><div class="ms-sub">Drought / Flood stress</div></div>
+      <div class="mast-stat"><div class="ms-label">Forecast Confidence</div><div class="ms-val green">84%</div><div class="ms-sub">Model ensemble score</div></div>
+    </div>
+    <div class="mast-brand">
+      <div class="brand-name">AlphaStatLab.org</div>
+      <div class="brand-season">Harvest Season 2023</div>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- Crop KPI Cards -->
+  <div class="section-label" style="animation-delay:0.1s">Primary Crop Yield Estimates — Current Season</div>
+  <div class="yield-cards">
+    <div class="ycard" style="animation-delay:0.05s">
+      <div class="yc-crop">Wheat</div>
+      <div class="yc-icon">🌾</div>
+      <div class="yc-yield">3.52<span class="yc-unit">t/ha</span></div>
+      <div class="yc-sub">Area: 218M ha · Total: 768 MT</div>
+      <div class="yc-vs vs-up">↑ +2.8% vs 5yr avg</div>
+    </div>
+    <div class="ycard" style="animation-delay:0.1s">
+      <div class="yc-crop">Maize (Corn)</div>
+      <div class="yc-icon">🌽</div>
+      <div class="yc-yield">5.81<span class="yc-unit">t/ha</span></div>
+      <div class="yc-sub">Area: 197M ha · Total: 1,145 MT</div>
+      <div class="yc-vs vs-up">↑ +4.1% vs 5yr avg</div>
+    </div>
+    <div class="ycard" style="animation-delay:0.15s">
+      <div class="yc-crop">Rice (Paddy)</div>
+      <div class="yc-icon">🍚</div>
+      <div class="yc-yield">4.71<span class="yc-unit">t/ha</span></div>
+      <div class="yc-sub">Area: 165M ha · Total: 777 MT</div>
+      <div class="yc-vs vs-neu">→ +0.4% vs 5yr avg</div>
+    </div>
+    <div class="ycard" style="animation-delay:0.2s">
+      <div class="yc-crop">Soybeans</div>
+      <div class="yc-icon">🫘</div>
+      <div class="yc-yield">2.89<span class="yc-unit">t/ha</span></div>
+      <div class="yc-sub">Area: 128M ha · Total: 370 MT</div>
+      <div class="yc-vs vs-dn">↓ −1.8% vs 5yr avg</div>
+    </div>
+    <div class="ycard" style="animation-delay:0.25s">
+      <div class="yc-crop">Cotton</div>
+      <div class="yc-icon">🌿</div>
+      <div class="yc-yield">0.78<span class="yc-unit">t/ha</span></div>
+      <div class="yc-sub">Area: 34M ha · Total: 26 MT</div>
+      <div class="yc-vs vs-dn">↓ −3.2% vs 5yr avg</div>
+    </div>
+  </div>
+
+  <!-- Historical yield trend + Regional breakdown -->
+  <div class="grid-21">
+    <div class="panel" style="animation-delay:0.3s">
+      <div class="panel-head">
+        <div>
+          <div class="panel-title">Historical & Forecast Yield Trends — Major Cereals</div>
+          <div class="panel-meta">tonnes per hectare · 2010–2025 (2024–25 = forecast)</div>
+        </div>
+        <span class="panel-tag tag-gold">Forecast Band Shown</span>
+      </div>
+      <div class="chart-h">
+        <canvas id="yieldTrendChart"></canvas>
+      </div>
+      <div class="forecast-legend">
+        <div class="fl-item"><div class="fl-line" style="background:var(--gold);"></div>Wheat actual</div>
+        <div class="fl-item"><div class="fl-line" style="background:var(--green);"></div>Maize actual</div>
+        <div class="fl-item"><div class="fl-line" style="background:var(--sky);"></div>Rice actual</div>
+        <div class="fl-item"><div class="fl-dot" style="background:rgba(200,134,10,0.15);width:16px;height:8px;border-radius:2px;"></div>Forecast band (90% CI)</div>
+      </div>
+    </div>
+    <div class="panel" style="animation-delay:0.35s">
+      <div class="panel-head">
+        <div>
+          <div class="panel-title">Production Share by Region</div>
+          <div class="panel-meta">All cereals combined · 2023</div>
+        </div>
+      </div>
+      <div style="position:relative;height:180px;">
+        <canvas id="regionDonut"></canvas>
+      </div>
+      <div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+        <div style="display:flex;align-items:center;gap:6px;font-family:'Barlow Condensed',sans-serif;font-size:10px;color:var(--muted);"><div style="width:8px;height:8px;border-radius:50%;background:#c8860a;flex-shrink:0"></div>Asia Pacific — 44.1%</div>
+        <div style="display:flex;align-items:center;gap:6px;font-family:'Barlow Condensed',sans-serif;font-size:10px;color:var(--muted);"><div style="width:8px;height:8px;border-radius:50%;background:#2e7d32;flex-shrink:0"></div>Americas — 28.3%</div>
+        <div style="display:flex;align-items:center;gap:6px;font-family:'Barlow Condensed',sans-serif;font-size:10px;color:var(--muted);"><div style="width:8px;height:8px;border-radius:50%;background:#1565c0;flex-shrink:0"></div>Europe — 14.8%</div>
+        <div style="display:flex;align-items:center;gap:6px;font-family:'Barlow Condensed',sans-serif;font-size:10px;color:var(--muted);"><div style="width:8px;height:8px;border-radius:50%;background:#b71c1c;flex-shrink:0"></div>Africa — 7.6%</div>
+        <div style="display:flex;align-items:center;gap:6px;font-family:'Barlow Condensed',sans-serif;font-size:10px;color:var(--muted);"><div style="width:8px;height:8px;border-radius:50%;background:#5c4025;flex-shrink:0"></div>Other — 5.2%</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Harvest timing calendar -->
+  <div class="panel" style="animation-delay:0.4s;margin-bottom:18px;">
+    <div class="panel-head">
+      <div>
+        <div class="panel-title">Harvest Timing Calendar — Northern Hemisphere 2023</div>
+        <div class="panel-meta">Growth phases by month · Green = Plant · Amber = Grow · Red = Harvest</div>
+      </div>
+      <span class="panel-tag tag-gold">Agronomic Calendar</span>
+    </div>
+    <div class="harvest-cal">
+      <div class="hc-label"></div>
+      <div class="hc-month">Jan</div><div class="hc-month">Feb</div><div class="hc-month">Mar</div>
+      <div class="hc-month">Apr</div><div class="hc-month">May</div><div class="hc-month">Jun</div>
+      <div class="hc-month">Jul</div><div class="hc-month">Aug</div><div class="hc-month">Sep</div>
+      <div class="hc-month">Oct</div><div class="hc-month">Nov</div><div class="hc-month">Dec</div>
+
+      <div class="hc-crop">🌾 Wheat</div>
+      <div class="hc-cell phase-none"></div><div class="hc-cell phase-none"></div><div class="hc-cell phase-plant"></div>
+      <div class="hc-cell phase-plant"></div><div class="hc-cell phase-grow"></div><div class="hc-cell phase-grow"></div>
+      <div class="hc-cell phase-harvest"></div><div class="hc-cell phase-harvest"></div><div class="hc-cell phase-none"></div>
+      <div class="hc-cell phase-plant"></div><div class="hc-cell phase-plant"></div><div class="hc-cell phase-grow"></div>
+
+      <div class="hc-crop">🌽 Maize</div>
+      <div class="hc-cell phase-none"></div><div class="hc-cell phase-none"></div><div class="hc-cell phase-none"></div>
+      <div class="hc-cell phase-plant"></div><div class="hc-cell phase-plant"></div><div class="hc-cell phase-grow"></div>
+      <div class="hc-cell phase-grow"></div><div class="hc-cell phase-grow"></div><div class="hc-cell phase-harvest"></div>
+      <div class="hc-cell phase-harvest"></div><div class="hc-cell phase-none"></div><div class="hc-cell phase-none"></div>
+
+      <div class="hc-crop">🍚 Rice</div>
+      <div class="hc-cell phase-none"></div><div class="hc-cell phase-none"></div><div class="hc-cell phase-none"></div>
+      <div class="hc-cell phase-plant"></div><div class="hc-cell phase-plant"></div><div class="hc-cell phase-grow"></div>
+      <div class="hc-cell phase-grow"></div><div class="hc-cell phase-grow"></div><div class="hc-cell phase-grow"></div>
+      <div class="hc-cell phase-harvest"></div><div class="hc-cell phase-harvest"></div><div class="hc-cell phase-none"></div>
+
+      <div class="hc-crop">🫘 Soybeans</div>
+      <div class="hc-cell phase-none"></div><div class="hc-cell phase-none"></div><div class="hc-cell phase-none"></div>
+      <div class="hc-cell phase-none"></div><div class="hc-cell phase-plant"></div><div class="hc-cell phase-plant"></div>
+      <div class="hc-cell phase-grow"></div><div class="hc-cell phase-grow"></div><div class="hc-cell phase-grow"></div>
+      <div class="hc-cell phase-harvest"></div><div class="hc-cell phase-harvest"></div><div class="hc-cell phase-none"></div>
+
+      <div class="hc-crop">🥔 Potato</div>
+      <div class="hc-cell phase-none"></div><div class="hc-cell phase-none"></div><div class="hc-cell phase-plant"></div>
+      <div class="hc-cell phase-plant"></div><div class="hc-cell phase-grow"></div><div class="hc-cell phase-grow"></div>
+      <div class="hc-cell phase-grow"></div><div class="hc-cell phase-harvest"></div><div class="hc-cell phase-harvest"></div>
+      <div class="hc-cell phase-none"></div><div class="hc-cell phase-none"></div><div class="hc-cell phase-none"></div>
+    </div>
+  </div>
+
+  <!-- Country table + Weather impact -->
+  <div class="grid-32">
+    <div class="panel" style="animation-delay:0.45s">
+      <div class="panel-head">
+        <div class="panel-title">Regional Yield Performance — Wheat 2023</div>
+      </div>
+      <table class="region-table">
+        <thead>
+          <tr><th>Country / Region</th><th>Area (M ha)</th><th>Yield (t/ha)</th><th>Production (MT)</th><th>YoY Change</th><th>5yr Avg Yield</th><th>Forecast 2024</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>China</strong></td><td>23.8</td><td>5.92<div class="yield-bar" style="width:59px;background:var(--gold)"></div></td><td>140.9</td><td class="trend-up">↑ +3.1%</td><td>5.74</td><td>6.02</td></tr>
+          <tr><td><strong>India</strong></td><td>29.5</td><td>3.47<div class="yield-bar" style="width:35px;background:var(--gold)"></div></td><td>102.3</td><td class="trend-dn">↓ −1.8%</td><td>3.53</td><td>3.55</td></tr>
+          <tr><td><strong>USA</strong></td><td>15.2</td><td>3.21<div class="yield-bar" style="width:32px;background:var(--gold)"></div></td><td>48.8</td><td class="trend-dn">↓ −4.2%</td><td>3.35</td><td>3.34</td></tr>
+          <tr><td><strong>Russia</strong></td><td>28.4</td><td>3.18<div class="yield-bar" style="width:32px;background:var(--gold)"></div></td><td>90.3</td><td class="trend-up">↑ +8.2%</td><td>2.94</td><td>3.02</td></tr>
+          <tr><td><strong>France</strong></td><td>4.8</td><td>7.12<div class="yield-bar" style="width:71px;background:var(--green)"></div></td><td>34.2</td><td class="trend-up">↑ +5.4%</td><td>6.76</td><td>7.08</td></tr>
+          <tr><td><strong>Germany</strong></td><td>3.1</td><td>7.89<div class="yield-bar" style="width:79px;background:var(--green)"></div></td><td>24.5</td><td class="trend-up">↑ +2.8%</td><td>7.68</td><td>7.94</td></tr>
+          <tr><td><strong>Australia</strong></td><td>12.3</td><td>2.14<div class="yield-bar" style="width:21px;background:var(--red2)"></div></td><td>26.3</td><td class="trend-dn">↓ −18.4%</td><td>2.62</td><td>2.80</td></tr>
+          <tr><td><strong>Canada</strong></td><td>9.8</td><td>3.89<div class="yield-bar" style="width:39px;background:var(--gold)"></div></td><td>38.1</td><td class="trend-up">↑ +6.1%</td><td>3.67</td><td>3.78</td></tr>
+          <tr><td><strong>Pakistan</strong></td><td>8.9</td><td>2.98<div class="yield-bar" style="width:30px;background:var(--gold)"></div></td><td>26.5</td><td class="trend-dn">↓ −2.1%</td><td>3.04</td><td>3.08</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="panel" style="animation-delay:0.5s">
+      <div class="panel-head">
+        <div class="panel-title">Yield Risk Factors — 2023</div>
+        <span class="panel-tag tag-red">Risk Index</span>
+      </div>
+      <div class="chart-h chart-sm">
+        <canvas id="riskChart"></canvas>
+      </div>
+      <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border);">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);margin-bottom:8px;">Crop Sensitivity to Climate</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:11px;">
+          <div style="padding:8px;background:var(--gold-pale);border-left:3px solid var(--gold);">🌡️ Heat stress: <strong style="color:var(--red)">HIGH</strong> for wheat</div>
+          <div style="padding:8px;background:#e8f5e9;border-left:3px solid var(--green2);">💧 Drought: <strong style="color:var(--gold)">MODERATE</strong> for maize</div>
+          <div style="padding:8px;background:#e3f2fd;border-left:3px solid var(--sky2);">🌊 Flood: <strong style="color:var(--sky)">LOW</strong> for rice</div>
+          <div style="padding:8px;background:#ffebee;border-left:3px solid var(--red2);">🦟 Pest/Disease: <strong style="color:var(--red)">HIGH</strong> globally</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="source-note">
+    <strong>⚠ Synthetic Data Notice:</strong> All crop yield figures, production estimates, regional statistics, forecast values, harvest calendars, and risk indices in this dashboard are <strong>entirely randomly generated synthetic data</strong> created by AlphaStatLab for portfolio demonstration. They do not represent real FAO, USDA-NASS, or national agricultural statistics. For real crop analytics solutions, visit <strong>alphastatlab.org</strong>.<br>
+    <strong>Methods:</strong> Yield trends modeled with linear trend + seasonal ARIMA-style noise. Forecast bands represent synthetic 90% prediction intervals. Regional production shares derived from uniform Dirichlet sampling. Risk indices scored from synthetic multi-factor model (temperature anomaly × precipitation deficit × pest pressure). Chart.js v4.4.1 · Fonts: Libre Baskerville + Barlow Condensed.
+  </div>
+</div>
+
+<script>
+// Yield Trend Chart
+const years = ['2010','2011','2012','2013','2014','2015','2016','2017','2018','2019','2020','2021','2022','2023','2024*','2025*'];
+function trendLine(base,slope,noise){return years.map((_,i)=>+(base+slope*i+(Math.random()-0.5)*noise).toFixed(2));}
+const wheatY=trendLine(2.9,0.04,0.12);
+const maizeY=trendLine(5.0,0.055,0.18);
+const riceY=trendLine(4.3,0.025,0.08);
+// Forecast uncertainty (last 2 points)
+const wheatLo=wheatY.map((v,i)=>i>=14?+(v-0.15).toFixed(2):null);
+const wheatHi=wheatY.map((v,i)=>i>=14?+(v+0.18).toFixed(2):null);
+
+const ytCtx=document.getElementById('yieldTrendChart').getContext('2d');
+new Chart(ytCtx,{
+  type:'line',
+  data:{
+    labels:years,
+    datasets:[
+      {label:'Wheat (t/ha)',data:wheatY,borderColor:'#c8860a',backgroundColor:'transparent',borderWidth:2.5,pointRadius:3,pointBackgroundColor:'#c8860a',tension:0.4,fill:false},
+      {label:'Maize (t/ha)',data:maizeY,borderColor:'#2e7d32',backgroundColor:'transparent',borderWidth:2.5,pointRadius:3,pointBackgroundColor:'#2e7d32',tension:0.4,fill:false},
+      {label:'Rice (t/ha)',data:riceY,borderColor:'#1565c0',backgroundColor:'transparent',borderWidth:2,pointRadius:3,pointBackgroundColor:'#1565c0',tension:0.4,fill:false,borderDash:[5,3]},
+      {label:'Wheat Forecast Hi',data:wheatHi,borderColor:'transparent',backgroundColor:'rgba(200,134,10,0.12)',fill:'+1',pointRadius:0,borderWidth:0},
+      {label:'Wheat Forecast Lo',data:wheatLo,borderColor:'rgba(200,134,10,0.3)',backgroundColor:'rgba(200,134,10,0.12)',fill:false,pointRadius:0,borderWidth:1,borderDash:[3,3]},
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    scales:{
+      x:{ticks:{color:'#7a6040',font:{size:10,family:'Barlow Condensed'}},grid:{color:'rgba(232,223,200,0.6)'}},
+      y:{ticks:{color:'#7a6040',font:{size:10,family:'Barlow Condensed'},callback:v=>v+' t/ha'},grid:{color:'rgba(232,223,200,0.6)'},title:{display:true,text:'Yield (t/ha)',color:'#7a6040',font:{size:10}}}
+    },
+    plugins:{
+      legend:{labels:{color:'#7a6040',font:{family:'Barlow',size:10},boxWidth:12,filter:item=>!item.text.includes('Forecast Hi')}},
+      tooltip:{backgroundColor:'#2d1f0e',titleFont:{family:'Barlow',size:11},bodyFont:{family:'Barlow',size:11}}
+    },
+    animation:{duration:1400,easing:'easeInOutCubic'}
+  }
+});
+
+// Region donut
+const rdCtx=document.getElementById('regionDonut').getContext('2d');
+new Chart(rdCtx,{
+  type:'doughnut',
+  data:{
+    labels:['Asia Pacific','Americas','Europe','Africa','Other'],
+    datasets:[{
+      data:[44.1,28.3,14.8,7.6,5.2],
+      backgroundColor:['rgba(200,134,10,0.8)','rgba(46,125,50,0.75)','rgba(21,101,192,0.7)','rgba(183,28,28,0.65)','rgba(92,64,37,0.6)'],
+      borderColor:'#faf6ee',borderWidth:3,hoverOffset:8
+    }]
+  },
+  options:{cutout:'64%',responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false},tooltip:{backgroundColor:'#2d1f0e',titleFont:{family:'Barlow',size:11},bodyFont:{family:'Barlow',size:11}}},
+    animation:{animateRotate:true,duration:1400}
+  }
+});
+
+// Risk chart
+const riskCtx=document.getElementById('riskChart').getContext('2d');
+new Chart(riskCtx,{
+  type:'radar',
+  data:{
+    labels:['Drought','Heat Stress','Flooding','Pest/Disease','Frost Risk','Market Shock'],
+    datasets:[
+      {label:'Wheat',data:[72,81,22,68,45,35],borderColor:'#c8860a',backgroundColor:'rgba(200,134,10,0.1)',pointBackgroundColor:'#c8860a',borderWidth:2,pointRadius:3},
+      {label:'Maize',data:[58,64,41,52,28,42],borderColor:'#2e7d32',backgroundColor:'rgba(46,125,50,0.08)',pointBackgroundColor:'#2e7d32',borderWidth:2,pointRadius:3},
+      {label:'Rice',data:[18,42,78,61,14,38],borderColor:'#1565c0',backgroundColor:'rgba(21,101,192,0.07)',pointBackgroundColor:'#1565c0',borderWidth:1.5,pointRadius:3,borderDash:[4,3]}
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    scales:{r:{ticks:{display:false,backdropColor:'transparent'},grid:{color:'rgba(232,223,200,0.7)'},pointLabels:{color:'#7a6040',font:{size:9,family:'Barlow Condensed'}},min:0,max:100}},
+    plugins:{legend:{labels:{color:'#7a6040',font:{family:'Barlow',size:10},boxWidth:10}},tooltip:{backgroundColor:'#2d1f0e'}}
+  }
+});
+</script>
+</body>
+</html>
