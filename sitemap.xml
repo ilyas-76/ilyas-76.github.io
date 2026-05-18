@@ -1,9 +1,63 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+  <!-- MAIN PAGES -->
   <url><loc>https://alphastatlab.org/</loc></url>
-  <url><loc>https://alphastatlab.org/categories/healthcare.html</loc></url>
-  <url><loc>https://alphastatlab.org/categories/business.html</loc></url>
-  <url><loc>https://alphastatlab.org/categories/energy.html</loc></url>
+  <url><loc>https://alphastatlab.org/CNAME</loc></url>
+
+  <!-- CATEGORY PAGES -->
   <url><loc>https://alphastatlab.org/categories/agriculture.html</loc></url>
+  <url><loc>https://alphastatlab.org/categories/business.html</loc></url>
   <url><loc>https://alphastatlab.org/categories/climate.html</loc></url>
+  <url><loc>https://alphastatlab.org/categories/energy.html</loc></url>
+  <url><loc>https://alphastatlab.org/categories/healthcare.html</loc></url>
+
+  <!-- AGRICULTURE DASHBOARDS -->
+  <url><loc>https://alphastatlab.org/agriculture-dashboards/agricultural-commodity.html</loc></url>
+  <url><loc>https://alphastatlab.org/agriculture-dashboards/crop-yield-forecast.html</loc></url>
+  <url><loc>https://alphastatlab.org/agriculture-dashboards/fisheries-aquaculture.html</loc></url>
+  <url><loc>https://alphastatlab.org/agriculture-dashboards/irrigation-water-management.html</loc></url>
+  <url><loc>https://alphastatlab.org/agriculture-dashboards/livestock-analytics.html</loc></url>
+  <url><loc>https://alphastatlab.org/agriculture-dashboards/soil-health-monitor.html</loc></url>
+
+  <!-- BUSINESS DASHBOARDS -->
+  <url><loc>https://alphastatlab.org/business-dashboards/airline-analytics.html</loc></url>
+  <url><loc>https://alphastatlab.org/business-dashboards/banking-analytics.html</loc></url>
+  <url><loc>https://alphastatlab.org/business-dashboards/customer-analytics.html</loc></url>
+  <url><loc>https://alphastatlab.org/business-dashboards/ecommerce-analytics.html</loc></url>
+  <url><loc>https://alphastatlab.org/business-dashboards/education-analytics.html</loc></url>
+  <url><loc>https://alphastatlab.org/business-dashboards/financial-analytics.html</loc></url>
+  <url><loc>https://alphastatlab.org/business-dashboards/healthcare-analytics.html</loc></url>
+  <url><loc>https://alphastatlab.org/business-dashboards/kpi-dashboard.html</loc></url>
+  <url><loc>https://alphastatlab.org/business-dashboards/logistics-analytics.html</loc></url>
+  <url><loc>https://alphastatlab.org/business-dashboards/manufacturing-analytics.html</loc></url>
+  <url><loc>https://alphastatlab.org/business-dashboards/marketing-performance.html</loc></url>
+  <url><loc>https://alphastatlab.org/business-dashboards/predictive-analytics.html</loc></url>
+  <url><loc>https://alphastatlab.org/business-dashboards/real-estate-analytics.html</loc></url>
+  <url><loc>https://alphastatlab.org/business-dashboards/sales-analytics.html</loc></url>
+  <url><loc>https://alphastatlab.org/business-dashboards/shopping-mall-analytics.html</loc></url>
+  <url><loc>https://alphastatlab.org/business-dashboards/travel-analytics.html</loc></url>
+
+  <!-- ENERGY DASHBOARDS -->
+  <url><loc>https://alphastatlab.org/energy-dashboards/carbon-emissions.html</loc></url>
+  <url><loc>https://alphastatlab.org/energy-dashboards/energy-consumption.html</loc></url>
+  <url><loc>https://alphastatlab.org/energy-dashboards/energy-storage.html</loc></url>
+  <url><loc>https://alphastatlab.org/energy-dashboards/energy-trading.html</loc></url>
+  <url><loc>https://alphastatlab.org/energy-dashboards/grid-stability.html</loc></url>
+  <url><loc>https://alphastatlab.org/energy-dashboards/renewable-energy.html</loc></url>
+
+  <!-- HEALTHCARE DASHBOARDS -->
+  <url><loc>https://alphastatlab.org/healthcare-dashboards/chronic-disease-analytics.html</loc></url>
+  <url><loc>https://alphastatlab.org/healthcare-dashboards/clinical-trials.html</loc></url>
+  <url><loc>https://alphastatlab.org/healthcare-dashboards/epidemiology-dashboard.html</loc></url>
+  <url><loc>https://alphastatlab.org/healthcare-dashboards/genomics-dashboard.html</loc></url>
+  <url><loc>https://alphastatlab.org/healthcare-dashboards/maternal-child-health.html</loc></url>
+  <url><loc>https://alphastatlab.org/healthcare-dashboards/mental-health-analytics.html</loc></url>
+  <url><loc>https://alphastatlab.org/healthcare-dashboards/patient-outcomes.html</loc></url>
+  <url><loc>https://alphastatlab.org/healthcare-dashboards/pharmaceutical-analytics.html</loc></url>
+
+  <!-- CLIMATE DASHBOARDS -->
+  <url><loc>https://alphastatlab.org/drought-dashboard/climate-dashboard.html</loc></url>
+  <url><loc>https://alphastatlab.org/ghg-dashboard/ghg-dashboard.html</loc></url>
+
 </urlset>
