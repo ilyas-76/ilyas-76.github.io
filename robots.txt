@@ -1,0 +1,10 @@
+User-agent: *
+Disallow: /*.csv$
+Disallow: /agriculture-dashboards/*.csv
+Disallow: /business-dashboards/*.csv
+Disallow: /energy-dashboards/*.csv
+Disallow: /healthcare-dashboards/*.csv
+Disallow: /drought-dashboard/*.csv
+Disallow: /ghg-dashboard/*.csv
+
+Sitemap: https://alphastatlab.org/sitemap.xml
