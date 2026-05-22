@@ -6,7 +6,6 @@
     <title>GHG Emissions Monitor | Alpha-Stat-Lab</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
-    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #1a472a 0%, #0d2818 100%); min-height: 100vh; }
@@ -163,11 +162,13 @@
             <div class="stat-card"><h4>Latest Year (2024)</h4><div class="value" id="latestValue">—</div><div class="trend" id="latestChange">vs 1990</div></div>
         </div>
 
+        <!-- Time Series Chart -->
         <div class="chart-container">
             <h3>📈 Emissions Time Series (National Totals)</h3>
             <canvas id="emissionsChart"></canvas>
             <p style="text-align: center; margin-top: 15px; color: #666; font-size: 12px;">💡 Mouse wheel to zoom | Drag to pan | Double-click to reset</p>
             
+            <!-- Export Buttons for Time Series -->
             <div class="export-buttons">
                 <button id="downloadTimeSeriesBtn" class="export-btn png">
                     📸 Download Time Series Chart (PNG)
@@ -178,12 +179,14 @@
             </div>
         </div>
 
+        <!-- Sector Bar Chart -->
         <div class="chart-container" id="sectorChartContainer">
-            <h3>🏭 Sector Breakdown Sunburst (Country ➔ Sector Hierarchical Shares)</h3>
+            <h3>🏭 Sector Breakdown (6 Major Sectors - Standardized)</h3>
             <div id="sectorWarning" class="info-note" style="display: none; background: #fff3cd; color: #856404;">⚠️ Showing up to 10 countries. Please deselect some for clearer view.</div>
-            <div id="sectorChart" style="width: 100%; height: 500px;"></div>
-            <p style="text-align: center; margin-top: 15px; color: #666; font-size: 12px;">📊 Inner Ring: Countries | Outer Ring: Mapped Sectors (Energy, Industry, Transport, Buildings, Agriculture, Waste)</p>
+            <canvas id="sectorChart"></canvas>
+            <p style="text-align: center; margin-top: 15px; color: #666; font-size: 12px;">📊 Sectors mapped consistently: Energy | Industry | Transport | Buildings | Agriculture | Waste</p>
             
+            <!-- Export Button for Sector Chart -->
             <div class="export-buttons">
                 <button id="downloadSectorChartBtn" class="export-btn png">
                     📸 Download Sector Chart (PNG)
@@ -517,13 +520,20 @@
                 alert('Please update the dashboard first.');
                 return;
             }
-            // Plotly native high-res download handler
-            Plotly.downloadImage(document.getElementById('sectorChart'), {
-                format: 'png',
-                width: 1200,
-                height: 800,
-                filename: `ghg_sectors_sunburst_${selectedCountries.slice(0,10).join('_')}`
-            });
+            
+            const canvas = document.getElementById('sectorChart');
+            const scale = 3;
+            const scaledCanvas = document.createElement('canvas');
+            scaledCanvas.width = canvas.width * scale;
+            scaledCanvas.height = canvas.height * scale;
+            const scaledCtx = scaledCanvas.getContext('2d');
+            scaledCtx.scale(scale, scale);
+            scaledCtx.drawImage(canvas, 0, 0);
+            
+            const link = document.createElement('a');
+            link.download = `ghg_sectors_${selectedCountries.slice(0,10).join('_')}.png`;
+            link.href = scaledCanvas.toDataURL('image/png');
+            link.click();
         }
         
         function downloadDataAsCSV() {
@@ -661,76 +671,39 @@
                 }
             });
             
-            // === SUNBURST SECTOR CHART FIXED WITH DISTINCT COLORS ===
+            // === SECTOR BAR CHART ===
             const sectorDataResult = getSectorDataForCountries(startYear, endYear);
             const displayCountries = selectedCountries.slice(0, 10);
             
             if (displayCountries.length > 0 && Object.keys(sectorData).length > 0) {
                 document.getElementById('sectorChartContainer').style.display = 'block';
+                const sectorCtx = document.getElementById('sectorChart').getContext('2d');
+                if (currentSectorChart) currentSectorChart.destroy();
                 
-                const ids = [];
-                const labels = [];
-                const parents = [];
-                const values = [];
-                const colorsList = [];
+                const sectorDatasets = majorSectors.map((sector) => ({
+                    label: sector,
+                    data: displayCountries.map(c => sectorDataResult[c]?.[sector] || 0),
+                    backgroundColor: sectorColors[sector],
+                    borderRadius: 6
+                }));
                 
-                // Add Root central point entry
-                ids.push("root_total");
-                labels.push("Total Selected");
-                parents.push("");
-                values.push(0); 
-                colorsList.push("#1a472a"); // Matches theme
-                
-                displayCountries.forEach((country, countryIdx) => {
-                    let countryTotal = 0;
-                    majorSectors.forEach(sector => {
-                        countryTotal += sectorDataResult[country]?.[sector] || 0;
-                    });
-                    
-                    // Add distinct node id for Countries to avoid naming overlap
-                    const countryId = "country_" + country;
-                    ids.push(countryId);
-                    labels.push(country);
-                    parents.push("root_total");
-                    values.push(countryTotal);
-                    colorsList.push(colors[countryIdx % colors.length]); // Dynamic distinct palette assignment
-                    
-                    // Add unique nested nodes for Sector Breakdown slices
-                    majorSectors.forEach(sector => {
-                        const sectorVal = sectorDataResult[country]?.[sector] || 0;
-                        if (sectorVal > 0) {
-                            ids.push(`sector_${country}_${sector}`);
-                            labels.push(sector);
-                            parents.push(countryId);
-                            values.push(sectorVal);
-                            colorsList.push(sectorColors[sector]); // Maps your configured global sector colors
+                currentSectorChart = new Chart(sectorCtx, {
+                    type: 'bar',
+                    data: { labels: displayCountries, datasets: sectorDatasets },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        interaction: { mode: 'index', intersect: false },
+                        plugins: {
+                            tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: ${ctx.raw?.toFixed(0) || 0} ${gasUnits[currentGas]}` } },
+                            legend: { position: 'bottom' }
+                        },
+                        scales: {
+                            x: { title: { display: true, text: 'Country' }, ticks: { maxRotation: 45, autoSkip: true } },
+                            y: { title: { display: true, text: `Average Annual Emissions (${gasUnits[currentGas]})` }, beginAtZero: true }
                         }
-                    });
+                    }
                 });
-                
-                const sunburstData = [{
-                    type: "sunburst",
-                    ids: ids,
-                    labels: labels,
-                    parents: parents,
-                    values: values,
-                    branchvalues: "total",
-                    marker: { 
-                        colors: colorsList,
-                        line: { width: 1.5, color: "#ffffff" } 
-                    },
-                    insidetextorientation: 'radial',
-                    hovertemplate: '<b>%{label}</b><br>' + 'Emissions: %{value:,.0f} ' + gasUnits[currentGas] + '<extra></extra>'
-                }];
-                
-                const sunburstLayout = {
-                    margin: { t: 15, l: 15, r: 15, b: 15 },
-                    paper_bgcolor: 'rgba(0,0,0,0)',
-                    font: { family: 'Segoe UI, Tahoma, Geneva, Verdana', size: 12, color: '#1a472a' }
-                };
-                
-                Plotly.newPlot('sectorChart', sunburstData, sunburstLayout, { responsive: true, displayModeBar: false });
-                currentSectorChart = document.getElementById('sectorChart');
             }
         }
         
@@ -751,6 +724,7 @@
         
         loadData();
     </script>
+    <!-- GoatCounter Analytics -->
     <script data-goatcounter="https://alphastatlab.goatcounter.com/count"
             async src="//gc.zgo.at/count.js"></script>
 </body>
