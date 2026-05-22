@@ -53,6 +53,24 @@
         .chart-container h3 { margin-bottom: 20px; color: #1a472a; font-size: 1.2em; border-left: 4px solid #2ecc71; padding-left: 15px; }
         canvas { max-height: 400px; }
         
+        /* Sunburst Chart Container */
+        .sunburst-container {
+            position: relative;
+            min-height: 450px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .sunburst-note {
+            text-align: center;
+            margin-top: 20px;
+            padding: 12px;
+            background: #f0f8f0;
+            border-radius: 8px;
+            font-size: 12px;
+            color: #1a472a;
+        }
+        
         .info-note { font-size: 11px; color: #666; text-align: center; margin-top: 10px; padding: 8px; background: #f8f9fa; border-radius: 8px; }
         
         /* Export buttons styles */
@@ -168,7 +186,6 @@
             <canvas id="emissionsChart"></canvas>
             <p style="text-align: center; margin-top: 15px; color: #666; font-size: 12px;">💡 Mouse wheel to zoom | Drag to pan | Double-click to reset</p>
             
-            <!-- Export Buttons for Time Series -->
             <div class="export-buttons">
                 <button id="downloadTimeSeriesBtn" class="export-btn png">
                     📸 Download Time Series Chart (PNG)
@@ -179,17 +196,20 @@
             </div>
         </div>
 
-        <!-- Sector Bar Chart -->
+        <!-- Sector Sunburst Chart (Replaced Bar Chart) -->
         <div class="chart-container" id="sectorChartContainer">
-            <h3>🏭 Sector Breakdown (6 Major Sectors - Standardized)</h3>
+            <h3>🏭 Sector Breakdown - Sunburst / Ring Chart</h3>
             <div id="sectorWarning" class="info-note" style="display: none; background: #fff3cd; color: #856404;">⚠️ Showing up to 10 countries. Please deselect some for clearer view.</div>
-            <canvas id="sectorChart"></canvas>
-            <p style="text-align: center; margin-top: 15px; color: #666; font-size: 12px;">📊 Sectors mapped consistently: Energy | Industry | Transport | Buildings | Agriculture | Waste</p>
+            <div class="sunburst-container">
+                <canvas id="sunburstChart"></canvas>
+            </div>
+            <div class="sunburst-note">
+                💡 Each ring represents a country. The inner ring shows sector distribution for the first selected country, outer rings show additional countries. Hover to see values.
+            </div>
             
-            <!-- Export Button for Sector Chart -->
             <div class="export-buttons">
-                <button id="downloadSectorChartBtn" class="export-btn png">
-                    📸 Download Sector Chart (PNG)
+                <button id="downloadSunburstBtn" class="export-btn png">
+                    📸 Download Sunburst Chart (PNG)
                 </button>
             </div>
         </div>
@@ -216,7 +236,7 @@
         let countries = [];
         let selectedCountries = ['China', 'United States', 'India', 'Pakistan'];
         let currentChart = null;
-        let currentSectorChart = null;
+        let currentSunburstChart = null;
         
         // Major sectors for consistent comparison
         const majorSectors = ['Energy', 'Industry', 'Transport', 'Buildings', 'Agriculture', 'Waste'];
@@ -515,13 +535,13 @@
             link.click();
         }
         
-        function downloadSectorChart() {
-            if (!currentSectorChart) {
+        function downloadSunburstChart() {
+            if (!currentSunburstChart) {
                 alert('Please update the dashboard first.');
                 return;
             }
             
-            const canvas = document.getElementById('sectorChart');
+            const canvas = document.getElementById('sunburstChart');
             const scale = 3;
             const scaledCanvas = document.createElement('canvas');
             scaledCanvas.width = canvas.width * scale;
@@ -531,7 +551,7 @@
             scaledCtx.drawImage(canvas, 0, 0);
             
             const link = document.createElement('a');
-            link.download = `ghg_sectors_${selectedCountries.slice(0,10).join('_')}.png`;
+            link.download = `ghg_sunburst_${selectedCountries.slice(0,5).join('_')}.png`;
             link.href = scaledCanvas.toDataURL('image/png');
             link.click();
         }
@@ -559,7 +579,6 @@
                 csvContent += "\n";
             }
             
-            // Add metadata
             csvContent += `\n# Metadata\n`;
             csvContent += `# Gas Type: ${gasNames[currentGas]}\n`;
             csvContent += `# Period: ${startYear} to ${endYear}\n`;
@@ -573,6 +592,69 @@
             link.download = `ghg_emissions_${selectedCountries.join('_')}_${startYear}_${endYear}.csv`;
             link.click();
             URL.revokeObjectURL(link.href);
+        }
+        
+        function createSunburstChart(sectorDataResult, displayCountries) {
+            // Build nested data structure for Sunburst/Doughnut
+            const datasets = [];
+            const colors = ['#e74c3c', '#3498db', '#2ecc71', '#f39c12', '#9b59b6', '#1abc9c', '#e67e22', '#27ae60', '#d35400', '#8e44ad', '#c0392b', '#16a085'];
+            
+            // Create a ring for each country (outer rings)
+            for (let i = 0; i < displayCountries.length && i < 8; i++) {
+                const country = displayCountries[i];
+                const sectorVals = sectorDataResult[country] || {};
+                const sectorArray = majorSectors.map(sector => sectorVals[sector] || 0);
+                
+                // Create a concentric ring dataset
+                datasets.push({
+                    label: country,
+                    data: sectorArray,
+                    backgroundColor: sectorColorsArray,
+                    borderColor: 'white',
+                    borderWidth: 2,
+                    circumference: 360,
+                    rotation: i === 0 ? -90 : (i * 45) % 360,
+                    radius: `${40 + i * 12}%`,
+                    cutout: `${30 + i * 12}%`
+                });
+            }
+            
+            const sectorColorsArray = majorSectors.map(s => sectorColors[s]);
+            
+            if (currentSunburstChart) currentSunburstChart.destroy();
+            
+            const ctx = document.getElementById('sunburstChart').getContext('2d');
+            currentSunburstChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: majorSectors,
+                    datasets: datasets
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: (tooltipItem) => {
+                                    const dataset = tooltipItem.dataset;
+                                    const countryName = dataset.label;
+                                    const sectorName = tooltipItem.label;
+                                    const value = dataset.data[tooltipItem.dataIndex];
+                                    return `${countryName} - ${sectorName}: ${(value || 0).toFixed(0)} ${gasUnits[currentGas]}`;
+                                }
+                            }
+                        },
+                        legend: {
+                            position: 'right',
+                            labels: { boxWidth: 12, font: { size: 11 } }
+                        }
+                    },
+                    layout: {
+                        padding: 10
+                    }
+                }
+            });
         }
         
         function updateDashboard() {
@@ -589,7 +671,7 @@
             const warningDiv = document.getElementById('sectorWarning');
             if (selectedCountries.length > 10) {
                 warningDiv.style.display = 'block';
-                warningDiv.textContent = `⚠️ Showing only top 10 of ${selectedCountries.length} selected countries in sector chart.`;
+                warningDiv.textContent = `⚠️ Showing only top 10 of ${selectedCountries.length} selected countries in sunburst chart.`;
             } else {
                 warningDiv.style.display = 'none';
             }
@@ -671,39 +753,73 @@
                 }
             });
             
-            // === SECTOR BAR CHART ===
+            // === SUNBURST SECTOR CHART ===
             const sectorDataResult = getSectorDataForCountries(startYear, endYear);
-            const displayCountries = selectedCountries.slice(0, 10);
+            const displayCountries = selectedCountries.slice(0, 8); // Limit to 8 for ring visibility
             
             if (displayCountries.length > 0 && Object.keys(sectorData).length > 0) {
                 document.getElementById('sectorChartContainer').style.display = 'block';
-                const sectorCtx = document.getElementById('sectorChart').getContext('2d');
-                if (currentSectorChart) currentSectorChart.destroy();
                 
-                const sectorDatasets = majorSectors.map((sector) => ({
-                    label: sector,
-                    data: displayCountries.map(c => sectorDataResult[c]?.[sector] || 0),
-                    backgroundColor: sectorColors[sector],
-                    borderRadius: 6
-                }));
+                // Build datasets for concentric rings (doughnut)
+                const ringDatasets = [];
+                const ringColors = ['#e74c3c', '#3498db', '#2ecc71', '#f39c12', '#9b59b6', '#1abc9c', '#e67e22', '#27ae60'];
                 
-                currentSectorChart = new Chart(sectorCtx, {
-                    type: 'bar',
-                    data: { labels: displayCountries, datasets: sectorDatasets },
+                for (let i = 0; i < displayCountries.length; i++) {
+                    const country = displayCountries[i];
+                    const sectorVals = sectorDataResult[country] || {};
+                    const sectorArray = majorSectors.map(sector => sectorVals[sector] || 0);
+                    
+                    // Skip if all values are zero
+                    if (sectorArray.every(v => v === 0)) continue;
+                    
+                    ringDatasets.push({
+                        label: country,
+                        data: sectorArray,
+                        backgroundColor: majorSectors.map(s => sectorColors[s]),
+                        borderColor: 'white',
+                        borderWidth: 2,
+                        circumference: 360,
+                        radius: `${55 - i * 8}%`,
+                        cutout: `${45 - i * 8}%`
+                    });
+                }
+                
+                if (currentSunburstChart) currentSunburstChart.destroy();
+                
+                const sunburstCtx = document.getElementById('sunburstChart').getContext('2d');
+                currentSunburstChart = new Chart(sunburstCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: majorSectors,
+                        datasets: ringDatasets.reverse() // Reverse so inner rings are on top
+                    },
                     options: {
                         responsive: true,
                         maintainAspectRatio: true,
-                        interaction: { mode: 'index', intersect: false },
                         plugins: {
-                            tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: ${ctx.raw?.toFixed(0) || 0} ${gasUnits[currentGas]}` } },
-                            legend: { position: 'bottom' }
+                            tooltip: {
+                                callbacks: {
+                                    label: (tooltipItem) => {
+                                        const dataset = tooltipItem.dataset;
+                                        const countryName = dataset.label;
+                                        const sectorName = tooltipItem.label;
+                                        const value = dataset.data[tooltipItem.dataIndex];
+                                        return `${countryName} - ${sectorName}: ${(value || 0).toFixed(0)} ${gasUnits[currentGas]}`;
+                                    }
+                                }
+                            },
+                            legend: {
+                                position: 'right',
+                                labels: { boxWidth: 12, font: { size: 11 }, color: '#333' }
+                            }
                         },
-                        scales: {
-                            x: { title: { display: true, text: 'Country' }, ticks: { maxRotation: 45, autoSkip: true } },
-                            y: { title: { display: true, text: `Average Annual Emissions (${gasUnits[currentGas]})` }, beginAtZero: true }
+                        layout: {
+                            padding: 20
                         }
                     }
                 });
+            } else {
+                document.getElementById('sectorChartContainer').style.display = 'none';
             }
         }
         
@@ -719,12 +835,11 @@
         
         // Export event listeners
         document.getElementById('downloadTimeSeriesBtn').addEventListener('click', downloadTimeSeriesChart);
-        document.getElementById('downloadSectorChartBtn').addEventListener('click', downloadSectorChart);
+        document.getElementById('downloadSunburstBtn').addEventListener('click', downloadSunburstChart);
         document.getElementById('downloadDataBtn').addEventListener('click', downloadDataAsCSV);
         
         loadData();
     </script>
-    <!-- GoatCounter Analytics -->
     <script data-goatcounter="https://alphastatlab.goatcounter.com/count"
             async src="//gc.zgo.at/count.js"></script>
 </body>
