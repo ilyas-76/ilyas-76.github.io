@@ -42,7 +42,6 @@
     line-height: 1.5;
     min-height: 100vh;
   }
-  /* ── Header ── */
   .header {
     background: var(--surface);
     border-bottom: 1px solid var(--border);
@@ -81,16 +80,12 @@
     padding: 4px 9px; background: #eff6ff; border: 1px solid #bfdbfe;
     border-radius: 20px; font-size: 11px; font-weight: 600; color: #1d4ed8;
   }
-
-  /* ── Layout ── */
   .main { display: grid; grid-template-columns: 300px 1fr; gap: 0; height: calc(100vh - 58px); overflow: hidden; }
   .sidebar {
     background: var(--surface); border-right: 1px solid var(--border);
     overflow-y: auto; padding: 20px 16px; display: flex; flex-direction: column; gap: 18px;
   }
   .content { overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 18px; }
-
-  /* ── Sidebar ── */
   .sidebar-section-label {
     font-size: 10px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase;
     color: var(--text-muted); margin-bottom: 8px;
@@ -108,7 +103,6 @@
   }
   select:focus, input:focus { border-color: var(--accent-blue); box-shadow: 0 0 0 3px rgba(37,99,235,.1); }
   .range-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-
   .var-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
   .var-btn {
     padding: 8px 6px; border: 1px solid var(--border); border-radius: 7px;
@@ -119,7 +113,6 @@
   .var-btn .var-icon { font-size: 16px; }
   .var-btn:hover { border-color: var(--accent-blue); color: var(--accent-blue); background: #eff6ff; }
   .var-btn.active { border-color: var(--accent-blue); background: #eff6ff; color: var(--accent-blue); font-weight: 600; }
-
   .btn-primary {
     width: 100%; padding: 10px; background: var(--accent-blue); color: #fff;
     border: none; border-radius: 8px; font-family: inherit; font-size: 13px;
@@ -128,15 +121,11 @@
   }
   .btn-primary:hover { background: #1d4ed8; }
   .btn-primary:disabled { background: #93c5fd; cursor: not-allowed; }
-
-  /* Stat cards in sidebar */
   .stat-mini { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 11px 13px; }
   .stat-mini-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; color: var(--text-muted); }
   .stat-mini-val { font-family: var(--font-data); font-size: 20px; font-weight: 500; margin-top: 2px; }
   .stat-mini-sub { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
   .stat-mini-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
-
-  /* ── Cards ── */
   .card {
     background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
     box-shadow: var(--shadow); overflow: hidden;
@@ -153,8 +142,6 @@
     background: var(--surface2); color: var(--text-muted); border: 1px solid var(--border);
   }
   .card-body { padding: 16px 18px; }
-
-  /* ── KPI row ── */
   .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
   .kpi-card {
     background: var(--surface); border: 1px solid var(--border);
@@ -169,8 +156,6 @@
   .trend-down { color: #3b82f6; }
   .trend-neutral { color: var(--text-muted); }
   .kpi-color-bar { height: 3px; border-radius: 2px; margin-top: 6px; }
-
-  /* ── Map ── */
   #world-map-container {
     width: 100%; height: 420px; position: relative;
     background: linear-gradient(160deg, #f0f7ff 0%, #e8f4f8 100%);
@@ -187,9 +172,7 @@
     font-size: 11px;
   }
   .legend-title { font-weight: 600; color: var(--text-secondary); margin-bottom: 6px; }
-  .legend-gradient {
-    width: 160px; height: 10px; border-radius: 5px; margin-bottom: 4px;
-  }
+  .legend-gradient { width: 160px; height: 10px; border-radius: 5px; margin-bottom: 4px; }
   .legend-ticks { display: flex; justify-content: space-between; color: var(--text-muted); font-size: 10px; font-family: var(--font-data); }
   .map-tooltip {
     position: absolute; pointer-events: none; background: rgba(26,35,50,.9);
@@ -213,12 +196,8 @@
     border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px;
     font-size: 11px; color: var(--text-secondary);
   }
-
-  /* ── Charts grid ── */
   .charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
   .chart-wrapper { position: relative; height: 240px; }
-
-  /* ── Time series ── */
   .ts-controls {
     display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
     padding: 0 18px 12px;
@@ -229,8 +208,6 @@
     color: var(--text-secondary); cursor: pointer; transition: all .12s;
   }
   .ts-btn:hover, .ts-btn.active { background: var(--accent-blue); color: #fff; border-color: var(--accent-blue); }
-
-  /* ── Stats table ── */
   .stats-table { width: 100%; border-collapse: collapse; font-size: 12px; }
   .stats-table th {
     text-align: left; padding: 8px 10px; font-size: 10px; font-weight: 700;
@@ -242,7 +219,6 @@
     font-family: var(--font-data); font-size: 12px; vertical-align: middle;
   }
   .stats-table tr:last-child td { border-bottom: none; }
-  .stats-table td:first-child { font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 500; }
   .anomaly-chip {
     display: inline-block; padding: 2px 7px; border-radius: 10px;
     font-size: 10px; font-weight: 600; font-family: 'Inter', sans-serif;
@@ -250,8 +226,6 @@
   .anomaly-pos { background: #fee2e2; color: #991b1b; }
   .anomaly-neg { background: #dbeafe; color: #1e40af; }
   .anomaly-neutral { background: var(--surface2); color: var(--text-muted); }
-
-  /* ── Loader ── */
   .loading-overlay {
     position: absolute; inset: 0; background: rgba(247,249,252,.85);
     backdrop-filter: blur(2px); display: flex; align-items: center;
@@ -264,15 +238,11 @@
   }
   @keyframes spin { to { transform: rotate(360deg); } }
   .loading-text { font-size: 12px; color: var(--text-muted); margin-top: 10px; text-align: center; }
-
-  /* ── Anomaly bar ── */
   .anomaly-bar-wrap { display: flex; align-items: center; gap: 8px; }
   .anomaly-bar-bg {
     flex: 1; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden;
   }
   .anomaly-bar-fill { height: 100%; border-radius: 3px; transition: width .4s; }
-
-  /* ── Footer ── */
   .dashboard-footer {
     padding: 12px 20px; border-top: 1px solid var(--border);
     display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
@@ -280,19 +250,13 @@
   }
   .footer-note { font-size: 11px; color: var(--text-muted); }
   .footer-note a { color: var(--accent-blue); text-decoration: none; }
-  .footer-note a:hover { text-decoration: underline; }
-  .footer-spacer { flex: 1; }
   .footer-credit { font-size: 11px; color: var(--text-muted); font-weight: 500; }
   .footer-credit span { color: var(--accent-blue); }
-
-  /* ── Empty/error state ── */
   .empty-state {
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     height: 200px; color: var(--text-muted); font-size: 12px; gap: 8px;
   }
   .empty-icon { font-size: 32px; opacity: .4; }
-
-  /* ── Tabs ── */
   .tab-row { display: flex; gap: 0; border-bottom: 1px solid var(--border); padding: 0 18px; }
   .tab-btn {
     padding: 10px 14px; font-size: 12px; font-weight: 500; color: var(--text-muted);
@@ -303,13 +267,9 @@
   .tab-btn.active { color: var(--accent-blue); border-bottom-color: var(--accent-blue); font-weight: 600; }
   .tab-pane { display: none; }
   .tab-pane.active { display: block; }
-
-  /* Scrollbar */
   ::-webkit-scrollbar { width: 5px; height: 5px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
-  ::-webkit-scrollbar-thumb:hover { background: #c1cbd8; }
-
   @media (max-width: 900px) {
     .main { grid-template-columns: 1fr; height: auto; }
     .sidebar { height: auto; border-right: none; border-bottom: 1px solid var(--border); }
@@ -320,7 +280,6 @@
 </head>
 <body>
 
-<!-- ══ HEADER ══ -->
 <header class="header">
   <div class="logo-block">
     <div class="logo-icon">🌡️</div>
@@ -336,40 +295,24 @@
   <div class="data-badge"><div class="dot-live"></div>Open-Meteo API</div>
 </header>
 
-<!-- ══ MAIN ══ -->
 <div class="main">
-
-  <!-- ── SIDEBAR ── -->
   <aside class="sidebar">
-
     <div>
       <div class="sidebar-section-label">📍 Location</div>
       <div class="select-group">
         <div class="select-label">Country</div>
-        <select id="country-select">
-          <option value="">— Select Country —</option>
-        </select>
+        <select id="country-select"><option value="">— Select Country —</option></select>
         <div class="select-label" style="margin-top:4px">City / Station</div>
-        <select id="city-select" disabled>
-          <option value="">— Select city first —</option>
-        </select>
+        <select id="city-select" disabled><option value="">— Select city first —</option></select>
       </div>
     </div>
-
     <div>
       <div class="sidebar-section-label">📅 Time Range</div>
       <div class="range-row">
-        <div class="select-group">
-          <div class="select-label">From</div>
-          <select id="year-start"></select>
-        </div>
-        <div class="select-group">
-          <div class="select-label">To</div>
-          <select id="year-end"></select>
-        </div>
+        <div class="select-group"><div class="select-label">From</div><select id="year-start"></select></div>
+        <div class="select-group"><div class="select-label">To</div><select id="year-end"></select></div>
       </div>
     </div>
-
     <div>
       <div class="sidebar-section-label">📊 Variable</div>
       <div class="var-grid">
@@ -379,271 +322,223 @@
         <button class="var-btn" data-var="wind_speed_10m_max" onclick="setVar(this)"><span class="var-icon">💨</span>Wind Speed</button>
       </div>
     </div>
-
     <div>
       <div class="sidebar-section-label">⏱ Aggregation</div>
       <div class="select-group">
         <select id="agg-select">
-          <option value="monthly">Monthly Mean</option>
           <option value="yearly" selected>Annual Mean</option>
-          <option value="seasonal">Seasonal</option>
+          <option value="monthly">Monthly Mean</option>
+          <option value="seasonal">Seasonal (DJF/MAM/JJA/SON)</option>
         </select>
       </div>
     </div>
-
-    <button class="btn-primary" id="fetch-btn" onclick="fetchData()">
-      <span>🔍</span> Analyse Climate Data
-    </button>
-
+    <button class="btn-primary" onclick="fetchData()"><span>🔍</span> Analyse Climate Data</button>
     <div id="sidebar-stats" style="display:none">
       <div class="sidebar-section-label">📈 Summary Statistics</div>
       <div class="stat-mini-grid">
-        <div class="stat-mini">
-          <div class="stat-mini-label">Mean</div>
-          <div class="stat-mini-val" id="st-mean">—</div>
-          <div class="stat-mini-sub" id="st-unit-mean"></div>
-        </div>
-        <div class="stat-mini">
-          <div class="stat-mini-label">Std Dev</div>
-          <div class="stat-mini-val" id="st-std">—</div>
-          <div class="stat-mini-sub">σ</div>
-        </div>
-        <div class="stat-mini">
-          <div class="stat-mini-label">Max</div>
-          <div class="stat-mini-val" id="st-max" style="color:var(--hot)">—</div>
-          <div class="stat-mini-sub" id="st-max-yr"></div>
-        </div>
-        <div class="stat-mini">
-          <div class="stat-mini-label">Min</div>
-          <div class="stat-mini-val" id="st-min" style="color:var(--cold)">—</div>
-          <div class="stat-mini-sub" id="st-min-yr"></div>
-        </div>
+        <div class="stat-mini"><div class="stat-mini-label">Mean</div><div class="stat-mini-val" id="st-mean">—</div><div class="stat-mini-sub" id="st-unit-mean"></div></div>
+        <div class="stat-mini"><div class="stat-mini-label">Std Dev</div><div class="stat-mini-val" id="st-std">—</div><div class="stat-mini-sub">σ</div></div>
+        <div class="stat-mini"><div class="stat-mini-label">Max</div><div class="stat-mini-val" id="st-max" style="color:var(--hot)">—</div><div class="stat-mini-sub" id="st-max-yr"></div></div>
+        <div class="stat-mini"><div class="stat-mini-label">Min</div><div class="stat-mini-val" id="st-min" style="color:var(--cold)">—</div><div class="stat-mini-sub" id="st-min-yr"></div></div>
       </div>
-      <div class="stat-mini" style="margin-top:6px">
-        <div class="stat-mini-label">Linear Trend</div>
-        <div class="stat-mini-val" id="st-trend" style="font-size:15px">—</div>
-        <div class="stat-mini-sub">per decade (OLS)</div>
-      </div>
+      <div class="stat-mini" style="margin-top:6px"><div class="stat-mini-label">Linear Trend</div><div class="stat-mini-val" id="st-trend" style="font-size:15px">—</div><div class="stat-mini-sub">per decade (OLS)</div></div>
     </div>
-
     <div style="margin-top:auto; padding-top:10px; font-size:11px; color:var(--text-muted); line-height:1.6;">
       <strong style="color:var(--text-secondary)">Data Sources</strong><br>
       Open-Meteo Historical Climate API (ERA5 reanalysis + NOAA station blend) · 100,000+ stations · Records from 1940 · No API key required
     </div>
-
   </aside>
 
-  <!-- ── CONTENT ── -->
   <main class="content">
-
-    <!-- KPI Row -->
-    <div class="kpi-row" id="kpi-row">
-      <div class="kpi-card">
-        <div class="kpi-label">Selected Location</div>
-        <div class="kpi-val" id="kpi-location" style="font-size:16px;font-family:Inter">—</div>
-        <div class="kpi-trend trend-neutral" id="kpi-coords">Choose a country & city</div>
-        <div class="kpi-color-bar" style="background:var(--accent-blue);width:60%"></div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Period Mean</div>
-        <div class="kpi-val" id="kpi-mean">—</div>
-        <div class="kpi-trend trend-neutral" id="kpi-mean-label">—</div>
-        <div class="kpi-color-bar" id="kpi-mean-bar" style="background:var(--neutral);width:50%"></div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Record High</div>
-        <div class="kpi-val" id="kpi-high" style="color:var(--hot)">—</div>
-        <div class="kpi-trend trend-up" id="kpi-high-yr">—</div>
-        <div class="kpi-color-bar" style="background:var(--hot);width:80%"></div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Record Low</div>
-        <div class="kpi-val" id="kpi-low" style="color:var(--cold)">—</div>
-        <div class="kpi-trend trend-down" id="kpi-low-yr">—</div>
-        <div class="kpi-color-bar" style="background:var(--cold);width:65%"></div>
-      </div>
+    <div class="kpi-row">
+      <div class="kpi-card"><div class="kpi-label">Selected Location</div><div class="kpi-val" id="kpi-location" style="font-size:16px;font-family:Inter">—</div><div class="kpi-trend trend-neutral" id="kpi-coords">Choose a country & city</div><div class="kpi-color-bar" style="background:var(--accent-blue);width:60%"></div></div>
+      <div class="kpi-card"><div class="kpi-label">Period Mean</div><div class="kpi-val" id="kpi-mean">—</div><div class="kpi-trend trend-neutral" id="kpi-mean-label">—</div><div class="kpi-color-bar" id="kpi-mean-bar" style="background:var(--neutral);width:50%"></div></div>
+      <div class="kpi-card"><div class="kpi-label">Record High</div><div class="kpi-val" id="kpi-high" style="color:var(--hot)">—</div><div class="kpi-trend trend-up" id="kpi-high-yr">—</div><div class="kpi-color-bar" style="background:var(--hot);width:80%"></div></div>
+      <div class="kpi-card"><div class="kpi-label">Record Low</div><div class="kpi-val" id="kpi-low" style="color:var(--cold)">—</div><div class="kpi-trend trend-down" id="kpi-low-yr">—</div><div class="kpi-color-bar" style="background:var(--cold);width:65%"></div></div>
     </div>
 
-    <!-- World Map -->
     <div class="card">
-      <div class="card-header">
-        <div>
-          <div class="card-title">🌍 Global Climate Map</div>
-          <div class="card-sub">Click any country to load its climate data · Color = selected variable value</div>
-        </div>
-        <div class="card-header-spacer"></div>
-        <div class="card-badge" id="map-var-label">Max Temperature</div>
-      </div>
+      <div class="card-header"><div><div class="card-title">🌍 Global Climate Map</div><div class="card-sub">Click any country to load its climate data · Color = selected variable value</div></div><div class="card-header-spacer"></div><div class="card-badge" id="map-var-label">Max Temperature</div></div>
       <div id="world-map-container">
         <div class="map-info" id="map-info">Click a country to analyse</div>
-        <div class="map-controls">
-          <div class="map-ctrl-btn" onclick="zoomIn()" title="Zoom in">+</div>
-          <div class="map-ctrl-btn" onclick="zoomOut()" title="Zoom out">−</div>
-          <div class="map-ctrl-btn" onclick="resetZoom()" title="Reset">⊙</div>
-        </div>
+        <div class="map-controls"><div class="map-ctrl-btn" onclick="zoomIn()">+</div><div class="map-ctrl-btn" onclick="zoomOut()">−</div><div class="map-ctrl-btn" onclick="resetZoom()">⊙</div></div>
         <div class="map-tooltip" id="map-tooltip"></div>
       </div>
     </div>
 
-    <!-- Charts & Tabs -->
-    <div class="card" id="analysis-card">
+    <div class="card">
       <div class="tab-row">
         <button class="tab-btn active" onclick="switchTab('ts',this)">📈 Time Series</button>
         <button class="tab-btn" onclick="switchTab('bar',this)">📊 Annual Distribution</button>
         <button class="tab-btn" onclick="switchTab('anom',this)">🌡️ Anomaly</button>
         <button class="tab-btn" onclick="switchTab('stats',this)">📋 Statistics Table</button>
       </div>
-
-      <!-- Time Series -->
       <div class="tab-pane active" id="tab-ts">
-        <div class="ts-controls" id="ts-controls">
-          <span style="font-size:11px;font-weight:600;color:var(--text-muted)">Smoothing:</span>
+        <div class="ts-controls"><span style="font-size:11px;font-weight:600;color:var(--text-muted)">Smoothing:</span>
           <button class="ts-btn active" onclick="setSmooth(1,this)">None</button>
           <button class="ts-btn" onclick="setSmooth(5,this)">5-yr</button>
           <button class="ts-btn" onclick="setSmooth(10,this)">10-yr</button>
           <div style="flex:1"></div>
           <span id="ts-trend-label" style="font-size:11px;color:var(--text-muted)"></span>
         </div>
-        <div class="card-body" style="padding-top:0">
-          <div class="chart-wrapper" style="height:280px">
-            <canvas id="chart-ts"></canvas>
-            <div class="loading-overlay" id="ts-loader" style="display:none">
-              <div style="text-align:center">
-                <div class="spinner"></div>
-                <div class="loading-text">Fetching climate records…</div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <div class="card-body" style="padding-top:0"><div class="chart-wrapper" style="height:280px"><canvas id="chart-ts"></canvas><div class="loading-overlay" id="ts-loader" style="display:none"><div style="text-align:center"><div class="spinner"></div><div class="loading-text">Fetching climate records…</div></div></div></div></div>
       </div>
-
-      <!-- Bar -->
-      <div class="tab-pane" id="tab-bar">
-        <div class="card-body">
-          <div class="chart-wrapper" style="height:280px">
-            <canvas id="chart-bar"></canvas>
-          </div>
-        </div>
-      </div>
-
-      <!-- Anomaly -->
-      <div class="tab-pane" id="tab-anom">
-        <div class="card-body">
-          <div class="chart-wrapper" style="height:280px">
-            <canvas id="chart-anom"></canvas>
-          </div>
-        </div>
-      </div>
-
-      <!-- Stats Table -->
-      <div class="tab-pane" id="tab-stats">
-        <div class="card-body" style="padding:0; overflow-x:auto;">
-          <div id="stats-table-wrap">
-            <div class="empty-state">
-              <div class="empty-icon">📋</div>
-              <div>Run an analysis to see the statistics table</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
+      <div class="tab-pane" id="tab-bar"><div class="card-body"><div class="chart-wrapper" style="height:280px"><canvas id="chart-bar"></canvas></div></div></div>
+      <div class="tab-pane" id="tab-anom"><div class="card-body"><div class="chart-wrapper" style="height:280px"><canvas id="chart-anom"></canvas></div></div></div>
+      <div class="tab-pane" id="tab-stats"><div class="card-body" style="padding:0; overflow-x:auto;"><div id="stats-table-wrap"><div class="empty-state"><div class="empty-icon">📋</div><div>Run an analysis to see the statistics table</div></div></div></div></div>
     </div>
 
-    <!-- Charts Row -->
     <div class="charts-row">
-      <div class="card">
-        <div class="card-header">
-          <div>
-            <div class="card-title">📅 Seasonal Pattern</div>
-            <div class="card-sub" id="seasonal-sub">Monthly climatology (period mean)</div>
-          </div>
-        </div>
-        <div class="card-body">
-          <div class="chart-wrapper">
-            <canvas id="chart-seasonal"></canvas>
-          </div>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-header">
-          <div>
-            <div class="card-title">📦 Distribution</div>
-            <div class="card-sub">Histogram + kernel density estimate</div>
-          </div>
-        </div>
-        <div class="card-body">
-          <div class="chart-wrapper">
-            <canvas id="chart-hist"></canvas>
-          </div>
-        </div>
-      </div>
+      <div class="card"><div class="card-header"><div><div class="card-title">📅 Seasonal Pattern</div><div class="card-sub" id="seasonal-sub">Monthly climatology (period mean)</div></div></div><div class="card-body"><div class="chart-wrapper"><canvas id="chart-seasonal"></canvas></div></div></div>
+      <div class="card"><div class="card-header"><div><div class="card-title">📦 Distribution</div><div class="card-sub">Histogram + kernel density estimate</div></div></div><div class="card-body"><div class="chart-wrapper"><canvas id="chart-hist"></canvas></div></div></div>
     </div>
 
-    <!-- Footer -->
     <div class="dashboard-footer">
-      <div class="footer-note">
-        Data: <a href="https://open-meteo.com/en/docs/historical-weather-api" target="_blank">Open-Meteo Historical Climate API</a> (ERA5 · NOAA blend) · Free, no API key · Records 1940–present
-      </div>
-      <div class="footer-note">
-        Reference: <a href="https://www.ncei.noaa.gov/" target="_blank">NOAA NCEI</a> · 100,000+ global stations
-      </div>
+      <div class="footer-note">Data: <a href="https://open-meteo.com/en/docs/historical-weather-api" target="_blank">Open-Meteo Historical Climate API</a> (ERA5 · NOAA blend) · Free, no API key · Records 1940–present</div>
+      <div class="footer-note">Reference: <a href="https://www.ncei.noaa.gov/" target="_blank">NOAA NCEI</a> · 100,000+ global stations</div>
       <div class="footer-spacer"></div>
       <div class="footer-credit">Built by <span>AlphaStatLab</span> · Muhammad Ilyas, PhD · QAU Islamabad</div>
     </div>
-
   </main>
 </div>
 
-<!-- ════════════════════════════════════════════════ SCRIPTS ════════ -->
 <script>
-// ── CITY DATABASE ──────────────────────────────────────────────────
+// ============================================================
+// COMPLETE GLOBAL CITY DATABASE - 100+ COUNTRIES, 500+ CITIES
+// ============================================================
 const CITIES = {
-  "Pakistan":    [{n:"Islamabad",lat:33.72,lon:73.06},{n:"Karachi",lat:24.86,lon:67.01},{n:"Lahore",lat:31.55,lon:74.34},{n:"Peshawar",lat:34.01,lon:71.58},{n:"Quetta",lat:30.19,lon:67.02},{n:"Gilgit",lat:35.92,lon:74.31},{n:"Muzaffarabad",lat:34.37,lon:73.47}],
-  "India":       [{n:"New Delhi",lat:28.63,lon:77.22},{n:"Mumbai",lat:19.08,lon:72.88},{n:"Kolkata",lat:22.57,lon:88.36},{n:"Chennai",lat:13.08,lon:80.27},{n:"Hyderabad",lat:17.39,lon:78.49},{n:"Bangalore",lat:12.97,lon:77.59},{n:"Jaipur",lat:26.92,lon:75.82}],
-  "China":       [{n:"Beijing",lat:39.91,lon:116.39},{n:"Shanghai",lat:31.23,lon:121.47},{n:"Chongqing",lat:29.56,lon:106.55},{n:"Guangzhou",lat:23.13,lon:113.26},{n:"Lhasa",lat:29.65,lon:91.11},{n:"Urumqi",lat:43.80,lon:87.60}],
-  "USA":         [{n:"New York",lat:40.71,lon:-74.01},{n:"Los Angeles",lat:34.05,lon:-118.24},{n:"Chicago",lat:41.88,lon:-87.63},{n:"Houston",lat:29.76,lon:-95.37},{n:"Miami",lat:25.77,lon:-80.19},{n:"Seattle",lat:47.61,lon:-122.33},{n:"Denver",lat:39.74,lon:-104.98},{n:"Phoenix",lat:33.45,lon:-112.07}],
-  "UK":          [{n:"London",lat:51.51,lon:-0.13},{n:"Manchester",lat:53.48,lon:-2.24},{n:"Edinburgh",lat:55.95,lon:-3.19},{n:"Birmingham",lat:52.49,lon:-1.90},{n:"Cardiff",lat:51.48,lon:-3.18}],
-  "Germany":     [{n:"Berlin",lat:52.52,lon:13.40},{n:"Munich",lat:48.14,lon:11.58},{n:"Hamburg",lat:53.55,lon:9.99},{n:"Frankfurt",lat:50.11,lon:8.68},{n:"Cologne",lat:50.94,lon:6.96}],
-  "France":      [{n:"Paris",lat:48.86,lon:2.35},{n:"Lyon",lat:45.74,lon:4.83},{n:"Marseille",lat:43.30,lon:5.37},{n:"Toulouse",lat:43.60,lon:1.44}],
-  "Australia":   [{n:"Sydney",lat:-33.87,lon:151.21},{n:"Melbourne",lat:-37.81,lon:144.96},{n:"Brisbane",lat:-27.47,lon:153.02},{n:"Perth",lat:-31.95,lon:115.86},{n:"Darwin",lat:-12.46,lon:130.84}],
-  "Brazil":      [{n:"Brasília",lat:-15.78,lon:-47.93},{n:"São Paulo",lat:-23.55,lon:-46.63},{n:"Rio de Janeiro",lat:-22.91,lon:-43.17},{n:"Manaus",lat:-3.11,lon:-60.02},{n:"Fortaleza",lat:-3.72,lon:-38.54}],
-  "Russia":      [{n:"Moscow",lat:55.75,lon:37.62},{n:"St. Petersburg",lat:59.94,lon:30.32},{n:"Novosibirsk",lat:55.03,lon:82.92},{n:"Yakutsk",lat:62.03,lon:129.73}],
-  "Japan":       [{n:"Tokyo",lat:35.69,lon:139.69},{n:"Osaka",lat:34.69,lon:135.50},{n:"Sapporo",lat:43.06,lon:141.35},{n:"Okinawa",lat:26.21,lon:127.68}],
-  "Canada":      [{n:"Toronto",lat:43.65,lon:-79.38},{n:"Vancouver",lat:49.25,lon:-123.12},{n:"Montreal",lat:45.51,lon:-73.57},{n:"Calgary",lat:51.05,lon:-114.08},{n:"Yellowknife",lat:62.45,lon:-114.38}],
-  "Egypt":       [{n:"Cairo",lat:30.06,lon:31.25},{n:"Alexandria",lat:31.21,lon:29.92},{n:"Aswan",lat:24.09,lon:32.90},{n:"Luxor",lat:25.69,lon:32.65}],
-  "Nigeria":     [{n:"Lagos",lat:6.45,lon:3.40},{n:"Kano",lat:12.00,lon:8.52},{n:"Abuja",lat:9.05,lon:7.49}],
-  "South Africa":[{n:"Cape Town",lat:-33.93,lon:18.42},{n:"Johannesburg",lat:-26.20,lon:28.04},{n:"Durban",lat:-29.87,lon:31.02}],
-  "Saudi Arabia":[{n:"Riyadh",lat:24.69,lon:46.72},{n:"Jeddah",lat:21.54,lon:39.17},{n:"Medina",lat:24.47,lon:39.61}],
-  "Turkey":      [{n:"Istanbul",lat:41.01,lon:28.96},{n:"Ankara",lat:39.93,lon:32.86},{n:"Antalya",lat:36.90,lon:30.70}],
-  "Bangladesh":  [{n:"Dhaka",lat:23.81,lon:90.41},{n:"Chittagong",lat:22.33,lon:91.83}],
-  "Afghanistan": [{n:"Kabul",lat:34.53,lon:69.17},{n:"Kandahar",lat:31.61,lon:65.71}],
-  "Iran":        [{n:"Tehran",lat:35.69,lon:51.42},{n:"Isfahan",lat:32.66,lon:51.68},{n:"Mashhad",lat:36.30,lon:59.60}],
-  "Nepal":       [{n:"Kathmandu",lat:27.72,lon:85.32},{n:"Pokhara",lat:28.21,lon:83.98}],
+  "Pakistan": [{n:"Islamabad",lat:33.72,lon:73.06},{n:"Karachi",lat:24.86,lon:67.01},{n:"Lahore",lat:31.55,lon:74.34},{n:"Peshawar",lat:34.01,lon:71.58},{n:"Quetta",lat:30.19,lon:67.02},{n:"Rawalpindi",lat:33.60,lon:73.04},{n:"Multan",lat:30.20,lon:71.46},{n:"Faisalabad",lat:31.42,lon:73.08},{n:"Sialkot",lat:32.50,lon:74.52},{n:"Hyderabad",lat:25.38,lon:68.37},{n:"Sukkur",lat:27.70,lon:68.85},{n:"Gilgit",lat:35.92,lon:74.31},{n:"Muzaffarabad",lat:34.37,lon:73.47}],
+  "India": [{n:"New Delhi",lat:28.63,lon:77.22},{n:"Mumbai",lat:19.08,lon:72.88},{n:"Kolkata",lat:22.57,lon:88.36},{n:"Chennai",lat:13.08,lon:80.27},{n:"Bangalore",lat:12.97,lon:77.59},{n:"Hyderabad",lat:17.39,lon:78.49},{n:"Ahmedabad",lat:23.02,lon:72.57},{n:"Pune",lat:18.52,lon:73.86},{n:"Jaipur",lat:26.92,lon:75.82},{n:"Lucknow",lat:26.85,lon:80.95},{n:"Nagpur",lat:21.15,lon:79.09},{n:"Indore",lat:22.72,lon:75.83}],
+  "China": [{n:"Beijing",lat:39.91,lon:116.39},{n:"Shanghai",lat:31.23,lon:121.47},{n:"Guangzhou",lat:23.13,lon:113.26},{n:"Shenzhen",lat:22.54,lon:114.06},{n:"Chengdu",lat:30.57,lon:104.07},{n:"Chongqing",lat:29.56,lon:106.55},{n:"Tianjin",lat:39.34,lon:117.36},{n:"Wuhan",lat:30.59,lon:114.31},{n:"Xi'an",lat:34.34,lon:108.94},{n:"Nanjing",lat:32.06,lon:118.78},{n:"Hangzhou",lat:30.27,lon:120.15},{n:"Lhasa",lat:29.65,lon:91.11}],
+  "USA": [{n:"New York",lat:40.71,lon:-74.01},{n:"Los Angeles",lat:34.05,lon:-118.24},{n:"Chicago",lat:41.88,lon:-87.63},{n:"Houston",lat:29.76,lon:-95.37},{n:"Phoenix",lat:33.45,lon:-112.07},{n:"Philadelphia",lat:39.95,lon:-75.17},{n:"San Antonio",lat:29.42,lon:-98.49},{n:"San Diego",lat:32.72,lon:-117.16},{n:"Dallas",lat:32.78,lon:-96.80},{n:"Austin",lat:30.27,lon:-97.74},{n:"Boston",lat:42.36,lon:-71.06},{n:"Seattle",lat:47.61,lon:-122.33},{n:"Denver",lat:39.74,lon:-104.98},{n:"Miami",lat:25.77,lon:-80.19}],
+  "UK": [{n:"London",lat:51.51,lon:-0.13},{n:"Manchester",lat:53.48,lon:-2.24},{n:"Birmingham",lat:52.49,lon:-1.90},{n:"Leeds",lat:53.80,lon:-1.55},{n:"Glasgow",lat:55.86,lon:-4.25},{n:"Liverpool",lat:53.41,lon:-2.98},{n:"Edinburgh",lat:55.95,lon:-3.19},{n:"Bristol",lat:51.45,lon:-2.59},{n:"Cardiff",lat:51.48,lon:-3.18},{n:"Belfast",lat:54.60,lon:-5.93}],
+  "Germany": [{n:"Berlin",lat:52.52,lon:13.40},{n:"Hamburg",lat:53.55,lon:9.99},{n:"Munich",lat:48.14,lon:11.58},{n:"Cologne",lat:50.94,lon:6.96},{n:"Frankfurt",lat:50.11,lon:8.68},{n:"Stuttgart",lat:48.78,lon:9.18},{n:"Düsseldorf",lat:51.23,lon:6.78},{n:"Leipzig",lat:51.34,lon:12.38},{n:"Dresden",lat:51.05,lon:13.74},{n:"Hanover",lat:52.37,lon:9.74}],
+  "France": [{n:"Paris",lat:48.86,lon:2.35},{n:"Marseille",lat:43.30,lon:5.37},{n:"Lyon",lat:45.76,lon:4.84},{n:"Toulouse",lat:43.60,lon:1.44},{n:"Nice",lat:43.70,lon:7.27},{n:"Nantes",lat:47.22,lon:-1.55},{n:"Strasbourg",lat:48.57,lon:7.75},{n:"Montpellier",lat:43.61,lon:3.88},{n:"Bordeaux",lat:44.84,lon:-0.58}],
+  "Canada": [{n:"Toronto",lat:43.65,lon:-79.38},{n:"Vancouver",lat:49.28,lon:-123.12},{n:"Montreal",lat:45.50,lon:-73.57},{n:"Calgary",lat:51.05,lon:-114.08},{n:"Ottawa",lat:45.42,lon:-75.69},{n:"Edmonton",lat:53.55,lon:-113.49},{n:"Quebec City",lat:46.81,lon:-71.21},{n:"Winnipeg",lat:49.90,lon:-97.14}],
+  "Australia": [{n:"Sydney",lat:-33.87,lon:151.21},{n:"Melbourne",lat:-37.81,lon:144.96},{n:"Brisbane",lat:-27.47,lon:153.02},{n:"Perth",lat:-31.95,lon:115.86},{n:"Adelaide",lat:-34.93,lon:138.60},{n:"Canberra",lat:-35.28,lon:149.13},{n:"Hobart",lat:-42.88,lon:147.33},{n:"Darwin",lat:-12.46,lon:130.84}],
+  "Japan": [{n:"Tokyo",lat:35.69,lon:139.69},{n:"Yokohama",lat:35.44,lon:139.64},{n:"Osaka",lat:34.69,lon:135.50},{n:"Nagoya",lat:35.18,lon:136.91},{n:"Sapporo",lat:43.06,lon:141.35},{n:"Fukuoka",lat:33.59,lon:130.40},{n:"Kobe",lat:34.69,lon:135.19},{n:"Kyoto",lat:35.01,lon:135.77}],
+  "Brazil": [{n:"São Paulo",lat:-23.55,lon:-46.63},{n:"Rio de Janeiro",lat:-22.91,lon:-43.17},{n:"Brasília",lat:-15.80,lon:-47.86},{n:"Salvador",lat:-12.97,lon:-38.51},{n:"Fortaleza",lat:-3.72,lon:-38.54},{n:"Belo Horizonte",lat:-19.92,lon:-43.94},{n:"Manaus",lat:-3.10,lon:-60.03},{n:"Curitiba",lat:-25.43,lon:-49.27}],
+  "Russia": [{n:"Moscow",lat:55.76,lon:37.62},{n:"St Petersburg",lat:59.93,lon:30.33},{n:"Novosibirsk",lat:55.03,lon:82.92},{n:"Yekaterinburg",lat:56.85,lon:60.61},{n:"Kazan",lat:55.79,lon:49.12},{n:"Nizhny Novgorod",lat:56.33,lon:44.00},{n:"Samara",lat:53.20,lon:50.15},{n:"Omsk",lat:54.99,lon:73.37}],
+  "South Africa": [{n:"Johannesburg",lat:-26.20,lon:28.04},{n:"Cape Town",lat:-33.92,lon:18.42},{n:"Durban",lat:-29.86,lon:31.03},{n:"Pretoria",lat:-25.74,lon:28.19},{n:"Port Elizabeth",lat:-33.96,lon:25.62},{n:"Bloemfontein",lat:-29.12,lon:26.22}],
+  "Egypt": [{n:"Cairo",lat:30.04,lon:31.24},{n:"Alexandria",lat:31.20,lon:29.92},{n:"Giza",lat:30.01,lon:31.21},{n:"Luxor",lat:25.68,lon:32.65},{n:"Aswan",lat:24.09,lon:32.90}],
+  "Turkey": [{n:"Istanbul",lat:41.01,lon:28.96},{n:"Ankara",lat:39.93,lon:32.86},{n:"Izmir",lat:38.42,lon:27.14},{n:"Bursa",lat:40.18,lon:29.06},{n:"Antalya",lat:36.90,lon:30.70},{n:"Adana",lat:37.00,lon:35.32}],
+  "Saudi Arabia": [{n:"Riyadh",lat:24.71,lon:46.67},{n:"Jeddah",lat:21.48,lon:39.19},{n:"Mecca",lat:21.39,lon:39.86},{n:"Medina",lat:24.47,lon:39.61},{n:"Dammam",lat:26.43,lon:50.10}],
+  "UAE": [{n:"Dubai",lat:25.20,lon:55.27},{n:"Abu Dhabi",lat:24.45,lon:54.38},{n:"Sharjah",lat:25.35,lon:55.39},{n:"Al Ain",lat:24.21,lon:55.76}],
+  "Indonesia": [{n:"Jakarta",lat:-6.20,lon:106.85},{n:"Surabaya",lat:-7.25,lon:112.75},{n:"Bandung",lat:-6.92,lon:107.61},{n:"Medan",lat:3.59,lon:98.67},{n:"Semarang",lat:-7.00,lon:110.42}],
+  "Thailand": [{n:"Bangkok",lat:13.73,lon:100.50},{n:"Chiang Mai",lat:18.79,lon:98.98},{n:"Phuket",lat:7.88,lon:98.39},{n:"Pattaya",lat:12.92,lon:100.88}],
+  "Vietnam": [{n:"Ho Chi Minh City",lat:10.82,lon:106.63},{n:"Hanoi",lat:21.03,lon:105.85},{n:"Da Nang",lat:16.06,lon:108.22},{n:"Hai Phong",lat:20.86,lon:106.68}],
+  "Malaysia": [{n:"Kuala Lumpur",lat:3.14,lon:101.69},{n:"George Town",lat:5.41,lon:100.33},{n:"Johor Bahru",lat:1.49,lon:103.74},{n:"Ipoh",lat:4.60,lon:101.07}],
+  "Philippines": [{n:"Manila",lat:14.60,lon:120.98},{n:"Quezon City",lat:14.65,lon:121.05},{n:"Davao City",lat:7.19,lon:125.46},{n:"Cebu City",lat:10.32,lon:123.89}],
+  "South Korea": [{n:"Seoul",lat:37.57,lon:126.98},{n:"Busan",lat:35.18,lon:129.08},{n:"Incheon",lat:37.46,lon:126.71},{n:"Daegu",lat:35.87,lon:128.60},{n:"Daejeon",lat:36.35,lon:127.38}],
+  "Italy": [{n:"Rome",lat:41.90,lon:12.50},{n:"Milan",lat:45.46,lon:9.19},{n:"Naples",lat:40.85,lon:14.27},{n:"Turin",lat:45.07,lon:7.69},{n:"Palermo",lat:38.12,lon:13.36},{n:"Florence",lat:43.77,lon:11.25}],
+  "Spain": [{n:"Madrid",lat:40.42,lon:-3.70},{n:"Barcelona",lat:41.39,lon:2.17},{n:"Valencia",lat:39.47,lon:-0.38},{n:"Seville",lat:37.39,lon:-5.99},{n:"Zaragoza",lat:41.65,lon:-0.88},{n:"Málaga",lat:36.72,lon:-4.42}],
+  "Mexico": [{n:"Mexico City",lat:19.43,lon:-99.13},{n:"Guadalajara",lat:20.66,lon:-103.35},{n:"Monterrey",lat:25.68,lon:-100.32},{n:"Puebla",lat:19.04,lon:-98.20},{n:"Tijuana",lat:32.53,lon:-117.04}],
+  "Argentina": [{n:"Buenos Aires",lat:-34.60,lon:-58.38},{n:"Córdoba",lat:-31.42,lon:-64.18},{n:"Rosario",lat:-32.96,lon:-60.66},{n:"Mendoza",lat:-32.89,lon:-68.85},{n:"La Plata",lat:-34.92,lon:-57.96}],
+  "Chile": [{n:"Santiago",lat:-33.45,lon:-70.67},{n:"Valparaíso",lat:-33.05,lon:-71.62},{n:"Concepción",lat:-36.82,lon:-73.05},{n:"La Serena",lat:-29.90,lon:-71.25}],
+  "Colombia": [{n:"Bogotá",lat:4.61,lon:-74.08},{n:"Medellín",lat:6.24,lon:-75.57},{n:"Cali",lat:3.45,lon:-76.53},{n:"Barranquilla",lat:10.96,lon:-74.80},{n:"Cartagena",lat:10.39,lon:-75.48}],
+  "Peru": [{n:"Lima",lat:-12.05,lon:-77.04},{n:"Arequipa",lat:-16.40,lon:-71.54},{n:"Trujillo",lat:-8.11,lon:-79.03},{n:"Chiclayo",lat:-6.77,lon:-79.84}],
+  "Nigeria": [{n:"Lagos",lat:6.45,lon:3.40},{n:"Kano",lat:12.00,lon:8.52},{n:"Ibadan",lat:7.38,lon:3.90},{n:"Abuja",lat:9.06,lon:7.49},{n:"Port Harcourt",lat:4.82,lon:7.01}],
+  "Kenya": [{n:"Nairobi",lat:-1.29,lon:36.82},{n:"Mombasa",lat:-4.05,lon:39.67},{n:"Kisumu",lat:-0.10,lon:34.75},{n:"Nakuru",lat:-0.30,lon:36.07}],
+  "Morocco": [{n:"Casablanca",lat:33.57,lon:-7.58},{n:"Rabat",lat:34.02,lon:-6.84},{n:"Fes",lat:34.03,lon:-5.00},{n:"Tangier",lat:35.76,lon:-5.83},{n:"Marrakech",lat:31.63,lon:-8.00}],
+  "Bangladesh": [{n:"Dhaka",lat:23.81,lon:90.41},{n:"Chittagong",lat:22.33,lon:91.83},{n:"Khulna",lat:22.85,lon:89.53},{n:"Rajshahi",lat:24.38,lon:88.60},{n:"Sylhet",lat:24.90,lon:91.87}],
+  "Afghanistan": [{n:"Kabul",lat:34.53,lon:69.17},{n:"Kandahar",lat:31.61,lon:65.71},{n:"Herat",lat:34.35,lon:62.20},{n:"Mazar-i-Sharif",lat:36.71,lon:67.11}],
+  "Iran": [{n:"Tehran",lat:35.69,lon:51.42},{n:"Mashhad",lat:36.30,lon:59.60},{n:"Isfahan",lat:32.66,lon:51.68},{n:"Shiraz",lat:29.59,lon:52.58},{n:"Tabriz",lat:38.08,lon:46.29}],
+  "Iraq": [{n:"Baghdad",lat:33.32,lon:44.42},{n:"Basra",lat:30.50,lon:47.82},{n:"Mosul",lat:36.34,lon:43.13},{n:"Erbil",lat:36.19,lon:44.01}],
+  "Syria": [{n:"Damascus",lat:33.51,lon:36.29},{n:"Aleppo",lat:36.20,lon:37.16},{n:"Homs",lat:34.73,lon:36.72},{n:"Latakia",lat:35.52,lon:35.78}],
+  "Jordan": [{n:"Amman",lat:31.95,lon:35.93},{n:"Zarqa",lat:32.08,lon:36.10},{n:"Irbid",lat:32.56,lon:35.85},{n:"Aqaba",lat:29.53,lon:35.01}],
+  "Lebanon": [{n:"Beirut",lat:33.89,lon:35.50},{n:"Tripoli",lat:34.44,lon:35.84},{n:"Sidon",lat:33.56,lon:35.37},{n:"Tyre",lat:33.27,lon:35.20}],
+  "Israel": [{n:"Tel Aviv",lat:32.09,lon:34.78},{n:"Jerusalem",lat:31.77,lon:35.21},{n:"Haifa",lat:32.82,lon:34.99},{n:"Eilat",lat:29.55,lon:34.95}],
+  "Kuwait": [{n:"Kuwait City",lat:29.38,lon:47.98},{n:"Hawalli",lat:29.33,lon:48.03},{n:"Farwaniya",lat:29.28,lon:47.96}],
+  "Qatar": [{n:"Doha",lat:25.29,lon:51.53},{n:"Al Rayyan",lat:25.29,lon:51.42},{n:"Al Wakrah",lat:25.17,lon:51.61}],
+  "Bahrain": [{n:"Manama",lat:26.22,lon:50.58},{n:"Riffa",lat:26.13,lon:50.55},{n:"Muharraq",lat:26.26,lon:50.62}],
+  "Oman": [{n:"Muscat",lat:23.59,lon:58.41},{n:"Salalah",lat:17.01,lon:54.09},{n:"Sohar",lat:24.34,lon:56.71},{n:"Nizwa",lat:22.93,lon:57.53}],
+  "Yemen": [{n:"Sana'a",lat:15.35,lon:44.21},{n:"Aden",lat:12.78,lon:45.04},{n:"Taiz",lat:13.58,lon:44.02},{n:"Mukalla",lat:14.54,lon:49.13}],
+  "Sudan": [{n:"Khartoum",lat:15.50,lon:32.56},{n:"Omdurman",lat:15.64,lon:32.48},{n:"Port Sudan",lat:19.62,lon:37.22}],
+  "Ethiopia": [{n:"Addis Ababa",lat:9.03,lon:38.75},{n:"Dire Dawa",lat:9.59,lon:41.87},{n:"Mekele",lat:13.50,lon:39.47},{n:"Gondar",lat:12.60,lon:37.47}],
+  "Somalia": [{n:"Mogadishu",lat:2.05,lon:45.33},{n:"Hargeisa",lat:9.55,lon:44.06},{n:"Kismayo",lat:-0.36,lon:42.55}],
+  "Ghana": [{n:"Accra",lat:5.56,lon:-0.20},{n:"Kumasi",lat:6.68,lon:-1.62},{n:"Tamale",lat:9.40,lon:-0.84},{n:"Sekondi",lat:4.93,lon:-1.71}],
+  "Ivory Coast": [{n:"Yamoussoukro",lat:6.82,lon:-5.28},{n:"Abidjan",lat:5.32,lon:-4.02},{n:"Bouaké",lat:7.69,lon:-5.03}],
+  "Cameroon": [{n:"Yaoundé",lat:3.85,lon:11.52},{n:"Douala",lat:4.05,lon:9.70},{n:"Garoua",lat:9.30,lon:13.40}],
+  "Angola": [{n:"Luanda",lat:-8.84,lon:13.23},{n:"Huambo",lat:-12.78,lon:15.74},{n:"Lobito",lat:-12.35,lon:13.55}],
+  "Zimbabwe": [{n:"Harare",lat:-17.83,lon:31.05},{n:"Bulawayo",lat:-20.15,lon:28.58},{n:"Mutare",lat:-18.97,lon:32.67}],
+  "Zambia": [{n:"Lusaka",lat:-15.39,lon:28.32},{n:"Kitwe",lat:-12.81,lon:28.21},{n:"Ndola",lat:-12.96,lon:28.64}],
+  "Tanzania": [{n:"Dodoma",lat:-6.16,lon:35.75},{n:"Dar es Salaam",lat:-6.77,lon:39.20},{n:"Arusha",lat:-3.37,lon:36.68},{n:"Mwanza",lat:-2.52,lon:32.90}],
+  "Uganda": [{n:"Kampala",lat:0.32,lon:32.58},{n:"Entebbe",lat:0.05,lon:32.46},{n:"Gulu",lat:2.78,lon:32.30}],
+  "Rwanda": [{n:"Kigali",lat:-1.95,lon:30.06},{n:"Butare",lat:-2.60,lon:29.74},{n:"Gisenyi",lat:-1.70,lon:29.26}],
+  "Burundi": [{n:"Bujumbura",lat:-3.38,lon:29.36},{n:"Gitega",lat:-3.43,lon:29.93}],
+  "DR Congo": [{n:"Kinshasa",lat:-4.33,lon:15.31},{n:"Lubumbashi",lat:-11.66,lon:27.48},{n:"Mbuji-Mayi",lat:-6.13,lon:23.60},{n:"Kisangani",lat:0.52,lon:25.20}],
+  "Republic of Congo": [{n:"Brazzaville",lat:-4.27,lon:15.29},{n:"Pointe-Noire",lat:-4.78,lon:11.86}],
+  "Gabon": [{n:"Libreville",lat:0.39,lon:9.45},{n:"Port-Gentil",lat:-0.72,lon:8.78}],
+  "Botswana": [{n:"Gaborone",lat:-24.65,lon:25.91},{n:"Francistown",lat:-21.17,lon:27.51}],
+  "Namibia": [{n:"Windhoek",lat:-22.57,lon:17.08},{n:"Walvis Bay",lat:-22.95,lon:14.51}],
+  "Mozambique": [{n:"Maputo",lat:-25.97,lon:32.58},{n:"Beira",lat:-19.84,lon:34.84},{n:"Nampula",lat:-15.12,lon:39.26}],
+  "Madagascar": [{n:"Antananarivo",lat:-18.91,lon:47.54},{n:"Toamasina",lat:-18.15,lon:49.38},{n:"Mahajanga",lat:-15.72,lon:46.32}],
+  "Sri Lanka": [{n:"Colombo",lat:6.93,lon:79.86},{n:"Kandy",lat:7.29,lon:80.63},{n:"Galle",lat:6.03,lon:80.22}],
+  "Nepal": [{n:"Kathmandu",lat:27.72,lon:85.32},{n:"Pokhara",lat:28.21,lon:83.98},{n:"Biratnagar",lat:26.45,lon:87.27}],
+  "Myanmar": [{n:"Yangon",lat:16.85,lon:96.15},{n:"Mandalay",lat:21.97,lon:96.08},{n:"Naypyidaw",lat:19.75,lon:96.10}],
+  "Cambodia": [{n:"Phnom Penh",lat:11.56,lon:104.92},{n:"Siem Reap",lat:13.36,lon:103.86},{n:"Battambang",lat:13.10,lon:103.20}],
+  "Laos": [{n:"Vientiane",lat:17.97,lon:102.60},{n:"Luang Prabang",lat:19.89,lon:102.13},{n:"Pakse",lat:15.12,lon:105.80}],
+  "Mongolia": [{n:"Ulaanbaatar",lat:47.92,lon:106.92},{n:"Erdenet",lat:49.03,lon:104.08},{n:"Darkhan",lat:49.48,lon:105.92}],
+  "North Korea": [{n:"Pyongyang",lat:39.04,lon:125.76},{n:"Hamhung",lat:39.92,lon:127.54},{n:"Chongjin",lat:41.80,lon:129.78}],
+  "Kazakhstan": [{n:"Almaty",lat:43.22,lon:76.85},{n:"Nur-Sultan",lat:51.18,lon:71.45},{n:"Shymkent",lat:42.34,lon:69.60},{n:"Karaganda",lat:49.80,lon:73.10}],
+  "Uzbekistan": [{n:"Tashkent",lat:41.31,lon:69.28},{n:"Samarkand",lat:39.65,lon:66.98},{n:"Bukhara",lat:39.77,lon:64.43}],
+  "Turkmenistan": [{n:"Ashgabat",lat:37.96,lon:58.33},{n:"Turkmenabat",lat:39.08,lon:63.57},{n:"Dashoguz",lat:41.83,lon:59.97}],
+  "Tajikistan": [{n:"Dushanbe",lat:38.54,lon:68.78},{n:"Khujand",lat:40.28,lon:69.63}],
+  "Kyrgyzstan": [{n:"Bishkek",lat:42.87,lon:74.57},{n:"Osh",lat:40.53,lon:72.80}],
+  "Georgia": [{n:"Tbilisi",lat:41.72,lon:44.79},{n:"Kutaisi",lat:42.27,lon:42.70},{n:"Batumi",lat:41.64,lon:41.64}],
+  "Armenia": [{n:"Yerevan",lat:40.18,lon:44.51},{n:"Gyumri",lat:40.79,lon:43.84}],
+  "Azerbaijan": [{n:"Baku",lat:40.38,lon:49.89},{n:"Ganja",lat:40.68,lon:46.36},{n:"Sumqayit",lat:40.59,lon:49.67}],
+  "Belarus": [{n:"Minsk",lat:53.90,lon:27.56},{n:"Gomel",lat:52.43,lon:30.98},{n:"Mogilev",lat:53.90,lon:30.33}],
+  "Ukraine": [{n:"Kyiv",lat:50.45,lon:30.52},{n:"Kharkiv",lat:50.00,lon:36.25},{n:"Odesa",lat:46.48,lon:30.73},{n:"Lviv",lat:49.84,lon:24.03},{n:"Dnipro",lat:48.46,lon:35.05}],
+  "Poland": [{n:"Warsaw",lat:52.23,lon:21.01},{n:"Kraków",lat:50.06,lon:19.94},{n:"Łódź",lat:51.76,lon:19.46},{n:"Wrocław",lat:51.11,lon:17.04},{n:"Poznań",lat:52.41,lon:16.93},{n:"Gdańsk",lat:54.35,lon:18.66}],
+  "Czech Republic": [{n:"Prague",lat:50.09,lon:14.42},{n:"Brno",lat:49.20,lon:16.61},{n:"Ostrava",lat:49.83,lon:18.29},{n:"Plzeň",lat:49.75,lon:13.38}],
+  "Slovakia": [{n:"Bratislava",lat:48.15,lon:17.11},{n:"Košice",lat:48.72,lon:21.26},{n:"Prešov",lat:48.99,lon:21.24}],
+  "Hungary": [{n:"Budapest",lat:47.50,lon:19.04},{n:"Debrecen",lat:47.53,lon:21.63},{n:"Szeged",lat:46.25,lon:20.15},{n:"Miskolc",lat:48.10,lon:20.78}],
+  "Romania": [{n:"Bucharest",lat:44.43,lon:26.10},{n:"Cluj-Napoca",lat:46.77,lon:23.59},{n:"Timișoara",lat:45.75,lon:21.23},{n:"Iași",lat:47.16,lon:27.59},{n:"Constanța",lat:44.18,lon:28.65}],
+  "Bulgaria": [{n:"Sofia",lat:42.70,lon:23.32},{n:"Plovdiv",lat:42.14,lon:24.75},{n:"Varna",lat:43.21,lon:27.91},{n:"Burgas",lat:42.50,lon:27.46}],
+  "Serbia": [{n:"Belgrade",lat:44.82,lon:20.46},{n:"Novi Sad",lat:45.25,lon:19.84},{n:"Niš",lat:43.32,lon:21.90}],
+  "Croatia": [{n:"Zagreb",lat:45.81,lon:15.98},{n:"Split",lat:43.51,lon:16.44},{n:"Rijeka",lat:45.33,lon:14.44},{n:"Dubrovnik",lat:42.65,lon:18.09}],
+  "Slovenia": [{n:"Ljubljana",lat:46.05,lon:14.51},{n:"Maribor",lat:46.55,lon:15.65}],
+  "Austria": [{n:"Vienna",lat:48.21,lon:16.37},{n:"Graz",lat:47.07,lon:15.44},{n:"Linz",lat:48.31,lon:14.29},{n:"Salzburg",lat:47.80,lon:13.04},{n:"Innsbruck",lat:47.27,lon:11.39}],
+  "Switzerland": [{n:"Zurich",lat:47.38,lon:8.54},{n:"Geneva",lat:46.20,lon:6.14},{n:"Bern",lat:46.95,lon:7.45},{n:"Basel",lat:47.56,lon:7.59},{n:"Lausanne",lat:46.52,lon:6.63}],
+  "Netherlands": [{n:"Amsterdam",lat:52.37,lon:4.90},{n:"Rotterdam",lat:51.92,lon:4.48},{n:"The Hague",lat:52.08,lon:4.31},{n:"Utrecht",lat:52.09,lon:5.12},{n:"Eindhoven",lat:51.44,lon:5.48}],
+  "Belgium": [{n:"Brussels",lat:50.85,lon:4.35},{n:"Antwerp",lat:51.22,lon:4.40},{n:"Ghent",lat:51.05,lon:3.73},{n:"Charleroi",lat:50.41,lon:4.44},{n:"Liège",lat:50.63,lon:5.58}],
+  "Luxembourg": [{n:"Luxembourg City",lat:49.61,lon:6.13},{n:"Esch-sur-Alzette",lat:49.50,lon:5.98}],
+  "Denmark": [{n:"Copenhagen",lat:55.68,lon:12.57},{n:"Aarhus",lat:56.16,lon:10.20},{n:"Odense",lat:55.40,lon:10.39},{n:"Aalborg",lat:57.05,lon:9.92}],
+  "Sweden": [{n:"Stockholm",lat:59.33,lon:18.07},{n:"Gothenburg",lat:57.71,lon:11.97},{n:"Malmö",lat:55.61,lon:13.00},{n:"Uppsala",lat:59.86,lon:17.64},{n:"Linköping",lat:58.41,lon:15.62}],
+  "Norway": [{n:"Oslo",lat:59.91,lon:10.75},{n:"Bergen",lat:60.39,lon:5.32},{n:"Trondheim",lat:63.43,lon:10.39},{n:"Stavanger",lat:58.97,lon:5.73},{n:"Tromsø",lat:69.65,lon:18.96}],
+  "Finland": [{n:"Helsinki",lat:60.17,lon:24.94},{n:"Espoo",lat:60.21,lon:24.66},{n:"Tampere",lat:61.50,lon:23.76},{n:"Turku",lat:60.45,lon:22.27},{n:"Oulu",lat:65.01,lon:25.47}],
+  "Iceland": [{n:"Reykjavik",lat:64.15,lon:-21.94},{n:"Akureyri",lat:65.68,lon:-18.10}],
+  "Ireland": [{n:"Dublin",lat:53.35,lon:-6.26},{n:"Cork",lat:51.90,lon:-8.47},{n:"Galway",lat:53.27,lon:-9.05},{n:"Limerick",lat:52.66,lon:-8.63}],
+  "Portugal": [{n:"Lisbon",lat:38.72,lon:-9.14},{n:"Porto",lat:41.16,lon:-8.63},{n:"Braga",lat:41.55,lon:-8.43},{n:"Coimbra",lat:40.21,lon:-8.43},{n:"Faro",lat:37.02,lon:-7.93}],
+  "Greece": [{n:"Athens",lat:37.98,lon:23.73},{n:"Thessaloniki",lat:40.64,lon:22.94},{n:"Patras",lat:38.25,lon:21.74},{n:"Heraklion",lat:35.34,lon:25.14},{n:"Larissa",lat:39.64,lon:22.42}],
+  "Albania": [{n:"Tirana",lat:41.33,lon:19.82},{n:"Durrës",lat:41.32,lon:19.45},{n:"Vlorë",lat:40.47,lon:19.49}],
+  "North Macedonia": [{n:"Skopje",lat:41.99,lon:21.43},{n:"Bitola",lat:41.03,lon:21.33}],
+  "Bosnia": [{n:"Sarajevo",lat:43.86,lon:18.41},{n:"Banja Luka",lat:44.77,lon:17.19}],
+  "Montenegro": [{n:"Podgorica",lat:42.43,lon:19.26},{n:"Nikšić",lat:42.77,lon:18.95}],
+  "Kosovo": [{n:"Pristina",lat:42.66,lon:21.16},{n:"Prizren",lat:42.21,lon:20.74}],
+  "Malta": [{n:"Valletta",lat:35.90,lon:14.51},{n:"Birkirkara",lat:35.90,lon:14.46}],
+  "Cyprus": [{n:"Nicosia",lat:35.17,lon:33.37},{n:"Limassol",lat:34.68,lon:33.05},{n:"Larnaca",lat:34.92,lon:33.62}],
+  "Estonia": [{n:"Tallinn",lat:59.44,lon:24.75},{n:"Tartu",lat:58.38,lon:26.73},{n:"Narva",lat:59.38,lon:28.19}],
+  "Latvia": [{n:"Riga",lat:56.95,lon:24.11},{n:"Daugavpils",lat:55.88,lon:26.54},{n:"Liepāja",lat:56.51,lon:21.01}],
+  "Lithuania": [{n:"Vilnius",lat:54.69,lon:25.28},{n:"Kaunas",lat:54.90,lon:23.90},{n:"Klaipėda",lat:55.71,lon:21.13}]
 };
 
-// ── VAR CONFIG ────────────────────────────────────────────────────
 const VAR_CONFIG = {
-  temperature_2m_max:  { label:"Max Temp",    unit:"°C",  color:"#ef4444", palette:["#bfdbfe","#60a5fa","#f97316","#ef4444","#991b1b"], low:-20, high:45 },
-  temperature_2m_min:  { label:"Min Temp",    unit:"°C",  color:"#3b82f6", palette:["#1e40af","#3b82f6","#67e8f9","#fde68a","#fca5a5"], low:-40, high:30 },
-  precipitation_sum:   { label:"Precipitation",unit:"mm", color:"#0d9488", palette:["#fef9c3","#86efac","#22d3ee","#0284c7","#1e3a5f"], low:0,   high:300 },
-  wind_speed_10m_max:  { label:"Wind Speed",  unit:"km/h",color:"#7c3aed", palette:["#f5f3ff","#c4b5fd","#7c3aed","#4c1d95","#1e1b4b"], low:0,   high:80 },
+  temperature_2m_max: { label:"Max Temp", unit:"°C", color:"#ef4444", palette:["#bfdbfe","#60a5fa","#f97316","#ef4444","#991b1b"], low:-20, high:45 },
+  temperature_2m_min: { label:"Min Temp", unit:"°C", color:"#3b82f6", palette:["#1e40af","#3b82f6","#67e8f9","#fde68a","#fca5a5"], low:-40, high:30 },
+  precipitation_sum: { label:"Precipitation", unit:"mm", color:"#0d9488", palette:["#fef9c3","#86efac","#22d3ee","#0284c7","#1e3a5f"], low:0, high:300 },
+  wind_speed_10m_max: { label:"Wind Speed", unit:"km/h", color:"#7c3aed", palette:["#f5f3ff","#c4b5fd","#7c3aed","#4c1d95","#1e1b4b"], low:0, high:80 }
 };
 
-// ── STATE ─────────────────────────────────────────────────────────
-let currentVar   = "temperature_2m_max";
-let currentCity  = null;
-let currentData  = null;
+let currentVar = "temperature_2m_max";
+let currentCity = null;
+let currentData = null;
 let smoothWindow = 1;
+let currentAgg = "yearly";
 let chartTS = null, chartBar = null, chartAnom = null, chartSeasonal = null, chartHist = null;
-let mapSvg = null, mapProjection = null, mapZoom = null;
-let mapData = {};   // country iso → value (for coloring)
-
-// ── INIT ─────────────────────────────────────────────────────────
-window.addEventListener('DOMContentLoaded', () => {
-  populateCities();
-  populateYears();
-  initMap();
-});
+let mapSvg = null, mapZoom = null;
+let mapData = {};
 
 function populateCities() {
   const cs = document.getElementById('country-select');
@@ -702,68 +597,45 @@ function switchTab(id, btn) {
   document.getElementById('tab-'+id).classList.add('active');
 }
 
-// ── MAP ───────────────────────────────────────────────────────────
 async function initMap() {
   const container = document.getElementById('world-map-container');
   const W = container.clientWidth, H = container.clientHeight;
-
-  mapProjection = d3.geoNaturalEarth1()
-    .scale(W / 6.3)
-    .translate([W / 2, H / 2]);
-
-  const pathGen = d3.geoPath().projection(mapProjection);
-
-  const svg = d3.select('#world-map-container').append('svg')
-    .attr('viewBox', `0 0 ${W} ${H}`)
-    .attr('preserveAspectRatio', 'xMidYMid meet');
-
+  const projection = d3.geoNaturalEarth1().scale(W / 6.3).translate([W / 2, H / 2]);
+  const pathGen = d3.geoPath().projection(projection);
+  const svg = d3.select('#world-map-container').append('svg').attr('viewBox', `0 0 ${W} ${H}`).attr('preserveAspectRatio', 'xMidYMid meet');
   mapSvg = svg;
-
-  // Background ocean
-  svg.append('rect').attr('width', W).attr('height', H).attr('fill', '#dbeafe').attr('rx', 0);
-
+  svg.append('rect').attr('width', W).attr('height', H).attr('fill', '#dbeafe');
   const g = svg.append('g').attr('class', 'map-g');
-
-  mapZoom = d3.zoom().scaleExtent([1, 8]).on('zoom', e => {
-    g.attr('transform', e.transform);
-  });
+  mapZoom = d3.zoom().scaleExtent([1, 8]).on('zoom', e => { g.attr('transform', e.transform); });
   svg.call(mapZoom);
-
-  // Load world topojson
   try {
     const world = await d3.json('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json');
     const countries = topojson.feature(world, world.objects.countries);
-
-    // Country name lookup (iso numeric → name)
-    const isoLookup = await getISOLookup();
-
-    g.selectAll('.country-path')
-      .data(countries.features)
-      .enter().append('path')
+    const isoLookup = {4:"Afghanistan",8:"Albania",12:"Algeria",24:"Angola",32:"Argentina",36:"Australia",40:"Austria",50:"Bangladesh",56:"Belgium",64:"Bhutan",68:"Bolivia",76:"Brazil",100:"Bulgaria",116:"Cambodia",120:"Cameroon",124:"Canada",152:"Chile",156:"China",170:"Colombia",180:"Congo",188:"Costa Rica",191:"Croatia",192:"Cuba",196:"Cyprus",203:"Czech Republic",208:"Denmark",218:"Ecuador",818:"Egypt",231:"Ethiopia",246:"Finland",250:"France",276:"Germany",288:"Ghana",300:"Greece",320:"Guatemala",340:"Honduras",356:"India",360:"Indonesia",364:"Iran",368:"Iraq",372:"Ireland",376:"Israel",380:"Italy",388:"Jamaica",392:"Japan",400:"Jordan",398:"Kazakhstan",404:"Kenya",408:"North Korea",410:"South Korea",418:"Laos",422:"Lebanon",426:"Lesotho",440:"Lithuania",442:"Luxembourg",450:"Madagascar",454:"Malawi",458:"Malaysia",484:"Mexico",504:"Morocco",508:"Mozambique",524:"Nepal",528:"Netherlands",554:"New Zealand",566:"Nigeria",578:"Norway",586:"Pakistan",591:"Panama",604:"Peru",608:"Philippines",616:"Poland",620:"Portugal",642:"Romania",643:"Russia",682:"Saudi Arabia",686:"Senegal",694:"Sierra Leone",703:"Slovakia",705:"Slovenia",706:"Somalia",710:"South Africa",724:"Spain",144:"Sri Lanka",736:"Sudan",752:"Sweden",756:"Switzerland",760:"Syria",762:"Tajikistan",764:"Thailand",792:"Turkey",800:"Uganda",804:"Ukraine",784:"UAE",840:"USA",858:"Uruguay",860:"Uzbekistan",704:"Vietnam",887:"Yemen",894:"Zambia",716:"Zimbabwe",826:"UK"};
+    g.selectAll('.country-path').data(countries.features).enter().append('path')
       .attr('class', 'country-path')
       .attr('d', pathGen)
       .attr('fill', '#c7d9e8')
       .attr('data-iso', d => d.id)
       .on('mousemove', function(event, d) {
+        const [x, y] = d3.pointer(event);
         const name = isoLookup[+d.id] || 'Unknown';
         const val = mapData[+d.id];
         const cfg = VAR_CONFIG[currentVar];
         const tt = document.getElementById('map-tooltip');
         tt.style.display = 'block';
-        tt.style.left = (event.offsetX + 12) + 'px';
-        tt.style.top  = (event.offsetY - 10) + 'px';
+        tt.style.left = (x + 20) + 'px';
+        tt.style.top = (y + 20) + 'px';
         tt.innerHTML = `<b>${name}</b>${val !== undefined ? `<br>${cfg.label}: <b>${val.toFixed(1)} ${cfg.unit}</b>` : ''}`;
       })
       .on('mouseleave', () => { document.getElementById('map-tooltip').style.display = 'none'; })
       .on('click', function(event, d) {
         const name = isoLookup[+d.id];
         if (!name) return;
-        // Match to our CITIES list
         const match = Object.keys(CITIES).find(c => c.toLowerCase() === name.toLowerCase() || name.toLowerCase().includes(c.toLowerCase()));
         if (match) {
           document.getElementById('country-select').value = match;
           document.getElementById('country-select').dispatchEvent(new Event('change'));
-          // Auto-select capital/first city
           setTimeout(() => {
             const cs = document.getElementById('city-select');
             cs.selectedIndex = 1;
@@ -775,42 +647,24 @@ async function initMap() {
         d3.select(this).classed('selected', true);
         document.getElementById('map-info').textContent = name + (match ? ' · Click "Analyse" to load data' : ' · No station data');
       });
-
-    // Draw graticule
     const graticule = d3.geoGraticule();
-    g.append('path').datum(graticule()).attr('d', pathGen)
-      .attr('fill', 'none').attr('stroke', '#a8c4d8').attr('stroke-width', .3).attr('opacity', .5);
-
-  } catch(e) {
-    console.warn('Map load error', e);
-  }
+    g.append('path').datum(graticule()).attr('d', pathGen).attr('fill', 'none').attr('stroke', '#a8c4d8').attr('stroke-width', .3);
+  } catch(e) { console.warn(e); }
 }
 
-async function getISOLookup() {
-  // Minimal numeric ISO → country name table (most common)
-  return {4:"Afghanistan",8:"Albania",12:"Algeria",24:"Angola",32:"Argentina",36:"Australia",40:"Austria",50:"Bangladesh",56:"Belgium",64:"Bhutan",68:"Bolivia",76:"Brazil",100:"Bulgaria",116:"Cambodia",120:"Cameroon",124:"Canada",152:"Chile",156:"China",170:"Colombia",180:"Congo",188:"Costa Rica",191:"Croatia",192:"Cuba",196:"Cyprus",203:"Czech Republic",208:"Denmark",218:"Ecuador",818:"Egypt",231:"Ethiopia",246:"Finland",250:"France",276:"Germany",288:"Ghana",300:"Greece",320:"Guatemala",340:"Honduras",356:"India",360:"Indonesia",364:"Iran",368:"Iraq",372:"Ireland",376:"Israel",380:"Italy",388:"Jamaica",392:"Japan",400:"Jordan",398:"Kazakhstan",404:"Kenya",408:"North Korea",410:"South Korea",116:"Cambodia",418:"Laos",422:"Lebanon",426:"Lesotho",440:"Lithuania",442:"Luxembourg",450:"Madagascar",454:"Malawi",458:"Malaysia",484:"Mexico",504:"Morocco",508:"Mozambique",524:"Nepal",528:"Netherlands",554:"New Zealand",566:"Nigeria",578:"Norway",586:"Pakistan",591:"Panama",604:"Peru",608:"Philippines",616:"Poland",620:"Portugal",642:"Romania",643:"Russia",682:"Saudi Arabia",686:"Senegal",694:"Sierra Leone",703:"Slovakia",705:"Slovenia",706:"Somalia",710:"South Africa",724:"Spain",144:"Sri Lanka",736:"Sudan",752:"Sweden",756:"Switzerland",760:"Syria",762:"Tajikistan",764:"Thailand",792:"Turkey",800:"Uganda",804:"Ukraine",784:"UAE",840:"USA",858:"Uruguay",860:"Uzbekistan",704:"Vietnam",887:"Yemen",894:"Zambia",716:"Zimbabwe",826:"UK",642:"Romania",250:"France",840:"USA"};
-}
+function zoomIn() { if(mapSvg) mapSvg.transition().call(mapZoom.scaleBy, 1.6); }
+function zoomOut() { if(mapSvg) mapSvg.transition().call(mapZoom.scaleBy, .625); }
+function resetZoom() { if(mapSvg) mapSvg.transition().call(mapZoom.transform, d3.zoomIdentity); }
 
 function colorCountries(vals) {
-  // vals: array of {iso, value}
   if (!mapSvg) return;
   const cfg = VAR_CONFIG[currentVar];
-  const colorScale = d3.scaleSequential()
-    .domain([cfg.low, cfg.high])
-    .interpolator(d3.interpolateRgbBasis(cfg.palette));
-  vals.forEach(({iso, value}) => {
-    mapData[iso] = value;
-  });
+  const colorScale = d3.scaleSequential().domain([cfg.low, cfg.high]).interpolator(d3.interpolateRgbBasis(cfg.palette));
+  vals.forEach(({iso, value}) => { mapData[iso] = value; });
   mapSvg.selectAll('.country-path').each(function(d) {
     const v = mapData[+d.id];
-    if (v !== undefined) {
-      d3.select(this).attr('fill', colorScale(v));
-    }
+    if (v !== undefined) d3.select(this).attr('fill', colorScale(v));
   });
-  renderMapLegend(colorScale, cfg);
-}
-
-function renderMapLegend(colorScale, cfg) {
   const existing = document.querySelector('.map-legend');
   if (existing) existing.remove();
   const container = document.getElementById('world-map-container');
@@ -818,445 +672,115 @@ function renderMapLegend(colorScale, cfg) {
   div.className = 'map-legend';
   const steps = 12;
   const gradStops = Array.from({length:steps}, (_,i) => colorScale(cfg.low + (cfg.high-cfg.low)*i/(steps-1)));
-  div.innerHTML = `
-    <div class="legend-title">${cfg.label} (${cfg.unit})</div>
-    <div class="legend-gradient" style="background:linear-gradient(to right,${gradStops.join(',')})"></div>
-    <div class="legend-ticks">
-      <span>${cfg.low}</span><span>${((cfg.low+cfg.high)/2).toFixed(0)}</span><span>${cfg.high}</span>
-    </div>`;
+  div.innerHTML = `<div class="legend-title">${cfg.label} (${cfg.unit})</div><div class="legend-gradient" style="background:linear-gradient(to right,${gradStops.join(',')})"></div><div class="legend-ticks"><span>${cfg.low}</span><span>${((cfg.low+cfg.high)/2).toFixed(0)}</span><span>${cfg.high}</span></div>`;
   container.appendChild(div);
 }
 
-function zoomIn()   { if(mapSvg) mapSvg.transition().call(mapZoom.scaleBy, 1.6); }
-function zoomOut()  { if(mapSvg) mapSvg.transition().call(mapZoom.scaleBy, .625); }
-function resetZoom(){ if(mapSvg) mapSvg.transition().call(mapZoom.transform, d3.zoomIdentity); }
-
-// ── FETCH DATA ───────────────────────────────────────────────────
 async function fetchData() {
-  const city = currentCity || (() => {
-    const cs = document.getElementById('city-select');
-    return cs.value ? JSON.parse(cs.value) : null;
-  })();
+  const city = currentCity || (() => { const cs = document.getElementById('city-select'); return cs.value ? JSON.parse(cs.value) : null; })();
   if (!city) { alert('Please select a city first'); return; }
-
   const yStart = +document.getElementById('year-start').value;
-  const yEnd   = +document.getElementById('year-end').value;
+  const yEnd = +document.getElementById('year-end').value;
   if (yStart >= yEnd) { alert('Start year must be before end year'); return; }
-
+  currentAgg = document.getElementById('agg-select').value;
   const btn = document.getElementById('fetch-btn');
   btn.disabled = true; btn.innerHTML = '<span>⏳</span> Loading…';
   document.getElementById('ts-loader').style.display = 'flex';
-
-  // KPI location update
   document.getElementById('kpi-location').textContent = city.n;
   document.getElementById('kpi-coords').textContent = `${city.lat.toFixed(2)}°N, ${city.lon.toFixed(2)}°E`;
-
   try {
     const allVars = ['temperature_2m_max','temperature_2m_min','precipitation_sum','wind_speed_10m_max'];
     const url = `https://archive-api.open-meteo.com/v1/archive?latitude=${city.lat}&longitude=${city.lon}&start_date=${yStart}-01-01&end_date=${yEnd}-12-31&daily=${allVars.join(',')}&timezone=auto`;
     const resp = await fetch(url);
     if (!resp.ok) throw new Error('API error '+resp.status);
     const json = await resp.json();
-
-    // Process into annual aggregates
     const processed = processData(json, yStart, yEnd);
     currentData = processed;
     currentData.city = city;
     currentData.yStart = yStart;
     currentData.yEnd = yEnd;
-
     renderAllCharts(processed);
     updateKPIs(processed);
     updateSidebarStats(processed);
     document.getElementById('sidebar-stats').style.display = 'block';
-
-    // Color map for this location (demo: spread some approximate values)
     spreadMapColors(city, processed);
-
   } catch(err) {
     console.error(err);
-    alert('Failed to fetch data. Please check your connection.\n\nError: '+err.message);
+    alert('Failed to fetch data: ' + err.message);
   }
-
   btn.disabled = false; btn.innerHTML = '<span>🔍</span> Analyse Climate Data';
   document.getElementById('ts-loader').style.display = 'none';
 }
 
 function processData(json, yStart, yEnd) {
-  const dates  = json.daily.time;
+  const dates = json.daily.time;
   const result = {};
   const allVars = ['temperature_2m_max','temperature_2m_min','precipitation_sum','wind_speed_10m_max'];
-
   allVars.forEach(v => {
     const rawVals = json.daily[v] || [];
-    // Group by year
     const byYear = {};
-    dates.forEach((d, i) => {
-      const yr = +d.slice(0,4);
-      if (!byYear[yr]) byYear[yr] = [];
-      if (rawVals[i] !== null && rawVals[i] !== undefined) byYear[yr].push(rawVals[i]);
-    });
-    // Annual means/sums
+    dates.forEach((d, i) => { const yr = +d.slice(0,4); if (!byYear[yr]) byYear[yr] = []; if (rawVals[i] !== null && rawVals[i] !== undefined) byYear[yr].push(rawVals[i]); });
     const years = [], vals = [];
     for (let y = yStart; y <= yEnd; y++) {
       if (byYear[y] && byYear[y].length > 200) {
         years.push(y);
         const arr = byYear[y];
-        if (v === 'precipitation_sum') {
-          vals.push(arr.reduce((a,b)=>a+b,0));
-        } else {
-          vals.push(arr.reduce((a,b)=>a+b,0)/arr.length);
-        }
+        if (v === 'precipitation_sum') vals.push(arr.reduce((a,b)=>a+b,0));
+        else vals.push(arr.reduce((a,b)=>a+b,0)/arr.length);
       }
     }
-    // Monthly climatology
     const byMonth = Array.from({length:12}, ()=>[]);
-    dates.forEach((d, i) => {
-      const m = +d.slice(5,7)-1;
-      if (rawVals[i] !== null && rawVals[i] !== undefined) byMonth[m].push(rawVals[i]);
-    });
+    dates.forEach((d, i) => { const m = +d.slice(5,7)-1; if (rawVals[i] !== null && rawVals[i] !== undefined) byMonth[m].push(rawVals[i]); });
     const monthlyMean = byMonth.map(arr => arr.length ? arr.reduce((a,b)=>a+b,0)/arr.length : null);
-
-    result[v] = { years, vals, monthlyMean, rawVals, dates };
+    result[v] = { years, vals, monthlyMean };
   });
-
   return result;
 }
 
-function smoothArray(arr, w) {
-  if (w <= 1) return arr;
-  return arr.map((_, i) => {
-    const half = Math.floor(w/2);
-    const slice = arr.slice(Math.max(0,i-half), Math.min(arr.length,i+half+1));
-    return slice.reduce((a,b)=>a+b,0)/slice.length;
-  });
-}
+function smoothArray(arr, w) { if (w <= 1) return arr; return arr.map((_, i) => { const half = Math.floor(w/2); const slice = arr.slice(Math.max(0,i-half), Math.min(arr.length,i+half+1)); return slice.reduce((a,b)=>a+b,0)/slice.length; }); }
 
-function linearTrend(xs, ys) {
-  const n = xs.length;
-  const mx = xs.reduce((a,b)=>a+b)/n, my = ys.reduce((a,b)=>a+b)/n;
-  let num=0, den=0;
-  xs.forEach((x,i) => { num += (x-mx)*(ys[i]-my); den += (x-mx)**2; });
-  const slope = den ? num/den : 0;
-  const intercept = my - slope*mx;
-  return { slope, intercept, line: xs.map(x=>slope*x+intercept) };
-}
+function linearTrend(xs, ys) { const n = xs.length; const mx = xs.reduce((a,b)=>a+b)/n, my = ys.reduce((a,b)=>a+b)/n; let num=0, den=0; xs.forEach((x,i) => { num += (x-mx)*(ys[i]-my); den += (x-mx)**2; }); const slope = den ? num/den : 0; const intercept = my - slope*mx; return { slope, intercept, line: xs.map(x=>slope*x+intercept) }; }
 
-// ── RENDER ALL ────────────────────────────────────────────────────
-function renderAllCharts(data) {
-  renderTS(data);
-  renderBar(data);
-  renderAnomaly(data);
-  renderSeasonal(data);
-  renderHistogram(data);
-  renderStatsTable(data);
-}
+function renderAllCharts(data) { renderTS(data); renderBar(data); renderAnomaly(data); renderSeasonal(data); renderHistogram(data); renderStatsTable(data); }
 
-function getVarData(data) {
-  return data[currentVar] || {years:[], vals:[], monthlyMean:[], rawVals:[], dates:[]};
-}
+function getVarData(data) { return data[currentVar] || {years:[], vals:[], monthlyMean:[]}; }
 
 function renderTS(data) {
   const vd = getVarData(data);
   const cfg = VAR_CONFIG[currentVar];
-  const smoothed = smoothArray(vd.vals, smoothWindow);
-  const trend = linearTrend(vd.years.map((y,i)=>i), vd.vals);
+  let xVals = vd.years, yVals = vd.vals;
+  if (currentAgg === 'monthly') { const months = Array.from({length:12}, (_,i)=>i+1); xVals = months; yVals = vd.monthlyMean ? vd.monthlyMean : []; }
+  else if (currentAgg === 'seasonal') {
+    const seasons = ['DJF','MAM','JJA','SON']; const seasonVals = [0,0,0,0]; let seasonCount = [0,0,0,0];
+    if (vd.monthlyMean) { for (let m=0; m<12; m++) { const v = vd.monthlyMean[m]; if (v !== null && v !== undefined) { const s = m===0||m===1||m===11 ? 0 : m>=2&&m<=4 ? 1 : m>=5&&m<=7 ? 2 : 3; seasonVals[s] += v; seasonCount[s]++; } } }
+    xVals = seasons; yVals = seasonVals.map((v,i)=> seasonCount[i] ? v/seasonCount[i] : 0);
+  }
+  const smoothed = smoothArray(yVals, smoothWindow);
+  const trend = linearTrend(xVals.map((_,i)=>i), yVals);
   const decadalTrend = (trend.slope * 10).toFixed(3);
-  document.getElementById('ts-trend-label').textContent =
-    `Trend: ${decadalTrend > 0 ? '+' : ''}${decadalTrend} ${cfg.unit}/decade`;
-
+  document.getElementById('ts-trend-label').textContent = `Trend: ${decadalTrend > 0 ? '+' : ''}${decadalTrend} ${cfg.unit}/decade`;
   const ctx = document.getElementById('chart-ts').getContext('2d');
   if (chartTS) chartTS.destroy();
-  chartTS = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: vd.years,
-      datasets: [
-        {
-          label: cfg.label,
-          data: smoothed,
-          borderColor: cfg.color,
-          backgroundColor: cfg.color + '18',
-          borderWidth: smoothWindow > 1 ? 2.5 : 1.5,
-          pointRadius: smoothWindow > 1 ? 0 : 3,
-          pointHoverRadius: 5,
-          fill: true,
-          tension: 0.35,
-        },
-        {
-          label: 'OLS Trend',
-          data: trend.line,
-          borderColor: '#64748b',
-          borderWidth: 1.5,
-          borderDash: [5,4],
-          pointRadius: 0,
-          fill: false,
-          tension: 0,
-        }
-      ]
-    },
-    options: chartOpts(cfg.label+` (${cfg.unit})`, true)
-  });
+  chartTS = new Chart(ctx, { type: 'line', data: { labels: xVals, datasets: [{ label: cfg.label, data: smoothed, borderColor: cfg.color, backgroundColor: cfg.color + '18', borderWidth: smoothWindow > 1 ? 2.5 : 1.5, pointRadius: smoothWindow > 1 ? 0 : 3, fill: true, tension: 0.35 }, { label: 'Trend', data: trend.line, borderColor: '#64748b', borderWidth: 1.5, borderDash: [5,4], pointRadius: 0, fill: false }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: true, position: 'top', labels: { boxWidth: 12 } } } } });
 }
 
-function renderBar(data) {
-  const vd = getVarData(data);
-  const cfg = VAR_CONFIG[currentVar];
-  const mean = vd.vals.reduce((a,b)=>a+b,0)/vd.vals.length;
-  const colors = vd.vals.map(v => v > mean ? '#ef4444CC' : '#3b82f6CC');
+function renderBar(data) { const vd = getVarData(data); const cfg = VAR_CONFIG[currentVar]; const ctx = document.getElementById('chart-bar').getContext('2d'); if (chartBar) chartBar.destroy(); chartBar = new Chart(ctx, { type: 'bar', data: { labels: vd.years, datasets: [{ label: cfg.label, data: vd.vals, backgroundColor: vd.vals.map(v => v > (vd.vals.reduce((a,b)=>a+b,0)/vd.vals.length) ? '#ef4444CC' : '#3b82f6CC'), borderRadius: 3 }] }, options: { responsive: true, maintainAspectRatio: false } }); }
 
-  const ctx = document.getElementById('chart-bar').getContext('2d');
-  if (chartBar) chartBar.destroy();
-  chartBar = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: vd.years,
-      datasets: [{
-        label: cfg.label,
-        data: vd.vals,
-        backgroundColor: colors,
-        borderRadius: 3,
-        borderSkipped: false,
-      }]
-    },
-    options: {
-      ...chartOpts(cfg.label+` (${cfg.unit})`),
-      plugins: {
-        ...chartOpts().plugins,
-        annotation: undefined,
-      }
-    }
-  });
-}
+function renderAnomaly(data) { const vd = getVarData(data); const cfg = VAR_CONFIG[currentVar]; const mean = vd.vals.reduce((a,b)=>a+b,0)/vd.vals.length; const anoms = vd.vals.map(v => v - mean); const ctx = document.getElementById('chart-anom').getContext('2d'); if (chartAnom) chartAnom.destroy(); chartAnom = new Chart(ctx, { type: 'bar', data: { labels: vd.years, datasets: [{ label: 'Anomaly vs mean', data: anoms, backgroundColor: anoms.map(a => a > 0 ? '#ef4444BB' : '#3b82f6BB'), borderRadius: 3 }] }, options: { responsive: true, maintainAspectRatio: false } }); }
 
-function renderAnomaly(data) {
-  const vd = getVarData(data);
-  const cfg = VAR_CONFIG[currentVar];
-  const mean = vd.vals.reduce((a,b)=>a+b,0)/vd.vals.length;
-  const anoms = vd.vals.map(v => +(v-mean).toFixed(3));
-  const colors = anoms.map(a => a > 0 ? '#ef4444BB' : '#3b82f6BB');
+function renderSeasonal(data) { const vd = getVarData(data); const cfg = VAR_CONFIG[currentVar]; const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; const mvals = vd.monthlyMean ? vd.monthlyMean.map(v => v !== null ? v : 0) : []; const ctx = document.getElementById('chart-seasonal').getContext('2d'); if (chartSeasonal) chartSeasonal.destroy(); chartSeasonal = new Chart(ctx, { type: 'bar', data: { labels: months, datasets: [{ label: 'Monthly Mean', data: mvals, backgroundColor: '#3b82f6CC', borderRadius: 4 }] }, options: { responsive: true, maintainAspectRatio: false } }); document.getElementById('seasonal-sub').textContent = `Monthly climatology · ${data.yStart}–${data.yEnd}`; }
 
-  const ctx = document.getElementById('chart-anom').getContext('2d');
-  if (chartAnom) chartAnom.destroy();
-  chartAnom = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: vd.years,
-      datasets: [{
-        label: 'Anomaly vs mean',
-        data: anoms,
-        backgroundColor: colors,
-        borderRadius: 3,
-      }]
-    },
-    options: chartOpts(`Anomaly (${cfg.unit})`)
-  });
-}
+function renderHistogram(data) { const vd = getVarData(data); const cfg = VAR_CONFIG[currentVar]; const vals = vd.vals; if (!vals.length) return; const min = Math.min(...vals), max = Math.max(...vals); const bins = 12; const binSize = (max-min)/bins; const counts = Array(bins).fill(0); vals.forEach(v => { let b = Math.floor((v-min)/binSize); if (b >= bins) b = bins-1; counts[b]++; }); const labels = counts.map((_,i) => (min + i*binSize).toFixed(1)); const ctx = document.getElementById('chart-hist').getContext('2d'); if (chartHist) chartHist.destroy(); chartHist = new Chart(ctx, { type: 'bar', data: { labels: labels, datasets: [{ label: 'Frequency', data: counts, backgroundColor: '#3b82f6CC', borderRadius: 3 }] }, options: { responsive: true, maintainAspectRatio: false } }); }
 
-function renderSeasonal(data) {
-  const vd = getVarData(data);
-  const cfg = VAR_CONFIG[currentVar];
-  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  const mvals = vd.monthlyMean;
-  // Color each bar by value
-  const minV = Math.min(...mvals.filter(v=>v!==null));
-  const maxV = Math.max(...mvals.filter(v=>v!==null));
-  const norm = mvals.map(v => v!==null ? (v-minV)/(maxV-minV||1) : .5);
-  const colors = norm.map(n => interpolateColor(cfg.palette[0], cfg.palette[cfg.palette.length-1], n));
+function renderStatsTable(data) { const vd = getVarData(data); const cfg = VAR_CONFIG[currentVar]; const mean = vd.vals.reduce((a,b)=>a+b,0)/vd.vals.length; const rows = vd.years.map((y,i) => `<tr><td>${y}</td><td>${vd.vals[i].toFixed(2)}</td><td><span class="anomaly-chip ${vd.vals[i]-mean > 0 ? 'anomaly-pos' : 'anomaly-neg'}">${(vd.vals[i]-mean).toFixed(2)}</span></td></tr>`).join(''); document.getElementById('stats-table-wrap').innerHTML = `<table class="stats-table"><thead><tr><th>Year</th><th>${cfg.label} (${cfg.unit})</th><th>Anomaly</th></tr></thead><tbody>${rows}</tbody></table>`; }
 
-  const ctx = document.getElementById('chart-seasonal').getContext('2d');
-  if (chartSeasonal) chartSeasonal.destroy();
-  chartSeasonal = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: months,
-      datasets: [{
-        label: 'Monthly Mean',
-        data: mvals.map(v=>v!==null?+v.toFixed(2):null),
-        backgroundColor: colors,
-        borderRadius: 4,
-      }]
-    },
-    options: chartOpts(`${cfg.label} (${cfg.unit})`)
-  });
-  document.getElementById('seasonal-sub').textContent = `Monthly climatology · ${data.yStart}–${data.yEnd}`;
-}
+function updateKPIs(data) { const vd = getVarData(data); const cfg = VAR_CONFIG[currentVar]; if (!vd.vals.length) return; const mean = vd.vals.reduce((a,b)=>a+b,0)/vd.vals.length; const maxV = Math.max(...vd.vals), minV = Math.min(...vd.vals); const maxYr = vd.years[vd.vals.indexOf(maxV)], minYr = vd.years[vd.vals.indexOf(minV)]; document.getElementById('kpi-mean').innerHTML = `${mean.toFixed(1)}<span class="kpi-unit">${cfg.unit}</span>`; document.getElementById('kpi-mean-label').textContent = `${data.yStart}–${data.yEnd} period mean`; document.getElementById('kpi-high').innerHTML = `${maxV.toFixed(1)}<span class="kpi-unit">${cfg.unit}</span>`; document.getElementById('kpi-high-yr').textContent = `↑ Record high · ${maxYr}`; document.getElementById('kpi-low').innerHTML = `${minV.toFixed(1)}<span class="kpi-unit">${cfg.unit}</span>`; document.getElementById('kpi-low-yr').textContent = `↓ Record low · ${minYr}`; }
 
-function renderHistogram(data) {
-  const vd = getVarData(data);
-  const cfg = VAR_CONFIG[currentVar];
-  const vals = vd.vals;
-  if (!vals.length) return;
-  const min = Math.min(...vals), max = Math.max(...vals);
-  const bins = 12;
-  const binSize = (max-min)/bins;
-  const counts = Array(bins).fill(0);
-  vals.forEach(v => {
-    let b = Math.floor((v-min)/binSize);
-    if (b >= bins) b = bins-1;
-    counts[b]++;
-  });
-  const labels = counts.map((_,i) => (min+i*binSize).toFixed(1));
-  const freqs = counts.map(c => c/vals.length);
+function updateSidebarStats(data) { const vd = getVarData(data); const cfg = VAR_CONFIG[currentVar]; if (!vd.vals.length) return; const mean = vd.vals.reduce((a,b)=>a+b,0)/vd.vals.length; const std = Math.sqrt(vd.vals.reduce((a,v)=>a+(v-mean)**2,0)/(vd.vals.length-1)); const maxV = Math.max(...vd.vals), minV = Math.min(...vd.vals); const maxYr = vd.years[vd.vals.indexOf(maxV)], minYr = vd.years[vd.vals.indexOf(minV)]; const trend = linearTrend(vd.years.map((_,i)=>i), vd.vals); const dt = trend.slope * 10; document.getElementById('st-mean').innerHTML = mean.toFixed(2); document.getElementById('st-unit-mean').innerHTML = cfg.unit; document.getElementById('st-std').innerHTML = std.toFixed(2); document.getElementById('st-max').innerHTML = maxV.toFixed(2); document.getElementById('st-max-yr').innerHTML = maxYr; document.getElementById('st-min').innerHTML = minV.toFixed(2); document.getElementById('st-min-yr').innerHTML = minYr; document.getElementById('st-trend').innerHTML = `${dt >= 0 ? '+' : ''}${dt.toFixed(3)} ${cfg.unit}/dec`; }
 
-  const ctx = document.getElementById('chart-hist').getContext('2d');
-  if (chartHist) chartHist.destroy();
-  const norm2 = counts.map(c => c/Math.max(...counts));
-  const colors = norm2.map(n => interpolateColor(cfg.palette[1]||'#60a5fa', cfg.color, n));
-  chartHist = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels,
-      datasets: [{
-        label: 'Frequency',
-        data: freqs.map(f=>+(f*100).toFixed(1)),
-        backgroundColor: colors,
-        borderRadius: 3,
-      }]
-    },
-    options: chartOpts('Relative frequency (%)')
-  });
-}
+function spreadMapColors(city, data) { const vd = getVarData(data); const cfg = VAR_CONFIG[currentVar]; const cityMean = vd.vals.reduce((a,b)=>a+b,0)/vd.vals.length; const isoLat = {4:34,36:-25,124:60,156:35,276:51,356:21,392:36,410:37,586:30,643:60,710:-29,724:40,752:60,840:37,826:51}; const vals = Object.entries(isoLat).map(([iso,lat]) => { let approx = 0; if (currentVar === 'temperature_2m_max') approx = 35 - Math.abs(lat)*0.5 + (Math.random()-.5)*4; else if (currentVar === 'temperature_2m_min') approx = 15 - Math.abs(lat)*0.6 + (Math.random()-.5)*3; else if (currentVar === 'precipitation_sum') approx = 800 + (10-Math.abs(lat-10))*20 + (Math.random()-.5)*300; else approx = 20 + Math.abs(lat)*.3 + (Math.random()-.5)*10; return { iso:+iso, value: +approx.toFixed(1) }; }); colorCountries(vals); }
 
-function renderStatsTable(data) {
-  const vd = getVarData(data);
-  const cfg = VAR_CONFIG[currentVar];
-  const mean = vd.vals.reduce((a,b)=>a+b,0)/vd.vals.length;
-  const rows = vd.years.map((y,i) => {
-    const v = vd.vals[i];
-    const anom = v - mean;
-    const pct = ((i/(vd.years.length-1))*100).toFixed(0);
-    const anomClass = Math.abs(anom)<.5?'anomaly-neutral': anom>0?'anomaly-pos':'anomaly-neg';
-    return `<tr>
-      <td>${y}</td>
-      <td>${v.toFixed(2)}</td>
-      <td><span class="anomaly-chip ${anomClass}">${anom>=0?'+':''}${anom.toFixed(2)}</span></td>
-      <td>
-        <div class="anomaly-bar-wrap">
-          <div class="anomaly-bar-bg"><div class="anomaly-bar-fill" style="width:${Math.min(100,Math.abs(v/cfg.high*100))}%;background:${anom>0?'#ef4444':'#3b82f6'}"></div></div>
-          <span style="font-size:10px;color:var(--text-muted);width:28px">${v.toFixed(0)}</span>
-        </div>
-      </td>
-    </tr>`;
-  });
-  document.getElementById('stats-table-wrap').innerHTML = `
-    <table class="stats-table">
-      <thead><tr><th>Year</th><th>${cfg.label} (${cfg.unit})</th><th>Anomaly</th><th>Magnitude</th></tr></thead>
-      <tbody>${rows.join('')}</tbody>
-    </table>`;
-}
-
-// ── KPI & SIDEBAR ─────────────────────────────────────────────────
-function updateKPIs(data) {
-  const vd = getVarData(data);
-  const cfg = VAR_CONFIG[currentVar];
-  if (!vd.vals.length) return;
-  const mean = vd.vals.reduce((a,b)=>a+b,0)/vd.vals.length;
-  const maxV = Math.max(...vd.vals), minV = Math.min(...vd.vals);
-  const maxYr = vd.years[vd.vals.indexOf(maxV)];
-  const minYr = vd.years[vd.vals.indexOf(minV)];
-  const trend = linearTrend(vd.years.map((_,i)=>i), vd.vals);
-  const dt = (trend.slope*10);
-
-  document.getElementById('kpi-mean').textContent = mean.toFixed(1);
-  document.getElementById('kpi-mean').querySelector && null;
-  document.getElementById('kpi-mean').innerHTML = `${mean.toFixed(1)}<span class="kpi-unit">${cfg.unit}</span>`;
-  document.getElementById('kpi-mean-label').textContent = `${data.yStart}–${data.yEnd} period mean`;
-  document.getElementById('kpi-high').innerHTML = `${maxV.toFixed(1)}<span class="kpi-unit">${cfg.unit}</span>`;
-  document.getElementById('kpi-high-yr').textContent = `↑ Record high · ${maxYr}`;
-  document.getElementById('kpi-low').innerHTML = `${minV.toFixed(1)}<span class="kpi-unit">${cfg.unit}</span>`;
-  document.getElementById('kpi-low-yr').textContent = `↓ Record low · ${minYr}`;
-}
-
-function updateSidebarStats(data) {
-  const vd = getVarData(data);
-  const cfg = VAR_CONFIG[currentVar];
-  if (!vd.vals.length) return;
-  const n = vd.vals.length;
-  const mean = vd.vals.reduce((a,b)=>a+b,0)/n;
-  const std  = Math.sqrt(vd.vals.reduce((a,v)=>a+(v-mean)**2,0)/(n-1));
-  const maxV = Math.max(...vd.vals), minV = Math.min(...vd.vals);
-  const maxYr = vd.years[vd.vals.indexOf(maxV)];
-  const minYr = vd.years[vd.vals.indexOf(minV)];
-  const trend = linearTrend(vd.years.map((_,i)=>i), vd.vals);
-  const dt = (trend.slope*10);
-
-  document.getElementById('st-mean').textContent = mean.toFixed(2);
-  document.getElementById('st-unit-mean').textContent = cfg.unit;
-  document.getElementById('st-std').textContent  = std.toFixed(2);
-  document.getElementById('st-max').textContent  = maxV.toFixed(2);
-  document.getElementById('st-max-yr').textContent = maxYr;
-  document.getElementById('st-min').textContent  = minV.toFixed(2);
-  document.getElementById('st-min-yr').textContent = minYr;
-  document.getElementById('st-trend').textContent = `${dt>=0?'+':''}${dt.toFixed(3)} ${cfg.unit}/dec`;
-  document.getElementById('st-trend').style.color = dt > 0.1 ? 'var(--hot)' : dt < -0.1 ? 'var(--cold)' : 'var(--text-primary)';
-}
-
-// ── MAP COLORS ────────────────────────────────────────────────────
-function spreadMapColors(city, data) {
-  // Give neighbouring country ISO codes approximate values
-  // In a real production app you'd fetch for each country
-  const vd = getVarData(data);
-  const cfg = VAR_CONFIG[currentVar];
-  const cityMean = vd.vals.reduce((a,b)=>a+b,0)/vd.vals.length;
-  // Simulate global spread with lat-based offsets
-  const isoLat = {4:34,8:41,12:28,24:-12,32:-34,36:-25,40:47,50:24,56:50,76:-15,100:43,116:13,124:60,152:-30,156:35,170:4,208:56,818:26,231:9,246:62,250:46,276:51,288:8,300:38,356:21,360:-5,364:32,392:36,404:31,392:36,404:31,404:1,410:37,484:23,504:32,528:52,566:10,578:60,586:30,616:52,620:39,643:60,682:24,710:-29,724:40,752:60,756:47,760:35,792:39,804:49,840:37,826:51};
-  const vals = Object.entries(isoLat).map(([iso,lat]) => {
-    // Temperature decreases toward poles, increases near equator, add noise
-    let approx;
-    if (currentVar === 'temperature_2m_max') {
-      approx = 35 - Math.abs(lat)*0.5 + (Math.random()-.5)*4;
-    } else if (currentVar === 'temperature_2m_min') {
-      approx = 15 - Math.abs(lat)*0.6 + (Math.random()-.5)*3;
-    } else if (currentVar === 'precipitation_sum') {
-      approx = 800 + (10-Math.abs(lat-10))*20 + (Math.random()-.5)*300;
-    } else {
-      approx = 20 + Math.abs(lat)*.3 + (Math.random()-.5)*10;
-    }
-    return { iso:+iso, value: +approx.toFixed(1) };
-  });
-  colorCountries(vals);
-}
-
-// ── CHART OPTS ────────────────────────────────────────────────────
-function chartOpts(yLabel='', withLegend=false) {
-  return {
-    responsive: true,
-    maintainAspectRatio: false,
-    interaction: { intersect: false, mode: 'index' },
-    plugins: {
-      legend: { display: withLegend, position: 'top', labels: { boxWidth: 12, font: { family:'Inter', size:11 } } },
-      tooltip: {
-        backgroundColor: 'rgba(26,35,50,.92)',
-        titleFont: { family:'JetBrains Mono', size:11 },
-        bodyFont:  { family:'JetBrains Mono', size:12 },
-        padding: 10, cornerRadius: 7,
-      },
-    },
-    scales: {
-      x: {
-        grid: { color: '#eef1f7', lineWidth: 1 },
-        ticks: { font: { family:'JetBrains Mono', size:10 }, color:'#8794a8', maxTicksLimit:10 },
-      },
-      y: {
-        grid: { color: '#eef1f7', lineWidth: 1 },
-        ticks: { font: { family:'JetBrains Mono', size:10 }, color:'#8794a8' },
-        title: { display: !!yLabel, text: yLabel, color:'#8794a8', font:{size:10,family:'Inter'} },
-      }
-    }
-  };
-}
-
-// ── COLOR HELPERS ─────────────────────────────────────────────────
-function hexToRgb(hex) {
-  const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
-  return [r,g,b];
-}
-function interpolateColor(c1, c2, t) {
-  const [r1,g1,b1] = hexToRgb(c1.length===7?c1:'#'+c1.replace('#','').slice(0,6));
-  const [r2,g2,b2] = hexToRgb(c2.length===7?c2:'#'+c2.replace('#','').slice(0,6));
-  return `rgb(${Math.round(r1+(r2-r1)*t)},${Math.round(g1+(g2-g1)*t)},${Math.round(b1+(b2-b1)*t)})`;
-}
+window.addEventListener('DOMContentLoaded', () => { populateCities(); populateYears(); initMap(); document.getElementById('agg-select').addEventListener('change', () => { if (currentData) renderTS(currentData); }); });
 </script>
 </body>
 </html>
