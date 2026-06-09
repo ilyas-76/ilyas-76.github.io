@@ -42,6 +42,7 @@
     line-height: 1.5;
     min-height: 100vh;
   }
+  /* Header */
   .header {
     background: var(--surface);
     border-bottom: 1px solid var(--border);
@@ -81,6 +82,7 @@
     border-radius: 20px; font-size: 11px; font-weight: 600; color: #1d4ed8;
   }
 
+  /* Layout */
   .main { display: grid; grid-template-columns: 300px 1fr; gap: 0; height: calc(100vh - 58px); overflow: hidden; }
   .sidebar {
     background: var(--surface); border-right: 1px solid var(--border);
@@ -88,6 +90,7 @@
   }
   .content { overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 18px; }
 
+  /* Sidebar */
   .sidebar-section-label {
     font-size: 10px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase;
     color: var(--text-muted); margin-bottom: 8px;
@@ -126,15 +129,17 @@
   .btn-primary:hover { background: #1d4ed8; }
   .btn-primary:disabled { background: #93c5fd; cursor: not-allowed; }
 
+  /* Stat cards */
   .stat-mini { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 11px 13px; }
   .stat-mini-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; color: var(--text-muted); }
-  .stat-mini-val { font-family: var(--font-data); font-size: 18px; font-weight: 500; margin-top: 2px; }
+  .stat-mini-val { font-family: var(--font-data); font-size: 20px; font-weight: 500; margin-top: 2px; }
   .stat-mini-sub { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
   .stat-mini-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
 
+  /* Cards */
   .card {
     background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
-    box-shadow: var(--shadow); overflow: hidden; position: relative;
+    box-shadow: var(--shadow); overflow: hidden;
   }
   .card-header {
     padding: 14px 18px 10px; border-bottom: 1px solid var(--border-light);
@@ -149,6 +154,7 @@
   }
   .card-body { padding: 16px 18px; }
 
+  /* KPI Row */
   .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
   .kpi-card {
     background: var(--surface); border: 1px solid var(--border);
@@ -156,7 +162,7 @@
     display: flex; flex-direction: column; gap: 4px;
   }
   .kpi-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; color: var(--text-muted); }
-  .kpi-val { font-family: var(--font-data); font-size: 22px; font-weight: 500; line-height: 1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .kpi-val { font-family: var(--font-data); font-size: 26px; font-weight: 500; line-height: 1.1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;}
   .kpi-unit { font-size: 12px; font-weight: 400; color: var(--text-muted); }
   .kpi-trend { font-size: 11px; font-weight: 500; display: flex; align-items: center; gap: 3px; }
   .trend-up { color: #ef4444; }
@@ -164,13 +170,14 @@
   .trend-neutral { color: var(--text-muted); }
   .kpi-color-bar { height: 3px; border-radius: 2px; margin-top: 6px; }
 
+  /* Map */
   #world-map-container {
-    width: 100%; height: 400px; position: relative;
+    width: 100%; height: 420px; position: relative;
     background: linear-gradient(160deg, #f0f7ff 0%, #e8f4f8 100%);
     overflow: hidden;
   }
   #world-map-container svg { width: 100%; height: 100%; }
-  .country-path { cursor: pointer; stroke: #fff; stroke-width: .4px; transition: opacity .1s; }
+  .country-path { cursor: pointer; stroke: #fff; stroke-width: .4px; fill: #e2e8f0; transition: opacity .1s; }
   .country-path:hover { opacity: .75; stroke-width: 1.2px; stroke: #1a2332; }
   .country-path.selected { stroke: #1a2332; stroke-width: 1.8px; }
   .map-legend {
@@ -180,31 +187,43 @@
     font-size: 11px;
   }
   .legend-title { font-weight: 600; color: var(--text-secondary); margin-bottom: 6px; }
-  .legend-gradient { width: 160px; height: 10px; border-radius: 5px; margin-bottom: 4px; }
+  .legend-gradient {
+    width: 160px; height: 10px; border-radius: 5px; margin-bottom: 4px;
+    background: linear-gradient(to right, #bfdbfe, #60a5fa, #f97316, #ef4444);
+  }
   .legend-ticks { display: flex; justify-content: space-between; color: var(--text-muted); font-size: 10px; font-family: var(--font-data); }
   .map-tooltip {
     position: absolute; pointer-events: none; background: rgba(26,35,50,.9);
     color: #fff; padding: 8px 12px; border-radius: 7px; font-size: 12px;
     white-space: nowrap; display: none; z-index: 10;
   }
-  .map-controls { position: absolute; top: 14px; right: 14px; display: flex; flex-direction: column; gap: 4px; }
+  .map-tooltip b { font-family: var(--font-data); }
+  .map-controls {
+    position: absolute; top: 14px; right: 14px; display: flex; flex-direction: column; gap: 4px;
+  }
   .map-ctrl-btn {
     width: 28px; height: 28px; background: rgba(255,255,255,.9); border: 1px solid var(--border);
     border-radius: 6px; cursor: pointer; font-size: 14px; display: flex; align-items: center;
-    justify-content: center; font-weight: 600; color: var(--text-secondary); transition: background .1s;
+    justify-content: center; font-weight: 600; color: var(--text-secondary);
+    transition: background .1s;
   }
   .map-ctrl-btn:hover { background: #fff; color: var(--accent-blue); }
   .map-info {
     position: absolute; top: 14px; left: 18px;
     background: rgba(255,255,255,.88); backdrop-filter: blur(4px);
     border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px;
-    font-size: 11px; color: var(--text-secondary); z-index: 5;
+    font-size: 11px; color: var(--text-secondary);
   }
 
+  /* Charts grid */
   .charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-  .chart-wrapper { position: relative; height: 260px; }
+  .chart-wrapper { position: relative; height: 240px; }
 
-  .ts-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 12px 18px 0; }
+  /* Time series */
+  .ts-controls {
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    padding: 12px 18px;
+  }
   .ts-btn {
     padding: 4px 10px; border: 1px solid var(--border); border-radius: 20px;
     background: var(--bg); font-size: 11px; font-weight: 500;
@@ -212,34 +231,43 @@
   }
   .ts-btn:hover, .ts-btn.active { background: var(--accent-blue); color: #fff; border-color: var(--accent-blue); }
 
+  /* Stats table */
   .stats-table { width: 100%; border-collapse: collapse; font-size: 12px; }
   .stats-table th {
     text-align: left; padding: 8px 10px; font-size: 10px; font-weight: 700;
     text-transform: uppercase; letter-spacing: .5px; color: var(--text-muted);
     border-bottom: 1px solid var(--border); background: var(--surface2);
   }
-  .stats-table td { padding: 8px 10px; border-bottom: 1px solid var(--border-light); font-family: var(--font-data); font-size: 12px; }
+  .stats-table td {
+    padding: 8px 10px; border-bottom: 1px solid var(--border-light);
+    font-family: var(--font-data); font-size: 12px; vertical-align: middle;
+  }
   .stats-table tr:last-child td { border-bottom: none; }
-  .stats-table td:first-child { font-family: 'Inter', sans-serif; font-weight: 500; }
+  .stats-table td:first-child { font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 500; }
 
+  /* Loader */
   .loading-overlay {
     position: absolute; inset: 0; background: rgba(247,249,252,.85);
     backdrop-filter: blur(2px); display: flex; align-items: center;
-    justify-content: center; z-index: 50; border-radius: var(--radius); display: none;
+    justify-content: center; z-index: 50; border-radius: var(--radius);
   }
   .spinner {
     width: 32px; height: 32px; border: 3px solid var(--border);
-    border-top-color: var(--accent-blue); border-radius: 50%; animation: spin .7s linear infinite;
+    border-top-color: var(--accent-blue); border-radius: 50%;
+    animation: spin .7s linear infinite;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
   .loading-text { font-size: 12px; color: var(--text-muted); margin-top: 10px; text-align: center; }
 
+  /* Footer */
   .dashboard-footer {
     padding: 12px 20px; border-top: 1px solid var(--border);
-    display: flex; align-items: center; gap: 16px; flex-wrap: wrap; background: var(--surface); margin-top: auto;
+    display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+    background: var(--surface);
   }
   .footer-note { font-size: 11px; color: var(--text-muted); }
   .footer-note a { color: var(--accent-blue); text-decoration: none; }
+  .footer-note a:hover { text-decoration: underline; }
   .footer-spacer { flex: 1; }
   .footer-credit { font-size: 11px; color: var(--text-muted); font-weight: 500; }
   .footer-credit span { color: var(--accent-blue); }
@@ -250,9 +278,10 @@
   }
   .empty-icon { font-size: 32px; opacity: .4; }
 
+  /* Tabs */
   .tab-row { display: flex; gap: 0; border-bottom: 1px solid var(--border); padding: 0 18px; }
   .tab-btn {
-    padding: 12px 14px; font-size: 12px; font-weight: 500; color: var(--text-muted);
+    padding: 10px 14px; font-size: 12px; font-weight: 500; color: var(--text-muted);
     border-bottom: 2px solid transparent; cursor: pointer; transition: all .12s; border: none;
     background: none; font-family: inherit; margin-bottom: -1px;
   }
@@ -261,14 +290,15 @@
   .tab-pane { display: none; }
   .tab-pane.active { display: block; }
 
-  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+  ::-webkit-scrollbar-thumb:hover { background: #c1cbd8; }
 
   @media (max-width: 900px) {
-    .main { grid-template-columns: 1fr; height: auto; overflow: visible; }
+    .main { grid-template-columns: 1fr; height: auto; }
     .sidebar { height: auto; border-right: none; border-bottom: 1px solid var(--border); }
-    .kpi-row { grid-template-columns: 1fr; }
+    .kpi-row { grid-template-columns: 1fr 1fr; }
     .charts-row { grid-template-columns: 1fr; }
   }
 </style>
@@ -296,7 +326,7 @@
       <div class="sidebar-section-label">📍 Location</div>
       <div class="select-group">
         <div class="select-label">Country</div>
-        <select id="country-select">
+        <select id="country-select" onchange="updateCitySelect()">
           <option value="">— Select Country —</option>
         </select>
         <div class="select-label" style="margin-top:4px">City / Station</div>
@@ -334,8 +364,8 @@
       <div class="sidebar-section-label">⏱ Aggregation</div>
       <div class="select-group">
         <select id="agg-select">
-          <option value="yearly" selected>Annual Mean</option>
           <option value="monthly">Monthly Mean</option>
+          <option value="yearly" selected>Annual Mean</option>
           <option value="seasonal">Seasonal</option>
         </select>
       </div>
@@ -371,44 +401,42 @@
       </div>
       <div class="stat-mini" style="margin-top:6px">
         <div class="stat-mini-label">Linear Trend</div>
-        <div class="stat-mini-val" id="st-trend" style="font-size:14px">—</div>
+        <div class="stat-mini-val" id="st-trend" style="font-size:15px">—</div>
         <div class="stat-mini-sub">per decade (OLS)</div>
       </div>
+    </div>
+
+    <div style="margin-top:auto; padding-top:10px; font-size:11px; color:var(--text-muted); line-height:1.6;">
+      <strong style="color:var(--text-secondary)">Data Sources</strong><br>
+      Open-Meteo Historical Climate API (ERA5 reanalysis + NOAA station blend) · 100,000+ stations · Records from 1940
     </div>
   </aside>
 
   <main class="content">
-    <div class="loading-overlay" id="global-loader">
-      <div style="text-align:center">
-        <div class="spinner"></div>
-        <div class="loading-text" id="loader-message">Loading system dependencies...</div>
-      </div>
-    </div>
-
     <div class="kpi-row" id="kpi-row">
       <div class="kpi-card">
         <div class="kpi-label">Selected Location</div>
-        <div class="kpi-val" id="kpi-location" style="font-size:15px; font-family:Inter; font-weight:600;">—</div>
-        <div class="kpi-trend trend-neutral" id="kpi-coords">Choose a country & city</div>
-        <div class="kpi-color-bar" style="background:var(--accent-blue); width:100%"></div>
+        <div class="kpi-val" id="kpi-location" style="font-size:16px;font-family:Inter">Islamabad</div>
+        <div class="kpi-trend trend-neutral" id="kpi-coords">33.72°N, 73.06°E</div>
+        <div class="kpi-color-bar" style="background:var(--accent-blue);width:100%"></div>
       </div>
       <div class="kpi-card">
         <div class="kpi-label">Period Mean</div>
         <div class="kpi-val" id="kpi-mean">—</div>
         <div class="kpi-trend trend-neutral" id="kpi-mean-label">—</div>
-        <div class="kpi-color-bar" id="kpi-mean-bar" style="background:var(--neutral); width:100%"></div>
+        <div class="kpi-color-bar" id="kpi-mean-bar" style="background:var(--neutral);width:0%"></div>
       </div>
       <div class="kpi-card">
         <div class="kpi-label">Record High</div>
         <div class="kpi-val" id="kpi-high" style="color:var(--hot)">—</div>
         <div class="kpi-trend trend-up" id="kpi-high-yr">—</div>
-        <div class="kpi-color-bar" style="background:var(--hot); width:100%"></div>
+        <div class="kpi-color-bar" style="background:var(--hot);width:0%"></div>
       </div>
       <div class="kpi-card">
         <div class="kpi-label">Record Low</div>
         <div class="kpi-val" id="kpi-low" style="color:var(--cold)">—</div>
         <div class="kpi-trend trend-down" id="kpi-low-yr">—</div>
-        <div class="kpi-color-bar" style="background:var(--cold); width:100%"></div>
+        <div class="kpi-color-bar" style="background:var(--cold);width:0%"></div>
       </div>
     </div>
 
@@ -416,13 +444,13 @@
       <div class="card-header">
         <div>
           <div class="card-title">🌍 Global Climate Map</div>
-          <div class="card-sub">Click any country to load its climate dataset inventory</div>
+          <div class="card-sub">Click any country to load its climate data · Color = selected variable value</div>
         </div>
         <div class="card-header-spacer"></div>
         <div class="card-badge" id="map-var-label">Max Temperature</div>
       </div>
       <div id="world-map-container">
-        <div class="map-info" id="map-info">Click a country to select target domain</div>
+        <div class="map-info" id="map-info">Pakistan · Click "Analyse" to load data</div>
         <div class="map-controls">
           <div class="map-ctrl-btn" onclick="zoomIn()" title="Zoom in">+</div>
           <div class="map-ctrl-btn" onclick="zoomOut()" title="Zoom out">−</div>
@@ -442,23 +470,29 @@
 
       <div class="tab-pane active" id="tab-ts">
         <div class="ts-controls" id="ts-controls">
-          <span style="font-size:11px; font-weight:600; color:var(--text-muted)">Smoothing Matrix:</span>
+          <span style="font-size:11px;font-weight:600;color:var(--text-muted)">Smoothing:</span>
           <button class="ts-btn active" onclick="setSmooth(1,this)">None</button>
-          <button class="ts-btn" onclick="setSmooth(5,this)">5-yr Moving</button>
-          <button class="ts-btn" onclick="setSmooth(10,this)">10-yr Moving</button>
+          <button class="ts-btn" onclick="setSmooth(5,this)">5-yr</button>
+          <button class="ts-btn" onclick="setSmooth(10,this)">10-yr</button>
           <div style="flex:1"></div>
-          <span id="ts-trend-label" style="font-size:11px; color:var(--text-muted)"></span>
+          <span id="ts-trend-label" style="font-size:11px;color:var(--text-muted)"></span>
         </div>
-        <div class="card-body">
-          <div class="chart-wrapper">
+        <div class="card-body" style="padding-top:0">
+          <div class="chart-wrapper" style="height:280px">
             <canvas id="chart-ts"></canvas>
+            <div class="loading-overlay" id="ts-loader" style="display:none">
+              <div style="text-align:center">
+                <div class="spinner"></div>
+                <div class="loading-text">Fetching climate records…</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
       <div class="tab-pane" id="tab-bar">
         <div class="card-body">
-          <div class="chart-wrapper">
+          <div class="chart-wrapper" style="height:280px">
             <canvas id="chart-bar"></canvas>
           </div>
         </div>
@@ -466,18 +500,18 @@
 
       <div class="tab-pane" id="tab-anom">
         <div class="card-body">
-          <div class="chart-wrapper">
+          <div class="chart-wrapper" style="height:280px">
             <canvas id="chart-anom"></canvas>
           </div>
         </div>
       </div>
 
       <div class="tab-pane" id="tab-stats">
-        <div class="card-body" style="padding:0; overflow-x:auto; max-height: 290px;">
+        <div class="card-body" style="padding:0; overflow-x:auto;">
           <div id="stats-table-wrap">
             <div class="empty-state">
               <div class="empty-icon">📋</div>
-              <div>Run analysis sequence to populate records matrix.</div>
+              <div>Run an analysis to see the statistics table</div>
             </div>
           </div>
         </div>
@@ -488,8 +522,8 @@
       <div class="card">
         <div class="card-header">
           <div>
-            <div class="card-title">📅 Seasonal Pattern Matrix</div>
-            <div class="card-sub" id="seasonal-sub">Monthly Multi-year Climatology Trend</div>
+            <div class="card-title">📅 Seasonal Pattern</div>
+            <div class="card-sub" id="seasonal-sub">Monthly climatology (period mean)</div>
           </div>
         </div>
         <div class="card-body">
@@ -501,8 +535,8 @@
       <div class="card">
         <div class="card-header">
           <div>
-            <div class="card-title">📦 Probability Density & Spread</div>
-            <div class="card-sub">Data Distribution Histogram Profile</div>
+            <div class="card-title">📦 Distribution</div>
+            <div class="card-sub">Histogram + kernel density estimate</div>
           </div>
         </div>
         <div class="card-body">
@@ -513,432 +547,309 @@
       </div>
     </div>
 
-    <footer class="dashboard-footer">
+    <div class="dashboard-footer">
       <div class="footer-note">
-        Data Hub: <a href="https://open-meteo.com/en/docs/historical-weather-api" target="_blank">Open-Meteo Historical API</a> (ERA5 Reanalysis Blend) · Continuous Records (1940 - Present)
+        Data: <a href="https://open-meteo.com/en/docs/historical-weather-api" target="_blank">Open-Meteo Historical Climate API</a> (ERA5 · NOAA blend)
+      </div>
+      <div class="footer-note">
+        Reference: <a href="https://www.ncei.noaa.gov/" target="_blank">NOAA NCEI</a>
       </div>
       <div class="footer-spacer"></div>
       <div class="footer-credit">Built by <span>AlphaStatLab</span> · Muhammad Ilyas, PhD · QAU Islamabad</div>
-    </footer>
+    </div>
   </main>
 </div>
 
 <script>
-// ── ROBUST GLOBAL CITY GEOLOCATION MATRIX ──────────────────────────
+// Global City & Station Database
 const CITIES = {
-  "Pakistan":    [{n:"Islamabad",lat:33.72,lon:73.06},{n:"Karachi",lat:24.86,lon:67.01},{n:"Lahore",lat:31.55,lon:74.34},{n:"Peshawar",lat:34.01,lon:71.58},{n:"Quetta",lat:30.19,lon:67.02},{n:"Gilgit",lat:35.92,lon:74.31},{n:"Muzaffarabad",lat:34.37,lon:73.47},{n:"Skardu",lat:35.30,lon:75.63},{n:"Multan",lat:30.16,lon:71.52},{n:"Faisalabad",lat:31.45,lon:73.13}],
-  "India":       [{n:"New Delhi",lat:28.63,lon:77.22},{n:"Mumbai",lat:19.08,lon:72.88},{n:"Kolkata",lat:22.57,lon:88.36},{n:"Chennai",lat:13.08,lon:80.27},{n:"Hyderabad",lat:17.39,lon:78.49},{n:"Srinagar",lat:34.08,lon:74.80},{n:"Leh",lat:34.15,lon:77.58}],
-  "China":       [{n:"Beijing",lat:39.91,lon:116.39},{n:"Shanghai",lat:31.23,lon:121.47},{n:"Chongqing",lat:29.56,lon:106.55},{n:"Guangzhou",lat:23.13,lon:113.26},{n:"Lhasa",lat:29.65,lon:91.11},{n:"Urumqi",lat:43.80,lon:87.60},{n:"Kashgar",lat:39.47,lon:75.99}],
-  "USA":         [{n:"New York",lat:40.71,lon:-74.01},{n:"Los Angeles",lat:34.05,lon:-118.24},{n:"Chicago",lat:41.88,lon:-87.63},{n:"Houston",lat:29.76,lon:-95.37},{n:"Miami",lat:25.77,lon:-80.19},{n:"Seattle",lat:47.61,lon:-122.33},{n:"Anchorage",lat:61.22,lon:-149.90}],
-  "United Kingdom":[{n:"London",lat:51.51,lon:-0.13},{n:"Manchester",lat:53.48,lon:-2.24},{n:"Edinburgh",lat:55.95,lon:-3.19},{n:"Belfast",lat:54.59,lon:-5.93}],
-  "Germany":     [{n:"Berlin",lat:52.52,lon:13.40},{n:"Munich",lat:48.14,lon:11.58},{n:"Hamburg",lat:53.55,lon:9.99},{n:"Frankfurt",lat:50.11,lon:8.68}],
-  "France":      [{n:"Paris",lat:48.86,lon:2.35},{n:"Lyon",lat:45.74,lon:4.83},{n:"Marseille",lat:43.30,lon:5.37}],
-  "Australia":   [{n:"Sydney",lat:-33.87,lon:151.21},{n:"Melbourne",lat:-37.81,lon:144.96},{n:"Brisbane",lat:-27.47,lon:153.02},{n:"Perth",lat:-31.95,lon:115.86},{n:"Hobart",lat:-42.88,lon:147.32}],
-  "Brazil":      [{n:"Brasília",lat:-15.78,lon:-47.93},{n:"São Paulo",lat:-23.55,lon:-46.63},{n:"Rio de Janeiro",lat:-22.91,lon:-43.17},{n:"Manaus",lat:-3.11,lon:-60.02}],
-  "Russia":      [{n:"Moscow",lat:55.75,lon:37.62},{n:"St. Petersburg",lat:59.94,lon:30.32},{n:"Novosibirsk",lat:55.03,lon:82.92},{n:"Yakutsk",lat:62.03,lon:129.73}],
-  "Japan":       [{n:"Tokyo",lat:35.69,lon:139.69},{n:"Osaka",lat:34.69,lon:135.50},{n:"Sapporo",lat:43.06,lon:141.35}],
-  "Canada":      [{n:"Toronto",lat:43.65,lon:-79.38},{n:"Vancouver",lat:49.25,lon:-123.12},{n:"Montreal",lat:45.51,lon:-73.57},{n:"Iqaluit",lat:63.74,lon:-68.51}],
-  "Egypt":       [{n:"Cairo",lat:30.06,lon:31.25},{n:"Alexandria",lat:31.21,lon:29.92},{n:"Aswan",lat:24.09,lon:32.90}],
-  "Turkey":      [{n:"Istanbul",lat:41.01,lon:28.96},{n:"Ankara",lat:39.93,lon:32.86},{n:"Antalya",lat:36.90,lon:30.70}],
-  "Saudi Arabia":[{n:"Riyadh",lat:24.69,lon:46.72},{n:"Jeddah",lat:21.54,lon:39.17}],
-  "South Africa":[{n:"Cape Town",lat:-33.93,lon:18.42},{n:"Johannesburg",lat:-26.20,lon:28.04}],
-  "Afghanistan": [{n:"Kabul",lat:34.53,lon:69.17},{n:"Kandahar",lat:31.61,lon:65.71}],
-  "Iran":        [{n:"Tehran",lat:35.69,lon:51.42},{n:"Isfahan",lat:32.66,lon:51.68}],
-  "Nepal":       [{n:"Kathmandu",lat:27.72,lon:85.32},{n:"Pokhara",lat:28.21,lon:83.98}],
-  "Bangladesh":  [{n:"Dhaka",lat:23.81,lon:90.41}],
-  "Argentina":   [{n:"Buenos Aires",lat:-34.60,lon:-58.38},{n:"Ushuaia",lat:-54.80,lon:-68.30}],
-  "Chile":       [{n:"Santiago",lat:-33.45,lon:-70.66},{n:"Punta Arenas",lat:-53.15,lon:-70.92}],
-  "New Zealand": [{n:"Auckland",lat:-36.84,lon:174.76},{n:"Christchurch",lat:-43.53,lon:172.63}],
-  "Norway":      [{n:"Oslo",lat:59.91,lon:10.75},{n:"Tromso",lat:69.64,lon:18.95}],
-  "Greenland":   [{n:"Nuuk",lat:64.17,lon:-51.73}],
-  "Switzerland": [{n:"Zurich",lat:47.37,lon:8.54},{n:"Geneva",lat:46.20,lon:6.14}],
-  "Italy":       [{n:"Rome",lat:41.89,lon:12.51},{n:"Milan",lat:45.46,lon:9.19}],
-  "Spain":       [{n:"Madrid",lat:40.41,lon:-3.70},{n:"Barcelona",lat:41.38,lon:2.17}],
-  "Mexico":      [{n:"Mexico City",lat:19.43,lon:-99.13}],
-  "Peru":        [{n:"Lima",lat:-12.04,lon:-77.03}],
-  "Indonesia":   [{n:"Jakarta",lat:-6.20,lon:106.81}],
-  "Thailand":    [{n:"Bangkok",lat:13.75,lon:100.50}]
+  "Pakistan": [{n:"Islamabad",lat:33.72,lon:73.06},{n:"Karachi",lat:24.86,lon:67.01},{n:"Lahore",lat:31.55,lon:74.34},{n:"Peshawar",lat:34.01,lon:71.58},{n:"Quetta",lat:30.19,lon:67.02},{n:"Gilgit",lat:35.92,lon:74.31},{n:"Muzaffarabad",lat:34.37,lon:73.47}],
+  "India": [{n:"New Delhi",lat:28.63,lon:77.22},{n:"Mumbai",lat:19.08,lon:72.88},{n:"Kolkata",lat:22.57,lon:88.36},{n:"Chennai",lat:13.08,lon:80.27},{n:"Hyderabad",lat:17.39,lon:78.49},{n:"Bangalore",lat:12.97,lon:77.59}],
+  "China": [{n:"Beijing",lat:39.91,lon:116.39},{n:"Shanghai",lat:31.23,lon:121.47},{n:"Chongqing",lat:29.56,lon:106.55},{n:"Guangzhou",lat:23.13,lon:113.26},{n:"Lhasa",lat:29.65,lon:91.11}],
+  "USA": [{n:"New York",lat:40.71,lon:-74.01},{n:"Los Angeles",lat:34.05,lon:-118.24},{n:"Chicago",lat:41.88,lon:-87.63},{n:"Houston",lat:29.76,lon:-95.37},{n:"Seattle",lat:47.61,lon:-122.33}],
+  "UK": [{n:"London",lat:51.51,lon:-0.13},{n:"Manchester",lat:53.48,lon:-2.24},{n:"Edinburgh",lat:55.95,lon:-3.19},{n:"Birmingham",lat:52.49,lon:-1.90}],
+  "Germany": [{n:"Berlin",lat:52.52,lon:13.40},{n:"Munich",lat:48.14,lon:11.58},{n:"Hamburg",lat:53.55,lon:9.99},{n:"Frankfurt",lat:50.11,lon:8.68}],
+  "France": [{n:"Paris",lat:48.86,lon:2.35},{n:"Lyon",lat:45.74,lon:4.83},{n:"Marseille",lat:43.30,lon:5.37}],
+  "Australia": [{n:"Sydney",lat:-33.87,lon:151.21},{n:"Melbourne",lat:-37.81,lon:144.96},{n:"Brisbane",lat:-27.47,lon:153.02}],
+  "Brazil": [{n:"Brasília",lat:-15.78,lon:-47.93},{n:"São Paulo",lat:-23.55,lon:-46.63},{n:"Rio de Janeiro",lat:-22.91,lon:-43.17}],
+  "Russia": [{n:"Moscow",lat:55.75,lon:37.62},{n:"St. Petersburg",lat:59.94,lon:30.32},{n:"Novosibirsk",lat:55.03,lon:82.92}],
+  "Japan": [{n:"Tokyo",lat:35.69,lon:139.69},{n:"Osaka",lat:34.69,lon:135.50},{n:"Sapporo",lat:43.06,lon:141.35}],
+  "Canada": [{n:"Toronto",lat:43.65,lon:-79.38},{n:"Vancouver",lat:49.25,lon:-123.12},{n:"Montreal",lat:45.51,lon:-73.57}],
+  "Egypt": [{n:"Cairo",lat:30.06,lon:31.25},{n:"Alexandria",lat:31.21,lon:29.92},{n:"Aswan",lat:24.09,lon:32.90}],
+  "South Africa": [{n:"Cape Town",lat:-33.93,lon:18.42},{n:"Johannesburg",lat:-26.20,lon:28.04}],
+  "Turkey": [{n:"Istanbul",lat:41.01,lon:28.96},{n:"Ankara",lat:39.93,lon:32.86}],
+  "Saudi Arabia": [{n:"Riyadh",lat:24.69,lon:46.72},{n:"Jeddah",lat:21.54,lon:39.17}],
+  "Bangladesh": [{n:"Dhaka",lat:23.81,lon:90.41}],
+  "Nepal": [{n:"Kathmandu",lat:27.72,lon:85.32}],
+  "Iran": [{n:"Tehran",lat:35.69,lon:51.42}],
+  "Afghanistan": [{n:"Kabul",lat:34.53,lon:69.17}]
 };
 
-// Map ISO-3 to Country Select names
-const MAP_ISO_TO_NAME = {
-  "PAK":"Pakistan","IND":"India","CHN":"China","USA":"USA","GBR":"United Kingdom","DEU":"Germany",
-  "FRA":"France","AUS":"Australia","BRA":"Brazil","RUS":"Russia","JPN":"Japan","CAN":"Canada",
-  "EGY":"Egypt","TUR":"Turkey","SAU":"Saudi Arabia","ZAF":"South Africa","AFG":"Afghanistan",
-  "IRN":"Iran","NPL":"Nepal","BGD":"Bangladesh","ARG":"Argentina","CHL":"Chile","NZL":"New Zealand",
-  "NOR":"Norway","GRL":"Greenland","CHE":"Switzerland","ITA":"Italy","ESP":"Spain","MEX":"Mexico",
-  "PER":"Peru","IDN":"Indonesia","THA":"Thailand"
-};
-
+// Variable Layout Configurations
 const VAR_CONFIG = {
-  temperature_2m_max:  { label:"Max Temp",     unit:"°C",  color:"#ef4444", low:10, high:40 },
-  temperature_2m_min:  { label:"Min Temp",     unit:"°C",  color:"#3b82f6", low:-10, high:25 },
-  precipitation_sum:   { label:"Precipitation",unit:"mm",  color:"#0d9488", low:0, high:200 },
-  wind_speed_10m_max:  { label:"Wind Speed",  unit:"km/h",color:"#7c3aed", low:5, high:50 }
+  temperature_2m_max:  { label:"Max Temp",    unit:"°C",  color:"#ef4444", low:15, high:40 },
+  temperature_2m_min:  { label:"Min Temp",    unit:"°C",  color:"#3b82f6", low:0, high:25 },
+  precipitation_sum:   { label:"Precipitation",unit:"mm", color:"#0d9488", low:0, high:2500 },
+  wind_speed_10m_max:  { label:"Wind Speed",  unit:"km/h",color:"#7c3aed", low:5, high:40 }
 };
 
-// ── STATE VARIABLES ───────────────────────────────────────────────
+// Application Global State Engine
 let currentVar   = "temperature_2m_max";
+let currentCity  = null;
+let currentData  = null; 
 let smoothWindow = 1;
-let rawDailyData = null; 
-let aggregatedDataset = []; 
 let chartTS = null, chartBar = null, chartAnom = null, chartSeasonal = null, chartHist = null;
-let mapSvg = null, mapProjection = null, mapZoom = null, gEl = null;
+let mapSvg = null, mapProjection = null, mapZoom = null, mapG = null;
 
-// ── INIT SEQUENCE ──────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', () => {
-  populateDropdowns();
-  initMapSystem();
-  setupInteractivityListeners();
+  populateCountries();
+  populateYears();
+  initMap();
   
-  // Set default initial selection
+  // Set default initial values to avoid blank card items
   document.getElementById('country-select').value = "Pakistan";
-  updateCityDropdown("Pakistan");
+  updateCitySelect();
   document.getElementById('city-select').value = "Islamabad";
   
-  setTimeout(() => {
-    document.getElementById('global-loader').style.display = 'none';
-    fetchData();
-  }, 800);
+  // Trigger initial visual load
+  fetchData();
 });
 
-function populateDropdowns() {
-  const cSelect = document.getElementById('country-select');
-  Object.keys(CITIES).sort().forEach(country => {
-    const opt = document.createElement('option');
-    opt.value = country; opt.textContent = country;
-    cSelect.appendChild(opt);
-  });
-
-  const startSel = document.getElementById('year-start');
-  const endSel = document.getElementById('year-end');
-  for(let y = 1950; y <= 2025; y++) {
-    const o1 = document.createElement('option'); o1.value = y; o1.textContent = y;
-    const o2 = document.createElement('option'); o2.value = y; o2.textContent = y;
-    startSel.appendChild(o1); endSel.appendChild(o2);
-  }
-  startSel.value = "1990";
-  endSel.value = "2024";
-}
-
-function setupInteractivityListeners() {
-  document.getElementById('country-select').addEventListener('change', (e) => {
-    updateCityDropdown(e.target.value);
-    highlightMapCountry(e.target.value);
+function populateCountries() {
+  const cs = document.getElementById('country-select');
+  Object.keys(CITIES).sort().forEach(c => {
+    const o = document.createElement('option');
+    o.value = c; o.textContent = c;
+    cs.appendChild(o);
   });
 }
 
-function updateCityDropdown(country) {
+function updateCitySelect() {
+  const country = document.getElementById('country-select').value;
   const citySelect = document.getElementById('city-select');
   citySelect.innerHTML = '';
-  if(!country || !CITIES[country]) {
+  
+  if (!country || !CITIES[country]) {
     citySelect.disabled = true;
     citySelect.appendChild(new Option("— Select country first —", ""));
     return;
   }
+  
   citySelect.disabled = false;
   CITIES[country].forEach(city => {
     citySelect.appendChild(new Option(city.n, city.n));
   });
 }
 
+function populateYears() {
+  const start = document.getElementById('year-start');
+  const end = document.getElementById('year-end');
+  const currentYear = 2024;
+  
+  for(let y = 1940; y <= currentYear; y++) {
+    start.appendChild(new Option(y, y));
+    end.appendChild(new Option(y, y));
+  }
+  start.value = 1990;
+  end.value = 2024;
+}
+
 function setVar(btn) {
   document.querySelectorAll('.var-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.remove('active');
-  btn.className = "var-btn active";
+  btn.classList.add('active');
   currentVar = btn.getAttribute('data-var');
   document.getElementById('map-var-label').textContent = VAR_CONFIG[currentVar].label;
-  if(rawDailyData) { processAndRenderPipeline(); }
+  if(currentData) processAndRender();
 }
 
-function switchTab(tabId, btn) {
+function switchTab(tab, btn) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
-  btn.className = "tab-btn active";
-  document.getElementById(`tab-${tabId}`).className = "tab-pane active";
+  btn.classList.add('active');
+  document.getElementById(`tab-${tab}`).classList.add('active');
 }
 
-// ── DATA INGESTION & PROCESSING ENGINE (OPEN-METEO) ────────────────
-function fetchData() {
+function setSmooth(w, btn) {
+  document.querySelectorAll('.ts-controls .ts-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  smoothWindow = w;
+  if(currentData) renderTimeSeries();
+}
+
+// REST Client Query Logic
+async function fetchData() {
   const country = document.getElementById('country-select').value;
   const cityName = document.getElementById('city-select').value;
-  const startYear = document.getElementById('year-start').value;
-  const endYear = document.getElementById('year-end').value;
+  const startYr = document.getElementById('year-start').value;
+  const endYr = document.getElementById('year-end').value;
+  const aggMode = document.getElementById('agg-select').value;
 
   if(!country || !cityName) {
-    alert("Please explicit select target operational Country and City domain.");
+    alert("Please select a Country and City first.");
     return;
   }
 
   const cityObj = CITIES[country].find(c => c.n === cityName);
-  if(!cityObj) return;
+  currentCity = cityObj;
+  
+  // Real-time structural update to Location UI blocks
+  document.getElementById('kpi-location').textContent = cityObj.n;
+  document.getElementById('kpi-coords').textContent = `${Math.abs(cityObj.lat).toFixed(2)}°${cityObj.lat >= 0 ? 'N' : 'S'}, ${Math.abs(cityObj.lon).toFixed(2)}°${cityObj.lon >= 0 ? 'E' : 'W'}`;
+  document.getElementById('map-info').textContent = `${country} · ${cityName} Metrics Active`;
 
-  const loader = document.getElementById('global-loader');
-  const loaderMsg = document.getElementById('loader-message');
-  loaderMsg.textContent = `Querying Open-Meteo Cluster for ${cityName} (${startYear}-${endYear})...`;
-  loader.style.display = 'flex';
+  const loader = document.getElementById('ts-loader');
+  loader.style.display = "flex";
 
-  const url = `https://archive-api.open-meteo.com/v1/archive?latitude=${cityObj.lat}&longitude=${cityObj.lon}&start_date=${startYear}-01-01&end_date=${endYear}-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,wind_speed_10m_max&timezone=auto`;
+  const url = `https://archive-api.open-meteo.com/v1/archive?latitude=${cityObj.lat}&longitude=${cityObj.lon}&start_date=${startYr}-01-01&end_date=${endYr}-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,wind_speed_10m_max&timezone=auto`;
 
-  fetch(url)
-    .then(res => {
-      if(!res.ok) throw new Error("Network latency or upstream API failure state.");
-      return res.json();
-    })
-    .then(data => {
-      if(!data.daily || !data.daily.time) throw new Error("Empty atmospheric register returned.");
-      rawDailyData = data.daily;
-      
-      // Update Core KPI Headers Instantly
-      document.getElementById('kpi-location').textContent = `${cityName}, ${country}`;
-      document.getElementById('kpi-coords').textContent = `${cityObj.lat.toFixed(2)}°N, ${cityObj.lon.toFixed(2)}°E`;
-      
-      processAndRenderPipeline();
-      document.getElementById('sidebar-stats').style.display = 'block';
-    })
-    .catch(err => {
-      console.error(err);
-      alert(`Pipeline ingestion aborted: ${err.message}`);
-    })
-    .finally(() => {
-      loader.style.display = 'none';
-    });
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+    if(!data.daily) throw new Error("Invalid payload format returned from data stream provider.");
+    
+    currentData = data.daily;
+    processAndRender();
+  } catch(e) {
+    console.error(e);
+    alert("Error fetching telemetry matrix streams from remote node endpoints.");
+  } finally {
+    loader.style.display = "none";
+  }
 }
 
-function processAndRenderPipeline() {
-  if(!rawDailyData) return;
+// Analytical Aggregator Matrix Engine
+function processAndRender() {
+  if(!currentData) return;
 
-  const dates = rawDailyData.time;
-  const values = rawDailyData[currentVar];
-  const aggStrategy = document.getElementById('agg-select').value;
-  const config = VAR_CONFIG[currentVar];
+  const dates = currentData.time; 
+  const vals = currentData[currentVar];
+  const aggMode = document.getElementById('agg-select').value;
 
-  // 1. Structural Dynamic Data Aggregation
-  let parseMap = {};
-  let seasonalClimatology = Array.from({length: 12}, () => ({sum: 0, count: 0}));
+  // Structural Processing Collections
+  let structuralMap = {}; 
+  let monthClimatology = Array(12).fill(0).map(() => []);
 
-  for(let i=0; i < dates.length; i++) {
-    if(values[i] === null || isNaN(values[i])) continue;
-    const val = values[i];
-    const dStr = dates[i]; // YYYY-MM-DD
-    const yr = dStr.substring(0,4);
-    const mo = dStr.substring(5,7);
-    const moIdx = parseInt(mo, 10) - 1;
+  for(let i=0; i<dates.length; i++) {
+    if(vals[i] == null) continue;
+    const d = new Date(dates[i]);
+    const yr = d.getFullYear();
+    const mo = d.getMonth(); 
+    const val = vals[i];
 
-    // Build Seasonal Matrix Natively
-    seasonalClimatology[moIdx].sum += val;
-    seasonalClimatology[moIdx].count++;
+    monthClimatology[mo].push(val);
 
-    let bucketKey = yr; // Default 'yearly'
-    if(aggStrategy === "monthly") {
-      bucketKey = `${yr}-${mo}`;
-    } else if(aggStrategy === "seasonal") {
+    let key = yr;
+    if(aggMode === 'monthly') key = `${yr}-${String(mo+1).padStart(2,'0')}`;
+    else if(aggMode === 'seasonal') {
       let season = "Winter";
-      if(moIdx >= 2 && moIdx <= 4) season = "Spring";
-      else if(moIdx >= 5 && moIdx <= 7) season = "Summer";
-      else if(moIdx >= 8 && moIdx <= 10) season = "Autumn";
-      bucketKey = `${yr} ${season}`;
+      if(mo >= 2 && mo <= 4) season = "Spring";
+      else if(mo >= 5 && mo <= 7) season = "Summer";
+      else if(mo >= 8 && mo <= 10) season = "Autumn";
+      key = `${yr} ${season}`;
     }
 
-    if(!parseMap[bucketKey]) parseMap[bucketKey] = [];
-    parseMap[bucketKey].push(val);
+    if(!structuralMap[key]) structuralMap[key] = [];
+    structuralMap[key].push(val);
   }
 
-  // Compile Structured Chronological Dataset
-  aggregatedDataset = Object.keys(parseMap).sort().map(key => {
-    const arr = parseMap[key];
-    const mean = arr.reduce((a,b)=>a+b,0) / arr.length;
-    const max = Math.max(...arr);
-    const min = Math.min(...arr);
-    return {
-      timeKey: key,
-      value: currentVar === "precipitation_sum" ? arr.reduce((a,b)=>a+b,0) : mean, // Sum for precip, mean for others
-      max: max,
-      min: min,
-      rawCount: arr.length
-    };
+  // Final processed timeline coordinates
+  let finalLabels = Object.keys(structuralMap).sort();
+  let finalVals = finalLabels.map(k => {
+    const arr = structuralMap[k];
+    if(currentVar === 'precipitation_sum') {
+      return aggMode === 'yearly' ? arr.reduce((a,b)=>a+b, 0) : arr.reduce((a,b)=>a+b, 0) / (arr.length / 30);
+    }
+    return arr.reduce((a,b)=>a+b, 0) / arr.length;
   });
 
-  // 2. High-Performance Statistical Metrics Engine
-  const seriesValues = aggregatedDataset.map(d => d.value);
-  const totalMean = seriesValues.reduce((a,b)=>a+b,0) / seriesValues.length;
-  const sqDiff = seriesValues.map(v => Math.pow(v - totalMean, 2));
-  const stdDev = Math.sqrt(sqDiff.reduce((a,b)=>a+b,0) / seriesValues.length);
+  // Calculate Base Structural Baseline Statistics
+  const validVals = finalVals.filter(v => !isNaN(v));
+  const mean = validVals.reduce((a,b)=>a+b,0) / validVals.length;
+  const maxVal = Math.max(...validVals);
+  const minVal = Math.min(...validVals);
+  const maxIdx = finalVals.indexOf(maxVal);
+  const minIdx = finalVals.indexOf(minVal);
 
-  // Compute Absolute Target Records from Daily Matrix directly for precision
-  const validDailyVals = values.filter(v => v !== null && !isNaN(v));
-  const recordHighVal = Math.max(...validDailyVals);
-  const recordLowVal = Math.min(...validDailyVals);
-  
-  // Find precise dates
-  const highIdx = values.indexOf(recordHighVal);
-  const lowIdx = values.indexOf(recordLowVal);
-  const highDate = highIdx !== -1 ? dates[highIdx].substring(0,4) : "—";
-  const lowDate = lowIdx !== -1 ? dates[lowIdx].substring(0,4) : "—";
+  const variance = validVals.reduce((a,b)=>a+Math.pow(b-mean,2),0) / validVals.length;
+  const stdDev = Math.sqrt(variance);
 
-  // Compute Linear Regression Trendline Parameters (Ordinary Least Squares)
-  let sumX=0, sumY=0, sumXY=0, sumXX=0;
-  const n = aggregatedDataset.length;
+  // Linear regression (OLS trendline parameter estimation calculation)
+  let sumX=0, sumY=0, sumXY=0, sumXX=0, n=validVals.length;
   for(let i=0; i<n; i++) {
-    sumX += i;
-    sumY += seriesValues[i];
-    sumXY += i * seriesValues[i];
-    sumXX += i * i;
+    sumX += i; sumY += validVals[i];
+    sumXY += i * validVals[i]; sumXX += i * i;
   }
-  const slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX || 1);
-  const trendDecade = slope * 10; // Scaled representation per decade units
+  let slope = (n*sumXY - sumX*sumY) / (n*sumXX - sumX*sumX);
+  let decadalTrend = slope * 10; 
+  if(aggMode === 'monthly') decadalTrend = slope * 120;
 
-  // Update DOM KPI Elements
-  document.getElementById('kpi-mean').textContent = `${totalMean.toFixed(1)} ${config.unit}`;
-  document.getElementById('kpi-mean-label').textContent = `${aggStrategy.toUpperCase()} CLIMATOLOGY`;
-  document.getElementById('kpi-high').textContent = `${recordHighVal.toFixed(1)} ${config.unit}`;
-  document.getElementById('kpi-high-yr').textContent = `Record Epoch: ${highDate}`;
-  document.getElementById('kpi-low').textContent = `${recordLowVal.toFixed(1)} ${config.unit}`;
-  document.getElementById('kpi-low-yr').textContent = `Record Epoch: ${lowDate}`;
+  // Render Sidebar Stats Panel
+  document.getElementById('sidebar-stats').style.display = "block";
+  const unit = VAR_CONFIG[currentVar].unit;
+  document.getElementById('st-mean').textContent = mean.toFixed(1);
+  document.getElementById('st-unit-mean').textContent = unit;
+  document.getElementById('st-std').textContent = stdDev.toFixed(1);
+  document.getElementById('st-max').textContent = maxVal.toFixed(1);
+  document.getElementById('st-max-yr').textContent = finalLabels[maxIdx];
+  document.getElementById('st-min').textContent = minVal.toFixed(1);
+  document.getElementById('st-min-yr').textContent = finalLabels[minIdx];
+  document.getElementById('st-trend').textContent = `${decadalTrend >= 0 ? '+' : ''}${decadalTrend.toFixed(2)} ${unit}`;
 
-  // Update Sidebar Minified Elements
-  document.getElementById('st-mean').textContent = totalMean.toFixed(1);
-  document.getElementById('st-unit-mean').textContent = config.unit;
-  document.getElementById('st-std').textContent = stdDev.toFixed(2);
-  document.getElementById('st-max').textContent = recordHighVal.toFixed(1);
-  document.getElementById('st-max-yr').textContent = `Year: ${highDate}`;
-  document.getElementById('st-min').textContent = recordLowVal.toFixed(1);
-  document.getElementById('st-min-yr').textContent = `Year: ${lowDate}`;
-  document.getElementById('st-trend').textContent = `${trendDecade >= 0 ? '+' : ''}${trendDecade.toFixed(2)} ${config.unit}`;
+  // Dynamically update Core Metric KPI Displays
+  document.getElementById('kpi-mean').innerHTML = `${mean.toFixed(1)} <span class="kpi-unit">${unit}</span>`;
+  document.getElementById('kpi-mean-label').textContent = `${finalLabels[0]} - ${finalLabels[finalLabels.length-1]} Mean`;
+  document.getElementById('kpi-high').innerHTML = `${maxVal.toFixed(1)} <span class="kpi-unit">${unit}</span>`;
+  document.getElementById('kpi-high-yr').textContent = `Record Max Peak Line (${finalLabels[maxIdx]})`;
+  document.getElementById('kpi-low').innerHTML = `${minVal.toFixed(1)} <span class="kpi-unit">${unit}</span>`;
+  document.getElementById('kpi-low-yr').textContent = `Record Min Peak Line (${finalLabels[minIdx]})`;
 
-  // 3. Execution of Charting Visualization Subsystems
-  renderTimeSeriesChart(totalMean);
-  renderAnnualDistributionChart();
-  renderAnomalyChart(totalMean);
-  renderStatisticsTable(totalMean);
-  renderSeasonalChart(seasonalClimatology);
-  renderHistogramDistribution(validDailyVals);
+  // Scale Dynamic Horizontal Colored KPI Bars
+  const spanRange = VAR_CONFIG[currentVar].high - VAR_CONFIG[currentVar].low;
+  const meanPct = Math.min(Math.max(((mean - VAR_CONFIG[currentVar].low) / spanRange) * 100, 5), 100);
+  const maxPct = Math.min(Math.max(((maxVal - VAR_CONFIG[currentVar].low) / spanRange) * 100, 5), 100);
+  const minPct = Math.min(Math.max(((minVal - VAR_CONFIG[currentVar].low) / spanRange) * 100, 5), 100);
+
+  document.getElementById('kpi-mean-bar').style.width = `${meanPct}%`;
+  document.getElementById('kpi-mean-bar').style.backgroundColor = VAR_CONFIG[currentVar].color;
+
+  // Retain data structures inside state managers & compile visual graphics elements
+  window.processedLabels = finalLabels;
+  window.processedVals = finalVals;
+  window.processedMean = mean;
+  window.monthClimatology = monthClimatology.map(arr => arr.length ? arr.reduce((a,b)=>a+b,0)/arr.length : 0);
+
+  renderTimeSeries();
+  renderDistributionCharts();
+  renderDataTable(finalLabels, finalVals, mean, unit);
 }
 
-// ── GRAPHICS & CHARTJS RENDERING HANDLERS ─────────────────────────
-function getMovingAverage(data, windowSize) {
-  if(windowSize <= 1) return data;
-  let result = [];
-  for(let i=0; i<data.length; i++) {
-    let start = Math.max(0, i - Math.floor(windowSize/2));
-    let end = Math.min(data.length - 1, i + Math.floor(windowSize/2));
-    let sum = 0, count = 0;
-    for(let j=start; j<=end; j++) { sum += data[j]; count++; }
-    result.push(sum / count);
-  }
-  return result;
-}
-
-function setSmooth(w, btn) {
-  document.querySelectorAll('#ts-controls .ts-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  smoothWindow = w;
-  if(aggregatedDataset.length > 0) {
-    const config = VAR_CONFIG[currentVar];
-    const vals = aggregatedDataset.map(d => d.value);
-    const smoothed = getMovingAverage(vals, smoothWindow);
-    chartTS.data.datasets[0].data = smoothed;
-    chartTS.update();
-  }
-}
-
-function renderTimeSeriesChart(baseline) {
+// Interactive Statistical Plot Graphics Compilers
+function renderTimeSeries() {
   const ctx = document.getElementById('chart-ts').getContext('2d');
-  const labels = aggregatedDataset.map(d => d.timeKey);
-  const values = aggregatedDataset.map(d => d.value);
-  const smoothed = getMovingAverage(values, smoothWindow);
-  const config = VAR_CONFIG[currentVar];
-
   if(chartTS) chartTS.destroy();
+
+  let dataPoints = [...window.processedVals];
+  if(smoothWindow > 1) {
+    for(let i=0; i<dataPoints.length; i++) {
+      let start = Math.max(0, i - Math.floor(smoothWindow/2));
+      let end = Math.min(dataPoints.length, start + smoothWindow);
+      let slice = window.processedVals.slice(start, end);
+      dataPoints[i] = slice.reduce((a,b)=>a+b,0) / slice.length;
+    }
+  }
+
   chartTS = new Chart(ctx, {
     type: 'line',
     data: {
-      labels: labels,
+      labels: window.processedLabels,
       datasets: [{
-        label: `${config.label} Trend`,
-        data: smoothed,
-        borderColor: config.color,
+        label: `${VAR_CONFIG[currentVar].label} (${VAR_CONFIG[currentVar].unit})`,
+        data: dataPoints,
+        borderColor: VAR_CONFIG[currentVar].color,
         borderWidth: 2,
-        pointRadius: labels.length > 60 ? 0 : 2,
-        backgroundColor: 'rgba(37, 99, 235, 0.04)',
-        fill: true,
-        tension: 0.15
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: {
-        x: { grid: { display: false }, ticks: { color: '#8794a8', font: { size: 10 } } },
-        y: { grid: { color: '#eef1f7' }, ticks: { color: '#8794a8' }, title: { display: true, text: config.unit, color: '#8794a8' } }
-      }
-    }
-  });
-}
-
-function renderAnnualDistributionChart() {
-  const ctx = document.getElementById('chart-bar').getContext('2d');
-  if(chartBar) chartBar.destroy();
-
-  // Pick up a sub-segmented sample or full if small
-  const labels = aggregatedDataset.map(d => d.timeKey);
-  const config = VAR_CONFIG[currentVar];
-
-  chartBar = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: labels,
-      datasets: [
-        {
-          label: 'Max Boundary',
-          data: aggregatedDataset.map(d => d.max),
-          backgroundColor: '#fca5a5',
-          borderRadius: 4
-        },
-        {
-          label: 'Observed Local Value',
-          data: aggregatedDataset.map(d => d.value),
-          backgroundColor: config.color,
-          borderRadius: 4
-        },
-        {
-          label: 'Min Boundary',
-          data: aggregatedDataset.map(d => d.min),
-          backgroundColor: '#93c5fd',
-          borderRadius: 4
-        }
-      ]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { labels: { boxWidth: 12, font: { size: 11 } } } },
-      scales: {
-        x: { stacked: false, grid: { display: false } },
-        y: { stacked: false, grid: { color: '#eef1f7' } }
-      }
-    }
-  });
-}
-
-function renderAnomalyChart(baseline) {
-  const ctx = document.getElementById('chart-anom').getContext('2d');
-  if(chartAnom) chartAnom.destroy();
-
-  const labels = aggregatedDataset.map(d => d.timeKey);
-  const anomalies = aggregatedDataset.map(d => d.value - baseline);
-  const colors = anomalies.map(v => v >= 0 ? '#dc2626' : '#1d4ed8');
-
-  chartAnom = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: labels,
-      datasets: [{
-        label: 'Climatological Departure',
-        data: anomalies,
-        backgroundColor: colors,
-        borderRadius: 2
+        pointRadius: window.processedLabels.length > 100 ? 0 : 3,
+        tension: 0.15,
+        fill: false
       }]
     },
     options: {
@@ -947,222 +858,218 @@ function renderAnomalyChart(baseline) {
       plugins: { legend: { display: false } },
       scales: {
         x: { grid: { display: false } },
-        y: { grid: { color: '#eef1f7' }, title: { display: true, text: `Δ Departure (${VAR_CONFIG[currentVar].unit})` } }
+        y: { title: { display: true, text: VAR_CONFIG[currentVar].unit } }
       }
     }
   });
 }
 
-function renderSeasonalChart(climatologyMatrix) {
-  const ctx = document.getElementById('chart-seasonal').getContext('2d');
-  if(chartSeasonal) chartSeasonal.destroy();
-
-  const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-  const profileData = climatologyMatrix.map(m => m.count > 0 ? m.sum / m.count : 0);
-
-  chartSeasonal = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: months,
-      datasets: [{
-        data: profileData,
-        borderColor: '#0d9488',
-        backgroundColor: 'rgba(13, 148, 136, 0.08)',
-        fill: true,
-        tension: 0.3,
-        borderWidth: 2.5
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: { y: { grid: { color: '#eef1f7' } }, x: { grid: { display: false } } }
-    }
-  });
-}
-
-function renderHistogramDistribution(rawDailyValues) {
-  const ctx = document.getElementById('chart-hist').getContext('2d');
-  if(chartHist) chartHist.destroy();
-
-  // Create explicit structural Histogram Bins
-  const min = Math.min(...rawDailyValues);
-  const max = Math.max(...rawDailyValues);
-  const binCount = 25;
-  const step = (max - min) / binCount;
-  
-  let bins = Array(binCount).fill(0);
-  let labels = Array(binCount).fill(0);
-
-  for(let i=0; i<binCount; i++) {
-    labels[i] = (min + (i * step) + (step / 2)).toFixed(1);
-  }
-
-  rawDailyValues.forEach(v => {
-    let binIdx = Math.floor((v - min) / step);
-    if(binIdx >= binCount) binIdx = binCount - 1;
-    if(binIdx < 0) binIdx = 0;
-    bins[binIdx]++;
-  });
-
-  chartHist = new Chart(ctx, {
+function renderDistributionCharts() {
+  // Annual/Aggregate Bar Configuration
+  const ctxBar = document.getElementById('chart-bar').getContext('2d');
+  if(chartBar) chartBar.destroy();
+  chartBar = new Chart(ctxBar, {
     type: 'bar',
     data: {
-      labels: labels,
+      labels: window.processedLabels,
       datasets: [{
-        label: 'Density Count Frequency',
-        data: bins,
-        backgroundColor: 'rgba(124, 58, 237, 0.75)',
-        barPercentage: 0.95,
-        categoryPercentage: 0.95
+        data: window.processedVals,
+        backgroundColor: VAR_CONFIG[currentVar].color + 'cc'
       }]
     },
     options: {
-      responsive: true,
-      maintainAspectRatio: false,
+      responsive: true, maintainAspectRatio: false,
       plugins: { legend: { display: false } },
-      scales: {
-        x: { grid: { display: false }, title: { display: true, text: 'Value Intervals', font: { size: 10 } } },
-        y: { grid: { color: '#eef1f7' } }
-      }
+      scales: { x: { grid: { display: false } } }
+    }
+  });
+
+  // Structural Diverging Anomaly Charts
+  const ctxAnom = document.getElementById('chart-anom').getContext('2d');
+  if(chartAnom) chartAnom.destroy();
+  const anomalies = window.processedVals.map(v => v - window.processedMean);
+  chartAnom = new Chart(ctxAnom, {
+    type: 'bar',
+    data: {
+      labels: window.processedLabels,
+      datasets: [{
+        data: anomalies,
+        backgroundColor: anomalies.map(v => v >= 0 ? '#dc2626' : '#1d4ed8')
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: { x: { grid: { display: false } } }
+    }
+  });
+
+  // Seasonal Phase/Climatology Trends Plot 
+  const ctxSeas = document.getElementById('chart-seasonal').getContext('2d');
+  if(chartSeasonal) chartSeasonal.destroy();
+  chartSeasonal = new Chart(ctxSeas, {
+    type: 'line',
+    data: {
+      labels: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+      datasets: [{
+        data: window.monthClimatology,
+        borderColor: '#0d9488', backgroundColor: '#0d948822', fill: true, tension: 0.3
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: { x: { grid: { display: false } } }
+    }
+  });
+
+  // Basic Statistical Histogram Distribution Layout
+  const ctxHist = document.getElementById('chart-hist').getContext('2d');
+  if(chartHist) chartHist.destroy();
+  
+  let sorted = [...window.processedVals].sort((a,b)=>a-b);
+  let bins = 10;
+  let min = sorted[0], max = sorted[sorted.length-1];
+  let step = (max - min) / bins;
+  let histCounts = Array(bins).fill(0);
+  let histLabels = [];
+  
+  for(let i=0; i<bins; i++) {
+    histLabels.push((min + step*i + step/2).toFixed(1));
+  }
+  window.processedVals.forEach(v => {
+    let b = Math.min(Math.floor((v - min) / step), bins - 1);
+    if(b >= 0 && b < bins) histCounts[b]++;
+  });
+
+  chartHist = new Chart(ctxHist, {
+    type: 'bar',
+    data: {
+      labels: histLabels,
+      datasets: [{
+        label: 'Frequency Count',
+        data: histCounts,
+        backgroundColor: '#6366f1bb',
+        barPercentage: 0.95,
+        categoryPercentage: 0.95,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: { x: { grid: { display: false } } }
     }
   });
 }
 
-function renderStatisticsTable(baseline) {
+function renderDataTable(labels, vals, baselineMean, unitStr) {
   const wrap = document.getElementById('stats-table-wrap');
-  const unit = VAR_CONFIG[currentVar].unit;
-  
-  let html = `
-    <table class="stats-table">
-      <thead>
-        <tr>
-          <th>Temporal Epoch</th>
-          <th>Observed Aggregate</th>
-          <th>Departure Anomaly</th>
-          <th>Max Peak</th>
-          <th>Min Dip</th>
-        </tr>
-      </thead>
-      <tbody>
-  `;
-
-  // Display top slices or reverse historical data array loop
-  const displaySet = [...aggregatedDataset].reverse();
-
-  displaySet.forEach(row => {
-    const anomaly = row.value - baseline;
-    const anomalyClass = anomaly >= 0 ? 'trend-up' : 'trend-down';
-    const plusSign = anomaly >= 0 ? '+' : '';
-
-    html += `
+  let html = `<table class="stats-table">
+    <thead>
       <tr>
-        <td><b>${row.timeKey}</b></td>
-        <td>${row.value.toFixed(2)} ${unit}</td>
-        <td class="${anomalyClass}"><b>${plusSign}${anomaly.toFixed(2)}</b></td>
-        <td style="color:var(--hot)">${row.max.toFixed(1)}</td>
-        <td style="color:var(--cold)">${row.min.toFixed(1)}</td>
+        <th>Interval Anchor Target</th>
+        <th>Observed Absolute Value</th>
+        <th>Relative Target Baseline Deviation Anomaly</th>
       </tr>
-    `;
-  });
-
+    </thead>
+    <tbody>`;
+  
+  for(let i = labels.length - 1; i >= 0; i--) {
+    const dev = vals[i] - baselineMean;
+    const devClass = dev >= 0 ? 'anomaly-pos' : 'anomaly-neg';
+    const sign = dev >= 0 ? '+' : '';
+    html += `<tr>
+      <td><b>${labels[i]}</b></td>
+      <td>${vals[i].toFixed(2)} ${unitStr}</td>
+      <td><span class="anomaly-chip ${devClass}">${sign}${dev.toFixed(2)} ${unitStr}</span></td>
+    </tr>`;
+  }
   html += `</tbody></table>`;
   wrap.innerHTML = html;
 }
 
-// ── D3.JS DYNAMIC GLOBAL CARTOGRAPHIC ENGINE ───────────────────────
-function initMapSystem() {
+// Geospatial SVG Topology D3 Engine Mapping Components
+function initMap() {
   const container = document.getElementById('world-map-container');
-  const width = container.offsetWidth || 800;
-  const height = 400;
+  const width = container.clientWidth || 800;
+  const height = 420;
 
   mapProjection = d3.geoMercator()
-    .scale(105)
+    .scale(110)
     .translate([width / 2, height / 1.4]);
 
-  const pathGenerator = d3.geoPath().projection(mapProjection);
+  const path = d3.geoPath().projection(mapProjection);
+
+  mapSvg = d3.select("#world-map-container").append("svg")
+    .attr("width", width)
+    .attr("height", height);
+
+  mapG = mapSvg.append("g");
 
   mapZoom = d3.zoom()
     .scaleExtent([1, 12])
-    .on('zoom', (event) => {
-      gEl.attr('transform', event.transform);
+    .on("zoom", (event) => {
+      mapG.attr("transform", event.transform);
     });
 
-  mapSvg = d3.select('#world-map-container')
-    .append('svg')
-    .call(mapZoom);
+  mapSvg.call(mapZoom);
 
-  gEl = mapSvg.append('g');
+  // Read topology file architectures
+  d3.json("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json").then(topology => {
+    const countries = topojson.feature(topology, topology.objects.countries).features;
 
-  // Asynchronous ingestion of TopoJSON global structures
-  d3.json('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
-    .then(topology => {
-      const countries = topojson.feature(topology, topology.objects.countries).features;
-      
-      gEl.selectAll('path')
-        .data(countries)
-        .enter()
-        .append('path')
-        .attr('d', pathGenerator)
-        .attr('class', 'country-path')
-        .attr('fill', d => {
-          const name = MAP_ISO_TO_NAME[d.id];
-          return name ? 'rgba(37, 99, 235, 0.45)' : '#e2e8f0'; // Active inventory validation fill
-        })
-        .on('mouseover', function(event, d) {
-          const countryMappedName = MAP_ISO_TO_NAME[d.id] || d.properties.name;
-          const statusText = MAP_ISO_TO_NAME[d.id] ? "Database: Connected" : "No Inventory Data";
-          
-          d3.select('#map-tooltip')
-            .style('display', 'block')
-            .html(`<b>${countryMappedName}</b><br><span style="font-size:11px">${statusText}</span>`);
-        })
-        .on('mousemove', function(event) {
-          const containerCoords = d3.pointer(event, container);
-          d3.select('#map-tooltip')
-            .style('left', (containerCoords[0] + 15) + 'px')
-            .style('top', (containerCoords[1] - 12) + 'px');
-        })
-        .on('mouseout', function() {
-          d3.select('#map-tooltip').style('display', 'none');
-        })
-        .on('click', function(event, d) {
-          const matchedCountry = MAP_ISO_TO_NAME[d.id];
-          if(matchedCountry) {
-            d3.selectAll('.country-path').classed('selected', false);
-            d3.select(this).classed('selected', true);
-            
-            document.getElementById('country-select').value = matchedCountry;
-            updateCityDropdown(matchedCountry);
-            document.getElementById('map-info').textContent = `Target Domain Focus: ${matchedCountry}`;
-            fetchData();
-          }
-        });
-        
-        highlightMapCountry("Pakistan");
-    });
+    mapG.selectAll("path")
+      .data(countries)
+      .enter().append("path")
+      .attr("d", path)
+      .attr("class", "country-path")
+      .on("mouseover", function(event, d) {
+        d3.select(this).style("opacity", 0.7);
+        const tooltip = document.getElementById('map-tooltip');
+        tooltip.style.display = 'block';
+        tooltip.innerHTML = `<b>${d.properties.name}</b><br/>Click to map database standard selection target`;
+      })
+      .on("mousemove", function(event) {
+        const tooltip = document.getElementById('map-tooltip');
+        const containerRect = container.getBoundingClientRect();
+        tooltip.style.left = (event.clientX - containerRect.left + 10) + 'px';
+        tooltip.style.top = (event.clientY - containerRect.top + 10) + 'px';
+      })
+      .on("mouseleave", function() {
+        d3.select(this).style("opacity", 1);
+        document.getElementById('map-tooltip').style.display = 'none';
+      })
+      .on("click", function(event, d) {
+        mapG.selectAll("path").classList?.remove("selected");
+        d3.select(this).classed("selected", true);
+        matchCountryToDropdown(d.properties.name);
+      });
+  });
 }
 
-function highlightMapCountry(countryName) {
-  if(!gEl) return;
-  let targetIso = null;
-  Object.keys(MAP_ISO_TO_NAME).forEach(key => {
-    if(MAP_ISO_TO_NAME[key] === countryName) targetIso = key;
-  });
+function matchCountryToDropdown(geoName) {
+  const select = document.getElementById('country-select');
+  let matched = false;
+  
+  for (let i = 0; i < select.options.length; i++) {
+    if (select.options[i].text.toLowerCase() === geoName.toLowerCase()) {
+      select.selectedIndex = i;
+      matched = true;
+      break;
+    }
+  }
 
-  gEl.selectAll('.country-path')
-    .classed('selected', d => d.id === targetIso);
-    
-  if(targetIso) {
-    document.getElementById('map-info').textContent = `Target Domain Focus: ${countryName}`;
+  if(matched) {
+    updateCitySelect();
+    fetchData();
+  } else {
+    document.getElementById('map-info').textContent = `${geoName} database entry offline. Please pick a separate continent.`;
   }
 }
 
-// Map Controllable Utilities
-function zoomIn() { mapSvg.transition().duration(250).call(mapZoom.scaleBy, 1.4); }
-function zoomOut() { mapSvg.transition().duration(250).call(mapZoom.scaleBy, 0.7); }
-function resetZoom() { mapSvg.transition().duration(250).call(mapZoom.transform, d3.zoomIdentity); }
+function zoomIn() { mapSvg.transition().duration(400).call(mapZoom.scaleBy, 1.4); }
+function zoomOut() { mapSvg.transition().duration(400).call(mapZoom.scaleBy, 0.7); }
+function resetZoom() { mapSvg.transition().duration(400).call(mapZoom.transform, d3.zoomIdentity); }
 </script>
 </body>
 </html>
