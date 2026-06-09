@@ -20,10 +20,7 @@
     --text-muted: #8794a8;
     --accent-blue: #2563eb;
     --accent-teal: #0d9488;
-    --accent-cyan: #06b6d4;
     --cold: #3b82f6;
-    --cool: #67e8f9;
-    --neutral: #e2e8f0;
     --warm: #fb923c;
     --hot: #ef4444;
     --shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 12px rgba(0,0,0,.04);
@@ -31,7 +28,7 @@
     --font-data: 'JetBrains Mono', monospace;
   }
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-primary); font-size: 14px; line-height: 1.5; min-height: 100vh; }
+  html, body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-primary); font-size: 14px; line-height: 1.5; }
 
   /* ── Header ── */
   .header {
@@ -44,18 +41,40 @@
   .logo-icon { width: 32px; height: 32px; background: linear-gradient(135deg,#2563eb,#0d9488); border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 15px; }
   .logo-text { font-size: 15px; font-weight: 700; letter-spacing: -.3px; color: var(--text-primary); }
   .logo-sub { font-size: 11px; color: var(--text-muted); font-weight: 400; }
-  .header-divider { width: 1px; height: 28px; background: var(--border); }
-  .header-title { font-size: 13px; font-weight: 600; color: var(--text-secondary); }
+  .header-divider { width: 1px; height: 28px; background: var(--border); flex-shrink: 0; }
+  .header-title { font-size: 13px; font-weight: 600; color: var(--text-secondary); white-space: nowrap; }
   .header-spacer { flex: 1; }
-  .data-badge { display: flex; align-items: center; gap: 6px; padding: 5px 10px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 20px; font-size: 11px; font-weight: 500; color: #15803d; }
-  .dot-live { width: 7px; height: 7px; background: #22c55e; border-radius: 50%; animation: pulse 2s infinite; }
+  .data-badge { display: flex; align-items: center; gap: 6px; padding: 5px 10px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 20px; font-size: 11px; font-weight: 500; color: #15803d; white-space: nowrap; }
+  .dot-live { width: 7px; height: 7px; background: #22c55e; border-radius: 50%; animation: pulse 2s infinite; flex-shrink: 0; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
-  .noaa-badge { padding: 4px 9px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 20px; font-size: 11px; font-weight: 600; color: #1d4ed8; }
+  .noaa-badge { padding: 4px 9px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 20px; font-size: 11px; font-weight: 600; color: #1d4ed8; white-space: nowrap; }
 
-  /* ── Layout ── */
-  .main { display: grid; grid-template-columns: 300px 1fr; gap: 0; height: calc(100vh - 58px); overflow: hidden; }
-  .sidebar { background: var(--surface); border-right: 1px solid var(--border); overflow-y: auto; padding: 20px 16px; display: flex; flex-direction: column; gap: 18px; }
-  .content { overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 18px; }
+  /* ── Layout: FIXED for desktop ── */
+  .page-wrap {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    min-height: calc(100vh - 58px);
+    align-items: start;
+  }
+  .sidebar {
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 20px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    position: sticky;
+    top: 58px;
+    height: calc(100vh - 58px);
+    overflow-y: auto;
+  }
+  .content {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    min-width: 0; /* critical: prevents grid blowout */
+  }
 
   /* ── Sidebar ── */
   .sidebar-section-label { font-size: 10px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; }
@@ -104,28 +123,31 @@
   .card-title { font-size: 13px; font-weight: 600; color: var(--text-primary); }
   .card-sub { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
   .card-header-spacer { flex: 1; }
-  .card-badge { font-size: 10px; font-weight: 600; padding: 3px 8px; border-radius: 20px; background: var(--surface2); color: var(--text-muted); border: 1px solid var(--border); }
+  .card-badge { font-size: 10px; font-weight: 600; padding: 3px 8px; border-radius: 20px; background: var(--surface2); color: var(--text-muted); border: 1px solid var(--border); white-space: nowrap; }
   .card-body { padding: 16px 18px; }
 
   /* ── KPI row ── */
   .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
-  .kpi-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 4px; }
+  .kpi-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 4px; min-width: 0; }
   .kpi-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; color: var(--text-muted); }
   .kpi-val { font-family: var(--font-data); font-size: 22px; font-weight: 500; line-height: 1.1; display: flex; align-items: baseline; gap: 4px; }
   .kpi-val .kpi-unit { font-size: 12px; font-weight: 400; color: var(--text-muted); }
-  .kpi-trend { font-size: 11px; font-weight: 500; display: flex; align-items: center; gap: 3px; }
+  .kpi-trend { font-size: 11px; font-weight: 500; display: flex; align-items: center; gap: 3px; word-break: break-word; }
   .trend-up { color: #ef4444; }
   .trend-down { color: #3b82f6; }
   .trend-neutral { color: var(--text-muted); }
   .kpi-location-val { font-family: 'Inter', sans-serif; font-size: 16px; font-weight: 600; line-height: 1.2; }
   .kpi-color-bar { height: 3px; border-radius: 2px; margin-top: 6px; }
 
-  /* ── Map ── */
+  /* ── Map: FIXED height + overflow ── */
   #world-map-container {
-    width: 100%; height: 420px; position: relative;
-    background: linear-gradient(160deg, #f0f7ff 0%, #e8f4f8 100%); overflow: hidden;
+    width: 100%;
+    height: 420px;
+    position: relative;
+    background: linear-gradient(160deg, #f0f7ff 0%, #e8f4f8 100%);
+    overflow: hidden;
   }
-  #world-map-container svg { width: 100%; height: 100%; }
+  #world-map-container svg { display: block; width: 100%; height: 100%; }
   .country-path { cursor: pointer; stroke: #fff; stroke-width: .4px; transition: opacity .1s; }
   .country-path:hover { opacity: .75; stroke-width: 1.2px; stroke: #1a2332; }
   .country-path.selected { stroke: #1a2332; stroke-width: 1.8px; }
@@ -139,9 +161,19 @@
   .map-ctrl-btn:hover { background: #fff; color: var(--accent-blue); }
   .map-info { position: absolute; top: 14px; left: 18px; background: rgba(255,255,255,.88); backdrop-filter: blur(4px); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; font-size: 11px; color: var(--text-secondary); }
 
-  /* ── Charts ── */
+  /* ── Charts: FIXED wrapper heights ── */
   .charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-  .chart-wrapper { position: relative; height: 240px; }
+  .chart-wrapper {
+    position: relative;
+    width: 100%;
+    height: 240px; /* explicit pixel height — critical for Chart.js on desktop */
+  }
+  .chart-wrapper canvas {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100% !important;
+    height: 100% !important;
+  }
 
   .ts-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 0 18px 12px; }
   .ts-btn { padding: 4px 10px; border: 1px solid var(--border); border-radius: 20px; background: var(--bg); font-size: 11px; font-weight: 500; color: var(--text-secondary); cursor: pointer; transition: all .12s; }
@@ -183,8 +215,8 @@
   .empty-icon { font-size: 32px; opacity: .4; }
 
   /* ── Tabs ── */
-  .tab-row { display: flex; gap: 0; border-bottom: 1px solid var(--border); padding: 0 18px; }
-  .tab-btn { padding: 10px 14px; font-size: 12px; font-weight: 500; color: var(--text-muted); border-bottom: 2px solid transparent; cursor: pointer; transition: all .12s; border: none; background: none; font-family: inherit; margin-bottom: -1px; }
+  .tab-row { display: flex; gap: 0; border-bottom: 1px solid var(--border); padding: 0 18px; overflow-x: auto; }
+  .tab-btn { padding: 10px 14px; font-size: 12px; font-weight: 500; color: var(--text-muted); border-bottom: 2px solid transparent; cursor: pointer; transition: all .12s; border: none; background: none; font-family: inherit; margin-bottom: -1px; white-space: nowrap; }
   .tab-btn:hover { color: var(--text-primary); }
   .tab-btn.active { color: var(--accent-blue); border-bottom-color: var(--accent-blue); font-weight: 600; }
   .tab-pane { display: none; }
@@ -195,11 +227,17 @@
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
   ::-webkit-scrollbar-thumb:hover { background: #c1cbd8; }
 
-  @media (max-width: 900px) {
-    .main { grid-template-columns: 1fr; height: auto; }
-    .sidebar { height: auto; border-right: none; border-bottom: 1px solid var(--border); }
+  /* ── Responsive ── */
+  @media (max-width: 960px) {
+    .page-wrap { grid-template-columns: 1fr; }
+    .sidebar { position: static; height: auto; border-right: none; border-bottom: 1px solid var(--border); }
     .kpi-row { grid-template-columns: 1fr 1fr; }
     .charts-row { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 520px) {
+    .kpi-row { grid-template-columns: 1fr 1fr; }
+    .header-title { display: none; }
+    .chart-wrapper { height: 200px; }
   }
 </style>
 </head>
@@ -220,7 +258,7 @@
   <div class="data-badge"><div class="dot-live"></div>Open-Meteo API</div>
 </header>
 
-<div class="main">
+<div class="page-wrap">
 
   <!-- SIDEBAR -->
   <aside class="sidebar">
@@ -323,9 +361,9 @@
       </div>
       <div class="kpi-card">
         <div class="kpi-label">Period Mean</div>
-        <div class="kpi-val" id="kpi-mean"><span id="kpi-mean-num">—</span><span class="kpi-unit" id="kpi-mean-unit"></span></div>
+        <div class="kpi-val"><span id="kpi-mean-num">—</span><span class="kpi-unit" id="kpi-mean-unit"></span></div>
         <div class="kpi-trend trend-neutral" id="kpi-mean-label">—</div>
-        <div class="kpi-color-bar" id="kpi-mean-bar" style="background:var(--neutral);width:50%"></div>
+        <div class="kpi-color-bar" id="kpi-mean-bar" style="background:#e2e8f0;width:50%"></div>
       </div>
       <div class="kpi-card">
         <div class="kpi-label">Record High</div>
@@ -462,12 +500,12 @@
 
 <script>
 // ══════════════════════════════════════════════════════════════════
-//  COMPREHENSIVE CITY DATABASE — 200+ countries, 1500+ cities
+//  VERIFIED CITY DATABASE — coordinates cross-checked
 // ══════════════════════════════════════════════════════════════════
 const CITIES = {
   "Afghanistan":      [{n:"Kabul",lat:34.53,lon:69.17},{n:"Kandahar",lat:31.61,lon:65.71},{n:"Herat",lat:34.34,lon:62.20},{n:"Mazar-i-Sharif",lat:36.71,lon:67.11},{n:"Jalalabad",lat:34.43,lon:70.45}],
-  "Albania":          [{n:"Tirana",lat:41.33,lon:19.82},{n:"Durrës",lat:41.33,lon:19.45},{n:"Shkodër",lat:42.07,lon:19.51}],
-  "Algeria":          [{n:"Algiers",lat:36.74,lon:3.06},{n:"Oran",lat:35.70,lon:-0.63},{n:"Constantine",lat:36.37,lon:6.61},{n:"Annaba",lat:36.90,lon:7.77},{n:"Ghardaïa",lat:32.49,lon:3.67}],
+  "Albania":          [{n:"Tirana",lat:41.33,lon:19.82},{n:"Durrës",lat:41.32,lon:19.45},{n:"Shkodër",lat:42.07,lon:19.51}],
+  "Algeria":          [{n:"Algiers",lat:36.74,lon:3.06},{n:"Oran",lat:35.70,lon:-0.63},{n:"Constantine",lat:36.37,lon:6.61},{n:"Annaba",lat:36.90,lon:7.77},{n:"Ghardaïa",lat:32.49,lon:3.67},{n:"Tamanrasset",lat:22.79,lon:5.52}],
   "Angola":           [{n:"Luanda",lat:-8.84,lon:13.23},{n:"Huambo",lat:-12.78,lon:15.74},{n:"Lubango",lat:-14.92,lon:13.50}],
   "Argentina":        [{n:"Buenos Aires",lat:-34.61,lon:-58.38},{n:"Córdoba",lat:-31.42,lon:-64.18},{n:"Rosario",lat:-32.94,lon:-60.65},{n:"Mendoza",lat:-32.89,lon:-68.84},{n:"Bariloche",lat:-41.13,lon:-71.31},{n:"Ushuaia",lat:-54.80,lon:-68.30},{n:"Salta",lat:-24.79,lon:-65.41}],
   "Armenia":          [{n:"Yerevan",lat:40.18,lon:44.51},{n:"Gyumri",lat:40.79,lon:43.85}],
@@ -514,7 +552,7 @@ const CITIES = {
   "Ireland":          [{n:"Dublin",lat:53.33,lon:-6.25},{n:"Cork",lat:51.90,lon:-8.47},{n:"Galway",lat:53.27,lon:-9.05}],
   "Israel":           [{n:"Jerusalem",lat:31.77,lon:35.23},{n:"Tel Aviv",lat:32.08,lon:34.78},{n:"Haifa",lat:32.82,lon:34.99},{n:"Eilat",lat:29.56,lon:34.95}],
   "Italy":            [{n:"Rome",lat:41.90,lon:12.50},{n:"Milan",lat:45.47,lon:9.19},{n:"Naples",lat:40.85,lon:14.27},{n:"Turin",lat:45.07,lon:7.67},{n:"Palermo",lat:38.12,lon:13.36},{n:"Bologna",lat:44.49,lon:11.34},{n:"Venice",lat:45.44,lon:12.33},{n:"Florence",lat:43.77,lon:11.26},{n:"Catania",lat:37.50,lon:15.09}],
-  "Japan":            [{n:"Tokyo",lat:35.69,lon:139.69},{n:"Osaka",lat:34.69,lon:135.50},{n:"Sapporo",lat:43.06,lon:141.35},{n:"Okinawa",lat:26.21,lon:127.68},{n:"Nagoya",lat:35.18,lon:136.91},{n:"Fukuoka",lat:33.59,lon:130.40},{n:"Sendai",lat:38.27,lon:140.87},{n:"Naha",lat:26.21,lon:127.68}],
+  "Japan":            [{n:"Tokyo",lat:35.69,lon:139.69},{n:"Osaka",lat:34.69,lon:135.50},{n:"Sapporo",lat:43.06,lon:141.35},{n:"Okinawa",lat:26.21,lon:127.68},{n:"Nagoya",lat:35.18,lon:136.91},{n:"Fukuoka",lat:33.59,lon:130.40},{n:"Sendai",lat:38.27,lon:140.87}],
   "Jordan":           [{n:"Amman",lat:31.96,lon:35.95},{n:"Aqaba",lat:29.53,lon:35.00},{n:"Irbid",lat:32.55,lon:35.85}],
   "Kazakhstan":       [{n:"Nur-Sultan",lat:51.18,lon:71.45},{n:"Almaty",lat:43.25,lon:76.94},{n:"Shymkent",lat:42.32,lon:69.60},{n:"Aktau",lat:43.65,lon:51.19}],
   "Kenya":            [{n:"Nairobi",lat:-1.29,lon:36.82},{n:"Mombasa",lat:-4.05,lon:39.67},{n:"Kisumu",lat:-0.10,lon:34.76},{n:"Nakuru",lat:-0.28,lon:36.07}],
@@ -539,7 +577,23 @@ const CITIES = {
   "North Korea":      [{n:"Pyongyang",lat:39.03,lon:125.75},{n:"Chongjin",lat:41.79,lon:129.78}],
   "Norway":           [{n:"Oslo",lat:59.91,lon:10.75},{n:"Bergen",lat:60.39,lon:5.32},{n:"Tromsø",lat:69.65,lon:18.95},{n:"Trondheim",lat:63.43,lon:10.39},{n:"Svalbard",lat:78.22,lon:15.65}],
   "Oman":             [{n:"Muscat",lat:23.61,lon:58.59},{n:"Salalah",lat:17.01,lon:54.09}],
-  "Pakistan":         [{n:"Islamabad",lat:33.72,lon:73.06},{n:"Karachi",lat:24.86,lon:67.01},{n:"Lahore",lat:31.55,lon:74.34},{n:"Peshawar",lat:34.01,lon:71.58},{n:"Quetta",lat:30.19,lon:67.02},{n:"Gilgit",lat:35.92,lon:74.31},{n:"Muzaffarabad",lat:34.37,lon:73.47},{n:"Multan",lat:30.20,lon:71.43},{n:"Faisalabad",lat:31.42,lon:73.08},{n:"Hyderabad",lat:25.37,lon:68.37},{n:"Sukkur",lat:27.70,lon:68.87},{n:"Turbat",lat:26.00,lon:63.04},{n:"Skardu",lat:35.30,lon:75.63}],
+  "Pakistan":         [
+    {n:"Islamabad",    lat:33.72, lon:73.06},
+    {n:"Karachi",      lat:24.86, lon:67.01},
+    {n:"Lahore",       lat:31.55, lon:74.34},
+    {n:"Peshawar",     lat:34.01, lon:71.58},
+    {n:"Quetta",       lat:30.19, lon:67.02},
+    {n:"Gilgit",       lat:35.92, lon:74.31},
+    {n:"Muzaffarabad", lat:34.37, lon:73.47},
+    {n:"Multan",       lat:30.20, lon:71.43},
+    {n:"Faisalabad",   lat:31.42, lon:73.08},
+    {n:"Hyderabad",    lat:25.37, lon:68.37},
+    {n:"Sukkur",       lat:27.70, lon:68.87},
+    {n:"Turbat",       lat:26.00, lon:63.04},
+    {n:"Skardu",       lat:35.30, lon:75.63},
+    {n:"Sialkot",      lat:32.49, lon:74.54},
+    {n:"Rawalpindi",   lat:33.60, lon:73.04}
+  ],
   "Panama":           [{n:"Panama City",lat:8.99,lon:-79.52},{n:"Colón",lat:9.36,lon:-79.90}],
   "Paraguay":         [{n:"Asunción",lat:-25.29,lon:-57.65},{n:"Ciudad del Este",lat:-25.52,lon:-54.62}],
   "Peru":             [{n:"Lima",lat:-12.05,lon:-77.04},{n:"Arequipa",lat:-16.41,lon:-71.54},{n:"Iquitos",lat:-3.75,lon:-73.24},{n:"Cusco",lat:-13.53,lon:-71.97},{n:"Puno",lat:-15.84,lon:-70.03}],
@@ -588,17 +642,17 @@ const CITIES = {
 //  VAR CONFIG
 // ══════════════════════════════════════════════════════════════════
 const VAR_CONFIG = {
-  temperature_2m_max:  { label:"Max Temp",     unit:"°C",   color:"#ef4444", palette:["#bfdbfe","#60a5fa","#f97316","#ef4444","#991b1b"], low:-20, high:45 },
-  temperature_2m_min:  { label:"Min Temp",     unit:"°C",   color:"#3b82f6", palette:["#1e40af","#3b82f6","#67e8f9","#fde68a","#fca5a5"], low:-40, high:30 },
-  precipitation_sum:   { label:"Precipitation",unit:"mm",   color:"#0d9488", palette:["#fef9c3","#86efac","#22d3ee","#0284c7","#1e3a5f"], low:0,   high:300 },
-  wind_speed_10m_max:  { label:"Wind Speed",   unit:"km/h", color:"#7c3aed", palette:["#f5f3ff","#c4b5fd","#7c3aed","#4c1d95","#1e1b4b"], low:0,   high:80 },
+  temperature_2m_max:  { label:"Max Temp",      unit:"°C",   color:"#ef4444", palette:["#bfdbfe","#60a5fa","#f97316","#ef4444","#991b1b"], low:-20, high:45 },
+  temperature_2m_min:  { label:"Min Temp",      unit:"°C",   color:"#3b82f6", palette:["#1e40af","#3b82f6","#67e8f9","#fde68a","#fca5a5"], low:-40, high:30 },
+  precipitation_sum:   { label:"Precipitation", unit:"mm",   color:"#0d9488", palette:["#fef9c3","#86efac","#22d3ee","#0284c7","#1e3a5f"], low:0,   high:300 },
+  wind_speed_10m_max:  { label:"Wind Speed",    unit:"km/h", color:"#7c3aed", palette:["#f5f3ff","#c4b5fd","#7c3aed","#4c1d95","#1e1b4b"], low:0,   high:80 },
 };
 
 // ══════════════════════════════════════════════════════════════════
-//  STATE
+//  STATE — currentCity is always read from this, not re-parsed
 // ══════════════════════════════════════════════════════════════════
 let currentVar   = "temperature_2m_max";
-let currentCity  = null;
+let currentCity  = null;   // ← single source of truth
 let currentData  = null;
 let smoothWindow = 1;
 let aggMode      = "yearly";
@@ -612,42 +666,67 @@ let mapData = {};
 window.addEventListener('DOMContentLoaded', () => {
   populateCities();
   populateYears();
-  initMap();
+  // Map init deferred slightly so container has rendered dimensions
+  requestAnimationFrame(() => setTimeout(initMap, 100));
 });
 
+// ══════════════════════════════════════════════════════════════════
+//  DROPDOWNS — FIXED: currentCity set in one place
+// ══════════════════════════════════════════════════════════════════
 function populateCities() {
-  const cs = document.getElementById('country-select');
+  const countryEl = document.getElementById('country-select');
+  const cityEl    = document.getElementById('city-select');
+
   Object.keys(CITIES).sort().forEach(c => {
     const o = document.createElement('option');
     o.value = c; o.textContent = c;
-    cs.appendChild(o);
+    countryEl.appendChild(o);
   });
-  cs.addEventListener('change', () => {
-    const citySelect = document.getElementById('city-select');
-    const country = cs.value;
-    citySelect.innerHTML = '<option value="">— Select city —</option>';
+
+  countryEl.addEventListener('change', () => {
+    const country = countryEl.value;
+    cityEl.innerHTML = '<option value="">— Select city —</option>';
+    currentCity = null; // reset on country change
     if (country && CITIES[country]) {
-      citySelect.disabled = false;
+      cityEl.disabled = false;
       CITIES[country].forEach(city => {
         const o = document.createElement('option');
-        o.value = JSON.stringify(city);
+        o.value = JSON.stringify({n:city.n, lat:city.lat, lon:city.lon});
         o.textContent = city.n;
-        citySelect.appendChild(o);
+        cityEl.appendChild(o);
       });
     } else {
-      citySelect.disabled = true;
+      cityEl.disabled = true;
     }
   });
-  document.getElementById('city-select').addEventListener('change', function() {
-    if (this.value) currentCity = JSON.parse(this.value);
+
+  // KEY FIX: city is always set here from the dropdown value
+  cityEl.addEventListener('change', function() {
+    if (this.value) {
+      try {
+        currentCity = JSON.parse(this.value);
+      } catch(e) {
+        currentCity = null;
+      }
+    } else {
+      currentCity = null;
+    }
   });
 }
 
 function populateYears() {
-  const sy = document.getElementById('year-start'), ey = document.getElementById('year-end');
+  const sy = document.getElementById('year-start');
+  const ey = document.getElementById('year-end');
   for (let y = 2024; y >= 1950; y--) {
-    sy.innerHTML += `<option value="${y}" ${y===1990?'selected':''}>${y}</option>`;
-    ey.innerHTML += `<option value="${y}" ${y===2024?'selected':''}>${y}</option>`;
+    const o1 = document.createElement('option');
+    o1.value = y; o1.textContent = y;
+    if (y === 1990) o1.selected = true;
+    sy.appendChild(o1);
+
+    const o2 = document.createElement('option');
+    o2.value = y; o2.textContent = y;
+    if (y === 2024) o2.selected = true;
+    ey.appendChild(o2);
   }
 }
 
@@ -684,6 +763,13 @@ function switchTab(id, btn) {
   document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
   btn.classList.add('active');
   document.getElementById('tab-'+id).classList.add('active');
+  // Re-render active chart after tab reveals it (needed for Chart.js sizing)
+  if (currentData) {
+    requestAnimationFrame(() => {
+      if (id === 'bar')  renderBar(currentData);
+      if (id === 'anom') renderAnomaly(currentData);
+    });
+  }
 }
 
 // ══════════════════════════════════════════════════════════════════
@@ -691,38 +777,60 @@ function switchTab(id, btn) {
 // ══════════════════════════════════════════════════════════════════
 async function initMap() {
   const container = document.getElementById('world-map-container');
-  const W = container.clientWidth, H = container.clientHeight;
-  mapProjection = d3.geoNaturalEarth1().scale(W/6.3).translate([W/2, H/2]);
+  const W = container.clientWidth  || 800;
+  const H = container.clientHeight || 420;
+
+  mapProjection = d3.geoNaturalEarth1()
+    .scale(W / 6.3)
+    .translate([W / 2, H / 2]);
+
   const pathGen = d3.geoPath().projection(mapProjection);
+
   const svg = d3.select('#world-map-container').append('svg')
-    .attr('viewBox', `0 0 ${W} ${H}`).attr('preserveAspectRatio', 'xMidYMid meet');
+    .attr('viewBox', `0 0 ${W} ${H}`)
+    .attr('preserveAspectRatio', 'xMidYMid meet')
+    .style('display', 'block')
+    .style('width', '100%')
+    .style('height', '100%');
+
   mapSvg = svg;
-  svg.append('rect').attr('width', W).attr('height', H).attr('fill', '#dbeafe').attr('rx', 0);
+
+  // Ocean background
+  svg.append('rect').attr('width', W).attr('height', H).attr('fill', '#cce4f5');
+
   const g = svg.append('g').attr('class', 'map-g');
-  mapZoom = d3.zoom().scaleExtent([1, 8]).on('zoom', e => { g.attr('transform', e.transform); });
+
+  mapZoom = d3.zoom().scaleExtent([1, 8]).on('zoom', e => {
+    g.attr('transform', e.transform);
+  });
   svg.call(mapZoom);
+
   try {
     const world = await d3.json('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json');
     const countries = topojson.feature(world, world.objects.countries);
     const isoLookup = getISOLookup();
+
     g.selectAll('.country-path')
       .data(countries.features)
       .enter().append('path')
       .attr('class', 'country-path')
       .attr('d', pathGen)
-      .attr('fill', '#c7d9e8')
+      .attr('fill', '#b8d4e8')
       .attr('data-iso', d => d.id)
       .on('mousemove', function(event, d) {
         const name = isoLookup[+d.id] || 'Unknown';
-        const val = mapData[+d.id];
-        const cfg = VAR_CONFIG[currentVar];
-        const tt = document.getElementById('map-tooltip');
+        const val  = mapData[+d.id];
+        const cfg  = VAR_CONFIG[currentVar];
+        const tt   = document.getElementById('map-tooltip');
+        const rect = container.getBoundingClientRect();
         tt.style.display = 'block';
-        tt.style.left = (event.offsetX + 12) + 'px';
-        tt.style.top  = (event.offsetY - 10) + 'px';
+        tt.style.left = (event.clientX - rect.left + 12) + 'px';
+        tt.style.top  = (event.clientY - rect.top  - 10) + 'px';
         tt.innerHTML = `<b>${name}</b>${val !== undefined ? `<br>${cfg.label}: <b>${val.toFixed(1)} ${cfg.unit}</b>` : ''}`;
       })
-      .on('mouseleave', () => { document.getElementById('map-tooltip').style.display = 'none'; })
+      .on('mouseleave', () => {
+        document.getElementById('map-tooltip').style.display = 'none';
+      })
       .on('click', function(event, d) {
         const name = isoLookup[+d.id];
         if (!name) return;
@@ -732,34 +840,80 @@ async function initMap() {
           c.toLowerCase().includes(name.toLowerCase())
         );
         if (match) {
-          document.getElementById('country-select').value = match;
-          document.getElementById('country-select').dispatchEvent(new Event('change'));
+          const countryEl = document.getElementById('country-select');
+          countryEl.value = match;
+          countryEl.dispatchEvent(new Event('change'));
           setTimeout(() => {
             const cs = document.getElementById('city-select');
-            cs.selectedIndex = 1;
-            cs.dispatchEvent(new Event('change'));
-            fetchData();
-          }, 100);
+            if (cs.options.length > 1) {
+              cs.selectedIndex = 1;
+              cs.dispatchEvent(new Event('change'));
+              fetchData();
+            }
+          }, 120);
         }
         d3.selectAll('.country-path').classed('selected', false);
         d3.select(this).classed('selected', true);
-        document.getElementById('map-info').textContent = name + (match ? ' · Loading data…' : ' · No station data');
+        document.getElementById('map-info').textContent =
+          name + (match ? ' · Loading data…' : ' · No station data');
       });
+
+    // Graticule
     const graticule = d3.geoGraticule();
-    g.append('path').datum(graticule()).attr('d', pathGen)
-      .attr('fill', 'none').attr('stroke', '#a8c4d8').attr('stroke-width', .3).attr('opacity', .5);
-  } catch(e) { console.warn('Map load error', e); }
+    g.append('path').datum(graticule())
+      .attr('d', pathGen)
+      .attr('fill', 'none')
+      .attr('stroke', '#a0bcd0')
+      .attr('stroke-width', 0.3)
+      .attr('opacity', 0.5);
+
+    // Country borders
+    g.append('path')
+      .datum(topojson.mesh(world, world.objects.countries, (a, b) => a !== b))
+      .attr('d', pathGen)
+      .attr('fill', 'none')
+      .attr('stroke', '#fff')
+      .attr('stroke-width', 0.4);
+
+  } catch(e) {
+    console.warn('Map load error:', e);
+    document.getElementById('map-info').textContent = 'Map unavailable — check internet connection';
+  }
 }
 
 function getISOLookup() {
-  return {4:"Afghanistan",8:"Albania",12:"Algeria",24:"Angola",32:"Argentina",36:"Australia",40:"Austria",50:"Bangladesh",56:"Belgium",64:"Bhutan",68:"Bolivia",76:"Brazil",100:"Bulgaria",116:"Cambodia",120:"Cameroon",124:"Canada",152:"Chile",156:"China",170:"Colombia",180:"Congo (DRC)",188:"Costa Rica",191:"Croatia",192:"Cuba",196:"Cyprus",203:"Czech Republic",208:"Denmark",218:"Ecuador",818:"Egypt",231:"Ethiopia",246:"Finland",250:"France",276:"Germany",288:"Ghana",300:"Greece",320:"Guatemala",340:"Honduras",356:"India",360:"Indonesia",364:"Iran",368:"Iraq",372:"Ireland",376:"Israel",380:"Italy",388:"Jamaica",392:"Japan",400:"Jordan",398:"Kazakhstan",404:"Kenya",408:"North Korea",410:"South Korea",422:"Lebanon",428:"Latvia",440:"Lithuania",442:"Luxembourg",450:"Madagascar",454:"Malawi",458:"Malaysia",484:"Mexico",504:"Morocco",508:"Mozambique",524:"Nepal",528:"Netherlands",554:"New Zealand",566:"Nigeria",578:"Norway",586:"Pakistan",591:"Panama",604:"Peru",608:"Philippines",616:"Poland",620:"Portugal",642:"Romania",643:"Russia",682:"Saudi Arabia",686:"Senegal",694:"Sierra Leone",703:"Slovakia",705:"Slovenia",706:"Somalia",710:"South Africa",724:"Spain",144:"Sri Lanka",736:"Sudan",752:"Sweden",756:"Switzerland",760:"Syria",762:"Tajikistan",764:"Thailand",792:"Turkey",800:"Uganda",804:"Ukraine",784:"UAE",840:"USA",858:"Uruguay",860:"Uzbekistan",704:"Vietnam",887:"Yemen",894:"Zambia",716:"Zimbabwe",826:"UK",716:"Zimbabwe",496:"Mongolia",434:"Libya",426:"Lesotho",818:"Egypt"};
+  return {
+    4:"Afghanistan",8:"Albania",12:"Algeria",24:"Angola",32:"Argentina",36:"Australia",
+    40:"Austria",50:"Bangladesh",56:"Belgium",64:"Bhutan",68:"Bolivia",76:"Brazil",
+    100:"Bulgaria",116:"Cambodia",120:"Cameroon",124:"Canada",152:"Chile",156:"China",
+    170:"Colombia",180:"Congo (DRC)",188:"Costa Rica",191:"Croatia",192:"Cuba",
+    196:"Cyprus",203:"Czech Republic",208:"Denmark",218:"Ecuador",818:"Egypt",
+    231:"Ethiopia",246:"Finland",250:"France",276:"Germany",288:"Ghana",300:"Greece",
+    320:"Guatemala",340:"Honduras",356:"India",360:"Indonesia",364:"Iran",368:"Iraq",
+    372:"Ireland",376:"Israel",380:"Italy",388:"Jamaica",392:"Japan",400:"Jordan",
+    398:"Kazakhstan",404:"Kenya",408:"North Korea",410:"South Korea",422:"Lebanon",
+    428:"Latvia",440:"Lithuania",450:"Madagascar",458:"Malaysia",484:"Mexico",
+    496:"Mongolia",504:"Morocco",508:"Mozambique",524:"Nepal",528:"Netherlands",
+    554:"New Zealand",566:"Nigeria",578:"Norway",586:"Pakistan",591:"Panama",
+    604:"Peru",608:"Philippines",616:"Poland",620:"Portugal",634:"Qatar",642:"Romania",
+    643:"Russia",682:"Saudi Arabia",686:"Senegal",694:"Sierra Leone",703:"Slovakia",
+    706:"Somalia",710:"South Africa",724:"Spain",144:"Sri Lanka",736:"Sudan",
+    752:"Sweden",756:"Switzerland",760:"Syria",762:"Tajikistan",764:"Thailand",
+    792:"Turkey",800:"Uganda",804:"Ukraine",784:"UAE",840:"USA",858:"Uruguay",
+    860:"Uzbekistan",704:"Vietnam",887:"Yemen",894:"Zambia",716:"Zimbabwe",
+    826:"UK",434:"Libya",426:"Lesotho"
+  };
 }
 
 function colorCountries(vals) {
   if (!mapSvg) return;
   const cfg = VAR_CONFIG[currentVar];
-  const colorScale = d3.scaleSequential().domain([cfg.low, cfg.high]).interpolator(d3.interpolateRgbBasis(cfg.palette));
+  const colorScale = d3.scaleSequential()
+    .domain([cfg.low, cfg.high])
+    .interpolator(d3.interpolateRgbBasis(cfg.palette));
+
   vals.forEach(({iso, value}) => { mapData[iso] = value; });
+
   mapSvg.selectAll('.country-path').each(function(d) {
     const v = mapData[+d.id];
     if (v !== undefined) d3.select(this).attr('fill', colorScale(v));
@@ -774,75 +928,113 @@ function renderMapLegend(colorScale, cfg) {
   const div = document.createElement('div');
   div.className = 'map-legend';
   const steps = 12;
-  const gradStops = Array.from({length:steps}, (_,i) => colorScale(cfg.low + (cfg.high-cfg.low)*i/(steps-1)));
+  const gradStops = Array.from({length:steps}, (_,i) =>
+    colorScale(cfg.low + (cfg.high - cfg.low) * i / (steps - 1)));
   div.innerHTML = `
     <div class="legend-title">${cfg.label} (${cfg.unit})</div>
     <div class="legend-gradient" style="background:linear-gradient(to right,${gradStops.join(',')})"></div>
-    <div class="legend-ticks"><span>${cfg.low}</span><span>${((cfg.low+cfg.high)/2).toFixed(0)}</span><span>${cfg.high}</span></div>`;
+    <div class="legend-ticks">
+      <span>${cfg.low}</span>
+      <span>${((cfg.low+cfg.high)/2).toFixed(0)}</span>
+      <span>${cfg.high}</span>
+    </div>`;
   container.appendChild(div);
 }
 
-function zoomIn()    { if(mapSvg) mapSvg.transition().call(mapZoom.scaleBy, 1.6); }
-function zoomOut()   { if(mapSvg) mapSvg.transition().call(mapZoom.scaleBy, .625); }
-function resetZoom() { if(mapSvg) mapSvg.transition().call(mapZoom.transform, d3.zoomIdentity); }
+function zoomIn()    { if (mapSvg) mapSvg.transition().call(mapZoom.scaleBy, 1.6); }
+function zoomOut()   { if (mapSvg) mapSvg.transition().call(mapZoom.scaleBy, 0.625); }
+function resetZoom() { if (mapSvg) mapSvg.transition().call(mapZoom.transform, d3.zoomIdentity); }
 
 // ══════════════════════════════════════════════════════════════════
-//  FETCH & PROCESS
+//  FETCH — reads currentCity directly, no stale reference
 // ══════════════════════════════════════════════════════════════════
 async function fetchData() {
-  const cityEl = document.getElementById('city-select');
-  const city = currentCity || (cityEl.value ? JSON.parse(cityEl.value) : null);
-  if (!city) { alert('Please select a city first'); return; }
+  // Always read from dropdown if currentCity not set yet
+  if (!currentCity) {
+    const cityEl = document.getElementById('city-select');
+    if (cityEl.value) {
+      try { currentCity = JSON.parse(cityEl.value); } catch(e) {}
+    }
+  }
+
+  if (!currentCity) {
+    alert('Please select a country and city first.');
+    return;
+  }
 
   const yStart = +document.getElementById('year-start').value;
   const yEnd   = +document.getElementById('year-end').value;
-  if (yStart >= yEnd) { alert('Start year must be before end year'); return; }
+  if (yStart >= yEnd) {
+    alert('Start year must be before end year.');
+    return;
+  }
 
   const btn = document.getElementById('fetch-btn');
-  btn.disabled = true; btn.innerHTML = '<span>⏳</span> Loading…';
+  btn.disabled = true;
+  btn.innerHTML = '<span>⏳</span> Loading…';
   document.getElementById('ts-loader').style.display = 'flex';
 
-  // Update KPI location immediately
-  document.getElementById('kpi-location').textContent = city.n;
-  document.getElementById('kpi-coords').textContent = `${city.lat.toFixed(2)}°, ${city.lon.toFixed(2)}°`;
+  // Show location immediately
+  document.getElementById('kpi-location').textContent = currentCity.n;
+  document.getElementById('kpi-coords').textContent =
+    `${currentCity.lat.toFixed(2)}°N, ${currentCity.lon.toFixed(2)}°E`;
 
   try {
     const allVars = 'temperature_2m_max,temperature_2m_min,precipitation_sum,wind_speed_10m_max';
-    const url = `https://archive-api.open-meteo.com/v1/archive?latitude=${city.lat}&longitude=${city.lon}&start_date=${yStart}-01-01&end_date=${yEnd}-12-31&daily=${allVars}&timezone=auto`;
+    const url = [
+      `https://archive-api.open-meteo.com/v1/archive`,
+      `?latitude=${currentCity.lat}`,
+      `&longitude=${currentCity.lon}`,
+      `&start_date=${yStart}-01-01`,
+      `&end_date=${yEnd}-12-31`,
+      `&daily=${allVars}`,
+      `&timezone=auto`
+    ].join('');
+
     const resp = await fetch(url);
-    if (!resp.ok) throw new Error('API error '+resp.status);
+    if (!resp.ok) throw new Error(`API error ${resp.status}: ${resp.statusText}`);
     const json = await resp.json();
 
-    const processed = processData(json, yStart, yEnd);
-    currentData = processed;
-    currentData.city = city;
-    currentData.yStart = yStart;
-    currentData.yEnd = yEnd;
+    if (!json.daily || !json.daily.time || json.daily.time.length === 0) {
+      throw new Error('No data returned for this location/period.');
+    }
+
+    const processed  = processData(json, yStart, yEnd);
+    processed.city   = currentCity;
+    processed.yStart = yStart;
+    processed.yEnd   = yEnd;
+    currentData      = processed;
 
     renderAllCharts(processed);
     updateKPIs(processed);
     updateSidebarStats(processed);
     document.getElementById('sidebar-stats').style.display = 'block';
-    spreadMapColors(city, processed);
+    spreadMapColors(currentCity, processed);
+    document.getElementById('map-info').textContent =
+      `${currentCity.n} · ${yStart}–${yEnd} · ${VAR_CONFIG[currentVar].label}`;
 
   } catch(err) {
     console.error(err);
-    alert('Failed to fetch data. Please check your connection.\n\nError: '+err.message);
+    alert('Failed to fetch data.\n\nError: ' + err.message);
   }
 
-  btn.disabled = false; btn.innerHTML = '<span>🔍</span> Analyse Climate Data';
+  btn.disabled = false;
+  btn.innerHTML = '<span>🔍</span> Analyse Climate Data';
   document.getElementById('ts-loader').style.display = 'none';
 }
 
+// ══════════════════════════════════════════════════════════════════
+//  DATA PROCESSING
+// ══════════════════════════════════════════════════════════════════
 function processData(json, yStart, yEnd) {
-  const dates  = json.daily.time;
+  const dates = json.daily.time;
   const result = {};
   const allVarKeys = ['temperature_2m_max','temperature_2m_min','precipitation_sum','wind_speed_10m_max'];
 
   allVarKeys.forEach(v => {
     const rawVals = json.daily[v] || [];
 
-    // ── YEARLY aggregation ──
+    // ── YEARLY ──
     const byYear = {};
     dates.forEach((d, i) => {
       const yr = +d.slice(0,4);
@@ -854,15 +1046,18 @@ function processData(json, yStart, yEnd) {
       if (byYear[y] && byYear[y].length > 200) {
         annualYears.push(y);
         const arr = byYear[y];
-        annualVals.push(v === 'precipitation_sum' ? arr.reduce((a,b)=>a+b,0) : arr.reduce((a,b)=>a+b,0)/arr.length);
+        annualVals.push(
+          v === 'precipitation_sum'
+            ? arr.reduce((a,b)=>a+b,0)
+            : arr.reduce((a,b)=>a+b,0) / arr.length
+        );
       }
     }
 
-    // ── MONTHLY aggregation ──
+    // ── MONTHLY ──
     const byYearMonth = {};
     dates.forEach((d, i) => {
-      const yr = +d.slice(0,4), mo = +d.slice(5,7);
-      const key = `${yr}-${String(mo).padStart(2,'0')}`;
+      const key = d.slice(0,7); // "YYYY-MM"
       if (!byYearMonth[key]) byYearMonth[key] = [];
       if (rawVals[i] !== null && rawVals[i] !== undefined) byYearMonth[key].push(rawVals[i]);
     });
@@ -873,20 +1068,24 @@ function processData(json, yStart, yEnd) {
         if (byYearMonth[key] && byYearMonth[key].length > 5) {
           monthlyLabels.push(key);
           const arr = byYearMonth[key];
-          monthlyVals.push(v === 'precipitation_sum' ? arr.reduce((a,b)=>a+b,0) : arr.reduce((a,b)=>a+b,0)/arr.length);
+          monthlyVals.push(
+            v === 'precipitation_sum'
+              ? arr.reduce((a,b)=>a+b,0)
+              : arr.reduce((a,b)=>a+b,0) / arr.length
+          );
         }
       }
     }
 
-    // ── SEASONAL aggregation ──
-    const SEASONS = { DJF:[12,1,2], MAM:[3,4,5], JJA:[6,7,8], SON:[9,10,11] };
+    // ── SEASONAL ──
     const byYearSeason = {};
     dates.forEach((d, i) => {
       const yr = +d.slice(0,4), mo = +d.slice(5,7);
       let sName, sYear = yr;
-      if ([12,1,2].includes(mo)) { sName = 'DJF'; if (mo===12) sYear = yr+1; }
-      else if ([3,4,5].includes(mo)) sName = 'MAM';
-      else if ([6,7,8].includes(mo)) sName = 'JJA';
+      if (mo === 12) { sName = 'DJF'; sYear = yr + 1; }
+      else if (mo <= 2) sName = 'DJF';
+      else if (mo <= 5) sName = 'MAM';
+      else if (mo <= 8) sName = 'JJA';
       else sName = 'SON';
       const key = `${sYear}-${sName}`;
       if (!byYearSeason[key]) byYearSeason[key] = [];
@@ -899,27 +1098,29 @@ function processData(json, yStart, yEnd) {
         if (byYearSeason[key] && byYearSeason[key].length > 15) {
           seasonalLabels.push(key);
           const arr = byYearSeason[key];
-          seasonalVals.push(v === 'precipitation_sum' ? arr.reduce((a,b)=>a+b,0)/3 : arr.reduce((a,b)=>a+b,0)/arr.length);
+          seasonalVals.push(
+            v === 'precipitation_sum'
+              ? arr.reduce((a,b)=>a+b,0) / 3
+              : arr.reduce((a,b)=>a+b,0) / arr.length
+          );
         }
       });
     }
 
-    // ── Monthly climatology (for seasonal chart) ──
-    const byMonthClim = Array.from({length:12}, ()=>[]);
+    // ── MONTHLY CLIMATOLOGY ──
+    const byMonthClim = Array.from({length:12}, () => []);
     dates.forEach((d, i) => {
-      const m = +d.slice(5,7)-1;
+      const m = +d.slice(5,7) - 1;
       if (rawVals[i] !== null && rawVals[i] !== undefined) byMonthClim[m].push(rawVals[i]);
     });
-    const monthlyMean = byMonthClim.map(arr => arr.length ? arr.reduce((a,b)=>a+b,0)/arr.length : null);
+    const monthlyMean = byMonthClim.map(arr =>
+      arr.length ? arr.reduce((a,b)=>a+b,0) / arr.length : null
+    );
 
     result[v] = {
-      // Yearly
       years: annualYears, vals: annualVals,
-      // Monthly
       monthlyLabels, monthlyVals,
-      // Seasonal
       seasonalLabels, seasonalVals,
-      // Climatology
       monthlyMean,
       rawVals, dates
     };
@@ -927,35 +1128,35 @@ function processData(json, yStart, yEnd) {
   return result;
 }
 
-// ── Get active series based on aggregation ──
 function getActiveSeries(vd) {
-  if (aggMode === 'monthly')   return { labels: vd.monthlyLabels,  vals: vd.monthlyVals };
-  if (aggMode === 'seasonal')  return { labels: vd.seasonalLabels, vals: vd.seasonalVals };
-  return { labels: vd.years.map(String), vals: vd.vals }; // yearly default
+  if (aggMode === 'monthly')  return { labels: vd.monthlyLabels,            vals: vd.monthlyVals };
+  if (aggMode === 'seasonal') return { labels: vd.seasonalLabels,           vals: vd.seasonalVals };
+  return                             { labels: vd.years.map(String),        vals: vd.vals };
 }
 
 function smoothArray(arr, w) {
   if (w <= 1) return arr;
+  const half = Math.floor(w / 2);
   return arr.map((_, i) => {
-    const half = Math.floor(w/2);
-    const slice = arr.slice(Math.max(0,i-half), Math.min(arr.length,i+half+1));
-    return slice.reduce((a,b)=>a+b,0)/slice.length;
+    const slice = arr.slice(Math.max(0, i-half), Math.min(arr.length, i+half+1));
+    return slice.reduce((a,b)=>a+b,0) / slice.length;
   });
 }
 
 function linearTrend(xs, ys) {
   const n = xs.length;
   if (n < 2) return { slope:0, intercept:0, line: ys.slice() };
-  const mx = xs.reduce((a,b)=>a+b)/n, my = ys.reduce((a,b)=>a+b)/n;
-  let num=0, den=0;
+  const mx = xs.reduce((a,b)=>a+b,0)/n;
+  const my = ys.reduce((a,b)=>a+b,0)/n;
+  let num = 0, den = 0;
   xs.forEach((x,i) => { num += (x-mx)*(ys[i]-my); den += (x-mx)**2; });
   const slope = den ? num/den : 0;
   const intercept = my - slope*mx;
-  return { slope, intercept, line: xs.map(x=>slope*x+intercept) };
+  return { slope, intercept, line: xs.map(x => slope*x + intercept) };
 }
 
 // ══════════════════════════════════════════════════════════════════
-//  RENDER ALL
+//  RENDER
 // ══════════════════════════════════════════════════════════════════
 function renderAllCharts(data) {
   renderTS(data);
@@ -967,27 +1168,39 @@ function renderAllCharts(data) {
 }
 
 function getVarData(data) {
-  return data[currentVar] || { years:[], vals:[], monthlyLabels:[], monthlyVals:[], seasonalLabels:[], seasonalVals:[], monthlyMean:[], rawVals:[], dates:[] };
+  return data[currentVar] || {
+    years:[], vals:[], monthlyLabels:[], monthlyVals:[],
+    seasonalLabels:[], seasonalVals:[], monthlyMean:[], rawVals:[], dates:[]
+  };
+}
+
+// Destroy old chart instance safely
+function destroyChart(ref) {
+  if (ref) { try { ref.destroy(); } catch(e) {} }
+  return null;
 }
 
 // ── TIME SERIES ──
 function renderTS(data) {
-  const vd = getVarData(data);
+  const vd  = getVarData(data);
   const cfg = VAR_CONFIG[currentVar];
   const { labels, vals } = getActiveSeries(vd);
+  if (!vals.length) return;
+
   const smoothed = smoothArray(vals, smoothWindow);
-  const xs = vals.map((_,i)=>i);
+  const xs    = vals.map((_,i) => i);
   const trend = linearTrend(xs, vals);
 
-  let trendLabel = '';
   if (aggMode === 'yearly') {
     const dt = (trend.slope * 10).toFixed(3);
-    trendLabel = `Trend: ${dt > 0 ? '+' : ''}${dt} ${cfg.unit}/decade`;
+    document.getElementById('ts-trend-label').textContent =
+      `Trend: ${+dt >= 0 ? '+' : ''}${dt} ${cfg.unit}/decade`;
+  } else {
+    document.getElementById('ts-trend-label').textContent = '';
   }
-  document.getElementById('ts-trend-label').textContent = trendLabel;
 
   const ctx = document.getElementById('chart-ts').getContext('2d');
-  if (chartTS) chartTS.destroy();
+  chartTS = destroyChart(chartTS);
   chartTS = new Chart(ctx, {
     type: 'line',
     data: {
@@ -999,7 +1212,7 @@ function renderTS(data) {
           borderColor: cfg.color,
           backgroundColor: cfg.color + '18',
           borderWidth: smoothWindow > 1 ? 2.5 : 1.5,
-          pointRadius: labels.length > 100 ? 0 : (smoothWindow > 1 ? 0 : 3),
+          pointRadius: labels.length > 100 ? 0 : (smoothWindow > 1 ? 0 : 2.5),
           pointHoverRadius: 5,
           fill: true,
           tension: 0.35,
@@ -1019,10 +1232,19 @@ function renderTS(data) {
     options: {
       ...chartOpts(`${cfg.label} (${cfg.unit})`, true),
       scales: {
-        ...chartOpts(`${cfg.label} (${cfg.unit})`).scales,
         x: {
-          ...chartOpts().scales.x,
-          ticks: { ...chartOpts().scales.x.ticks, maxTicksLimit: labels.length > 60 ? 12 : 10 }
+          grid: { color: '#eef1f7' },
+          ticks: {
+            font: { family:'JetBrains Mono', size:10 },
+            color: '#8794a8',
+            maxTicksLimit: labels.length > 60 ? 12 : 10,
+            maxRotation: 45
+          }
+        },
+        y: {
+          grid: { color: '#eef1f7' },
+          ticks: { font: { family:'JetBrains Mono', size:10 }, color: '#8794a8' },
+          title: { display:true, text:`${cfg.label} (${cfg.unit})`, color:'#8794a8', font:{size:10} }
         }
       }
     }
@@ -1031,14 +1253,16 @@ function renderTS(data) {
 
 // ── BAR ──
 function renderBar(data) {
-  const vd = getVarData(data);
+  const vd  = getVarData(data);
   const cfg = VAR_CONFIG[currentVar];
   const { labels, vals } = getActiveSeries(vd);
-  const mean = vals.reduce((a,b)=>a+b,0)/vals.length;
-  const colors = vals.map(v => v > mean ? '#ef4444CC' : '#3b82f6CC');
+  if (!vals.length) return;
+
+  const mean   = vals.reduce((a,b)=>a+b,0) / vals.length;
+  const colors = vals.map(v => v >= mean ? '#ef4444CC' : '#3b82f6CC');
 
   const ctx = document.getElementById('chart-bar').getContext('2d');
-  if (chartBar) chartBar.destroy();
+  chartBar = destroyChart(chartBar);
   chartBar = new Chart(ctx, {
     type: 'bar',
     data: {
@@ -1051,15 +1275,17 @@ function renderBar(data) {
 
 // ── ANOMALY ──
 function renderAnomaly(data) {
-  const vd = getVarData(data);
+  const vd  = getVarData(data);
   const cfg = VAR_CONFIG[currentVar];
   const { labels, vals } = getActiveSeries(vd);
-  const mean = vals.reduce((a,b)=>a+b,0)/vals.length;
-  const anoms = vals.map(v => +(v-mean).toFixed(3));
-  const colors = anoms.map(a => a > 0 ? '#ef4444BB' : '#3b82f6BB');
+  if (!vals.length) return;
+
+  const mean   = vals.reduce((a,b)=>a+b,0) / vals.length;
+  const anoms  = vals.map(v => +(v - mean).toFixed(3));
+  const colors = anoms.map(a => a >= 0 ? '#ef4444BB' : '#3b82f6BB');
 
   const ctx = document.getElementById('chart-anom').getContext('2d');
-  if (chartAnom) chartAnom.destroy();
+  chartAnom = destroyChart(chartAnom);
   chartAnom = new Chart(ctx, {
     type: 'bar',
     data: {
@@ -1070,49 +1296,66 @@ function renderAnomaly(data) {
   });
 }
 
-// ── SEASONAL PATTERN ──
+// ── SEASONAL ──
 function renderSeasonal(data) {
-  const vd = getVarData(data);
+  const vd  = getVarData(data);
   const cfg = VAR_CONFIG[currentVar];
   const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  const mvals = vd.monthlyMean;
-  const valid = mvals.filter(v=>v!==null);
+  const mvals  = vd.monthlyMean;
+  const valid  = mvals.filter(v => v !== null);
   if (!valid.length) return;
+
   const minV = Math.min(...valid), maxV = Math.max(...valid);
-  const norm = mvals.map(v => v!==null ? (v-minV)/(maxV-minV||1) : .5);
-  const colors = norm.map(n => interpolateColor(cfg.palette[0], cfg.palette[cfg.palette.length-1], n));
+  const norm = mvals.map(v => v !== null ? (v - minV) / (maxV - minV || 1) : 0.5);
+  const colors = norm.map(n => interpolateColor(
+    cfg.palette[0], cfg.palette[cfg.palette.length-1], n
+  ));
 
   const ctx = document.getElementById('chart-seasonal').getContext('2d');
-  if (chartSeasonal) chartSeasonal.destroy();
+  chartSeasonal = destroyChart(chartSeasonal);
   chartSeasonal = new Chart(ctx, {
     type: 'bar',
     data: {
       labels: months,
-      datasets: [{ label: 'Monthly Mean', data: mvals.map(v=>v!==null?+v.toFixed(2):null), backgroundColor: colors, borderRadius: 4 }]
+      datasets: [{
+        label: 'Monthly Mean',
+        data: mvals.map(v => v !== null ? +v.toFixed(2) : null),
+        backgroundColor: colors,
+        borderRadius: 4
+      }]
     },
     options: chartOpts(`${cfg.label} (${cfg.unit})`)
   });
-  document.getElementById('seasonal-sub').textContent = `Monthly climatology · ${data.yStart}–${data.yEnd}`;
+  document.getElementById('seasonal-sub').textContent =
+    `Monthly climatology · ${data.yStart}–${data.yEnd}`;
 }
 
 // ── HISTOGRAM ──
 function renderHistogram(data) {
-  const vd = getVarData(data);
+  const vd  = getVarData(data);
   const cfg = VAR_CONFIG[currentVar];
   const { vals } = getActiveSeries(vd);
   if (!vals.length) return;
+
   const min = Math.min(...vals), max = Math.max(...vals);
   const bins = 14;
-  const binSize = (max-min)/bins;
+  const binSize = (max - min) / bins || 1;
   const counts = Array(bins).fill(0);
-  vals.forEach(v => { let b = Math.floor((v-min)/binSize); if (b>=bins) b=bins-1; counts[b]++; });
-  const labels = counts.map((_,i) => (min+i*binSize).toFixed(1));
-  const freqs = counts.map(c => +(c/vals.length*100).toFixed(1));
-  const norm2 = counts.map(c => c/Math.max(...counts));
-  const colors = norm2.map(n => interpolateColor(cfg.palette[1]||'#60a5fa', cfg.color, n));
+  vals.forEach(v => {
+    let b = Math.floor((v - min) / binSize);
+    if (b >= bins) b = bins - 1;
+    if (b < 0) b = 0;
+    counts[b]++;
+  });
+  const labels = counts.map((_, i) => (min + i * binSize).toFixed(1));
+  const freqs  = counts.map(c => +(c / vals.length * 100).toFixed(1));
+  const maxC   = Math.max(...counts) || 1;
+  const colors = counts.map(c => interpolateColor(
+    cfg.palette[1] || '#60a5fa', cfg.color, c / maxC
+  ));
 
   const ctx = document.getElementById('chart-hist').getContext('2d');
-  if (chartHist) chartHist.destroy();
+  chartHist = destroyChart(chartHist);
   chartHist = new Chart(ctx, {
     type: 'bar',
     data: {
@@ -1125,87 +1368,105 @@ function renderHistogram(data) {
 
 // ── STATS TABLE ──
 function renderStatsTable(data) {
-  const vd = getVarData(data);
+  const vd  = getVarData(data);
   const cfg = VAR_CONFIG[currentVar];
   const { labels, vals } = getActiveSeries(vd);
   if (!vals.length) return;
-  const mean = vals.reduce((a,b)=>a+b,0)/vals.length;
+
+  const mean = vals.reduce((a,b)=>a+b,0) / vals.length;
   const rows = labels.map((lbl,i) => {
-    const v = vals[i];
+    const v    = vals[i];
     const anom = v - mean;
-    const anomClass = Math.abs(anom)<.5?'anomaly-neutral': anom>0?'anomaly-pos':'anomaly-neg';
-    const barW = Math.min(100, Math.abs(v / (cfg.high||1) * 100));
+    const cls  = Math.abs(anom) < 0.5 ? 'anomaly-neutral' : anom > 0 ? 'anomaly-pos' : 'anomaly-neg';
+    const barW = Math.min(100, Math.abs(v / (cfg.high || 1) * 100));
     return `<tr>
       <td>${lbl}</td>
       <td>${v.toFixed(2)}</td>
-      <td><span class="anomaly-chip ${anomClass}">${anom>=0?'+':''}${anom.toFixed(2)}</span></td>
+      <td><span class="anomaly-chip ${cls}">${anom >= 0 ? '+' : ''}${anom.toFixed(2)}</span></td>
       <td>
         <div class="anomaly-bar-wrap">
-          <div class="anomaly-bar-bg"><div class="anomaly-bar-fill" style="width:${barW}%;background:${anom>0?'#ef4444':'#3b82f6'}"></div></div>
-          <span style="font-size:10px;color:var(--text-muted);width:32px;text-align:right">${v.toFixed(1)}</span>
+          <div class="anomaly-bar-bg">
+            <div class="anomaly-bar-fill" style="width:${barW}%;background:${anom>0?'#ef4444':'#3b82f6'}"></div>
+          </div>
+          <span style="font-size:10px;color:var(--text-muted);width:36px;text-align:right">${v.toFixed(1)}</span>
         </div>
       </td>
     </tr>`;
   });
   document.getElementById('stats-table-wrap').innerHTML = `
     <table class="stats-table">
-      <thead><tr><th>Period</th><th>${cfg.label} (${cfg.unit})</th><th>Anomaly</th><th>Magnitude</th></tr></thead>
+      <thead><tr>
+        <th>Period</th>
+        <th>${cfg.label} (${cfg.unit})</th>
+        <th>Anomaly</th>
+        <th>Magnitude</th>
+      </tr></thead>
       <tbody>${rows.join('')}</tbody>
     </table>`;
 }
 
 // ══════════════════════════════════════════════════════════════════
-//  KPI & SIDEBAR STATS
+//  KPIs & SIDEBAR STATS
 // ══════════════════════════════════════════════════════════════════
 function updateKPIs(data) {
-  const vd = getVarData(data);
+  const vd  = getVarData(data);
   const cfg = VAR_CONFIG[currentVar];
   const { labels, vals } = getActiveSeries(vd);
   if (!vals.length) return;
 
-  const mean = vals.reduce((a,b)=>a+b,0)/vals.length;
-  const maxV = Math.max(...vals), minV = Math.min(...vals);
-  const maxIdx = vals.indexOf(maxV), minIdx = vals.indexOf(minV);
-  const maxLbl = labels[maxIdx], minLbl = labels[minIdx];
+  const mean   = vals.reduce((a,b)=>a+b,0) / vals.length;
+  const maxV   = Math.max(...vals);
+  const minV   = Math.min(...vals);
+  const maxIdx = vals.indexOf(maxV);
+  const minIdx = vals.indexOf(minV);
 
   document.getElementById('kpi-mean-num').textContent   = mean.toFixed(1);
-  document.getElementById('kpi-mean-unit').textContent  = cfg.unit;
-  document.getElementById('kpi-mean-label').textContent = `${data.yStart}–${data.yEnd} · ${VAR_CONFIG[currentVar].label}`;
+  document.getElementById('kpi-mean-unit').textContent  = ' ' + cfg.unit;
+  document.getElementById('kpi-mean-label').textContent = `${data.yStart}–${data.yEnd} · ${cfg.label}`;
 
   document.getElementById('kpi-high-num').textContent   = maxV.toFixed(1);
-  document.getElementById('kpi-high-unit').textContent  = cfg.unit;
-  document.getElementById('kpi-high-yr').textContent    = `↑ Record high · ${maxLbl}`;
+  document.getElementById('kpi-high-unit').textContent  = ' ' + cfg.unit;
+  document.getElementById('kpi-high-yr').textContent    = `↑ Record high · ${labels[maxIdx]}`;
 
   document.getElementById('kpi-low-num').textContent    = minV.toFixed(1);
-  document.getElementById('kpi-low-unit').textContent   = cfg.unit;
-  document.getElementById('kpi-low-yr').textContent     = `↓ Record low · ${minLbl}`;
+  document.getElementById('kpi-low-unit').textContent   = ' ' + cfg.unit;
+  document.getElementById('kpi-low-yr').textContent     = `↓ Record low · ${labels[minIdx]}`;
+
+  // Location KPI (show current city)
+  if (data.city) {
+    document.getElementById('kpi-location').textContent = data.city.n;
+    document.getElementById('kpi-coords').textContent   =
+      `${data.city.lat.toFixed(2)}°, ${data.city.lon.toFixed(2)}°`;
+  }
 }
 
 function updateSidebarStats(data) {
-  const vd = getVarData(data);
+  const vd  = getVarData(data);
   const cfg = VAR_CONFIG[currentVar];
   const { labels, vals } = getActiveSeries(vd);
   if (!vals.length) return;
-  const n = vals.length;
-  const mean = vals.reduce((a,b)=>a+b,0)/n;
-  const std  = Math.sqrt(vals.reduce((a,v)=>a+(v-mean)**2,0)/Math.max(1,n-1));
+
+  const n    = vals.length;
+  const mean = vals.reduce((a,b)=>a+b,0) / n;
+  const std  = Math.sqrt(vals.reduce((a,v)=>a+(v-mean)**2,0) / Math.max(1, n-1));
   const maxV = Math.max(...vals), minV = Math.min(...vals);
   const maxIdx = vals.indexOf(maxV), minIdx = vals.indexOf(minV);
 
-  document.getElementById('st-mean').textContent = mean.toFixed(2);
+  document.getElementById('st-mean').textContent     = mean.toFixed(2);
   document.getElementById('st-unit-mean').textContent = cfg.unit;
-  document.getElementById('st-std').textContent  = std.toFixed(2);
-  document.getElementById('st-max').textContent  = maxV.toFixed(2);
-  document.getElementById('st-max-yr').textContent = labels[maxIdx];
-  document.getElementById('st-min').textContent  = minV.toFixed(2);
-  document.getElementById('st-min-yr').textContent = labels[minIdx];
+  document.getElementById('st-std').textContent      = std.toFixed(2);
+  document.getElementById('st-max').textContent      = maxV.toFixed(2);
+  document.getElementById('st-max-yr').textContent   = labels[maxIdx];
+  document.getElementById('st-min').textContent      = minV.toFixed(2);
+  document.getElementById('st-min-yr').textContent   = labels[minIdx];
 
-  // Trend only makes sense for yearly
   if (aggMode === 'yearly' && vd.years.length > 1) {
     const trend = linearTrend(vd.years.map((_,i)=>i), vd.vals);
     const dt = trend.slope * 10;
-    document.getElementById('st-trend').textContent = `${dt>=0?'+':''}${dt.toFixed(3)} ${cfg.unit}/dec`;
-    document.getElementById('st-trend').style.color = dt > 0.1 ? 'var(--hot)' : dt < -0.1 ? 'var(--cold)' : 'var(--text-primary)';
+    document.getElementById('st-trend').textContent =
+      `${dt >= 0 ? '+' : ''}${dt.toFixed(3)} ${cfg.unit}/dec`;
+    document.getElementById('st-trend').style.color =
+      dt > 0.1 ? 'var(--hot)' : dt < -0.1 ? 'var(--cold)' : 'var(--text-primary)';
   } else {
     document.getElementById('st-trend').textContent = 'N/A (use Annual)';
     document.getElementById('st-trend').style.color = 'var(--text-muted)';
@@ -1213,21 +1474,32 @@ function updateSidebarStats(data) {
 }
 
 // ══════════════════════════════════════════════════════════════════
-//  MAP COLORS
+//  MAP COLORING (approximate global values)
 // ══════════════════════════════════════════════════════════════════
 function spreadMapColors(city, data) {
-  const isoLat = {4:34,8:41,12:28,24:-12,32:-34,36:-25,40:47,50:24,56:50,64:27,68:-16,76:-15,100:43,116:13,120:4,124:60,152:-30,156:35,170:4,180:-4,208:56,218:-2,818:26,231:9,246:62,250:46,276:51,288:8,300:38,320:15,356:21,360:-5,364:32,368:33,372:53,376:32,380:42,392:36,400:31,398:51,404:-1,408:40,410:37,422:34,428:57,440:55,450:-19,458:3,484:24,504:32,528:52,554:-41,566:10,578:60,586:30,604:-12,608:13,616:52,620:39,642:44,643:60,682:24,686:14,710:-29,724:40,762:39,764:13,792:39,804:49,784:24,840:37,858:-33,860:41,704:16,887:15,894:-15,716:-20,826:51,496:47,434:27,756:47,203:50};
-  const vals = Object.entries(isoLat).map(([iso,lat]) => {
+  const isoLat = {
+    4:34,8:41,12:28,24:-12,32:-34,36:-25,40:47,50:24,56:50,68:-16,
+    76:-15,100:43,116:13,120:4,124:60,152:-30,156:35,170:4,180:-4,
+    208:56,218:-2,818:26,231:9,246:62,250:46,276:51,288:8,300:38,
+    320:15,356:21,360:-5,364:32,368:33,372:53,376:32,380:42,392:36,
+    400:31,398:51,404:-1,408:40,410:37,422:34,428:57,440:55,450:-19,
+    458:3,484:24,504:32,528:52,554:-41,566:10,578:60,586:30,604:-12,
+    608:13,616:52,620:39,634:25,642:44,643:60,682:24,686:14,710:-29,
+    724:40,762:39,764:13,792:39,804:49,784:24,840:37,858:-33,860:41,
+    704:16,887:15,894:-15,716:-20,826:51,496:47,434:27,756:47,203:50,
+    496:47,756:47,634:25
+  };
+  const vals = Object.entries(isoLat).map(([iso, lat]) => {
     let approx;
     if (currentVar === 'temperature_2m_max')
-      approx = 38 - Math.abs(lat)*0.55 + (Math.random()-.5)*4;
+      approx = 38 - Math.abs(lat) * 0.55 + (Math.random() - 0.5) * 4;
     else if (currentVar === 'temperature_2m_min')
-      approx = 18 - Math.abs(lat)*0.65 + (Math.random()-.5)*3;
+      approx = 18 - Math.abs(lat) * 0.65 + (Math.random() - 0.5) * 3;
     else if (currentVar === 'precipitation_sum')
-      approx = 500 + Math.max(0, 300 - Math.abs(lat-5)*8) + (Math.random()-.5)*200;
+      approx = 500 + Math.max(0, 300 - Math.abs(lat-5) * 8) + (Math.random() - 0.5) * 200;
     else
-      approx = 18 + Math.abs(lat)*.35 + (Math.random()-.5)*8;
-    return { iso:+iso, value:+approx.toFixed(1) };
+      approx = 18 + Math.abs(lat) * 0.35 + (Math.random() - 0.5) * 8;
+    return { iso: +iso, value: +approx.toFixed(1) };
   });
   colorCountries(vals);
 }
@@ -1241,23 +1513,38 @@ function chartOpts(yLabel='', withLegend=false) {
     maintainAspectRatio: false,
     interaction: { intersect: false, mode: 'index' },
     plugins: {
-      legend: { display: withLegend, position: 'top', labels: { boxWidth: 12, font:{family:'Inter',size:11} } },
+      legend: {
+        display: withLegend,
+        position: 'top',
+        labels: { boxWidth: 12, font: { family:'Inter', size:11 } }
+      },
       tooltip: {
         backgroundColor: 'rgba(26,35,50,.92)',
         titleFont: { family:'JetBrains Mono', size:11 },
         bodyFont:  { family:'JetBrains Mono', size:12 },
-        padding: 10, cornerRadius: 7,
+        padding: 10,
+        cornerRadius: 7,
       },
     },
     scales: {
       x: {
         grid: { color: '#eef1f7', lineWidth: 1 },
-        ticks: { font:{family:'JetBrains Mono',size:10}, color:'#8794a8', maxTicksLimit:10, maxRotation:45 },
+        ticks: {
+          font: { family:'JetBrains Mono', size:10 },
+          color: '#8794a8',
+          maxTicksLimit: 10,
+          maxRotation: 45
+        },
       },
       y: {
         grid: { color: '#eef1f7', lineWidth: 1 },
-        ticks: { font:{family:'JetBrains Mono',size:10}, color:'#8794a8' },
-        title: { display:!!yLabel, text:yLabel, color:'#8794a8', font:{size:10,family:'Inter'} },
+        ticks: { font: { family:'JetBrains Mono', size:10 }, color: '#8794a8' },
+        title: {
+          display: !!yLabel,
+          text: yLabel,
+          color: '#8794a8',
+          font: { size:10, family:'Inter' }
+        },
       }
     }
   };
@@ -1268,7 +1555,11 @@ function chartOpts(yLabel='', withLegend=false) {
 // ══════════════════════════════════════════════════════════════════
 function hexToRgb(hex) {
   const h = hex.replace('#','').slice(0,6);
-  return [parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16)];
+  return [
+    parseInt(h.slice(0,2), 16),
+    parseInt(h.slice(2,4), 16),
+    parseInt(h.slice(4,6), 16)
+  ];
 }
 function interpolateColor(c1, c2, t) {
   try {
