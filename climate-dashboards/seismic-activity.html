@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Global Seismic Activity Dashboard · AlphaStatLab</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{--bg:#f7f9fc;--surface:#fff;--surface2:#f0f4f9;--border:#dde3ed;--border-light:#eef1f7;--text-primary:#1a2332;--text-secondary:#4a5568;--text-muted:#8794a8;--accent-blue:#2563eb;--shallow:#ef4444;--deep:#3b82f6;--shadow:0 1px 3px rgba(0,0,0,.06),0 4px 12px rgba(0,0,0,.04);--radius:10px;--font-data:'JetBrains Mono',monospace}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primary);font-size:14px;line-height:1.5}
+.header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;gap:20px;height:58px;position:sticky;top:0;z-index:100;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.logo-block{display:flex;align-items:center;gap:10px}
+.logo-icon{width:32px;height:32px;background:linear-gradient(135deg,#2563eb,#0d9488);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:15px}
+.logo-text{font-size:15px;font-weight:700;letter-spacing:-.3px}
+.logo-sub{font-size:11px;color:var(--text-muted)}
+.header-divider{width:1px;height:28px;background:var(--border);flex-shrink:0}
+.header-title{font-size:13px;font-weight:600;color:var(--text-secondary);white-space:nowrap}
+.header-spacer{flex:1}
+.data-badge{display:flex;align-items:center;gap:6px;padding:5px 10px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:20px;font-size:11px;font-weight:500;color:#15803d;white-space:nowrap}
+.dot-live{width:7px;height:7px;background:#22c55e;border-radius:50%;animation:pulse 2s infinite;flex-shrink:0}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.usgs-badge{padding:4px 9px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:20px;font-size:11px;font-weight:600;color:#1d4ed8;white-space:nowrap}
+.page-wrap{display:grid;grid-template-columns:300px 1fr;min-height:calc(100vh - 58px);align-items:start}
+.sidebar{background:var(--surface);border-right:1px solid var(--border);padding:20px 16px;display:flex;flex-direction:column;gap:18px;position:sticky;top:58px;height:calc(100vh - 58px);overflow-y:auto}
+.content{padding:20px;display:flex;flex-direction:column;gap:18px;min-width:0}
+.sidebar-section-label{font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px}
+.select-group{display:flex;flex-direction:column;gap:6px}
+.select-label{font-size:12px;font-weight:500;color:var(--text-secondary)}
+select{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:7px;background:var(--bg);color:var(--text-primary);font-family:inherit;font-size:13px;outline:none;transition:border-color .15s;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath fill='%238794a8' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;padding-right:28px}
+select:focus{border-color:var(--accent-blue);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+.var-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.var-btn{padding:8px 6px;border:1px solid var(--border);border-radius:7px;background:var(--bg);cursor:pointer;text-align:center;font-size:11px;font-weight:500;color:var(--text-secondary);transition:all .15s;display:flex;flex-direction:column;align-items:center;gap:3px}
+.var-btn .var-icon{font-size:16px}
+.var-btn:hover{border-color:var(--accent-blue);color:var(--accent-blue);background:#eff6ff}
+.var-btn.active{border-color:var(--accent-blue);background:#eff6ff;color:var(--accent-blue);font-weight:600}
+.btn-primary{width:100%;padding:10px;background:var(--accent-blue);color:#fff;border:none;border-radius:8px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:background .15s;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn-primary:hover{background:#1d4ed8}
+.btn-primary:disabled{background:#93c5fd;cursor:not-allowed}
+.stat-mini{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:11px 13px}
+.stat-mini-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted)}
+.stat-mini-val{font-family:var(--font-data);font-size:20px;font-weight:500;margin-top:2px}
+.stat-mini-sub{font-size:11px;color:var(--text-muted);margin-top:1px}
+.stat-mini-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+.card-header{padding:14px 18px 10px;border-bottom:1px solid var(--border-light);display:flex;align-items:center;gap:10px}
+.card-title{font-size:13px;font-weight:600;color:var(--text-primary)}
+.card-sub{font-size:11px;color:var(--text-muted);margin-top:1px}
+.card-header-spacer{flex:1}
+.card-badge{font-size:10px;font-weight:600;padding:3px 8px;border-radius:20px;background:var(--surface2);color:var(--text-muted);border:1px solid var(--border);white-space:nowrap}
+.card-body{padding:16px 18px}
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:4px;min-width:0}
+.kpi-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted)}
+.kpi-val{font-family:var(--font-data);font-size:22px;font-weight:500;line-height:1.1;display:flex;align-items:baseline;gap:4px}
+.kpi-val .kpi-unit{font-size:12px;font-weight:400;color:var(--text-muted)}
+.kpi-trend{font-size:11px;font-weight:500;word-break:break-word}
+.trend-shallow{color:var(--shallow)}.trend-deep{color:var(--deep)}.trend-neutral{color:var(--text-muted)}
+.kpi-location-val{font-family:'Inter',sans-serif;font-size:16px;font-weight:600;line-height:1.2}
+.kpi-color-bar{height:3px;border-radius:2px;margin-top:6px}
+#world-map-container{width:100%;height:440px;position:relative;background:linear-gradient(160deg,#f0f7ff,#e8f4f8);overflow:hidden}
+#world-map-container svg{display:block;width:100%;height:100%}
+.country-path{stroke:#fff;stroke-width:.4px}
+.eq-dot{cursor:pointer;transition:opacity .1s;stroke:#fff;stroke-width:.6px}
+.eq-dot:hover{opacity:.7;stroke-width:1.4px;stroke:#1a2332}
+.map-legend{position:absolute;bottom:14px;left:18px;background:rgba(255,255,255,.92);backdrop-filter:blur(4px);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-size:11px;display:flex;gap:16px}
+.legend-title{font-weight:600;color:var(--text-secondary);margin-bottom:6px}
+.legend-gradient{width:140px;height:10px;border-radius:5px;margin-bottom:4px}
+.legend-ticks{display:flex;justify-content:space-between;color:var(--text-muted);font-size:10px;font-family:var(--font-data);width:140px}
+.legend-size-row{display:flex;align-items:flex-end;gap:8px}
+.legend-size-item{display:flex;flex-direction:column;align-items:center;gap:3px}
+.legend-size-item span{font-size:9px;color:var(--text-muted);font-family:var(--font-data)}
+.legend-dot{border-radius:50%;background:#94a3b8}
+.map-tooltip{position:absolute;pointer-events:none;background:rgba(26,35,50,.92);color:#fff;padding:8px 12px;border-radius:7px;font-size:12px;display:none;z-index:10;max-width:220px;line-height:1.4}
+.map-controls{position:absolute;top:14px;right:14px;display:flex;flex-direction:column;gap:4px}
+.map-ctrl-btn{width:28px;height:28px;background:rgba(255,255,255,.9);border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;font-weight:600;color:var(--text-secondary);transition:background .1s}
+.map-ctrl-btn:hover{background:#fff;color:var(--accent-blue)}
+.map-info{position:absolute;top:14px;left:18px;background:rgba(255,255,255,.88);backdrop-filter:blur(4px);border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-size:11px;color:var(--text-secondary);max-width:60%}
+.charts-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.chart-wrapper{position:relative;width:100%;height:240px}
+.chart-wrapper canvas{position:absolute;top:0;left:0;width:100%!important;height:100%!important}
+.chart-legend{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:8px 18px 4px;font-size:11px;color:var(--text-secondary);background:var(--surface2);border-bottom:1px solid var(--border-light)}
+.legend-item{display:flex;align-items:center;gap:5px;white-space:nowrap}
+.legend-swatch{width:12px;height:12px;border-radius:3px;flex-shrink:0;display:inline-block}
+.stats-table{width:100%;border-collapse:collapse;font-size:12px}
+.stats-table th{text-align:left;padding:8px 10px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted);border-bottom:1px solid var(--border);background:var(--surface2)}
+.stats-table td{padding:8px 10px;border-bottom:1px solid var(--border-light);font-family:var(--font-data);font-size:12px;vertical-align:middle}
+.stats-table tr:last-child td{border-bottom:none}
+.stats-table td:first-child{font-family:'Inter',sans-serif;font-size:12px;font-weight:500;font-family:var(--font-data)}
+.mag-chip{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700;font-family:var(--font-data)}
+.mag-minor{background:var(--surface2);color:var(--text-muted)}
+.mag-light{background:#dbeafe;color:#1e40af}
+.mag-moderate{background:#fef9c3;color:#854d0e}
+.mag-strong{background:#fed7aa;color:#9a3412}
+.mag-major{background:#fee2e2;color:#991b1b}
+.loading-overlay{position:absolute;inset:0;background:rgba(247,249,252,.88);backdrop-filter:blur(2px);display:flex;align-items:center;justify-content:center;z-index:50;border-radius:var(--radius)}
+.spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--accent-blue);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{font-size:12px;color:var(--text-muted);margin-top:10px;text-align:center}
+.dashboard-footer{padding:12px 20px;border-top:1px solid var(--border);display:flex;align-items:center;gap:16px;flex-wrap:wrap;background:var(--surface)}
+.footer-note{font-size:11px;color:var(--text-muted)}
+.footer-note a{color:var(--accent-blue);text-decoration:none}
+.footer-note a:hover{text-decoration:underline}
+.footer-spacer{flex:1}
+.footer-credit{font-size:11px;color:var(--text-muted);font-weight:500}
+.footer-credit span{color:var(--accent-blue)}
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;height:200px;color:var(--text-muted);font-size:12px;gap:8px}
+.empty-icon{font-size:32px;opacity:.4}
+.tab-row{display:flex;gap:0;border-bottom:1px solid var(--border);padding:0 18px;overflow-x:auto}
+.tab-btn{padding:10px 14px;font-size:12px;font-weight:500;color:var(--text-muted);border-bottom:2px solid transparent;cursor:pointer;transition:all .12s;border:none;background:none;font-family:inherit;margin-bottom:-1px;white-space:nowrap}
+.tab-btn:hover{color:var(--text-primary)}
+.tab-btn.active{color:var(--accent-blue);border-bottom-color:var(--accent-blue);font-weight:600}
+.tab-pane{display:none}
+.tab-pane.active{display:block}
+.rate-banner{display:none;align-items:center;gap:8px;padding:8px 14px;background:#fffbeb;border:1px solid #fcd34d;border-radius:8px;font-size:12px;color:#92400e}
+.rate-banner.show{display:flex}
+.truncate-note{font-size:10px;color:var(--text-muted);padding:6px 18px;background:var(--surface2);border-bottom:1px solid var(--border-light)}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px}
+::-webkit-scrollbar-thumb:hover{background:#c1cbd8}
+@media(max-width:960px){.page-wrap{grid-template-columns:1fr}.sidebar{position:static;height:auto;border-right:none;border-bottom:1px solid var(--border)}.kpi-row{grid-template-columns:1fr 1fr}.charts-row{grid-template-columns:1fr}}
+@media(max-width:520px){.kpi-row{grid-template-columns:1fr 1fr}.header-title{display:none}.chart-wrapper{height:200px}}
+</style>
+</head>
+<body>
+<header class="header">
+  <div class="logo-block">
+    <div class="logo-icon">&#x1F30D;</div>
+    <div><div class="logo-text">AlphaStatLab</div><div class="logo-sub">Statistical Research Platform</div></div>
+  </div>
+  <div class="header-divider"></div>
+  <div class="header-title">Global Seismic Activity Dashboard</div>
+  <div class="header-spacer"></div>
+  <div class="usgs-badge">USGS &middot; Earthquake Hazards Program</div>
+  <div class="data-badge"><div class="dot-live"></div>Live Feed</div>
+</header>
+
+<div class="page-wrap">
+<aside class="sidebar">
+  <div>
+    <div class="sidebar-section-label">&#x1F30B; Magnitude Threshold</div>
+    <div class="var-grid">
+      <button class="var-btn active" data-mag="significant" onclick="setMag(this)"><span class="var-icon">&#x2757;</span>Significant</button>
+      <button class="var-btn" data-mag="4.5" onclick="setMag(this)"><span class="var-icon">&#x1F538;</span>M4.5+</button>
+      <button class="var-btn" data-mag="2.5" onclick="setMag(this)"><span class="var-icon">&#x1F536;</span>M2.5+</button>
+      <button class="var-btn" data-mag="1.0" onclick="setMag(this)"><span class="var-icon">&#x1F537;</span>M1.0+</button>
+    </div>
+  </div>
+  <div>
+    <div class="sidebar-section-label">&#x1F4C5; Time Window</div>
+    <div class="select-group">
+      <select id="period-select">
+        <option value="hour">Past Hour</option>
+        <option value="day">Past Day</option>
+        <option value="week" selected>Past Week</option>
+        <option value="month">Past 30 Days</option>
+      </select>
+    </div>
+  </div>
+  <div>
+    <div class="sidebar-section-label">&#x1F3A8; Map Color Encodes</div>
+    <div class="select-group">
+      <select id="color-mode" onchange="onColorModeChange()">
+        <option value="depth" selected>Depth (shallow&rarr;deep)</option>
+        <option value="mag">Magnitude (light&rarr;major)</option>
+      </select>
+    </div>
+  </div>
+  <div class="rate-banner" id="rate-banner">&#x26A0;&#xFE0F; <span id="rate-msg">Retrying&hellip;</span></div>
+  <button class="btn-primary" id="fetch-btn" onclick="fetchData()"><span>&#x1F50D;</span> Load Earthquake Data</button>
+  <div id="sidebar-stats" style="display:none">
+    <div class="sidebar-section-label">&#x1F4C8; Summary Statistics</div>
+    <div class="stat-mini-grid">
+      <div class="stat-mini"><div class="stat-mini-label">Mean Mag</div><div class="stat-mini-val" id="st-mean">&#x2014;</div><div class="stat-mini-sub">M</div></div>
+      <div class="stat-mini"><div class="stat-mini-label">Std Dev</div><div class="stat-mini-val" id="st-std">&#x2014;</div><div class="stat-mini-sub">&#x3C3;</div></div>
+      <div class="stat-mini"><div class="stat-mini-label">Mean Depth</div><div class="stat-mini-val" id="st-depth">&#x2014;</div><div class="stat-mini-sub">km</div></div>
+      <div class="stat-mini"><div class="stat-mini-label">Median Mag</div><div class="stat-mini-val" id="st-median">&#x2014;</div><div class="stat-mini-sub">M</div></div>
+    </div>
+  </div>
+  <div style="margin-top:auto;padding-top:10px;font-size:11px;color:var(--text-muted);line-height:1.6">
+    <strong style="color:var(--text-secondary)">Data Source</strong><br>
+    USGS Earthquake Hazards Program &middot; real-time GeoJSON summary feeds &middot; updated every 5 minutes &middot; no API key required
+  </div>
+</aside>
+
+<main class="content">
+  <div class="kpi-row">
+    <div class="kpi-card">
+      <div class="kpi-label">Total Events</div>
+      <div class="kpi-val"><span id="kpi-total">&#x2014;</span></div>
+      <div class="kpi-trend trend-neutral" id="kpi-window">Select a window &amp; load</div>
+      <div class="kpi-color-bar" style="background:var(--accent-blue);width:60%"></div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Largest Magnitude</div>
+      <div class="kpi-val" style="color:var(--shallow)"><span id="kpi-max-mag">&#x2014;</span><span class="kpi-unit">M</span></div>
+      <div class="kpi-trend trend-shallow" id="kpi-max-place">&#x2014;</div>
+      <div class="kpi-color-bar" style="background:var(--shallow);width:80%"></div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Average Magnitude</div>
+      <div class="kpi-val"><span id="kpi-avg-mag">&#x2014;</span><span class="kpi-unit">M</span></div>
+      <div class="kpi-trend trend-neutral" id="kpi-avg-label">&#x2014;</div>
+      <div class="kpi-color-bar" style="background:#e2e8f0;width:50%"></div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Average Depth</div>
+      <div class="kpi-val" style="color:var(--deep)"><span id="kpi-avg-depth">&#x2014;</span><span class="kpi-unit">km</span></div>
+      <div class="kpi-trend trend-deep" id="kpi-depth-label">&#x2014;</div>
+      <div class="kpi-color-bar" style="background:var(--deep);width:65%"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div><div class="card-title">&#x1F30D; Global Epicenter Map</div><div class="card-sub">Bubble size = magnitude &middot; color = selected encoding &middot; hover for details</div></div>
+      <div class="card-header-spacer"></div>
+      <div class="card-badge" id="map-var-label">Significant &middot; Past Week</div>
+    </div>
+    <div id="world-map-container">
+      <div class="map-info" id="map-info">Choose filters and click "Load Earthquake Data"</div>
+      <div class="map-controls">
+        <div class="map-ctrl-btn" onclick="zoomIn()" title="Zoom in">+</div>
+        <div class="map-ctrl-btn" onclick="zoomOut()" title="Zoom out">&minus;</div>
+        <div class="map-ctrl-btn" onclick="resetZoom()" title="Reset">&#x2299;</div>
+      </div>
+      <div class="map-tooltip" id="map-tooltip"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="tab-row">
+      <button class="tab-btn active" onclick="switchTab('ts',this)">&#x1F4C8; Frequency Over Time</button>
+      <button class="tab-btn" onclick="switchTab('hist',this)">&#x1F4CA; Magnitude Distribution</button>
+      <button class="tab-btn" onclick="switchTab('scatter',this)">&#x1F30A; Depth vs Magnitude</button>
+      <button class="tab-btn" onclick="switchTab('stats',this)">&#x1F4CB; Event List</button>
+    </div>
+
+    <!-- TIME SERIES -->
+    <div class="tab-pane active" id="tab-ts">
+      <div class="chart-legend">
+        <div class="legend-item"><div class="legend-swatch" style="background:#2563eb"></div><span id="ts-leg">Earthquake count per interval</span></div>
+      </div>
+      <div class="card-body" style="padding-top:8px">
+        <div class="chart-wrapper" style="height:270px">
+          <canvas id="chart-ts"></canvas>
+          <div class="loading-overlay" id="ts-loader" style="display:none">
+            <div style="text-align:center"><div class="spinner"></div><div class="loading-text" id="loading-msg">Fetching seismic records&hellip;</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- HISTOGRAM -->
+    <div class="tab-pane" id="tab-hist">
+      <div class="chart-legend">
+        <div class="legend-item"><div class="legend-swatch" style="background:#60a5fa"></div><span>Low-frequency magnitude bins</span></div>
+        <div class="legend-item"><div class="legend-swatch" style="background:#ef4444"></div><span>High-frequency magnitude bins</span></div>
+      </div>
+      <div class="card-body">
+        <div class="chart-wrapper" style="height:265px"><canvas id="chart-hist"></canvas></div>
+      </div>
+    </div>
+
+    <!-- SCATTER -->
+    <div class="tab-pane" id="tab-scatter">
+      <div class="chart-legend">
+        <div class="legend-item"><div class="legend-swatch" style="background:#ef4444"></div><span>Each point = one earthquake &middot; depth (km) vs magnitude</span></div>
+        <div class="legend-item" id="scatter-trunc-note" style="margin-left:auto;color:var(--text-muted);font-size:10px"></div>
+      </div>
+      <div class="card-body">
+        <div class="chart-wrapper" style="height:265px"><canvas id="chart-scatter"></canvas></div>
+      </div>
+    </div>
+
+    <!-- STATS TABLE -->
+    <div class="tab-pane" id="tab-stats">
+      <div class="truncate-note" id="table-trunc-note" style="display:none"></div>
+      <div class="card-body" style="padding:0;overflow-x:auto;max-height:480px;overflow-y:auto">
+        <div id="stats-table-wrap"><div class="empty-state"><div class="empty-icon">&#x1F4CB;</div><div>Load data to see the event list</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="charts-row">
+    <div class="card">
+      <div class="card-header">
+        <div><div class="card-title">&#x1F30D; Events by Depth Band</div><div class="card-sub" id="depth-sub">Shallow (&lt;70km) &middot; Intermediate (70&ndash;300km) &middot; Deep (&gt;300km)</div></div>
+      </div>
+      <div class="chart-legend">
+        <div class="legend-item"><div class="legend-swatch" style="background:#ef4444"></div><span>Shallow &mdash; greatest surface shaking risk</span></div>
+        <div class="legend-item"><div class="legend-swatch" style="background:#f97316"></div><span>Intermediate</span></div>
+        <div class="legend-item"><div class="legend-swatch" style="background:#3b82f6"></div><span>Deep &mdash; less surface impact</span></div>
+      </div>
+      <div class="card-body"><div class="chart-wrapper"><canvas id="chart-depthband"></canvas></div></div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div><div class="card-title">&#x1F310; Top Regions</div><div class="card-sub">Event count by broad region (from place field)</div></div>
+      </div>
+      <div class="chart-legend">
+        <div class="legend-item"><div class="legend-swatch" style="background:#2563eb"></div><span>Number of events in period</span></div>
+      </div>
+      <div class="card-body"><div class="chart-wrapper"><canvas id="chart-regions"></canvas></div></div>
+    </div>
+  </div>
+
+  <div class="dashboard-footer">
+    <div class="footer-note">Data: <a href="https://earthquake.usgs.gov/earthquakes/feed/v1.0/geojson.php" target="_blank">USGS Earthquake Hazards Program</a> &middot; GeoJSON summary feeds</div>
+    <div class="footer-note">Feeds refresh every 5 minutes &middot; magnitudes are as-reported (subject to revision)</div>
+    <div class="footer-spacer"></div>
+    <div class="footer-credit">Built by <span>AlphaStatLab</span> &middot; Muhammad Ilyas, PhD &middot; QAU Islamabad</div>
+  </div>
+</main>
+</div>
+
+<script>
+// ── STATE ─────────────────────────────────────────────────────────
+let currentMag='significant',currentPeriod='week',colorMode='depth';
+let currentFeatures=[],mapSvg=null,mapProjection=null,mapZoom=null,mapG=null;
+let chartTS=null,chartHist=null,chartScatter=null,chartDepthBand=null,chartRegions=null;
+const dataCache=new Map();
+let lastFetchTime=0;
+const MIN_GAP_MS=1200;
+const MAP_MARKER_CAP=3000;   // performance cap for map bubbles
+const TABLE_ROW_CAP=300;     // performance cap for table rows
+const SCATTER_POINT_CAP=4000;// performance cap for scatter points
+
+const MAG_LABELS={significant:'Significant',"4.5":'M4.5+',"2.5":'M2.5+',"1.0":'M1.0+'};
+const PERIOD_LABELS={hour:'Past Hour',day:'Past Day',week:'Past Week',month:'Past 30 Days'};
+
+window.addEventListener('DOMContentLoaded',()=>{
+  requestAnimationFrame(()=>setTimeout(initMap,100));
+});
+
+function setMag(btn){
+  document.querySelectorAll('.var-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');currentMag=btn.dataset.mag;
+}
+function onColorModeChange(){
+  colorMode=document.getElementById('color-mode').value;
+  if(currentFeatures.length)plotMapMarkers(currentFeatures);
+}
+function switchTab(id,btn){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');document.getElementById('tab-'+id).classList.add('active');
+}
+function showBanner(show,msg=''){
+  const el=document.getElementById('rate-banner');
+  el.classList.toggle('show',show);
+  if(msg)document.getElementById('rate-msg').textContent=msg;
+}
+function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
+
+// ── FETCH WITH RETRY ───────────────────────────────────────────────
+async function fetchWithRetry(url,maxRetries=3){
+  let delay=2000;
+  for(let attempt=1;attempt<=maxRetries;attempt++){
+    const now=Date.now();
+    const wait=Math.max(0,MIN_GAP_MS-(now-lastFetchTime));
+    if(wait>0)await sleep(wait);
+    lastFetchTime=Date.now();
+    showBanner(false);
+    const resp=await fetch(url);
+    if(resp.ok)return resp.json();
+    if(resp.status===429){
+      const secs=(delay/1000).toFixed(0);
+      showBanner(true,`Rate limited — retrying in ${secs}s (attempt ${attempt}/${maxRetries})`);
+      await sleep(delay);delay*=2;continue;
+    }
+    throw new Error(`API error ${resp.status}: ${resp.statusText}`);
+  }
+  throw new Error('Rate limit exceeded. Please wait and try again.');
+}
+
+// ── MAIN FETCH ────────────────────────────────────────────────────
+async function fetchData(){
+  currentPeriod=document.getElementById('period-select').value;
+  const cacheKey=`${currentMag}_${currentPeriod}`;
+  const btn=document.getElementById('fetch-btn');
+
+  if(dataCache.has(cacheKey)){
+    applyData(dataCache.get(cacheKey));
+    document.getElementById('map-info').textContent=`${MAG_LABELS[currentMag]} · ${PERIOD_LABELS[currentPeriod]} · cached`;
+    return;
+  }
+
+  btn.disabled=true;btn.innerHTML='<span>&#x23F3;</span> Loading…';
+  document.getElementById('ts-loader').style.display='flex';
+  document.getElementById('loading-msg').textContent='Fetching seismic records…';
+
+  try{
+    const url=`https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/${currentMag}_${currentPeriod}.geojson`;
+    const json=await fetchWithRetry(url);
+    if(!json.features)throw new Error('No data returned for this selection.');
+    // keep only actual earthquakes (exclude quarry blasts, explosions, etc.)
+    const features=json.features.filter(f=>f.properties && f.properties.type==='earthquake' && f.properties.mag!=null && f.geometry && f.geometry.coordinates);
+    if(!features.length)throw new Error('No earthquakes matched this magnitude/time selection.');
+    dataCache.set(cacheKey,features);
+    applyData(features);
+  }catch(err){
+    console.error(err);showBanner(true,err.message);
+    alert('Failed to fetch earthquake data.\n\n'+err.message);
+  }
+  btn.disabled=false;btn.innerHTML='<span>&#x1F50D;</span> Load Earthquake Data';
+  document.getElementById('ts-loader').style.display='none';
+  showBanner(false);
+}
+
+function applyData(features){
+  currentFeatures=features;
+  document.getElementById('map-var-label').textContent=`${MAG_LABELS[currentMag]} · ${PERIOD_LABELS[currentPeriod]}`;
+  document.getElementById('map-info').textContent=`${features.length.toLocaleString()} events · ${MAG_LABELS[currentMag]} · ${PERIOD_LABELS[currentPeriod]}`;
+  document.getElementById('sidebar-stats').style.display='block';
+  updateKPIs(features);
+  updateSidebarStats(features);
+  renderTS(features);
+  renderHistogram(features);
+  renderScatter(features);
+  renderDepthBands(features);
+  renderRegions(features);
+  renderStatsTable(features);
+  plotMapMarkers(features);
+}
+
+// ── STATS HELPERS ────────────────────────────────────────────────
+function mean(arr){return arr.length?arr.reduce((a,b)=>a+b,0)/arr.length:0;}
+function median(arr){if(!arr.length)return 0;const s=[...arr].sort((a,b)=>a-b),m=Math.floor(s.length/2);return s.length%2?s[m]:(s[m-1]+s[m])/2;}
+function stdDev(arr){const m=mean(arr);return arr.length>1?Math.sqrt(arr.reduce((a,v)=>a+(v-m)**2,0)/(arr.length-1)):0;}
+function depthOf(f){return f.geometry.coordinates[2];}
+function magOf(f){return f.properties.mag;}
+function depthBand(d){return d<70?'Shallow':d<300?'Intermediate':'Deep';}
+function magClass(m){return m<3?'mag-minor':m<4.5?'mag-light':m<6?'mag-moderate':m<7?'mag-strong':'mag-major';}
+function magColorHex(m){return m<3?'#8794a8':m<4.5?'#3b82f6':m<6?'#f59e0b':m<7?'#f97316':'#ef4444';}
+function depthColorHex(d){ // shallow=red (hot,dangerous) → deep=blue (cool)
+  const t=Math.min(1,Math.max(0,d/700));
+  return iColor('#ef4444','#3b82f6',t);
+}
+function regionFromPlace(place){
+  if(!place)return'Unknown';
+  const parts=place.split(' of ');
+  const tail=parts.length>1?parts[1]:place;
+  return tail.trim();
+}
+
+// ── KPIs ──────────────────────────────────────────────────────────
+function updateKPIs(features){
+  const mags=features.map(magOf),depths=features.map(depthOf);
+  const maxIdx=mags.indexOf(Math.max(...mags));
+  document.getElementById('kpi-total').textContent=features.length.toLocaleString();
+  document.getElementById('kpi-window').textContent=`${MAG_LABELS[currentMag]} · ${PERIOD_LABELS[currentPeriod]}`;
+  document.getElementById('kpi-max-mag').textContent=mags[maxIdx].toFixed(1);
+  document.getElementById('kpi-max-place').textContent=features[maxIdx].properties.place||'Unknown location';
+  document.getElementById('kpi-avg-mag').textContent=mean(mags).toFixed(2);
+  document.getElementById('kpi-avg-label').textContent=`across ${features.length.toLocaleString()} events`;
+  document.getElementById('kpi-avg-depth').textContent=mean(depths).toFixed(1);
+  document.getElementById('kpi-depth-label').textContent=`median ${median(depths).toFixed(1)} km`;
+}
+function updateSidebarStats(features){
+  const mags=features.map(magOf),depths=features.map(depthOf);
+  document.getElementById('st-mean').textContent=mean(mags).toFixed(2);
+  document.getElementById('st-std').textContent=stdDev(mags).toFixed(2);
+  document.getElementById('st-depth').textContent=mean(depths).toFixed(1);
+  document.getElementById('st-median').textContent=median(mags).toFixed(2);
+}
+
+// ── TIME SERIES ───────────────────────────────────────────────────
+function renderTS(features){
+  const times=features.map(f=>f.properties.time).sort((a,b)=>a-b);
+  const fineBin=(currentPeriod==='hour'||currentPeriod==='day');
+  const bins={};
+  times.forEach(t=>{
+    const d=new Date(t);
+    let key;
+    if(fineBin){ d.setMinutes(0,0,0); key=d.toISOString().slice(0,13); }
+    else { d.setUTCHours(0,0,0,0); key=d.toISOString().slice(0,10); }
+    bins[key]=(bins[key]||0)+1;
+  });
+  const labels=Object.keys(bins).sort();
+  const vals=labels.map(k=>bins[k]);
+  document.getElementById('ts-leg').textContent=`Earthquake count per ${fineBin?'hour':'day'}`;
+  const ctx=document.getElementById('chart-ts').getContext('2d');chartTS=dc(chartTS);
+  chartTS=new Chart(ctx,{type:'bar',data:{labels:labels.map(l=>fineBin?l.slice(11)+':00':l.slice(5)),datasets:[
+    {label:'Event count',data:vals,backgroundColor:'#2563ebCC',borderRadius:3}
+  ]},options:cOpts('Number of earthquakes',false)});
+}
+
+// ── HISTOGRAM ─────────────────────────────────────────────────────
+function renderHistogram(features){
+  const mags=features.map(magOf);
+  const min=Math.min(...mags),max=Math.max(...mags),bins=14,bs=(max-min)/bins||1;
+  const counts=Array(bins).fill(0);
+  mags.forEach(v=>{let b=Math.floor((v-min)/bs);if(b>=bins)b=bins-1;if(b<0)b=0;counts[b]++;});
+  const labels=counts.map((_,i)=>(min+i*bs).toFixed(1));
+  const maxC=Math.max(...counts)||1;
+  const colors=counts.map(c=>iColor('#60a5fa','#ef4444',c/maxC));
+  const ctx=document.getElementById('chart-hist').getContext('2d');chartHist=dc(chartHist);
+  chartHist=new Chart(ctx,{type:'bar',data:{labels,datasets:[{label:'Number of events',data:counts,backgroundColor:colors,borderRadius:3}]},options:cOpts('Number of events',false)});
+}
+
+// ── SCATTER: depth vs magnitude ───────────────────────────────────
+function renderScatter(features){
+  let pts=features.map(f=>({x:depthOf(f),y:magOf(f)}));
+  let note='';
+  if(pts.length>SCATTER_POINT_CAP){
+    // sample evenly to keep rendering fast
+    const step=pts.length/SCATTER_POINT_CAP;
+    pts=Array.from({length:SCATTER_POINT_CAP},(_,i)=>pts[Math.floor(i*step)]);
+    note=`Showing a ${SCATTER_POINT_CAP.toLocaleString()}-point sample of ${features.length.toLocaleString()} events`;
+  }
+  document.getElementById('scatter-trunc-note').textContent=note;
+  const ctx=document.getElementById('chart-scatter').getContext('2d');chartScatter=dc(chartScatter);
+  chartScatter=new Chart(ctx,{type:'scatter',data:{datasets:[{label:'Depth vs Magnitude',data:pts,backgroundColor:'#ef444499',pointRadius:3,pointHoverRadius:5}]},
+    options:{...cOpts('Magnitude',false),scales:{x:{title:{display:true,text:'Depth (km)',color:'#8794a8',font:{size:10}},grid:{color:'#eef1f7'},ticks:{font:{family:'JetBrains Mono',size:10},color:'#8794a8'}},y:{title:{display:true,text:'Magnitude',color:'#8794a8',font:{size:10}},grid:{color:'#eef1f7'},ticks:{font:{family:'JetBrains Mono',size:10},color:'#8794a8'}}}}});
+}
+
+// ── DEPTH BANDS ───────────────────────────────────────────────────
+function renderDepthBands(features){
+  const bands={Shallow:0,Intermediate:0,Deep:0};
+  features.forEach(f=>bands[depthBand(depthOf(f))]++);
+  const ctx=document.getElementById('chart-depthband').getContext('2d');chartDepthBand=dc(chartDepthBand);
+  chartDepthBand=new Chart(ctx,{type:'bar',data:{labels:['Shallow (<70km)','Intermediate (70–300km)','Deep (>300km)'],datasets:[{label:'Events',data:[bands.Shallow,bands.Intermediate,bands.Deep],backgroundColor:['#ef4444CC','#f97316CC','#3b82f6CC'],borderRadius:4}]},options:cOpts('Number of events',false)});
+}
+
+// ── TOP REGIONS ───────────────────────────────────────────────────
+function renderRegions(features){
+  const counts={};
+  features.forEach(f=>{const r=regionFromPlace(f.properties.place);counts[r]=(counts[r]||0)+1;});
+  const sorted=Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,10);
+  const ctx=document.getElementById('chart-regions').getContext('2d');chartRegions=dc(chartRegions);
+  chartRegions=new Chart(ctx,{type:'bar',data:{labels:sorted.map(s=>s[0]),datasets:[{label:'Events',data:sorted.map(s=>s[1]),backgroundColor:'#2563ebCC',borderRadius:4}]},options:{...cOpts('Number of events',false),indexAxis:'y'}});
+}
+
+// ── STATS TABLE ───────────────────────────────────────────────────
+function renderStatsTable(features){
+  const sorted=[...features].sort((a,b)=>magOf(b)-magOf(a));
+  const shown=sorted.slice(0,TABLE_ROW_CAP);
+  const noteEl=document.getElementById('table-trunc-note');
+  if(sorted.length>TABLE_ROW_CAP){
+    noteEl.style.display='block';
+    noteEl.textContent=`Showing top ${TABLE_ROW_CAP} of ${sorted.length.toLocaleString()} events, sorted by magnitude`;
+  }else noteEl.style.display='none';
+  const rows=shown.map(f=>{
+    const m=magOf(f),d=depthOf(f),t=new Date(f.properties.time);
+    const timeStr=t.toISOString().replace('T',' ').slice(0,16)+' UTC';
+    return `<tr><td>${timeStr}</td><td>${(f.properties.place||'Unknown').replace(/</g,'&lt;')}</td><td><span class="mag-chip ${magClass(m)}">M ${m.toFixed(1)}</span></td><td>${d.toFixed(1)} km</td><td>${depthBand(d)}</td></tr>`;
+  });
+  document.getElementById('stats-table-wrap').innerHTML=`<table class="stats-table"><thead><tr><th>Time (UTC)</th><th>Location</th><th>Magnitude</th><th>Depth</th><th>Depth Band</th></tr></thead><tbody>${rows.join('')}</tbody></table>`;
+}
+
+// ── MAP ────────────────────────────────────────────────────────────
+async function initMap(){
+  const c=document.getElementById('world-map-container'),W=c.clientWidth||800,H=c.clientHeight||440;
+  mapProjection=d3.geoNaturalEarth1().scale(W/6.3).translate([W/2,H/2]);
+  const pg=d3.geoPath().projection(mapProjection);
+  const svg=d3.select('#world-map-container').append('svg').attr('viewBox',`0 0 ${W} ${H}`).attr('preserveAspectRatio','xMidYMid meet').style('display','block').style('width','100%').style('height','100%');
+  mapSvg=svg;svg.append('rect').attr('width',W).attr('height',H).attr('fill','#cce4f5');
+  const g=svg.append('g').attr('class','map-g');
+  mapG=g;
+  mapZoom=d3.zoom().scaleExtent([1,10]).on('zoom',e=>g.attr('transform',e.transform));svg.call(mapZoom);
+  try{
+    const world=await d3.json('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json');
+    const countries=topojson.feature(world,world.objects.countries);
+    g.append('g').attr('class','countries-g').selectAll('.country-path').data(countries.features).enter().append('path')
+      .attr('class','country-path').attr('d',pg).attr('fill','#d7e4ee');
+    g.append('path').datum(d3.geoGraticule()()).attr('d',pg).attr('fill','none').attr('stroke','#a0bcd0').attr('stroke-width',0.3).attr('opacity',0.5);
+    g.append('path').datum(topojson.mesh(world,world.objects.countries,(a,b)=>a!==b)).attr('d',pg).attr('fill','none').attr('stroke','#fff').attr('stroke-width',0.4);
+    g.append('g').attr('class','markers-g');
+    window._eqProjection=mapProjection;
+    if(currentFeatures.length)plotMapMarkers(currentFeatures);
+  }catch(e){console.warn('Map error:',e);document.getElementById('map-info').textContent='Map unavailable';}
+}
+
+function plotMapMarkers(features){
+  if(!mapG||!mapProjection)return;
+  const markersG=mapG.select('.markers-g');
+  markersG.selectAll('*').remove();
+
+  let pts=[...features].sort((a,b)=>magOf(b)-magOf(a));
+  let truncated=false;
+  if(pts.length>MAP_MARKER_CAP){pts=pts.slice(0,MAP_MARKER_CAP);truncated=true;}
+
+  const tt=document.getElementById('map-tooltip'),container=document.getElementById('world-map-container');
+
+  markersG.selectAll('.eq-dot').data(pts).enter().append('circle')
+    .attr('class','eq-dot')
+    .attr('cx',f=>{const p=mapProjection([f.geometry.coordinates[0],f.geometry.coordinates[1]]);return p?p[0]:-9999;})
+    .attr('cy',f=>{const p=mapProjection([f.geometry.coordinates[0],f.geometry.coordinates[1]]);return p?p[1]:-9999;})
+    .attr('r',f=>Math.max(2,magOf(f)*2.1))
+    .attr('fill',f=>colorMode==='depth'?depthColorHex(depthOf(f)):magColorHex(magOf(f)))
+    .attr('fill-opacity',0.72)
+    .on('mousemove',function(ev,f){
+      const rect=container.getBoundingClientRect();
+      tt.style.display='block';tt.style.left=(ev.clientX-rect.left+12)+'px';tt.style.top=(ev.clientY-rect.top-10)+'px';
+      const t=new Date(f.properties.time);
+      tt.innerHTML=`<b>M ${magOf(f).toFixed(1)}</b> &mdash; ${(f.properties.place||'Unknown').replace(/</g,'&lt;')}<br>Depth: ${depthOf(f).toFixed(1)} km<br>${t.toISOString().replace('T',' ').slice(0,16)} UTC`;
+    })
+    .on('mouseleave',()=>{tt.style.display='none';});
+
+  renderMapLegend(truncated,pts.length,features.length);
+}
+
+function renderMapLegend(truncated,shown,total){
+  const ex=document.querySelector('.map-legend');if(ex)ex.remove();
+  const c=document.getElementById('world-map-container'),div=document.createElement('div');div.className='map-legend';
+
+  let colorLegendHTML='';
+  if(colorMode==='depth'){
+    const steps=10,gs=Array.from({length:steps},(_,i)=>depthColorHex(i/(steps-1)*700));
+    colorLegendHTML=`<div><div class="legend-title">Depth (km)</div><div class="legend-gradient" style="background:linear-gradient(to right,${gs.join(',')})"></div><div class="legend-ticks"><span>0</span><span>350</span><span>700+</span></div></div>`;
+  }else{
+    const steps=10,gs=Array.from({length:steps},(_,i)=>magColorHex(1+i/(steps-1)*7));
+    colorLegendHTML=`<div><div class="legend-title">Magnitude</div><div class="legend-gradient" style="background:linear-gradient(to right,${gs.join(',')})"></div><div class="legend-ticks"><span>1</span><span>4.5</span><span>8+</span></div></div>`;
+  }
+  const sizeLegendHTML=`<div><div class="legend-title">Bubble size = magnitude</div><div class="legend-size-row">
+    <div class="legend-size-item"><div class="legend-dot" style="width:${2*2.1}px;height:${2*2.1}px"></div><span>M2</span></div>
+    <div class="legend-size-item"><div class="legend-dot" style="width:${5*2.1}px;height:${5*2.1}px"></div><span>M5</span></div>
+    <div class="legend-size-item"><div class="legend-dot" style="width:${7*2.1}px;height:${7*2.1}px"></div><span>M7</span></div>
+  </div></div>`;
+  div.innerHTML=colorLegendHTML+sizeLegendHTML;
+  c.appendChild(div);
+
+  if(truncated){
+    document.getElementById('map-info').textContent=`Showing largest ${shown.toLocaleString()} of ${total.toLocaleString()} events (by magnitude) · ${MAG_LABELS[currentMag]} · ${PERIOD_LABELS[currentPeriod]}`;
+  }
+}
+
+function zoomIn(){if(mapSvg)mapSvg.transition().call(mapZoom.scaleBy,1.6);}
+function zoomOut(){if(mapSvg)mapSvg.transition().call(mapZoom.scaleBy,0.625);}
+function resetZoom(){if(mapSvg)mapSvg.transition().call(mapZoom.transform,d3.zoomIdentity);}
+
+// ── SHARED CHART OPTIONS / COLOR HELPERS ─────────────────────────
+function dc(ref){if(ref)try{ref.destroy();}catch(e){}return null;}
+function cOpts(yLabel='',leg=false){return{responsive:true,maintainAspectRatio:false,interaction:{intersect:false,mode:'index'},plugins:{legend:{display:leg,position:'top',labels:{boxWidth:12,font:{family:'Inter',size:11},color:'#4a5568'}},tooltip:{backgroundColor:'rgba(26,35,50,.92)',titleFont:{family:'JetBrains Mono',size:11},bodyFont:{family:'JetBrains Mono',size:12},padding:10,cornerRadius:7}},scales:{x:{grid:{color:'#eef1f7'},ticks:{font:{family:'JetBrains Mono',size:10},color:'#8794a8',maxTicksLimit:12,maxRotation:45}},y:{grid:{color:'#eef1f7'},ticks:{font:{family:'JetBrains Mono',size:10},color:'#8794a8'},title:{display:!!yLabel,text:yLabel,color:'#8794a8',font:{size:10,family:'Inter'}}}}};}
+function hexToRgb(h){const x=h.replace('#','').slice(0,6);return[parseInt(x.slice(0,2),16),parseInt(x.slice(2,4),16),parseInt(x.slice(4,6),16)];}
+function iColor(c1,c2,t){try{const[r1,g1,b1]=hexToRgb(c1),[r2,g2,b2]=hexToRgb(c2);t=Math.min(1,Math.max(0,t));return `rgb(${Math.round(r1+(r2-r1)*t)},${Math.round(g1+(g2-g1)*t)},${Math.round(b1+(b2-b1)*t)})`;}catch(e){return'#94a3b8';}}
+</script>
+</body>
+</html>
