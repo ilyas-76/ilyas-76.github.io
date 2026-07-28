@@ -597,7 +597,10 @@ async function fetchData(){
 
   try{
     const vars='temperature_2m_max,temperature_2m_min,precipitation_sum,wind_speed_10m_max';
-    const url=`https://archive-api.open-meteo.com/v1/archive?latitude=${currentCity.lat}&longitude=${currentCity.lon}&start_date=${yStart}-01-01&end_date=${yEnd}-12-31&daily=${vars}&timezone=auto`;
+    const today=new Date();
+    const isCurrentYear=yEnd===today.getFullYear();
+    const endDateStr=isCurrentYear?today.toISOString().slice(0,10):`${yEnd}-12-31`;
+    const url=`https://archive-api.open-meteo.com/v1/archive?latitude=${currentCity.lat}&longitude=${currentCity.lon}&start_date=${yStart}-01-01&end_date=${endDateStr}&daily=${vars}&timezone=auto`;
     const json=await fetchWithRetry(url);
     if(!json.daily||!json.daily.time||json.daily.time.length===0)throw new Error('No data returned for this location/period.');
     const processed=processData(json,yStart,yEnd);
