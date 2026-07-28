@@ -485,9 +485,9 @@ function populateCities(){
 }
 function populateYears(){
   const sy=document.getElementById('year-start'),ey=document.getElementById('year-end');
-  for(let y=2024;y>=1950;y--){
+  for(let y=2026;y>=1950;y--){
     const o1=document.createElement('option');o1.value=y;o1.textContent=y;if(y===1990)o1.selected=true;sy.appendChild(o1);
-    const o2=document.createElement('option');o2.value=y;o2.textContent=y;if(y===2024)o2.selected=true;ey.appendChild(o2);
+    const o2=document.createElement('option');o2.value=y;o2.textContent=y;if(y===2026)o2.selected=true;ey.appendChild(o2);
   }
 }
 function setVar(btn){
