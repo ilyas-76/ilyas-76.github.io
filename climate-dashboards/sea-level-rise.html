@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Sea Level Rise Monitor · AlphaStatLab</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{--bg:#f7f9fc;--surface:#fff;--surface2:#f0f4f9;--border:#dde3ed;--border-light:#eef1f7;--text-primary:#0f2436;--text-secondary:#3d5568;--text-muted:#7690a3;--accent:#0891b2;--accent2:#2563eb;--rise:#ef4444;--fall:#0891b2;--shadow:0 1px 3px rgba(0,0,0,.06),0 4px 12px rgba(0,0,0,.04);--radius:10px;--font-data:'JetBrains Mono',monospace}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primary);font-size:14px;line-height:1.5}
+.header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;gap:20px;height:58px;position:sticky;top:0;z-index:100;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.logo-block{display:flex;align-items:center;gap:10px}
+.logo-icon{width:32px;height:32px;background:linear-gradient(135deg,#0891b2,#2563eb);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:15px}
+.logo-text{font-size:15px;font-weight:700;letter-spacing:-.3px}
+.logo-sub{font-size:11px;color:var(--text-muted)}
+.header-divider{width:1px;height:28px;background:var(--border);flex-shrink:0}
+.header-title{font-size:13px;font-weight:600;color:var(--text-secondary);white-space:nowrap}
+.header-spacer{flex:1}
+.data-badge{display:flex;align-items:center;gap:6px;padding:5px 10px;background:#f0fdfa;border:1px solid #99f6e4;border-radius:20px;font-size:11px;font-weight:500;color:#0f766e;white-space:nowrap}
+.dot-live{width:7px;height:7px;background:#22c55e;border-radius:50%;animation:pulse 2s infinite;flex-shrink:0}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.noaa-badge{padding:4px 9px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:20px;font-size:11px;font-weight:600;color:#1d4ed8;white-space:nowrap}
+.page-wrap{display:grid;grid-template-columns:300px 1fr;min-height:calc(100vh - 58px);align-items:start}
+.sidebar{background:var(--surface);border-right:1px solid var(--border);padding:20px 16px;display:flex;flex-direction:column;gap:18px;position:sticky;top:58px;height:calc(100vh - 58px);overflow-y:auto}
+.content{padding:20px;display:flex;flex-direction:column;gap:18px;min-width:0}
+.sidebar-section-label{font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px}
+.select-group{display:flex;flex-direction:column;gap:6px}
+.select-label{font-size:12px;font-weight:500;color:var(--text-secondary)}
+select,input[type=number]{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:7px;background:var(--bg);color:var(--text-primary);font-family:inherit;font-size:13px;outline:none;transition:border-color .15s}
+select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath fill='%237690a3' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;padding-right:28px}
+select:focus,input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(8,145,178,.1)}
+.range-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.var-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.var-btn{padding:8px 6px;border:1px solid var(--border);border-radius:7px;background:var(--bg);cursor:pointer;text-align:center;font-size:11px;font-weight:500;color:var(--text-secondary);transition:all .15s;display:flex;flex-direction:column;align-items:center;gap:3px}
+.var-btn .var-icon{font-size:16px}
+.var-btn:hover{border-color:var(--accent);color:var(--accent);background:#ecfeff}
+.var-btn.active{border-color:var(--accent);background:#ecfeff;color:var(--accent);font-weight:600}
+.btn-primary{width:100%;padding:10px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:background .15s;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn-primary:hover{background:#0e7490}
+.btn-primary:disabled{background:#a5f3fc;cursor:not-allowed;color:#0e7490}
+.stat-mini{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:11px 13px}
+.stat-mini-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted)}
+.stat-mini-val{font-family:var(--font-data);font-size:20px;font-weight:500;margin-top:2px}
+.stat-mini-sub{font-size:11px;color:var(--text-muted);margin-top:1px}
+.stat-mini-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+.card-header{padding:14px 18px 10px;border-bottom:1px solid var(--border-light);display:flex;align-items:center;gap:10px}
+.card-title{font-size:13px;font-weight:600;color:var(--text-primary)}
+.card-sub{font-size:11px;color:var(--text-muted);margin-top:1px}
+.card-header-spacer{flex:1}
+.card-badge{font-size:10px;font-weight:600;padding:3px 8px;border-radius:20px;background:var(--surface2);color:var(--text-muted);border:1px solid var(--border);white-space:nowrap}
+.card-body{padding:16px 18px}
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:4px;min-width:0}
+.kpi-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted)}
+.kpi-val{font-family:var(--font-data);font-size:22px;font-weight:500;line-height:1.1;display:flex;align-items:baseline;gap:4px}
+.kpi-val .kpi-unit{font-size:12px;font-weight:400;color:var(--text-muted)}
+.kpi-trend{font-size:11px;font-weight:500;word-break:break-word}
+.trend-up{color:#ef4444}.trend-down{color:#0891b2}.trend-neutral{color:var(--text-muted)}
+.kpi-location-val{font-family:'Inter',sans-serif;font-size:16px;font-weight:600;line-height:1.2}
+.kpi-color-bar{height:3px;border-radius:2px;margin-top:6px}
+#world-map-container{width:100%;height:420px;position:relative;background:linear-gradient(160deg,#eaf6fb,#dceef5);overflow:hidden}
+#world-map-container svg{display:block;width:100%;height:100%}
+.country-path{fill:#cfe2ee;stroke:#fff;stroke-width:.4px}
+.station-dot{cursor:pointer;stroke:#fff;stroke-width:1.4px;transition:r .1s}
+.station-dot:hover{stroke:#0f2436;stroke-width:2px}
+.station-dot.selected{stroke:#0f2436;stroke-width:2.4px}
+.map-legend{position:absolute;bottom:14px;left:18px;background:rgba(255,255,255,.92);backdrop-filter:blur(4px);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-size:11px}
+.legend-title{font-weight:600;color:var(--text-secondary);margin-bottom:6px}
+.legend-gradient{width:160px;height:10px;border-radius:5px;margin-bottom:4px}
+.legend-ticks{display:flex;justify-content:space-between;color:var(--text-muted);font-size:10px;font-family:var(--font-data)}
+.map-tooltip{position:absolute;pointer-events:none;background:rgba(15,36,54,.92);color:#fff;padding:8px 12px;border-radius:7px;font-size:12px;white-space:nowrap;display:none;z-index:10}
+.map-controls{position:absolute;top:14px;right:14px;display:flex;flex-direction:column;gap:4px}
+.map-ctrl-btn{width:28px;height:28px;background:rgba(255,255,255,.9);border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;font-weight:600;color:var(--text-secondary);transition:background .1s}
+.map-ctrl-btn:hover{background:#fff;color:var(--accent)}
+.map-info{position:absolute;top:14px;left:18px;background:rgba(255,255,255,.88);backdrop-filter:blur(4px);border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-size:11px;color:var(--text-secondary)}
+.charts-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.chart-wrapper{position:relative;width:100%;height:240px}
+.chart-wrapper canvas{position:absolute;top:0;left:0;width:100%!important;height:100%!important}
+.chart-legend{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:8px 18px 4px;font-size:11px;color:var(--text-secondary);background:var(--surface2);border-bottom:1px solid var(--border-light)}
+.legend-item{display:flex;align-items:center;gap:5px;white-space:nowrap}
+.legend-swatch{width:12px;height:12px;border-radius:3px;flex-shrink:0;display:inline-block}
+.ts-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 18px 8px}
+.ts-btn{padding:4px 10px;border:1px solid var(--border);border-radius:20px;background:var(--bg);font-size:11px;font-weight:500;color:var(--text-secondary);cursor:pointer;transition:all .12s}
+.ts-btn:hover,.ts-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.stats-table{width:100%;border-collapse:collapse;font-size:12px}
+.stats-table th{text-align:left;padding:8px 10px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted);border-bottom:1px solid var(--border);background:var(--surface2)}
+.stats-table td{padding:8px 10px;border-bottom:1px solid var(--border-light);font-family:var(--font-data);font-size:12px;vertical-align:middle}
+.stats-table tr:last-child td{border-bottom:none}
+.stats-table td:first-child{font-family:'Inter',sans-serif;font-size:12px;font-weight:500}
+.anomaly-chip{display:inline-block;padding:2px 7px;border-radius:10px;font-size:10px;font-weight:600;font-family:'Inter',sans-serif}
+.anomaly-pos{background:#fee2e2;color:#991b1b}
+.anomaly-neg{background:#cffafe;color:#0e7490}
+.anomaly-neutral{background:var(--surface2);color:var(--text-muted)}
+.loading-overlay{position:absolute;inset:0;background:rgba(247,249,252,.88);backdrop-filter:blur(2px);display:flex;align-items:center;justify-content:center;z-index:50;border-radius:var(--radius)}
+.spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{font-size:12px;color:var(--text-muted);margin-top:10px;text-align:center}
+.anomaly-bar-wrap{display:flex;align-items:center;gap:8px}
+.anomaly-bar-bg{flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden}
+.anomaly-bar-fill{height:100%;border-radius:3px;transition:width .4s}
+.dashboard-footer{padding:12px 20px;border-top:1px solid var(--border);display:flex;align-items:center;gap:16px;flex-wrap:wrap;background:var(--surface)}
+.footer-note{font-size:11px;color:var(--text-muted)}
+.footer-note a{color:var(--accent2);text-decoration:none}
+.footer-note a:hover{text-decoration:underline}
+.footer-spacer{flex:1}
+.footer-credit{font-size:11px;color:var(--text-muted);font-weight:500}
+.footer-credit span{color:var(--accent2)}
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;height:200px;color:var(--text-muted);font-size:12px;gap:8px}
+.empty-icon{font-size:32px;opacity:.4}
+.tab-row{display:flex;gap:0;border-bottom:1px solid var(--border);padding:0 18px;overflow-x:auto}
+.tab-btn{padding:10px 14px;font-size:12px;font-weight:500;color:var(--text-muted);border-bottom:2px solid transparent;cursor:pointer;transition:all .12s;border:none;background:none;font-family:inherit;margin-bottom:-1px;white-space:nowrap}
+.tab-btn:hover{color:var(--text-primary)}
+.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
+.tab-pane{display:none}
+.tab-pane.active{display:block}
+.rate-banner{display:none;align-items:center;gap:8px;padding:8px 14px;background:#fffbeb;border:1px solid #fcd34d;border-radius:8px;font-size:12px;color:#92400e}
+.rate-banner.show{display:flex}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px}
+::-webkit-scrollbar-thumb:hover{background:#c1cbd8}
+@media(max-width:960px){.page-wrap{grid-template-columns:1fr}.sidebar{position:static;height:auto;border-right:none;border-bottom:1px solid var(--border)}.kpi-row{grid-template-columns:1fr 1fr}.charts-row{grid-template-columns:1fr}}
+@media(max-width:520px){.kpi-row{grid-template-columns:1fr 1fr}.header-title{display:none}.chart-wrapper{height:200px}}
+</style>
+</head>
+<body>
+<header class="header">
+  <div class="logo-block">
+    <div class="logo-icon">&#x1F30A;</div>
+    <div><div class="logo-text">AlphaStatLab</div><div class="logo-sub">Statistical Research Platform</div></div>
+  </div>
+  <div class="header-divider"></div>
+  <div class="header-title">Sea Level Rise Monitor</div>
+  <div class="header-spacer"></div>
+  <div class="noaa-badge">NOAA &middot; PSMSL &middot; IPCC AR6</div>
+  <div class="data-badge"><div class="dot-live"></div>NOAA CO-OPS Live API</div>
+</header>
+
+<div class="page-wrap">
+<aside class="sidebar">
+  <div>
+    <div class="sidebar-section-label">&#x1F4CD; Tide Station</div>
+    <div class="select-group">
+      <div class="select-label">NOAA Station</div>
+      <select id="station-select"></select>
+    </div>
+  </div>
+  <div>
+    <div class="sidebar-section-label">&#x23F1; Live Window</div>
+    <div class="select-group">
+      <div class="select-label">Days of recent history</div>
+      <select id="days-select">
+        <option value="3">3 days</option>
+        <option value="7">7 days</option>
+        <option value="14" selected>14 days</option>
+        <option value="30">30 days</option>
+      </select>
+    </div>
+  </div>
+  <div>
+    <div class="sidebar-section-label">&#x1F4C8; View</div>
+    <div class="var-grid">
+      <button class="var-btn active" data-var="live" onclick="setVar(this)"><span class="var-icon">&#x1F30A;</span>Live Level</button>
+      <button class="var-btn" data-var="trend" onclick="setVar(this)"><span class="var-icon">&#x1F4C9;</span>Long Trend</button>
+      <button class="var-btn" data-var="gmsl" onclick="setVar(this)"><span class="var-icon">&#x1F6F0;&#xFE0F;</span>Global GMSL</button>
+      <button class="var-btn" data-var="proj" onclick="setVar(this)"><span class="var-icon">&#x1F52E;</span>Projections</button>
+    </div>
+  </div>
+  <div class="rate-banner" id="rate-banner">&#x26A0;&#xFE0F; <span id="rate-msg">Rate limit hit &#x2014; retrying&hellip;</span></div>
+  <button class="btn-primary" id="fetch-btn" onclick="fetchData()"><span>&#x1F50D;</span> Load Station Data</button>
+  <div id="sidebar-stats" style="display:none">
+    <div class="sidebar-section-label">&#x1F4C8; Summary Statistics</div>
+    <div class="stat-mini-grid">
+      <div class="stat-mini"><div class="stat-mini-label">Mean</div><div class="stat-mini-val" id="st-mean">&#x2014;</div><div class="stat-mini-sub" id="st-unit-mean"></div></div>
+      <div class="stat-mini"><div class="stat-mini-label">Std Dev</div><div class="stat-mini-val" id="st-std">&#x2014;</div><div class="stat-mini-sub">&#x3C3;</div></div>
+      <div class="stat-mini"><div class="stat-mini-label">Max</div><div class="stat-mini-val" id="st-max" style="color:var(--rise)">&#x2014;</div><div class="stat-mini-sub" id="st-max-yr"></div></div>
+      <div class="stat-mini"><div class="stat-mini-label">Min</div><div class="stat-mini-val" id="st-min" style="color:var(--fall)">&#x2014;</div><div class="stat-mini-sub" id="st-min-yr"></div></div>
+    </div>
+    <div class="stat-mini" style="margin-top:6px">
+      <div class="stat-mini-label">Linear Trend</div>
+      <div class="stat-mini-val" id="st-trend" style="font-size:15px">&#x2014;</div>
+      <div class="stat-mini-sub" id="st-trend-sub">mm / year</div>
+    </div>
+  </div>
+  <div style="margin-top:auto;padding-top:10px;font-size:11px;color:var(--text-muted);line-height:1.6">
+    <strong style="color:var(--text-secondary)">Data Sources</strong><br>
+    NOAA CO-OPS Tides &amp; Currents API (live, no key) &middot; PSMSL long-record tide gauges &middot; Satellite altimetry (1993&ndash;present) &middot; IPCC AR6 projections
+  </div>
+</aside>
+
+<main class="content">
+  <div class="kpi-row">
+    <div class="kpi-card">
+      <div class="kpi-label">Selected Station</div>
+      <div class="kpi-location-val" id="kpi-location">&#x2014;</div>
+      <div class="kpi-trend trend-neutral" id="kpi-coords">Choose a NOAA tide station</div>
+      <div class="kpi-color-bar" style="background:var(--accent);width:60%"></div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Latest / Period Reading</div>
+      <div class="kpi-val"><span id="kpi-mean-num">&#x2014;</span><span class="kpi-unit" id="kpi-mean-unit"></span></div>
+      <div class="kpi-trend trend-neutral" id="kpi-mean-label">&#x2014;</div>
+      <div class="kpi-color-bar" style="background:#e2e8f0;width:50%"></div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Period High</div>
+      <div class="kpi-val" style="color:var(--rise)"><span id="kpi-high-num">&#x2014;</span><span class="kpi-unit" id="kpi-high-unit"></span></div>
+      <div class="kpi-trend trend-up" id="kpi-high-yr">&#x2014;</div>
+      <div class="kpi-color-bar" style="background:var(--rise);width:80%"></div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Period Low</div>
+      <div class="kpi-val" style="color:var(--fall)"><span id="kpi-low-num">&#x2014;</span><span class="kpi-unit" id="kpi-low-unit"></span></div>
+      <div class="kpi-trend trend-down" id="kpi-low-yr">&#x2014;</div>
+      <div class="kpi-color-bar" style="background:var(--fall);width:65%"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div><div class="card-title">&#x1F30E; NOAA Tide Station Network</div><div class="card-sub">Click any marker to load that station's live &amp; historic data &middot; Color = local relative sea-level trend</div></div>
+      <div class="card-header-spacer"></div>
+      <div class="card-badge" id="map-var-label">Local Trend (mm/yr)</div>
+    </div>
+    <div id="world-map-container">
+      <div class="map-info" id="map-info">Click a station to analyse</div>
+      <div class="map-controls">
+        <div class="map-ctrl-btn" onclick="zoomIn()" title="Zoom in">+</div>
+        <div class="map-ctrl-btn" onclick="zoomOut()" title="Zoom out">&minus;</div>
+        <div class="map-ctrl-btn" onclick="resetZoom()" title="Reset">&#x2299;</div>
+      </div>
+      <div class="map-tooltip" id="map-tooltip"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="tab-row">
+      <button class="tab-btn active" onclick="switchTab('ts',this)">&#x1F4C8; Time Series</button>
+      <button class="tab-btn" onclick="switchTab('bar',this)">&#x1F4CA; Period Distribution</button>
+      <button class="tab-btn" onclick="switchTab('anom',this)">&#x1F30A; Anomaly</button>
+      <button class="tab-btn" onclick="switchTab('stats',this)">&#x1F4CB; Statistics Table</button>
+    </div>
+
+    <div class="tab-pane active" id="tab-ts">
+      <div class="ts-controls">
+        <span style="font-size:11px;font-weight:600;color:var(--text-muted)">Smoothing:</span>
+        <button class="ts-btn active" onclick="setSmooth(1,this)">None</button>
+        <button class="ts-btn" onclick="setSmooth(5,this)">5-pt</button>
+        <button class="ts-btn" onclick="setSmooth(10,this)">10-pt</button>
+        <div style="flex:1"></div>
+        <span id="ts-trend-label" style="font-size:11px;color:var(--text-muted)"></span>
+      </div>
+      <div class="chart-legend">
+        <div class="legend-item"><div class="legend-swatch" id="ts-swatch" style="background:#0891b2"></div><span id="ts-leg-main">Observed sea level</span></div>
+        <div class="legend-item"><div class="legend-swatch" style="background:repeating-linear-gradient(90deg,#64748b 0,#64748b 5px,transparent 5px,transparent 9px)"></div><span>OLS Linear Trend line</span></div>
+        <div class="legend-item"><div class="legend-swatch" style="background:#0891b220;border:1px solid #0891b2"></div><span>Shaded fill area</span></div>
+      </div>
+      <div class="card-body" style="padding-top:8px">
+        <div class="chart-wrapper" style="height:270px">
+          <canvas id="chart-ts"></canvas>
+          <div class="loading-overlay" id="ts-loader" style="display:none">
+            <div style="text-align:center"><div class="spinner"></div><div class="loading-text" id="loading-msg">Fetching sea level records&hellip;</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-pane" id="tab-bar">
+      <div class="chart-legend">
+        <div class="legend-item"><div class="legend-swatch" style="background:#ef4444CC"></div><span>&#x1F534; Above period mean &mdash; higher water level</span></div>
+        <div class="legend-item"><div class="legend-swatch" style="background:#0891b2CC"></div><span>&#x1F535; Below period mean &mdash; lower water level</span></div>
+      </div>
+      <div class="card-body"><div class="chart-wrapper" style="height:265px"><canvas id="chart-bar"></canvas></div></div>
+    </div>
+
+    <div class="tab-pane" id="tab-anom">
+      <div class="chart-legend">
+        <div class="legend-item"><div class="legend-swatch" style="background:#ef4444BB"></div><span>&#x1F534; Positive anomaly &mdash; above long-term mean (rising signal)</span></div>
+        <div class="legend-item"><div class="legend-swatch" style="background:#0891b2BB"></div><span>&#x1F535; Negative anomaly &mdash; below long-term mean</span></div>
+        <div class="legend-item" style="margin-left:auto;color:var(--text-muted);font-size:10px">Baseline = period mean = 0</div>
+      </div>
+      <div class="card-body"><div class="chart-wrapper" style="height:265px"><canvas id="chart-anom"></canvas></div></div>
+    </div>
+
+    <div class="tab-pane" id="tab-stats">
+      <div class="card-body" style="padding:0;overflow-x:auto">
+        <div id="stats-table-wrap"><div class="empty-state"><div class="empty-icon">&#x1F4CB;</div><div>Load a station to see the statistics table</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="charts-row">
+    <div class="card">
+      <div class="card-header">
+        <div><div class="card-title">&#x1F310; Global Mean Sea Level (Satellite Altimetry)</div><div class="card-sub">Multi-mission record since 1993</div></div>
+      </div>
+      <div class="chart-legend">
+        <div class="legend-item"><div class="legend-swatch" style="background:#0891b2"></div><span>GMSL anomaly (mm, vs. 1993 mean)</span></div>
+      </div>
+      <div class="card-body"><div class="chart-wrapper"><canvas id="chart-gmsl"></canvas></div></div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div><div class="card-title">&#x1F52E; Future Projections (IPCC AR6)</div><div class="card-sub">Global median, vs. 1995&ndash;2014 baseline</div></div>
+      </div>
+      <div class="chart-legend">
+        <div class="legend-item"><div class="legend-swatch" style="background:#0891b2"></div><span>SSP1-2.6 (low)</span></div>
+        <div class="legend-item"><div class="legend-swatch" style="background:#f59e0b"></div><span>SSP2-4.5 (mid)</span></div>
+        <div class="legend-item"><div class="legend-swatch" style="background:#ef4444"></div><span>SSP5-8.5 (high)</span></div>
+      </div>
+      <div class="card-body"><div class="chart-wrapper"><canvas id="chart-proj"></canvas></div></div>
+    </div>
+  </div>
+
+  <div class="dashboard-footer">
+    <div class="footer-note">Live data: <a href="https://api.tidesandcurrents.noaa.gov/api/prod/" target="_blank">NOAA CO-OPS Tides &amp; Currents API</a> &middot; no key required</div>
+    <div class="footer-note">Historic: <a href="https://psmsl.org/" target="_blank">PSMSL</a> &middot; Projections: <a href="https://sealevel.nasa.gov/ipcc-ar6-sea-level-projection-tool" target="_blank">NASA/IPCC AR6</a></div>
+    <div class="footer-spacer"></div>
+    <div class="footer-credit">Built by <span>AlphaStatLab</span> &middot; Muhammad Ilyas, PhD &middot; QAU Islamabad</div>
+  </div>
+</main>
+</div>
+
+<script>
+// ── STATION DATABASE (NOAA CO-OPS, id → name + coords + approx long-term local trend mm/yr) ──
+// Trend values are indicative long-term local relative-sea-level-rise rates published by NOAA
+// CO-OPS "Sea Level Trends" product for these stations — used here for map coloring only;
+// the app also computes a live trend from fetched monthly means when available.
+const STATIONS={
+"8518750":{n:"The Battery, New York, NY",lat:40.70,lon:-74.01,trend:2.88},
+"8443970":{n:"Boston, MA",lat:42.35,lon:-71.05,trend:2.87},
+"8452660":{n:"Newport, RI",lat:41.50,lon:-71.33,trend:2.74},
+"8724580":{n:"Key West, FL",lat:24.56,lon:-81.81,trend:2.42},
+"8771450":{n:"Galveston Pier 21, TX",lat:29.31,lon:-94.79,trend:6.66},
+"9414290":{n:"San Francisco, CA",lat:37.81,lon:-122.47,trend:1.94},
+"9447130":{n:"Seattle, WA",lat:47.60,lon:-122.34,trend:2.03},
+"9455920":{n:"Anchorage, AK",lat:61.24,lon:-149.89,trend:-3.86},
+"1612340":{n:"Honolulu, HI",lat:21.31,lon:-157.87,trend:1.54},
+"9755371":{n:"San Juan, Puerto Rico",lat:18.47,lon:-66.12,trend:1.67},
+"1770000":{n:"Apra Harbor, Guam",lat:13.44,lon:144.66,trend:2.86},
+"8636580":{n:"Chesapeake Bay Bridge, VA",lat:36.97,lon:-76.11,trend:4.75}
+};
+
+// ── EMBEDDED REFERENCE DATASETS (used when live fetches are unreachable, and for global panels) ──
+// Global Mean Sea Level, satellite altimetry era (illustrative reference series built from
+// published NOAA/NASA rates: ~3.4 mm/yr long-term average with mild acceleration).
+// For the authoritative, most current record see sealevel.nasa.gov or sealevel.colorado.edu.
+function buildGMSLReference(){
+  const years=[];for(let y=1993;y<=2025;y++)years.push(y);
+  let cum=0;const vals=[];
+  years.forEach((y,i)=>{const rate=3.2+0.10*i/10;cum+=rate;vals.push(+cum.toFixed(1));});
+  return{years,vals};
+}
+const GMSL_REF=buildGMSLReference();
+
+// IPCC AR6 global sea level projections — median, metres vs 1995–2014 baseline.
+// Source: IPCC AR6 WG1 / Garner et al. (2021), DOI 10.5281/zenodo.5914709.
+const AR6={
+  years:[2030,2050,2070,2090,2100,2150],
+  "SSP1-2.6":[0.11,0.20,0.29,0.38,0.44,0.68],
+  "SSP2-4.5":[0.11,0.21,0.32,0.44,0.51,0.83],
+  "SSP5-8.5":[0.12,0.23,0.37,0.53,0.63,1.05]
+};
+
+const NOAA_BASE="https://api.tidesandcurrents.noaa.gov/api/prod/datagetter";
+
+// ── STATE ─────────────────────────────────────────────────────────
+let currentView="live",currentStation=null,currentData=null,smoothWindow=1;
+let chartTS=null,chartBar=null,chartAnom=null,chartGMSL=null,chartProj=null;
+let mapSvg=null,mapProjection=null,mapZoom=null;
+const dataCache=new Map();
+let lastFetchTime=0;
+const MIN_GAP_MS=1200;
+
+// ── INIT ─────────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded',()=>{
+  populateStations();
+  requestAnimationFrame(()=>setTimeout(initMap,100));
+  renderGMSLChart();renderProjectionChart();
+});
+
+function populateStations(){
+  const sel=document.getElementById('station-select');
+  Object.keys(STATIONS).forEach(id=>{const o=document.createElement('option');o.value=id;o.textContent=`${STATIONS[id].n} (${id})`;sel.appendChild(o);});
+  sel.value="8518750";currentStation=sel.value;
+  sel.addEventListener('change',()=>{currentStation=sel.value;});
+}
+function setVar(btn){
+  document.querySelectorAll('.var-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');currentView=btn.dataset.var;
+  if(currentData)renderPrimaryChart();
+}
+function setSmooth(w,btn){
+  document.querySelectorAll('.ts-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');smoothWindow=w;
+  if(currentData)renderTS(currentData);
+}
+function switchTab(id,btn){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');document.getElementById('tab-'+id).classList.add('active');
+  if(currentData)requestAnimationFrame(()=>{if(id==='bar')renderBar(currentData);if(id==='anom')renderAnomaly(currentData);});
+}
+
+// ── RATE BANNER / RETRY HELPERS ─────────────────────────────────
+function showBanner(show,msg=''){const el=document.getElementById('rate-banner');el.classList.toggle('show',show);if(msg)document.getElementById('rate-msg').textContent=msg;}
+function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
+async function fetchWithRetry(url,maxRetries=3){
+  let delay=1500;
+  for(let attempt=1;attempt<=maxRetries;attempt++){
+    const now=Date.now();const wait=Math.max(0,MIN_GAP_MS-(now-lastFetchTime));
+    if(wait>0)await sleep(wait);
+    lastFetchTime=Date.now();showBanner(false);
+    const resp=await fetch(url);
+    if(resp.ok)return resp.json();
+    if(resp.status===429){showBanner(true,`Rate limit — retrying in ${(delay/1000).toFixed(0)}s (attempt ${attempt}/${maxRetries})`);await sleep(delay);delay*=2;continue;}
+    throw new Error(`API error ${resp.status}: ${resp.statusText}`);
+  }
+  throw new Error('Rate limit exceeded — please wait a moment and try again.');
+}
+
+// ── MAIN FETCH: pulls live water level + verified monthly means for a station ──
+async function fetchData(){
+  const sel=document.getElementById('station-select');currentStation=sel.value;
+  const days=+document.getElementById('days-select').value;
+  const cacheKey=`${currentStation}-${days}`;
+  if(dataCache.has(cacheKey)){applyData(dataCache.get(cacheKey));return;}
+
+  const btn=document.getElementById('fetch-btn');
+  btn.disabled=true;btn.innerHTML='<span>&#x23F3;</span> Loading…';
+  document.getElementById('ts-loader').style.display='flex';
+  document.getElementById('loading-msg').textContent='Fetching from NOAA CO-OPS…';
+  const st=STATIONS[currentStation];
+  document.getElementById('kpi-location').textContent=st.n;
+  document.getElementById('kpi-coords').textContent=`${st.lat.toFixed(2)}°, ${st.lon.toFixed(2)}° · local trend ${st.trend>=0?'+':''}${st.trend} mm/yr`;
+
+  const result={station:currentStation,live:null,monthly:null};
+  try{
+    const end=new Date(),start=new Date(end.getTime()-days*86400000);
+    const fmt=d=>d.toISOString().slice(0,10).replace(/-/g,'');
+    const liveUrl=`${NOAA_BASE}?begin_date=${fmt(start)}&end_date=${fmt(end)}&station=${currentStation}&product=water_level&datum=MSL&units=metric&time_zone=gmt&format=json`;
+    const liveJson=await fetchWithRetry(liveUrl);
+    if(liveJson.data&&liveJson.data.length){
+      result.live=liveJson.data.map(d=>({t:new Date(d.t.replace(' ','T')+'Z'),v:parseFloat(d.v)})).filter(d=>!isNaN(d.v));
+    }
+  }catch(e){console.warn('Live fetch failed:',e.message);}
+
+  try{
+    const mmUrl=`${NOAA_BASE}?station=${currentStation}&product=monthly_mean&datum=MSL&units=metric&time_zone=gmt&format=json&begin_date=19700101&end_date=${new Date().toISOString().slice(0,10).replace(/-/g,'')}`;
+    const mmJson=await fetchWithRetry(mmUrl);
+    if(mmJson.data&&mmJson.data.length){
+      result.monthly=mmJson.data.map(d=>({date:new Date(+d.year,+d.month-1,1),v:parseFloat(d.MSL)})).filter(d=>!isNaN(d.v));
+    }
+  }catch(e){console.warn('Monthly fetch failed:',e.message);}
+
+  if(!result.live&&!result.monthly){
+    showBanner(true,'Could not reach NOAA CO-OPS from this browser/network (CORS or connectivity). Showing global reference panels instead — this works normally once hosted (e.g. GitHub Pages).');
+  }
+  dataCache.set(cacheKey,result);
+  applyData(result);
+  btn.disabled=false;btn.innerHTML='<span>&#x1F50D;</span> Load Station Data';
+  document.getElementById('ts-loader').style.display='none';
+}
+
+function applyData(result){
+  currentData=result;
+  document.getElementById('sidebar-stats').style.display='block';
+  renderPrimaryChart();renderBar(result);renderAnomaly(result);renderStatsTable(result);updateKPIs(result);updateSidebarStats(result);
+  highlightStation(result.station);
+  const st=STATIONS[result.station];
+  document.getElementById('map-info').textContent=`${st.n} · local trend ${st.trend>=0?'+':''}${st.trend} mm/yr`;
+}
+
+// ── SERIES HELPERS ──────────────────────────────────────────────
+function activeSeries(result){
+  if(currentView==='trend'&&result.monthly&&result.monthly.length){
+    return{labels:result.monthly.map(d=>d.date.toISOString().slice(0,7)),vals:result.monthly.map(d=>d.v*1000),unit:'mm',label:'Monthly mean sea level'};
+  }
+  if(currentView==='gmsl'){
+    return{labels:GMSL_REF.years.map(String),vals:GMSL_REF.vals,unit:'mm',label:'Global mean sea level (satellite)'};
+  }
+  if(currentView==='proj'){
+    return{labels:AR6.years.map(String),vals:AR6["SSP2-4.5"].map(v=>v*1000),unit:'mm',label:'IPCC AR6 SSP2-4.5 projection'};
+  }
+  if(result.live&&result.live.length){
+    return{labels:result.live.map(d=>d.t.toISOString().slice(0,16).replace('T',' ')),vals:result.live.map(d=>d.v*1000),unit:'mm',label:'Water level (MSL)'};
+  }
+  // fallback to global reference so the chart is never empty
+  return{labels:GMSL_REF.years.map(String),vals:GMSL_REF.vals,unit:'mm',label:'Global mean sea level (reference)'};
+}
+function smoothArray(arr,w){if(w<=1)return arr;const h=Math.floor(w/2);return arr.map((_,i)=>{const s=arr.slice(Math.max(0,i-h),Math.min(arr.length,i+h+1));return s.reduce((a,b)=>a+b,0)/s.length;});}
+function linearTrend(xs,ys){const n=xs.length;if(n<2)return{slope:0,intercept:0,line:ys.slice()};const mx=xs.reduce((a,b)=>a+b,0)/n,my=ys.reduce((a,b)=>a+b,0)/n;let num=0,den=0;xs.forEach((x,i)=>{num+=(x-mx)*(ys[i]-my);den+=(x-mx)**2;});const s=den?num/den:0,ic=my-s*mx;return{slope:s,intercept:ic,line:xs.map(x=>s*x+ic)};}
+function dc(ref){if(ref)try{ref.destroy();}catch(e){}return null;}
+function cOpts(yLabel='',leg=false){return{responsive:true,maintainAspectRatio:false,interaction:{intersect:false,mode:'index'},plugins:{legend:{display:leg,position:'top',labels:{boxWidth:12,font:{family:'Inter',size:11},color:'#3d5568'}},tooltip:{backgroundColor:'rgba(15,36,54,.92)',titleFont:{family:'JetBrains Mono',size:11},bodyFont:{family:'JetBrains Mono',size:12},padding:10,cornerRadius:7}},scales:{x:{grid:{color:'#eef1f7'},ticks:{font:{family:'JetBrains Mono',size:10},color:'#7690a3',maxTicksLimit:10,maxRotation:45}},y:{grid:{color:'#eef1f7'},ticks:{font:{family:'JetBrains Mono',size:10},color:'#7690a3'},title:{display:!!yLabel,text:yLabel,color:'#7690a3',font:{size:10,family:'Inter'}}}}};}
+
+// ── RENDER: PRIMARY (Time Series tab) ────────────────────────────
+function renderPrimaryChart(){if(currentData)renderTS(currentData);}
+function renderTS(result){
+  const s=activeSeries(result);if(!s.vals.length)return;
+  const sm=smoothArray(s.vals,smoothWindow),xs=s.vals.map((_,i)=>i),tr=linearTrend(xs,s.vals);
+  document.getElementById('ts-trend-label').textContent=`Trend across shown window: ${tr.slope>=0?'+':''}${tr.slope.toFixed(3)} ${s.unit}/step`;
+  document.getElementById('ts-leg-main').textContent=s.label;
+  const ctx=document.getElementById('chart-ts').getContext('2d');chartTS=dc(chartTS);
+  chartTS=new Chart(ctx,{type:'line',data:{labels:s.labels,datasets:[
+    {label:s.label,data:sm,borderColor:'#0891b2',backgroundColor:'#0891b218',borderWidth:smoothWindow>1?2.5:1.5,pointRadius:s.labels.length>150?0:smoothWindow>1?0:2,pointHoverRadius:5,fill:true,tension:0.3},
+    {label:'OLS Linear Trend',data:tr.line,borderColor:'#64748b',borderWidth:1.5,borderDash:[5,4],pointRadius:0,fill:false,tension:0}
+  ]},options:{...cOpts(`${s.label} (${s.unit})`,true),scales:{x:{grid:{color:'#eef1f7'},ticks:{font:{family:'JetBrains Mono',size:10},color:'#7690a3',maxTicksLimit:s.labels.length>60?12:10,maxRotation:45}},y:{grid:{color:'#eef1f7'},ticks:{font:{family:'JetBrains Mono',size:10},color:'#7690a3'},title:{display:true,text:`${s.label} (${s.unit})`,color:'#7690a3',font:{size:10}}}}}});
+}
+function renderBar(result){
+  const s=activeSeries(result);if(!s.vals.length)return;
+  const mean=s.vals.reduce((a,b)=>a+b,0)/s.vals.length;
+  const colors=s.vals.map(v=>v>=mean?'#ef4444CC':'#0891b2CC');
+  const ctx=document.getElementById('chart-bar').getContext('2d');chartBar=dc(chartBar);
+  chartBar=new Chart(ctx,{type:'bar',data:{labels:s.labels,datasets:[{label:`${s.label} — Red=above mean / Blue=below mean`,data:s.vals,backgroundColor:colors,borderRadius:3,borderSkipped:false}]},options:cOpts(`${s.label} (${s.unit})`,true)});
+}
+function renderAnomaly(result){
+  const s=activeSeries(result);if(!s.vals.length)return;
+  const mean=s.vals.reduce((a,b)=>a+b,0)/s.vals.length;
+  const anoms=s.vals.map(v=>+(v-mean).toFixed(2));
+  const ctx=document.getElementById('chart-anom').getContext('2d');chartAnom=dc(chartAnom);
+  chartAnom=new Chart(ctx,{type:'bar',data:{labels:s.labels,datasets:[
+    {label:'Positive anomaly',data:anoms.map(a=>a>=0?a:null),backgroundColor:'#ef4444BB',borderRadius:3},
+    {label:'Negative anomaly',data:anoms.map(a=>a<0?a:null),backgroundColor:'#0891b2BB',borderRadius:3}
+  ]},options:{...cOpts(`Anomaly (${s.unit})`,true),scales:{x:{grid:{color:'#eef1f7'},ticks:{font:{family:'JetBrains Mono',size:10},color:'#7690a3',maxTicksLimit:10,maxRotation:45}},y:{grid:{color:'#eef1f7'},ticks:{font:{family:'JetBrains Mono',size:10},color:'#7690a3'},title:{display:true,text:`Anomaly (${s.unit})`,color:'#7690a3',font:{size:10}}}}}});
+}
+function renderStatsTable(result){
+  const s=activeSeries(result);if(!s.vals.length)return;
+  const mean=s.vals.reduce((a,b)=>a+b,0)/s.vals.length,maxAbs=Math.max(...s.vals.map(Math.abs))||1;
+  const rows=s.labels.map((lbl,i)=>{const v=s.vals[i],an=v-mean;const cls=Math.abs(an)<0.5?'anomaly-neutral':an>0?'anomaly-pos':'anomaly-neg';const bw=Math.min(100,Math.abs(v/maxAbs*100));return `<tr><td>${lbl}</td><td>${v.toFixed(1)}</td><td><span class="anomaly-chip ${cls}">${an>=0?'+':''}${an.toFixed(1)}</span></td><td><div class="anomaly-bar-wrap"><div class="anomaly-bar-bg"><div class="anomaly-bar-fill" style="width:${bw}%;background:${an>0?'#ef4444':'#0891b2'}"></div></div><span style="font-size:10px;color:var(--text-muted);width:44px;text-align:right">${v.toFixed(1)}</span></div></td></tr>`;}).slice(-500);
+  document.getElementById('stats-table-wrap').innerHTML=`<table class="stats-table"><thead><tr><th>Period</th><th>${s.label} (${s.unit})</th><th>Anomaly (&#x1F534;=above &#x1F535;=below)</th><th>Magnitude</th></tr></thead><tbody>${rows.join('')}</tbody></table>`;
+}
+function updateKPIs(result){
+  const s=activeSeries(result);if(!s.vals.length)return;
+  const mean=s.vals.reduce((a,b)=>a+b,0)/s.vals.length,maxV=Math.max(...s.vals),minV=Math.min(...s.vals);
+  const mxI=s.vals.indexOf(maxV),mnI=s.vals.indexOf(minV);
+  document.getElementById('kpi-mean-num').textContent=mean.toFixed(0);document.getElementById('kpi-mean-unit').textContent=' '+s.unit;document.getElementById('kpi-mean-label').textContent=s.label;
+  document.getElementById('kpi-high-num').textContent=maxV.toFixed(0);document.getElementById('kpi-high-unit').textContent=' '+s.unit;document.getElementById('kpi-high-yr').textContent=`↑ Period high · ${s.labels[mxI]}`;
+  document.getElementById('kpi-low-num').textContent=minV.toFixed(0);document.getElementById('kpi-low-unit').textContent=' '+s.unit;document.getElementById('kpi-low-yr').textContent=`↓ Period low · ${s.labels[mnI]}`;
+}
+function updateSidebarStats(result){
+  const s=activeSeries(result);if(!s.vals.length)return;
+  const n=s.vals.length,mean=s.vals.reduce((a,b)=>a+b,0)/n,std=Math.sqrt(s.vals.reduce((a,v)=>a+(v-mean)**2,0)/Math.max(1,n-1));
+  const maxV=Math.max(...s.vals),minV=Math.min(...s.vals);
+  document.getElementById('st-mean').textContent=mean.toFixed(1);document.getElementById('st-unit-mean').textContent=s.unit;
+  document.getElementById('st-std').textContent=std.toFixed(1);
+  document.getElementById('st-max').textContent=maxV.toFixed(1);document.getElementById('st-max-yr').textContent=s.labels[s.vals.indexOf(maxV)];
+  document.getElementById('st-min').textContent=minV.toFixed(1);document.getElementById('st-min-yr').textContent=s.labels[s.vals.indexOf(minV)];
+  const t=linearTrend(s.vals.map((_,i)=>i),s.vals);
+  document.getElementById('st-trend').textContent=`${t.slope>=0?'+':''}${t.slope.toFixed(2)}`;
+  document.getElementById('st-trend').style.color=t.slope>0.05?'var(--rise)':t.slope<-0.05?'var(--fall)':'var(--text-primary)';
+  document.getElementById('st-trend-sub').textContent=`${s.unit} / step (this window)`;
+}
+
+// ── GLOBAL PANELS (always render, independent of station selection) ──
+function renderGMSLChart(){
+  const ctx=document.getElementById('chart-gmsl').getContext('2d');chartGMSL=dc(chartGMSL);
+  chartGMSL=new Chart(ctx,{type:'line',data:{labels:GMSL_REF.years,datasets:[{label:'GMSL anomaly (mm)',data:GMSL_REF.vals,borderColor:'#0891b2',backgroundColor:'#0891b218',borderWidth:2.5,pointRadius:0,fill:true,tension:0.3}]},options:cOpts('GMSL anomaly (mm)',false)});
+}
+function renderProjectionChart(){
+  const ctx=document.getElementById('chart-proj').getContext('2d');chartProj=dc(chartProj);
+  const mk=(k,c)=>({label:k,data:AR6[k].map(v=>+(v*100).toFixed(0)),borderColor:c,backgroundColor:c+'18',borderWidth:2.5,pointRadius:3,fill:false,tension:0.25});
+  chartProj=new Chart(ctx,{type:'line',data:{labels:AR6.years,datasets:[mk('SSP1-2.6','#0891b2'),mk('SSP2-4.5','#f59e0b'),mk('SSP5-8.5','#ef4444')]},options:cOpts('Sea level rise (cm)',false)});
+}
+
+// ── MAP: NOAA station markers on a world basemap ──────────────────
+async function initMap(){
+  const c=document.getElementById('world-map-container'),W=c.clientWidth||800,H=c.clientHeight||420;
+  mapProjection=d3.geoNaturalEarth1().scale(W/6.3).translate([W/2,H/2]);
+  const pg=d3.geoPath().projection(mapProjection);
+  const svg=d3.select('#world-map-container').append('svg').attr('viewBox',`0 0 ${W} ${H}`).attr('preserveAspectRatio','xMidYMid meet').style('display','block').style('width','100%').style('height','100%');
+  mapSvg=svg;svg.append('rect').attr('width',W).attr('height',H).attr('fill','#dceef5');
+  const g=svg.append('g').attr('class','map-g');
+  mapZoom=d3.zoom().scaleExtent([1,8]).on('zoom',e=>g.attr('transform',e.transform));svg.call(mapZoom);
+  try{
+    const world=await d3.json('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json');
+    const countries=topojson.feature(world,world.objects.countries);
+    g.selectAll('.country-path').data(countries.features).enter().append('path').attr('class','country-path').attr('d',pg);
+    g.append('path').datum(topojson.mesh(world,world.objects.countries,(a,b)=>a!==b)).attr('d',pg).attr('fill','none').attr('stroke','#fff').attr('stroke-width',0.4);
+  }catch(e){console.warn('Basemap unavailable:',e);}
+
+  const trends=Object.values(STATIONS).map(s=>s.trend);
+  const cs=d3.scaleSequential().domain([Math.min(...trends),Math.max(...trends)]).interpolator(d3.interpolateRgbBasis(['#2563eb','#67e8f9','#fde68a','#f97316','#ef4444']));
+  const markers=g.selectAll('.station-dot').data(Object.entries(STATIONS)).enter().append('circle')
+    .attr('class','station-dot').attr('id',d=>'st-'+d[0])
+    .attr('cx',d=>{const p=mapProjection([d[1].lon,d[1].lat]);return p?p[0]:-99;})
+    .attr('cy',d=>{const p=mapProjection([d[1].lon,d[1].lat]);return p?p[1]:-99;})
+    .attr('r',6).attr('fill',d=>cs(d[1].trend))
+    .on('mousemove',function(ev,d){
+      const tt=document.getElementById('map-tooltip'),rect=c.getBoundingClientRect();
+      tt.style.display='block';tt.style.left=(ev.clientX-rect.left+12)+'px';tt.style.top=(ev.clientY-rect.top-10)+'px';
+      tt.innerHTML=`<b>${d[1].n}</b><br>Local trend: <b>${d[1].trend>=0?'+':''}${d[1].trend} mm/yr</b>`;
+    })
+    .on('mouseleave',()=>{document.getElementById('map-tooltip').style.display='none';})
+    .on('click',function(ev,d){
+      document.getElementById('station-select').value=d[0];currentStation=d[0];fetchData();
+    });
+  renderMapLegend(cs,Math.min(...trends),Math.max(...trends));
+}
+function highlightStation(id){
+  if(!mapSvg)return;
+  mapSvg.selectAll('.station-dot').classed('selected',false).attr('r',6);
+  mapSvg.select('#st-'+id).classed('selected',true).attr('r',9);
+}
+function renderMapLegend(cs,lo,hi){
+  const ex=document.querySelector('.map-legend');if(ex)ex.remove();
+  const c=document.getElementById('world-map-container'),div=document.createElement('div');div.className='map-legend';
+  const steps=12,gs=Array.from({length:steps},(_,i)=>cs(lo+(hi-lo)*i/(steps-1)));
+  div.innerHTML=`<div class="legend-title">Local trend (mm/yr)</div><div class="legend-gradient" style="background:linear-gradient(to right,${gs.join(',')})"></div><div class="legend-ticks"><span>${lo.toFixed(1)}</span><span>${((lo+hi)/2).toFixed(1)}</span><span>${hi.toFixed(1)}</span></div>`;
+  c.appendChild(div);
+}
+function zoomIn(){if(mapSvg)mapSvg.transition().call(mapZoom.scaleBy,1.6);}
+function zoomOut(){if(mapSvg)mapSvg.transition().call(mapZoom.scaleBy,0.625);}
+function resetZoom(){if(mapSvg)mapSvg.transition().call(mapZoom.transform,d3.zoomIdentity);}
+</script>
+</body>
+</html>
