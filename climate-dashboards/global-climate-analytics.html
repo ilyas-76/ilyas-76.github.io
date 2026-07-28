@@ -600,8 +600,10 @@ async function fetchData(){
     const today=new Date();
     const isCurrentYear=yEnd===today.getFullYear();
     const endDateStr=isCurrentYear?today.toISOString().slice(0,10):`${yEnd}-12-31`;
-    const url=`https://archive-api.open-meteo.com/v1/archive?latitude=${currentCity.lat}&longitude=${currentCity.lon}&start_date=${yStart}-01-01&end_date=${endDateStr}&daily=${vars}&timezone=auto`;
-    const json=await fetchWithRetry(url);
+    const today=new Date();
+    const isCurrentYear=yEnd===today.getFullYear();
+    const endDateStr=isCurrentYear?today.toISOString().slice(0,10):`${yEnd}-12-31`;
+    const url=`https://archive-api.open-meteo.com/v1/archive?latitude=${currentCity.lat}&longitude=${currentCity.lon}&start_date=${yStart}-01-01&end_date=${endDateStr}&daily=${vars}&timezone=auto`;    const json=await fetchWithRetry(url);
     if(!json.daily||!json.daily.time||json.daily.time.length===0)throw new Error('No data returned for this location/period.');
     const processed=processData(json,yStart,yEnd);
     processed.city=currentCity;processed.yStart=yStart;processed.yEnd=yEnd;
